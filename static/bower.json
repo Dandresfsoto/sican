@@ -1,0 +1,28 @@
+{
+  "name": "sican",
+  "description": "",
+  "main": "",
+  "authors": [
+    "dandresfoto@gmail.com"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "dependencies": {
+    "paper-elements": "^1.0.7",
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.4",
+    "iron-component-page": "^1.1.6",
+    "normalize-css": "normalize.css#^4.1.1",
+    "gold-elements": "^1.0.1",
+    "image-mask": "^1.1.1",
+    "paper-collapse-item": "^1.0.7",
+    "vaadin-core-elements": "vaadin-elements#^1.0.0",
+    "file-upload": "^1.7.5",
+    "reconnectingWebsocket": "^1.0.0",
+    "datatables": "^1.10.12",
+    "bootstrap-select": "1.10.0",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.37",
+    "moment": "^2.14.1",
+    "moment-timezone": "^0.5.4"
+  }
+}
