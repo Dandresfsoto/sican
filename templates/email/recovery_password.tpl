@@ -38,12 +38,12 @@ Cambio de contraseña
     <![endif]-->
     <table bgcolor="#ffffff" class="content" align="center" cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 600px;">
       <tr>
-        <td bgcolor="#1976D2" class="header" style="padding: 40px 30px 20px 30px;">
+        <td bgcolor="#1976D2" class="header" style="padding: 40px 30px 40px 30px;">
           <table width="70" align="left" border="0" cellpadding="0" cellspacing="0">
             <tr>
-              <td height="70" style="padding: 0 20px 20px 0;">
-                <img style="margin-left: 70px;height: auto;" class="fix" src="{{ url_base }}/static/imag/logo.png" width="400" border="0" alt="" />
-              </td>
+              <div style="text-align: center;">
+                <img style="padding: 0 auto;height: auto;" class="fix" src="{{ url_base }}/static/img/SICAN.png" width="200" border="0" alt="" />
+              </div>
             </tr>
           </table>
 
@@ -58,8 +58,10 @@ Cambio de contraseña
               </td>
             </tr>
             <tr>
-              <td class="bodycopy" style="color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
-                Recibimos una solicitud para cambiar su contraseña, si no fue usted porfavor omita este mensaje.
+              <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
+                Recibimos una solicitud para cambiar la contraseña de acceso a su cuenta registrada en el sistema de
+                  información SICAN, si usted no realizo esta solicitud porfavor borre
+                  este mensaje y acceda con la contraseña que tenia previamente.
               </td>
             </tr>
           </table>
