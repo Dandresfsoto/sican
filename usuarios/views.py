@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from django.views.generic import UpdateView, TemplateView
+from django.views.generic import UpdateView, TemplateView, FormView
 from braces.views import LoginRequiredMixin
 from usuarios.forms import UserUpdateForm
 from usuarios.models import User
@@ -9,6 +9,10 @@ from sican.settings.base import MEDIA_URL
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth import update_session_auth_hash
+from usuarios.forms import ChangePasswordForm
+from usuarios.tasks import send_mail_templated
+from sican.settings.base import DEFAULT_FROM_EMAIL
+
 # Create your views here.
 class Perfil(LoginRequiredMixin,UpdateView):
     '''
@@ -45,32 +49,24 @@ class Perfil(LoginRequiredMixin,UpdateView):
         kwargs['mensaje'] = mensaje
         return super(Perfil, self).get_context_data(**kwargs)
 
-class ChangePassword(LoginRequiredMixin,TemplateView):
+class ChangePassword(LoginRequiredMixin,FormView):
+    form_class = ChangePasswordForm
     template_name = 'usuarios/changepassword.html'
 
-    def post(self, request, *args, **kwargs):
-        previus_password = request.POST['previus_password']
-        new_password_1 = request.POST['new_password_1']
-        new_password_2 = request.POST['new_password_2']
+    def get_initial(self):
+        return {'user':self.request.user}
+
+    def form_valid(self, form):
         user = self.request.user
+        user.set_password(form.data['new_password_1'])
+        user.save()
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        update_session_auth_hash(self.request, user)
+        url_base = self.request.META['HTTP_ORIGIN']
+        send_mail_templated.delay('email/change_password.tpl', {'url_base':url_base,'first_name':user.first_name,'last_name':user.last_name,'email':user.email,'password':form.data['new_password_1']}, DEFAULT_FROM_EMAIL, [user.email])
+        return self.render_to_response(self.get_context_data(mensaje='Se cambio correctamente la contraseña'))
 
-        if previus_password != '' and new_password_1 != '' and new_password_2 != '':
-            valid = user.check_password(previus_password)
-            if valid:
-                if new_password_1 != new_password_2:
-                    kwargs['previus_password'] = previus_password
-                    kwargs['mensaje'] = 'No se pudo cambiar la contraseña, las contraseñas no son iguales.'
-                else:
-                    user.set_password(new_password_1)
-                    user.save()
-                    user.backend = 'django.contrib.auth.backends.ModelBackend'
-                    update_session_auth_hash(request, user)
-                    kwargs['mensaje'] = 'La contraseña se cambio correctamente.'
-
-            else:
-                kwargs['mensaje'] = "No se pudo cambiar la contraseña, debe completar todos los campos"
-        else:
-            kwargs['mensaje'] = "No se pudo cambiar la contraseña, debe completar todos los campos"
-
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
+    def get_context_data(self, mensaje=None ,**kwargs):
+        if mensaje != None:
+            kwargs['mensaje'] = mensaje
+        return super(ChangePassword, self).get_context_data(**kwargs)

@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^chat/', include('inbox.urls', namespace='inbox')),
     url(r'^rest/', include('rest.urls', namespace='rest')),
     url(r'^rh/', include('rh.urls', namespace='rh')),
+    url(r'^admin/', include('admin.urls', namespace='admin')),
 ]
 
 if settings.DEBUG:

@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 from django import forms
 from administrativos.models import Administrativo
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Fieldset
-from administrativos.models import Cargo
+from crispy_forms.layout import Layout, Div, Fieldset, HTML
+from administrativos.models import Cargo, Soporte
 
 class NuevoForm(forms.ModelForm):
 
@@ -80,3 +80,74 @@ class NuevoForm(forms.ModelForm):
                                                  )
                                         ),
         }
+
+class NuevoSoporteForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(NuevoSoporteForm, self).__init__(*args, **kwargs)
+        if 'data' in kwargs:
+            kwargs['data']['administrativo'] = kwargs['initial']['administrativo']
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Soporte:',
+                Div(
+                    Div('fecha',css_class='col-sm-6'),
+                    Div('tipo',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('descripcion',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    HTML("""
+                            <file-upload-sican style="margin-left:14px;" name="archivo">Archivo</file-upload-sican>
+                        """),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('administrativo',css_class='col-sm-12'),
+                    css_class = 'hidden'
+                ),
+            ),
+        )
+
+    class Meta:
+        model = Soporte
+        fields = '__all__'
+
+class UpdateSoporteAdministrativoForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateSoporteAdministrativoForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Soporte:',
+                Div(
+                    Div('fecha',css_class='col-sm-6'),
+                    Div('tipo',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('descripcion',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    HTML("""
+                            <file-upload-sican style="margin-left:14px;" name="archivo" link_old_file="{{link_old_file}}"
+                            old_file="{{old_file}}">Archivo</file-upload-sican>
+                        """),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('administrativo',css_class='col-sm-12'),
+                    css_class = 'hidden'
+                ),
+            ),
+        )
+
+    class Meta:
+        model = Soporte
+        fields = '__all__'

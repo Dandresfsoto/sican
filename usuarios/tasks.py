@@ -5,7 +5,6 @@ from __future__ import absolute_import
 
 from celery import shared_task
 from mail_templated import send_mail
-from sican.settings.base import DEFAULT_FROM_EMAIL
 
 
 @shared_task

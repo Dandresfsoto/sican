@@ -1,10 +1,11 @@
-from administrativos.models import Administrativo
+from administrativos.models import Administrativo, Soporte
 from django.views.generic import TemplateView, CreateView, DeleteView, UpdateView
-from administrativos.forms import NuevoForm
+from administrativos.forms import NuevoForm, NuevoSoporteForm
 from cargos.models import Cargo
 from cargos.forms import NuevoCargoForm, EditarCargoForm
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
+from administrativos.forms import UpdateSoporteAdministrativoForm
 # Create your views here.
 
 class AdministrativoView(LoginRequiredMixin,
@@ -48,6 +49,73 @@ class UpdateAdministrativoView(LoginRequiredMixin,
     template_name = 'rh/editarAdministrativo.html'
     permission_required = "administrativos.rh"
 
+
+class SoporteAdministrativoView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'rh/soportes/soportes.html'
+    permission_required = "administrativos.rh"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_administrativo'] = Administrativo.objects.get(id=kwargs['pk']).get_full_name
+        kwargs['id_administrativo'] = kwargs['pk']
+        return super(SoporteAdministrativoView, self).get_context_data(**kwargs)
+
+
+
+class NuevoSoporteAdministrativoView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = Soporte
+    form_class = NuevoSoporteForm
+    success_url = '../'
+    template_name = 'rh/soportes/nuevo.html'
+    permission_required = "administrativos.rh"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_administrativo'] = Administrativo.objects.get(id=self.kwargs['pk']).get_full_name
+        return super(NuevoSoporteAdministrativoView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'administrativo':self.kwargs['pk']}
+
+
+class UpdateSoporteAdministrativoView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = Soporte
+    form_class = UpdateSoporteAdministrativoForm
+    pk_url_kwarg = 'id_soporte'
+    success_url = '../../'
+    template_name = 'rh/soportes/editarSoporte.html'
+    permission_required = "administrativos.rh"
+
+    def get_context_data(self, **kwargs):
+        kwargs['link_old_file'] = self.object.get_archivo_url()
+        kwargs['old_file'] = self.object.archivo_filename()
+        kwargs['nombre_administrativo'] = Administrativo.objects.get(id=self.kwargs['pk']).get_full_name
+        return super(UpdateSoporteAdministrativoView, self).get_context_data(**kwargs)
+
+
+class DeleteSoporteAdministrativoView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               DeleteView):
+    model = Soporte
+    pk_url_kwarg = 'id_soporte'
+    success_url = '../../'
+    template_name = 'rh/soportes/eliminarSoporte.html'
+    permission_required = "administrativos.rh"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_administrativo'] = Administrativo.objects.get(id=self.kwargs['pk']).get_full_name
+        return super(DeleteSoporteAdministrativoView, self).get_context_data(**kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.oculto = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)
 
 
 class CargosView(LoginRequiredMixin,

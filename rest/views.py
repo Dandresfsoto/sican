@@ -6,9 +6,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from inbox.models import Mensaje
 from django_datatables_view.base_datatable_view import BaseDatatableView
-from administrativos.models import Administrativo
+from administrativos.models import Administrativo, Soporte
 from cargos.models import Cargo
 from django.db.models import Q
+from usuarios.models import User
+from django.contrib.auth.models import Group, Permission
 
 # Create your views here.
 
@@ -51,7 +53,8 @@ class UserPermissionList(APIView):
                   'icon':'icons:account-circle',
                   'id':'usuarios',
                   'links':[
-                      {'name':'Listado de usuarios','link':'/admin/'},
+                      {'name':'Grupos de permisos','link':'/admin/grupos/'},
+                      {'name':'Listado de usuarios','link':'/admin/usuarios/'},
                   ]
             },
 
@@ -122,7 +125,7 @@ class AdministrativosRh(BaseDatatableView):
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         if search:
-            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__icontains=search)
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search)
             qs = qs.filter(q)
         return qs
 
@@ -157,3 +160,90 @@ class CargosRh(BaseDatatableView):
             q = Q(nombre__icontains=search)
             qs = qs.filter(q)
         return qs
+
+class AdministrativosRhSoportes(BaseDatatableView):
+    """
+    0.id
+    1.tipo
+    2.fecha
+    3.descripcion
+    4.archivo (url o string vacio)
+    5.creacion
+    """
+    model = Soporte
+    columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
+
+    order_columns = ['id','tipo','fecha','descripcion']
+    max_display_length = 10
+
+    def get_initial_queryset(self):
+        return Soporte.objects.filter(oculto = False,administrativo__id=self.kwargs['id_administrativo'])
+
+    def render_column(self, row, column):
+        if column == 'tipo':
+            return row.tipo.nombre
+        if column == 'descripcion':
+            return row.tipo.descripcion
+        if column == 'get_archivo_url':
+            return row.get_archivo_url()
+        return super(AdministrativosRhSoportes, self).render_column(row, column)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(tipo__nombre__icontains=search) | Q(tipo__descripcion__icontains=search) | Q(fecha__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+class AdminUserList(BaseDatatableView):
+    """
+    0.id
+    1.email
+    2.first_name
+    3.last_name
+    4.is_active
+    5.cargo
+    6.telefono_personal
+    7.correo_personal
+    """
+    model = User
+    columns = ['id','email','first_name','last_name','is_active','cargo','telefono_personal','correo_personal']
+
+    order_columns = ['id','email','first_name','last_name']
+    max_display_length = 10
+
+    def get_initial_queryset(self):
+        return User.objects.exclude(email="AnonymousUser")
+
+    def render_column(self, row, column):
+        if column == 'cargo':
+            return row.cargo.nombre
+        return super(AdminUserList, self).render_column(row, column)
+
+    def filter_queryset(self, qs):
+        #search = self.request.GET.get(u'search[value]', None)
+        #if search:
+        #    q = Q(nombre__icontains=search)
+        #    qs = qs.filter(q)
+        return qs
+
+class GroupUserList(BaseDatatableView):
+    """
+    0.id
+    1.name
+    2.permissions
+    """
+    model = Group
+    columns = ['id','name','permissions']
+
+    order_columns = ['id','name']
+    max_display_length = 10
+
+    def render_column(self, row, column):
+        if column == 'permissions':
+            result = []
+            permisos = Group.objects.get(id=row.id).permissions.all()
+            for permiso in permisos:
+                result.append(permiso.__str__())
+            return result
+        return super(GroupUserList, self).render_column(row, column)

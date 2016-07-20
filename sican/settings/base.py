@@ -18,7 +18,7 @@ CELERYBEAT_SCHEDULE = {
     # Executes every Monday morning at 7:30 A.M
     'add-every-monday-morning': {
         'task': 'usuarios.tasks.add',
-        'schedule': crontab(hour=14, minute=22, day_of_week=5),
+        'schedule': crontab(),
         'args': (16, 16),
     },
 }
@@ -96,7 +96,7 @@ CHANNEL_LAYERS = {
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'PAGE_SIZE': 10
 }
 

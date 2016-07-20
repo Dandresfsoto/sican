@@ -160,7 +160,7 @@
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Inicio
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
               </paper-icon-item></a>
-            <paper-icon-item disabled="disabled" class="breadcrum_active">Listado de administrativos
+            <paper-icon-item disabled="disabled" class="breadcrum_active">Lista de grupos
               <iron-icon icon="check" item-icon="item-icon"></iron-icon>
             </paper-icon-item>
           </div>
@@ -171,7 +171,7 @@
           <paper-icon-button id="navicon" icon="menu" paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
           <iron-icon src="{% static 'img/SICAN.svg'%}" class="icon-sican"></iron-icon>
           <!--paper-icon-button(icon="communication:email",id="inbox")-->
-          <!--paper-badge(for="inbox",label="0",hidden,id="badge_chat")--><span class="title">ADMINISTRATIVOS</span>
+          <!--paper-badge(for="inbox",label="0",hidden,id="badge_chat")--><span class="title">USUARIOS</span>
           <paper-icon-button icon="help" id="help_button"></paper-icon-button>
         </paper-toolbar>
         <iron-collapse id="help">
@@ -181,10 +181,8 @@
                 <div class="help_container">
                   <p class="title-help">Descripción:</p>
                   <p>
-                    En esta pagina puedes visualizar todos los entes administrativos de la Asociación Nacional para
-                    el Desarrollo Social - ANDES, haciendo click en la cabecera de la columna puedes ordenar
-                    alfabeticamente los campos de "Funcionario" y "Cargo".
-                    
+                    En esta tabla encuentras el listado de los roles disponibles en el sistema de información SICAN, cada rol recoge
+                    el grupo de permisos de acceso.
                   </p>
                 </div>
               </div>
@@ -197,20 +195,14 @@
             <thead>
               <tr>
                 <th></th>
-                <th>Funcionario</th>
-                <th>Cargo</th>
-                <th>Región</th>
-                <th>Soportes</th>
+                <th>Nombre</th>
                 <th>Eliminar</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td></td>
-                <td>Funcionario</td>
-                <td>Cargo</td>
-                <td>Región</td>
-                <td>Soportes</td>
+                <td>Nombres</td>
                 <td>Eliminar</td>
               </tr>
             </tbody>
@@ -292,104 +284,64 @@
               "processing": true,
               "serverSide": true,
               "scrollX": true,
-              "ajax": "/rest/administrativos/rh/",
-              "language":{
+              "ajax": "/rest/admin/grupos/",
+              "language": {
                   "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
               },
-              "order": [[ 1, "desc" ]],
+              "order": [[1, "asc"]],
               "columns": [
                   {
-                      "className":'details-control',
-                      "orderable":false,
-                      "data":null,
+                      "className": 'details-control',
+                      "orderable": false,
+                      "data": null,
                       "defaultContent": ''
                   },
                   {
                       "data": 1,
-                      "render": function ( data, type, row, meta ) {
-                                return '<a href="editar/'+row[0]+'" style="color:#004c99;">'+data+'</a>';
+                      "render": function (data, type, row, meta) {
+                          return '<a href="editar/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                       },
-                      "orderable":true,
+                      "orderable": true,
                   },
                   {
-                      "data": 2,
-                      "orderable":true,
-                  },
-                  {
-                      "data": 3,
-                      "orderable":false,
-                  },
-                  {
-                      "orderable":false,
-                      "className":'text-center',
-                      "data":null,
-                      "render": function ( data, type, row, meta ) {
-                                return '<a href="soportes/'+row[0]+'" style="color:#004c99;"><img src="/static/img/ver.png" height="32"></a>';
+                      "orderable": false,
+                      "className": 'text-center',
+                      "data": null,
+                      "render": function (data, type, row, meta) {
+                          return '<a href="eliminar/' + row[0] + '" style="color:#004c99;"><img src="/static/img/delete.png" height="32"></a>';
                       },
-                  },
-                  {
-                      "orderable":false,
-                      "className":'text-center',
-                      "data":null,
-                      "render": function ( data, type, row, meta ) {
-                          return '<a href="eliminar/' + row[0] + '" style="color:#004c99;"><img src="/static/img/delete.png" height="24"></a>';
-                      },
-                      "defaultContent": ''
-                  },
+                  }
               ]
           });
-      
-      
           // Add event listener for opening and closing details
           $('#table tbody').on('click', 'td.details-control', function () {
               var tr = $(this).closest('tr');
-              var row = table.row( tr );
-      
-              if ( row.child.isShown() ) {
+              var row = table.row(tr);
+              if (row.child.isShown()) {
                   // This row is already open - close it
                   row.child.hide();
                   tr.removeClass('shown');
               }
               else {
                   // Open this row
-                  row.child( format(row.data()) ).show();
+                  row.child(format(row.data())).show();
                   tr.addClass('shown');
               }
           });
-      
       });
-      
       function format(d) {
           // `d` is the original data object for the row
+          var permisos = '';
+      
+          for(i=0;i<d[2].length;i++){
+              permisos += d[2][i] + '<br>';
+          }
+      
           return '<table class="table table-striped">' +
-                      '<tr>' +
-                          '<td><p class="bold-p">Cédula:</p>'+ d[4] +'</td>' +
-                          '<td><p class="bold-p">Correo personal:</p>'+ d[5] +'</td>' +
-                          '<td><p class="bold-p">Celular personal:</p>'+ d[6] +'</td>' +
-                          '<td><p class="bold-p">Profesión:</p>'+ d[7] +'</td>' +
-                      '</tr>' +
-      
-                      '<tr>' +
-                          '<td><p class="bold-p">Correo corporativo:</p>'+ d[8] +'</td>' +
-                          '<td><p class="bold-p">Celular corporativo:</p>'+ d[9] +'</td>' +
-                          '<td><p class="bold-p">Fecha de contratación:</p>'+ d[10] +'</td>' +
-                          '<td><p class="bold-p">Fecha de terminación:</p>'+ d[11] +'</td>' +
-                      '</tr>' +
-      
-                      '<tr>' +
-                          '<td><p class="bold-p">Banco:</p>'+ d[12] +'</td>' +
-                          '<td><p class="bold-p">Tipo de cuenta:</p>'+ d[13] +'</td>' +
-                          '<td><p class="bold-p">Número de cuenta:</p>'+ d[14] +'</td>' +
-                          '<td><p class="bold-p"></p></td>' +
-                      '</tr>' +
-      
-                      '<tr>' +
-                          '<td><p class="bold-p">Eps:</p>'+ d[15] +'</td>' +
-                          '<td><p class="bold-p">Pensión:</p>'+ d[16] +'</td>' +
-                          '<td><p class="bold-p">Arl:</p>'+ d[17] +'</td>' +
-                          '<td><p class="bold-p"></p></td>' +
-                      '</tr>' +
-      
+                  '<tr>' +
+                          '<td><p class="bold-p">Permisos:</p>' + permisos + '</td>' +
+                  '</tr>' +
+                  '<tr>' +
                   '</table>';
       }
     </script>

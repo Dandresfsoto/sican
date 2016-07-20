@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from rest.views import UserList, UserChatList, UserDetail, UserPermissionList, AdministrativosRh,CargosRh
+from rest.views import AdministrativosRhSoportes, AdminUserList, GroupUserList
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -8,6 +9,10 @@ urlpatterns = [
     url(r'usuarios/permisos/$', UserPermissionList.as_view()),
 
     url(r'administrativos/rh/$', AdministrativosRh.as_view()),
+    url(r'administrativos/rh/soportes/(?P<id_administrativo>\w+)/$', AdministrativosRhSoportes.as_view()),
+
+    url(r'admin/usuarios/$', AdminUserList.as_view()),
+    url(r'admin/grupos/$', GroupUserList.as_view()),
 
     url(r'cargos/rh/$', CargosRh.as_view()),
 ]
