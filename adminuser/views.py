@@ -49,7 +49,7 @@ class NewUserView(LoginRequiredMixin,
         user.set_password(password)
         user.save()
         send_mail_templated.delay('email/new_user.tpl',
-                                  {'first_name': user.first_name, 'last_name': user.last_name,
+                                  {'url_base' : self.request.META['HTTP_ORIGIN'],'first_name': user.first_name, 'last_name': user.last_name,
                                    'email': user.email, 'password':password},
                                   DEFAULT_FROM_EMAIL,[form.data['email']])
         return HttpResponseRedirect('/adminuser/usuarios/')

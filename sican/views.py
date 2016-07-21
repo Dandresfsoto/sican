@@ -85,7 +85,8 @@ class Recovery(TemplateView):
                 user.new_password = password1
                 user.save()
                 send_mail_templated.delay('email/recovery_password.tpl', {'code':user.recovery,'url_base':url_base,'email': email,'password':password1,'fullname':''}, DEFAULT_FROM_EMAIL, [email])
-                return redirect('/')
+                context['error'] = "Revisa tu correo electrónico y acepta el cambio de contraseña."
+                return self.render_to_response(context)
 
         else:
             return super(Recovery,self).dispatch(request, *args, **kwargs)
