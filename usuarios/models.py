@@ -58,7 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_online = models.BooleanField(default=False)
     recovery = models.CharField(max_length=20,null=True,blank=True,default="")
     new_password = models.CharField(max_length=100,null=True,blank=True,default="")
-    photo = ContentTypeRestrictedFileField(upload_to='Usuarios/Foto',blank=True,null=True,content_types=['image/jpg', 'image/jpeg', 'image/png'],max_upload_size=1048576)
+    photo = ContentTypeRestrictedFileField(upload_to='Usuarios/Foto',blank=True,null=True,content_types=['image/jpg', 'image/jpeg', 'image/png'],max_upload_size=10485760)
 
 
     def get_full_name(self):
