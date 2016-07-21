@@ -31,6 +31,12 @@ class UpdateUserView(LoginRequiredMixin,
     template_name = 'adminuser/usuarios/editar.html'
     permission_required = "permisos_sican.adminuser.usuarios.editar"
 
+    def form_valid(self, form):
+        form.save()
+        user = User.objects.get(email=form.data['email'])
+        user.fullname = user.first_name + " " + user.last_name
+        user.save()
+        return HttpResponseRedirect('/adminuser/usuarios/')
 
 class NewUserView(LoginRequiredMixin,
                               PermissionRequiredMixin,
@@ -44,6 +50,8 @@ class NewUserView(LoginRequiredMixin,
     def form_valid(self, form):
         form.save()
         user = User.objects.get(email=form.data['email'])
+        user.fullname = user.first_name + " " + user.last_name
+        user.save()
 
         password = "".join( [random.choice(string.letters) for i in xrange(6)] )
         user.set_password(password)
