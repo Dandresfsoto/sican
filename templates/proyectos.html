@@ -7,6 +7,8 @@
     <title>SICAN</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"/>
+    <script src="{% static 'bower_components/webcomponentsjs/webcomponents-lite.min.js'%}"></script>
+    <link rel="import" href="{% static 'bower_components/polymer/polymer.html'%}"/>
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.png'%}"/>
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.png'%}"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700"/>
@@ -190,7 +192,6 @@
         <paper-toast id="toast_message" text="{{mensaje}}" duration="5000"></paper-toast>
       </paper-scroll-header-panel>
     </paper-drawer-panel>
-    <script src="{% static 'bower_components/webcomponentsjs/webcomponents-lite.min.js'%}"></script>
     <script src="{% static 'bower_components/jquery/dist/jquery.min.js'%}"></script>
     <script src="{% static 'bower_components/moment/min/moment.min.js'%}"></script>
     <script src="{% static 'bower_components/moment/locale/es.js'%}"></script>
