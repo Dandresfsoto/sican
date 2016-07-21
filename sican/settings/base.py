@@ -68,7 +68,9 @@ LOCAL_APPS = [
     'region',
     'rh',
     'cargos',
-    'bancos'
+    'bancos',
+    'adminuser',
+    'permisos_sican'
 ]
 
 THIRD_PARTY_APPS = [

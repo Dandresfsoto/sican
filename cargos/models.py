@@ -10,10 +10,6 @@ class Cargo(models.Model):
     manual = models.FileField(upload_to="Manual Funciones",blank=True)
     oculto = models.BooleanField(default=False)
 
-    class Meta:
-        permissions = (
-            ("rh", u"Recursos Humanos"),
-        )
 
     def __unicode__(self):
         return self.nombre

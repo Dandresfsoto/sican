@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='user',
-            options={'permissions': (('admin', 'Administracion de usuarios'),)},
+            options={'permissions': (('adminuser', 'Administracion de usuarios'),)},
         ),
     ]

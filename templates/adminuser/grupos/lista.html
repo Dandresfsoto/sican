@@ -7,6 +7,8 @@
     <title>SICAN</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"/>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.png'%}"/>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.png'%}"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700"/>
     <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css'%}"/>
     <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap-theme.min.css'%}"/>
@@ -32,9 +34,7 @@
     <link rel="import" href="{% static 'bower_components/iron-collapse/iron-collapse.html'%}"/>
     <link rel="import" href="{% static 'bower_components/paper-toast/paper-toast.html'%}"/>
     <link rel="import" href="{% static 'bower_components/paper-badge/paper-badge.html'%}"/>
-    <link rel="import" href="{% static 'bower_components/paper-input/paper-input.html'%}"/>
-    <link rel="import" href="{% static 'bower_components/file-upload-sican/file-upload-sican.html'%}"/>
-    <link rel="import" href="{% static 'bower_components/gold-email-input/gold-email-input.html'%}"/>
+    <link rel="import" href="{% static 'bower_components/paper-button/paper-button.html'%}"/>
     <style is="custom-style">
       .icon-sican{
          --iron-icon-height: 100px;
@@ -121,6 +121,11 @@
         };
       }
     </style>
+    <style is="custom-style">
+      paper-button{
+        margin-bottom:15px;
+      }
+    </style>
   </head>
   <body>
     <input id="user_id" value="{{user.id}}" hidden="hidden"/>
@@ -156,11 +161,8 @@
             </iron-collapse><a href="/proyectos/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Inicio
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
-              </paper-icon-item></a><a href="/admin/grupos/" class="link_button">
-              <paper-icon-item class="breadcrumb-paper-icon-item-class">Lista de grupos
-                <iron-icon icon="check" item-icon="item-icon"></iron-icon>
               </paper-icon-item></a>
-            <paper-icon-item disabled="disabled" class="breadcrum_active">{{nombre_grupo}}
+            <paper-icon-item disabled="disabled" class="breadcrum_active">Lista de grupos
               <iron-icon icon="check" item-icon="item-icon"></iron-icon>
             </paper-icon-item>
           </div>
@@ -181,26 +183,32 @@
                 <div class="help_container">
                   <p class="title-help">Descripción:</p>
                   <p>
-                    Con este formulario puedes editar el grupo de permisos para el rol de {{object}} en el sistema de información SICAN, selecciona
-                    cada permiso que deseas agregar.
+                    En esta tabla encuentras el listado de los roles disponibles en el sistema de información SICAN, cada rol recoge
+                    el grupo de permisos de acceso.
                   </p>
                 </div>
               </div>
             </div>
           </div>
         </iron-collapse>
-        <div class="container-fluid container-panel">
-          <div class="row">
-            <div class="col-sm-8 col-sm-offset-2">
-              <form method="POST" enctype="multipart/form-data" id="form">
-                {% csrf_token %}
-                {% crispy form %}
-                <div class="text-right login-form-button">
-                  <paper-button id="submit_form" class="submit">Guardar</paper-button>
-                </div>
-              </form>
-            </div>
-          </div>
+        <div class="container-fluid container-index">{% if nuevo_permiso %}<a href="nuevo" class="link_button">
+            <paper-button class="submit">Nuevo</paper-button></a>{% endif %}
+          <table id="table" width="100%" class="display responsive no-wrap table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Nombre</th>
+                <th>Eliminar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td></td>
+                <td>Nombres</td>
+                <td>Eliminar</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <input type="hidden" value="{{mensaje}}" id="input_mensaje"/>
         <paper-toast id="toast_message" text="{{mensaje}}" duration="5000"></paper-toast>
@@ -271,10 +279,83 @@
       });
     </script>
     <script>
-      $('#id_permissions').selectpicker({});
-      submit_form.addEventListener('click', function (e) {
-          form.submit();
+      $(document).ready(function () {
+          var table = $('#table').DataTable({
+              "stateSave": true,
+              "searching": true,
+              "processing": true,
+              "serverSide": true,
+              "scrollX": true,
+              "ajax": "/rest/adminuser/grupos/",
+              "language": {
+                  "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
+              },
+              "order": [[1, "asc"]],
+              "columns": [
+                  {
+                      "className": 'details-control',
+                      "orderable": false,
+                      "data": null,
+                      "defaultContent": ''
+                  },
+                  {
+                      "data": 1,
+                      "render": function (data, type, row, meta) {
+                          if(row[3]){
+                              return '<a href="editar/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
+                          }
+                          else{
+                              return data;
+                          }
+                      },
+                      "orderable": true,
+                  },
+                  {
+                      "orderable": false,
+                      "className": 'text-center',
+                      "data": null,
+                      "render": function (data, type, row, meta) {
+                          if(row[4]){
+                              return '<a href="eliminar/' + row[0] + '" style="color:#004c99;"><img src="/static/img/delete.png" height="32"></a>';
+                          }
+                          else{
+                              return '<img src="/static/img/delete_gray.png" height="32">';
+                          }
+                      },
+                  }
+              ]
+          });
+          // Add event listener for opening and closing details
+          $('#table tbody').on('click', 'td.details-control', function () {
+              var tr = $(this).closest('tr');
+              var row = table.row(tr);
+              if (row.child.isShown()) {
+                  // This row is already open - close it
+                  row.child.hide();
+                  tr.removeClass('shown');
+              }
+              else {
+                  // Open this row
+                  row.child(format(row.data())).show();
+                  tr.addClass('shown');
+              }
+          });
       });
+      function format(d) {
+          // `d` is the original data object for the row
+          var permisos = '';
+      
+          for(i=0;i<d[2].length;i++){
+              permisos += d[2][i] + '<br>';
+          }
+      
+          return '<table class="table table-striped">' +
+                  '<tr>' +
+                          '<td><p class="bold-p">Permisos:</p>' + permisos + '</td>' +
+                  '</tr>' +
+                  '<tr>' +
+                  '</table>';
+      }
     </script>
   </body>
 </html>

@@ -60,10 +60,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     new_password = models.CharField(max_length=100,null=True,blank=True,default="")
     photo = ContentTypeRestrictedFileField(upload_to='Usuarios/Foto',blank=True,null=True,content_types=['image/jpg', 'image/jpeg', 'image/png'],max_upload_size=1048576)
 
-    class Meta:
-        permissions = (
-            ("admin", u"Administracion de usuarios"),
-        )
 
     def get_full_name(self):
         return self.email

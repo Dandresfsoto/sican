@@ -7,6 +7,8 @@
     <title>SICAN</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"/>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.png'%}"/>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.png'%}"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700"/>
     <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css'%}"/>
     <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap-theme.min.css'%}"/>
@@ -156,11 +158,11 @@
             </iron-collapse><a href="/proyectos/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Inicio
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
-              </paper-icon-item></a><a href="/admin/usuarios/" class="link_button">
+              </paper-icon-item></a><a href="/adminuser/usuarios/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Lista de usuarios
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
               </paper-icon-item></a>
-            <paper-icon-item disabled="disabled" class="breadcrum_active">Cuenta de {{email}}
+            <paper-icon-item disabled="disabled" class="breadcrum_active">Nuevo usuario
               <iron-icon icon="check" item-icon="item-icon"></iron-icon>
             </paper-icon-item>
           </div>
@@ -181,8 +183,8 @@
                 <div class="help_container">
                   <p class="title-help">Descripción:</p>
                   <p>
-                    Con este formulario puedes actualizar la información de la cuenta registrada con el correo {{email}}, el usuario
-                    solo puede iniciar sesión cuando se encuentra activo.
+                    Con este formulario puedes agregar un nuevo usuario al sistema de información SICAN, una vez se confirme la validez
+                    de la información se enviara un correo con la contraseña inicial de acceso.
                     
                   </p>
                 </div>

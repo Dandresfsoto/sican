@@ -38,11 +38,6 @@ class Administrativo(models.Model):
 
     oculto = models.BooleanField(default=False)
 
-    class Meta:
-        permissions = (
-            ("rh", u"Recursos Humanos"),
-        )
-
     def __unicode__(self):
         return self.nombres
 

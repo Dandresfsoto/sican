@@ -10,7 +10,9 @@ from administrativos.models import Administrativo, Soporte
 from cargos.models import Cargo
 from django.db.models import Q
 from usuarios.models import User
+from permisos_sican.models import UserPermissionSican
 from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 
 # Create your views here.
 
@@ -49,25 +51,43 @@ class UserPermissionList(APIView):
                       {'name':'Cargos','link':'/rh/cargos/'}
                   ]
             },
-            'admin':{'name':'Administración de usuarios',
+            'adminuser':{'name':'Administración de usuarios',
                   'icon':'icons:account-circle',
                   'id':'usuarios',
-                  'links':[
-                      {'name':'Grupos de permisos','link':'/admin/grupos/'},
-                      {'name':'Listado de usuarios','link':'/admin/usuarios/'},
-                  ]
+                  'links':[]
             },
+        }
 
+        links = {
+            'permisos':{
+                'ver':{'name':'Permisos de usuario','link':'/adminuser/permisos/'}
+            },
+            'usuarios':{
+                'ver':{'name':'Usuarios','link':'/adminuser/usuarios/'}
+            },
+            'grupos':{
+                'ver':{'name':'Grupos de usuarios','link':'/adminuser/grupos/'}
+            }
         }
 
 
         perms_response = []
         perms_dict = {}
 
+        content_type = ContentType.objects.get_for_model(UserPermissionSican)
+        exclude_perms = ['add_userpermissionsican','change_userpermissionsican','delete_userpermissionsican']
+        permissions = Permission.objects.filter(content_type=content_type).exclude(codename__in=exclude_perms).values_list('codename',flat=True)
+        app = 'permisos_sican.'
+
         for perm_user in perms_user:
-            model, category = perm_user.split('.')
-            if category in categories:
-                perms_dict[category] = categories[category]
+
+            if perm_user.replace(app,'') in permissions:
+                category, links_group, link = perm_user.replace(app,'').split('.')
+                if links_group in links:
+                    if link in links[links_group]:
+                        perms_dict[category] = categories[category]
+                        perms_dict[category]['links'].append(links[links_group][link])
+
 
         for key, value in perms_dict.iteritems():
             perms_response.append(value)
@@ -205,6 +225,7 @@ class AdminUserList(BaseDatatableView):
     5.cargo
     6.telefono_personal
     7.correo_personal
+    8.permiso para editar
     """
     model = User
     columns = ['id','email','first_name','last_name','is_active','cargo','telefono_personal','correo_personal']
@@ -215,23 +236,37 @@ class AdminUserList(BaseDatatableView):
     def get_initial_queryset(self):
         return User.objects.exclude(email="AnonymousUser")
 
-    def render_column(self, row, column):
-        if column == 'cargo':
-            return row.cargo.nombre
-        return super(AdminUserList, self).render_column(row, column)
 
     def filter_queryset(self, qs):
-        #search = self.request.GET.get(u'search[value]', None)
-        #if search:
-        #    q = Q(nombre__icontains=search)
-        #    qs = qs.filter(q)
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(email__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search)
+            qs = qs.filter(q)
         return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.email,
+                item.first_name,
+                item.last_name,
+                item.is_active,
+                item.cargo.nombre,
+                item.telefono_personal,
+                item.correo_personal,
+                self.request.user.has_perm('permisos_sican.adminuser.usuarios.editar'),
+            ])
+        return json_data
 
 class GroupUserList(BaseDatatableView):
     """
     0.id
     1.name
     2.permissions
+    3.permiso para editar
+    4.permiso para eliminar
     """
     model = Group
     columns = ['id','name','permissions']
@@ -239,11 +274,62 @@ class GroupUserList(BaseDatatableView):
     order_columns = ['id','name']
     max_display_length = 10
 
-    def render_column(self, row, column):
-        if column == 'permissions':
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(name__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
             result = []
-            permisos = Group.objects.get(id=row.id).permissions.all()
+            permisos = Group.objects.get(id=item.id).permissions.all()
             for permiso in permisos:
                 result.append(permiso.__str__())
-            return result
-        return super(GroupUserList, self).render_column(row, column)
+            json_data.append([
+                item.id,
+                item.name,
+                result,
+                self.request.user.has_perm('permisos_sican.adminuser.grupos.editar'),
+                self.request.user.has_perm('permisos_sican.adminuser.grupos.eliminar'),
+            ])
+        return json_data
+
+class AdminUserPermissionList(BaseDatatableView):
+    """
+    0.id
+    1.name
+    2.codename
+    3.permiso para editar
+    4.permiso para eliminar
+    """
+    model = Permission
+    columns = ['id','name','codename']
+    order_columns = ['id','name','codename']
+    max_display_length = 10
+
+    def get_initial_queryset(self):
+        content_type = ContentType.objects.get_for_model(UserPermissionSican)
+        exclude_perms = ['add_userpermissionsican','change_userpermissionsican','delete_userpermissionsican']
+        return Permission.objects.filter(content_type=content_type).exclude(codename__in=exclude_perms)
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.name,
+                item.codename,
+                self.request.user.has_perm('permisos_sican.adminuser.permisos.editar'),
+                self.request.user.has_perm('permisos_sican.adminuser.permisos.eliminar')
+            ])
+        return json_data
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(codename__icontains=search) | Q(name__icontains=search)
+            qs = qs.filter(q)
+        return qs

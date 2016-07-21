@@ -1,28 +1,24 @@
-extends ../inicio
+extends ../../inicio
 block scroll_header_panel_title
     span(class="title") USUARIOS
-
 block help_content
     p(class="title-help") Descripción:
     p.
-        Con este formulario puedes actualizar la información de la cuenta registrada con el correo {{email}}, el usuario
-        solo puede iniciar sesión cuando se encuentra activo.
-
+        Con este formulario puedes editar el grupo de permisos para el rol de {{object.name}} en el sistema de información SICAN, selecciona
+        cada permiso que deseas agregar.
 block head_content_inicio
     link(rel="import",href="{% static 'bower_components/paper-input/paper-input.html'%}")
     link(rel="import",href="{% static 'bower_components/file-upload-sican/file-upload-sican.html'%}")
     link(rel="import",href="{% static 'bower_components/gold-email-input/gold-email-input.html'%}")
-
 block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
-    a(href="/admin/usuarios/",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Lista de usuarios
+    a(href="/adminuser/grupos/",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Lista de grupos
             iron-icon(icon="check",item-icon)
-    paper-icon-item(class="breadcrum_active",disabled) Cuenta de {{email}}
+    paper-icon-item(class="breadcrum_active",disabled) Editar: {{object.name}}
         iron-icon(icon="check",item-icon)
-
 block scroll_header_panel_content
     div(class="container-fluid container-panel")
         div(class="row")
@@ -30,12 +26,11 @@ block scroll_header_panel_content
                 form(method="POST",enctype="multipart/form-data",id="form")
                     | {% csrf_token %}
                     | {% crispy form %}
-
                     div(class="text-right login-form-button")
                         paper-button(class="submit",id="submit_form") Guardar
 block body_script_content
     script.
-        $('#id_groups').selectpicker({});
+        $('#id_permissions').selectpicker({});
         submit_form.addEventListener('click', function (e) {
             form.submit();
         });

@@ -20,7 +20,7 @@
         timezoneOffset: 0,
         init: function() {
             var body = document.getElementsByTagName('body')[0];
-            var serverOffset = body.getAttribute('data-admin-utc-offset');
+            var serverOffset = body.getAttribute('data-adminuser-utc-offset');
             if (serverOffset) {
                 var localOffset = new Date().getTimezoneOffset() * -60;
                 DateTimeShortcuts.timezoneOffset = localOffset - serverOffset;
@@ -42,7 +42,7 @@
         // Return the current time while accounting for the server timezone.
         now: function() {
             var body = document.getElementsByTagName('body')[0];
-            var serverOffset = body.getAttribute('data-admin-utc-offset');
+            var serverOffset = body.getAttribute('data-adminuser-utc-offset');
             if (serverOffset) {
                 var localNow = new Date();
                 var localOffset = localNow.getTimezoneOffset() * -60;

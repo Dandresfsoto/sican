@@ -7,8 +7,10 @@ from usuarios.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, HTML
 from django.contrib.auth.models import Group
-from django.contrib.admin import widgets
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+from permisos_sican.models import UserPermissionSican
 
 class UserUpdateForm(ModelForm):
 
@@ -165,6 +167,9 @@ class UserUpdateAdminForm(ModelForm):
 class GroupNewAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(GroupNewAdminForm, self).__init__(*args, **kwargs)
+        content_type = ContentType.objects.get_for_model(UserPermissionSican)
+        exclude_perms = ['add_userpermissionsican','change_userpermissionsican','delete_userpermissionsican']
+        self.fields['permissions'].queryset = Permission.objects.filter(content_type=content_type).exclude(codename__in=exclude_perms)
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
@@ -229,3 +234,35 @@ class ChangePasswordForm(Form):
         if new_password_1 != new_password_2:
             self.add_error('new_password_1',"Los campos de la nueva contraseña no coinciden.")
             self.add_error('new_password_2',"Los campos de la nueva contraseña no coinciden.")
+
+class NuevoPermisoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(NuevoPermisoForm, self).__init__(*args, **kwargs)
+        self.fields['content_type'].initial = ContentType.objects.get_for_model(UserPermissionSican)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Información del permiso:',
+                Div(
+                    Div('name',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('codename',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('content_type',css_class='col-sm-12'),
+                    css_class = 'hidden'
+                ),
+            ),
+        )
+
+    class Meta:
+        model = Permission
+        fields = '__all__'
+        labels = {
+            'codename': 'Codigo'
+        }
+        widget = {
+        }

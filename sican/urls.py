@@ -21,7 +21,7 @@ from sican.settings import dev as develop_settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^admin-sican/', admin.site.urls),
+    url(r'^adminuser-sican/', admin.site.urls),
     url(r'^$', Login.as_view(),name='login'),
     url(r'^logout/', Logout.as_view()),
     url(r'^recovery/$', Recovery.as_view()),
@@ -31,7 +31,7 @@ urlpatterns = [
     url(r'^chat/', include('inbox.urls', namespace='inbox')),
     url(r'^rest/', include('rest.urls', namespace='rest')),
     url(r'^rh/', include('rh.urls', namespace='rh')),
-    url(r'^admin/', include('admin.urls', namespace='admin')),
+    url(r'^adminuser/', include('adminuser.urls', namespace='adminuser')),
 ]
 
 if settings.DEBUG:
