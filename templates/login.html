@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
+    <script src="{% static 'bower_components/webcomponentsjs/webcomponents-lite.min.js'%}"></script>
     <title>Iniciar Sesión</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"/>
@@ -22,22 +23,6 @@
     <link rel="import" href="{% static 'bower_components/paper-input/paper-input.html'%}"/>
     <link rel="import" href="{% static 'bower_components/paper-button/paper-button.html'%}"/>
     <link rel="import" href="{% static 'bower_components/paper-toast/paper-toast.html'%}"/>
-    <style is="custom-style">
-      #submit{
-          background: #0056a3;
-          color: white;
-      }
-      
-      #submit[disabled]{
-          background: #eaeaea;
-      }
-      
-      #login_toast{
-        --paper-toast-background-color: #FF5252;
-      }
-      
-      
-    </style>
   </head>
   <body>
     <div class="container-fluid login-card">
@@ -63,7 +48,6 @@
     <script src="{% static 'bower_components/jquery/dist/jquery.min.js'%}"></script>
     <script src="{% static 'bower_components/moment/min/moment.min.js'%}"></script>
     <script src="{% static 'bower_components/moment/locale/es.js'%}"></script>
-    <script src="{% static 'bower_components/webcomponentsjs/webcomponents-lite.js'%}"></script>
     <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js'%}"></script>
     <script src="{% static 'bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js'%}"></script>
     <script src="{% static 'bower_components/datatables/media/js/jquery.dataTables.min.js'%}"></script>
