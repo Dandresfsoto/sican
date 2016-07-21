@@ -1,7 +1,7 @@
 {% extends "mail_templated/base.tpl" %}
 
 {% block subject %}
-Cambio de contraseña
+CREACIÓN DE CUENTA
 {% endblock %}
 
 {% block html %}
@@ -38,7 +38,7 @@ Cambio de contraseña
     <![endif]-->
     <table bgcolor="#ffffff" class="content" align="center" cellpadding="0" cellspacing="0" border="0" style="width: 100%; max-width: 600px;">
       <tr>
-        <td bgcolor="#1976D2" class="header" style="padding: 40px 30px 40px 30px;">
+        <td bgcolor="#0056a3" class="header" style="padding: 40px 30px 40px 30px;">
           <table width="70" align="left" border="0" cellpadding="0" cellspacing="0">
             <tr>
               <div style="text-align: center;">
@@ -113,7 +113,7 @@ Cambio de contraseña
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
-                La contraseña suministrada anteriormente es generada automaticamente, por favor cambiela por una que pueda
+                La contraseña suministrada anteriormente es generada automaticamente, por favor cambiala por una que puedas
                   recordar facilmente.
               </td>
             </tr>
@@ -122,7 +122,7 @@ Cambio de contraseña
       </tr>
 
       <tr>
-        <td class="footer" bgcolor="#1976D2" style="padding: 20px 30px 15px 30px;">
+        <td class="footer" bgcolor="#0056a3" style="padding: 20px 30px 15px 30px;">
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td align="center" class="footercopy" style="font-family: sans-serif; font-size: 14px; color: #ffffff;">
