@@ -165,7 +165,7 @@ class AdministrativosRh(BaseDatatableView):
                 item.celular_corporativo,
                 item.fecha_contratacion,
                 item.fecha_terminacion,
-                item.banco,
+                item.banco.nombre,
                 item.tipo_cuenta,
                 item.numero_cuenta,
                 item.eps,
