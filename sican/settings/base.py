@@ -48,6 +48,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+ADMINS = [('Diego Fonseca','sistemas@asoandes.org')]
 
 # Application definition
 
