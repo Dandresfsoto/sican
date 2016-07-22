@@ -4,4 +4,3 @@ from administrativos.models import Administrativo, Soporte, TipoSoporte
 
 admin.site.register(Administrativo)
 admin.site.register(Soporte)
-admin.site.register(TipoSoporte)

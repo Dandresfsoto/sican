@@ -4,6 +4,7 @@ from django.db import models
 from region.models import Region
 from cargos.models import Cargo
 from bancos.models import Banco
+from rh.models import TipoSoporte
 import os
 
 # Create your models here.
@@ -50,12 +51,7 @@ class Administrativo(models.Model):
     def get_full_name(self):
         return self.nombres + " " + self.apellidos
 
-class TipoSoporte(models.Model):
-    nombre = models.CharField(max_length=50)
-    descripcion = models.TextField(max_length=500)
 
-    def __unicode__(self):
-        return self.nombre
 
 class Soporte(models.Model):
     administrativo = models.ForeignKey(Administrativo)
