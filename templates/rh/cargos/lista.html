@@ -195,8 +195,8 @@
             </div>
           </div>
         </iron-collapse>
-        <div class="container-fluid container-index"><a href="nuevo" class="link_button">
-            <paper-button class="submit">Nuevo</paper-button></a>
+        <div class="container-fluid container-index">{% if nuevo_permiso %}<a href="nuevo" class="link_button">
+            <paper-button class="submit">Nuevo</paper-button></a>{% endif %}
           <table id="table" width="100%" class="display responsive no-wrap table table-striped table-bordered">
             <thead>
               <tr>
@@ -306,7 +306,12 @@
                   {
                       "data": 1,
                       "render": function ( data, type, row, meta ) {
-                                return '<a href="editar/'+row[0]+'" style="color:#004c99;">'+row[1]+'</a>';
+                          if(row[4]){
+                              return '<a href="editar/'+row[0]+'" style="color:#004c99;">'+row[1]+'</a>';
+                          }
+                          else{
+                              return data;
+                          }
                       },
                       "orderable": true,
                   },
@@ -327,7 +332,12 @@
                       "data": null,
                       "className":'text-center',
                       "render": function ( data, type, row, meta ) {
-                          return '<a href="eliminar/'+row[0]+'" style="color:#004c99;"><img src="/static/img/delete.png" height="24"></a>';
+                          if(row[5]){
+                              return '<a href="eliminar/'+row[0]+'" style="color:#004c99;"><img src="/static/img/delete.png" height="24"></a>';
+                          }
+                          else{
+                              return '<img src="/static/img/delete_gray.png" height="24">';
+                          }
                       },
                       "orderable": false,
                   },

@@ -43,17 +43,14 @@ class UserPermissionList(APIView):
         perms_user = list(user.get_all_permissions())
 
         categories = {
-            'rh':{'name':'Recursos Humanos',
-                  'icon':'icons:accessibility',
-                  'id':'rh',
-                  'links':[
-                      {'name':'Administrativos','link':'/rh/administrativos/'},
-                      {'name':'Cargos','link':'/rh/cargos/'}
-                  ]
-            },
             'adminuser':{'name':'Administración de usuarios',
                   'icon':'icons:account-circle',
                   'id':'usuarios',
+                  'links':[]
+            },
+            'rh':{'name':'Recursos Humanos',
+                  'icon':'icons:accessibility',
+                  'id':'rh',
                   'links':[]
             },
         }
@@ -67,7 +64,13 @@ class UserPermissionList(APIView):
             },
             'grupos':{
                 'ver':{'name':'Grupos de usuarios','link':'/adminuser/grupos/'}
-            }
+            },
+            'administrativos':{
+                'ver':{'name':'Listado de administrativos','link':'/rh/administrativos/'}
+            },
+            'cargos':{
+                'ver':{'name':'Listado de cargos','link':'/rh/cargos/'}
+            },
         }
 
 
@@ -102,7 +105,6 @@ class AdministrativosRh(BaseDatatableView):
     1.nombres
     2.cargo
     3.region
-
     4.cedula
     5.correo_personal
     6.celular_personal
@@ -117,6 +119,9 @@ class AdministrativosRh(BaseDatatableView):
     15.eps
     16.pension
     17.arl
+    18.permiso para editar
+    19.permiso para eliminar
+    20.permiso para ver soportes
     """
     model = Administrativo
     columns = ['id','nombres','cargo','region','cedula','correo_personal','celular_personal','profesion',
@@ -129,19 +134,6 @@ class AdministrativosRh(BaseDatatableView):
     def get_initial_queryset(self):
         return Administrativo.objects.filter(oculto = False)
 
-    def render_column(self, row, column):
-        if column == 'region':
-            value = ''
-            for region in row.region.values_list('numero',flat=True):
-                value = value + str(region) + ','
-            return value[:-1]
-        if column == 'nombres':
-            return '{0} {1}'.format(row.nombres,row.apellidos)
-        if column == 'cargo':
-            return row.cargo.nombre
-        else:
-            return super(AdministrativosRh,self).render_column(row, column)
-
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         if search:
@@ -149,12 +141,51 @@ class AdministrativosRh(BaseDatatableView):
             qs = qs.filter(q)
         return qs
 
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+
+            region_str = ''
+            for region in item.region.values_list('numero',flat=True):
+                region_str = region_str + str(region) + ','
+            region_str = region_str[:-1]
+
+            json_data.append([
+                item.id,
+                item.nombres + " " + item.apellidos,
+                item.cargo.nombre,
+                region_str,
+                item.cedula,
+                item.correo_personal,
+                item.celular_personal,
+                item.profesion,
+                item.correo_corporativo,
+                item.celular_corporativo,
+                item.fecha_contratacion,
+                item.fecha_terminacion,
+                item.banco,
+                item.tipo_cuenta,
+                item.numero_cuenta,
+                item.eps,
+                item.pension,
+                item.arl,
+                self.request.user.has_perm('permisos_sican.rh.administrativos.editar'),
+                self.request.user.has_perm('permisos_sican.rh.administrativos.eliminar'),
+                self.request.user.has_perm('permisos_sican.rh.administrativos_soportes.ver'),
+            ])
+        return json_data
+
+
 class CargosRh(BaseDatatableView):
     """
-    1.id
-    2.nombre
-    3.manual (retorna la url o string vacio)
-    4.descripcion
+    0.id
+    1.nombre
+    2.manual (retorna la url o string vacio)
+    3.descripcion
+    4.permiso para editar
+    5.permiso para eliminar
     """
     model = Cargo
     columns = ['id','nombre','manual','descripcion']
@@ -165,14 +196,6 @@ class CargosRh(BaseDatatableView):
     def get_initial_queryset(self):
         return Cargo.objects.filter(oculto = False)
 
-    def render_column(self, row, column):
-        if column == 'manual':
-            try:
-                url = row.manual.url
-            except:
-                url = ""
-            return url
-        return super(CargosRh, self).render_column(row, column)
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
@@ -180,6 +203,24 @@ class CargosRh(BaseDatatableView):
             q = Q(nombre__icontains=search)
             qs = qs.filter(q)
         return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            try:
+                url = item.manual.url
+            except:
+                url = ""
+
+            json_data.append([
+                item.id,
+                item.nombre,
+                url,
+                item.descripcion,
+                self.request.user.has_perm('permisos_sican.rh.cargos.editar'),
+                self.request.user.has_perm('permisos_sican.rh.cargos.eliminar'),
+            ])
+        return json_data
 
 class AdministrativosRhSoportes(BaseDatatableView):
     """
@@ -189,6 +230,8 @@ class AdministrativosRhSoportes(BaseDatatableView):
     3.descripcion
     4.archivo (url o string vacio)
     5.creacion
+    6.permiso para editar
+    7.permiso para eliminar
     """
     model = Soporte
     columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
@@ -199,14 +242,6 @@ class AdministrativosRhSoportes(BaseDatatableView):
     def get_initial_queryset(self):
         return Soporte.objects.filter(oculto = False,administrativo__id=self.kwargs['id_administrativo'])
 
-    def render_column(self, row, column):
-        if column == 'tipo':
-            return row.tipo.nombre
-        if column == 'descripcion':
-            return row.tipo.descripcion
-        if column == 'get_archivo_url':
-            return row.get_archivo_url()
-        return super(AdministrativosRhSoportes, self).render_column(row, column)
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
@@ -214,6 +249,21 @@ class AdministrativosRhSoportes(BaseDatatableView):
             q = Q(tipo__nombre__icontains=search) | Q(tipo__descripcion__icontains=search) | Q(fecha__icontains=search)
             qs = qs.filter(q)
         return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.tipo.nombre,
+                item.fecha,
+                item.tipo.descripcion,
+                item.get_archivo_url(),
+                item.creacion,
+                self.request.user.has_perm('permisos_sican.rh.administrativos_soportes.editar'),
+                self.request.user.has_perm('permisos_sican.rh.administrativos_soportes.eliminar'),
+            ])
+        return json_data
 
 class AdminUserList(BaseDatatableView):
     """

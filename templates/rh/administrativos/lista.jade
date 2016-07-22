@@ -1,4 +1,4 @@
-extends ../inicio
+extends ../../inicio
 
 block scroll_header_panel_title
     span(class="title") ADMINISTRATIVOS
@@ -21,10 +21,11 @@ block custom_style_panel
 
 
 block breadcrum
+    |{% if nuevo_permiso %}
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
-
+    |{% endif %}
     paper-icon-item(class="breadcrum_active",disabled) Listado de administrativos
         iron-icon(icon="check",item-icon)
 
@@ -75,7 +76,12 @@ block body_script_content
                     {
                         "data": 1,
                         "render": function ( data, type, row, meta ) {
-                                  return '<a href="editar/'+row[0]+'" style="color:#004c99;">'+data+'</a>';
+                            if(row[18]){
+                                return '<a href="editar/'+row[0]+'" style="color:#004c99;">'+data+'</a>';
+                            }
+                            else{
+                                return data;
+                            }
                         },
                         "orderable":true,
                     },
@@ -92,7 +98,12 @@ block body_script_content
                         "className":'text-center',
                         "data":null,
                         "render": function ( data, type, row, meta ) {
-                                  return '<a href="soportes/'+row[0]+'" style="color:#004c99;"><img src="/static/img/ver.png" height="32"></a>';
+                            if(row[20]){
+                                return '<a href="soportes/'+row[0]+'" style="color:#004c99;"><img src="/static/img/ver.png" height="32"></a>';
+                            }
+                            else{
+                                return '<img src="/static/img/ver_gray.png" height="32">';
+                            }
                         },
                     },
                     {
@@ -100,7 +111,12 @@ block body_script_content
                         "className":'text-center',
                         "data":null,
                         "render": function ( data, type, row, meta ) {
-                            return '<a href="eliminar/' + row[0] + '" style="color:#004c99;"><img src="/static/img/delete.png" height="24"></a>';
+                            if(row[19]){
+                                return '<a href="eliminar/' + row[0] + '" style="color:#004c99;"><img src="/static/img/delete.png" height="24"></a>';
+                            }
+                            else{
+                                return '<img src="/static/img/delete_gray.png" height="24">';
+                            }
                         },
                         "defaultContent": ''
                     },

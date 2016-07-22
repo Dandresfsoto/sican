@@ -161,10 +161,10 @@
                   <paper-icon-item class="icon-hover">
                     <iron-icon icon="icons:power-settings-new" item-icon="item-icon"></iron-icon>Cerrar sesión
                   </paper-icon-item></a></div>
-            </iron-collapse><a href="/proyectos/" class="link_button">
+            </iron-collapse>{% if nuevo_permiso %}<a href="/proyectos/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Inicio
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
-              </paper-icon-item></a>
+              </paper-icon-item></a>{% endif %}
             <paper-icon-item disabled="disabled" class="breadcrum_active">Listado de administrativos
               <iron-icon icon="check" item-icon="item-icon"></iron-icon>
             </paper-icon-item>
@@ -311,7 +311,12 @@
                   {
                       "data": 1,
                       "render": function ( data, type, row, meta ) {
-                                return '<a href="editar/'+row[0]+'" style="color:#004c99;">'+data+'</a>';
+                          if(row[18]){
+                              return '<a href="editar/'+row[0]+'" style="color:#004c99;">'+data+'</a>';
+                          }
+                          else{
+                              return data;
+                          }
                       },
                       "orderable":true,
                   },
@@ -328,7 +333,12 @@
                       "className":'text-center',
                       "data":null,
                       "render": function ( data, type, row, meta ) {
-                                return '<a href="soportes/'+row[0]+'" style="color:#004c99;"><img src="/static/img/ver.png" height="32"></a>';
+                          if(row[20]){
+                              return '<a href="soportes/'+row[0]+'" style="color:#004c99;"><img src="/static/img/ver.png" height="32"></a>';
+                          }
+                          else{
+                              return '<img src="/static/img/ver_gray.png" height="32">';
+                          }
                       },
                   },
                   {
@@ -336,7 +346,12 @@
                       "className":'text-center',
                       "data":null,
                       "render": function ( data, type, row, meta ) {
-                          return '<a href="eliminar/' + row[0] + '" style="color:#004c99;"><img src="/static/img/delete.png" height="24"></a>';
+                          if(row[19]){
+                              return '<a href="eliminar/' + row[0] + '" style="color:#004c99;"><img src="/static/img/delete.png" height="24"></a>';
+                          }
+                          else{
+                              return '<img src="/static/img/delete_gray.png" height="24">';
+                          }
                       },
                       "defaultContent": ''
                   },

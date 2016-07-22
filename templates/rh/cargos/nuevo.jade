@@ -1,20 +1,24 @@
-extends ../inicio
+extends ../../inicio
 block scroll_header_panel_title
     span(class="title") ADMINISTRATIVOS
+
 block help_content
     p(class="title-help") Descripción:
     p.
-        Aqui puedes editar el cargo de {{object.nombre}} en la estructura interna de la Asociación ANDES, los campos que tienen un asterisco (*) son obligatorios
+        Con este formulario puedes agregar un nuevo cargo en la estructura interna de la Asociación Nacional para el
+        Desarrollo Social - ANDES en el sistema de información, los campos que tienen un asterisco (*) son obligatorios
         y deben contener un valor coherente en cada caso.
 
 block head_content_inicio
     link(rel="import",href="{% static 'bower_components/paper-button/paper-button.html'%}")
     link(rel="import",href="{% static 'bower_components/file-upload-sican/file-upload-sican.html'%}")
+
 block custom_style_panel
     style(is="custom-style")
         | paper-button{
         |   margin-bottom:15px;
         | }
+
 block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
@@ -22,8 +26,9 @@ block breadcrum
     a(href="/rh/cargos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Listado de cargos
             iron-icon(icon="check",item-icon)
-    paper-icon-item(class="breadcrum_active",disabled) Editar
+    paper-icon-item(class="breadcrum_active",disabled) Nuevo
         iron-icon(icon="check",item-icon)
+
 block scroll_header_panel_content
     div(class="container-fluid container-index")
         div(class="row")
@@ -33,8 +38,9 @@ block scroll_header_panel_content
                     | {% crispy form %}
                     div(class="text-right login-form-button")
                         paper-button(class="submit",id="submit_form") Guardar
+
 block body_script_content
-    script.
-        $('#submit_form').on('click', function () {
-            $('#form-cargo').submit();
-        });
+   script.
+      $('#submit_form').on('click',function(){
+         $('#form-cargo').submit();
+      });

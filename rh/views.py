@@ -6,13 +6,17 @@ from cargos.forms import NuevoCargoForm, EditarCargoForm
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from administrativos.forms import UpdateSoporteAdministrativoForm
-# Create your views here.
+
 
 class AdministrativoView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
-    template_name = 'rh/administrativos.html'
-    permission_required = "administrativos.rh"
+    template_name = 'rh/administrativos/lista.html'
+    permission_required = "permisos_sican.rh.cargos.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.cargos.crear')
+        return super(AdministrativoView, self).get_context_data(**kwargs)
 
 class NuevoAdministrativoView(LoginRequiredMixin,
                               PermissionRequiredMixin,
@@ -20,8 +24,8 @@ class NuevoAdministrativoView(LoginRequiredMixin,
     model = Administrativo
     form_class = NuevoForm
     success_url = '/rh/administrativos/'
-    template_name = 'rh/nuevo.html'
-    permission_required = "administrativos.rh"
+    template_name = 'rh/administrativos/nuevo.html'
+    permission_required = "permisos_sican.rh.cargos.crear"
 
 class DeleteAdministrativoView(LoginRequiredMixin,
                                PermissionRequiredMixin,
@@ -29,8 +33,8 @@ class DeleteAdministrativoView(LoginRequiredMixin,
     model = Administrativo
     pk_url_kwarg = 'pk'
     success_url = '/rh/administrativos/'
-    template_name = 'rh/eliminarAdministrativo.html'
-    permission_required = "administrativos.rh"
+    template_name = 'rh/administrativos/eliminar.html'
+    permission_required = "permisos_sican.rh.cargos.eliminar"
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -46,19 +50,21 @@ class UpdateAdministrativoView(LoginRequiredMixin,
     form_class = NuevoForm
     pk_url_kwarg = 'pk'
     success_url = '/rh/administrativos/'
-    template_name = 'rh/editarAdministrativo.html'
-    permission_required = "administrativos.rh"
+    template_name = 'rh/administrativos/editar.html'
+    permission_required = "permisos_sican.rh.cargos.editar"
+
 
 
 class SoporteAdministrativoView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
-    template_name = 'rh/soportes/soportes.html'
-    permission_required = "administrativos.rh"
+    template_name = 'rh/soportes/lista.html'
+    permission_required = "permisos_sican.rh.administrativos_soportes.ver"
 
     def get_context_data(self, **kwargs):
         kwargs['nombre_administrativo'] = Administrativo.objects.get(id=kwargs['pk']).get_full_name
         kwargs['id_administrativo'] = kwargs['pk']
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.administrativos_soportes.crear')
         return super(SoporteAdministrativoView, self).get_context_data(**kwargs)
 
 
@@ -70,7 +76,7 @@ class NuevoSoporteAdministrativoView(LoginRequiredMixin,
     form_class = NuevoSoporteForm
     success_url = '../'
     template_name = 'rh/soportes/nuevo.html'
-    permission_required = "administrativos.rh"
+    permission_required = "permisos_sican.rh.administrativos_soportes.crear"
 
     def get_context_data(self, **kwargs):
         kwargs['nombre_administrativo'] = Administrativo.objects.get(id=self.kwargs['pk']).get_full_name
@@ -87,8 +93,8 @@ class UpdateSoporteAdministrativoView(LoginRequiredMixin,
     form_class = UpdateSoporteAdministrativoForm
     pk_url_kwarg = 'id_soporte'
     success_url = '../../'
-    template_name = 'rh/soportes/editarSoporte.html'
-    permission_required = "administrativos.rh"
+    template_name = 'rh/soportes/editar.html'
+    permission_required = "permisos_sican.rh.administrativos_soportes.editar"
 
     def get_context_data(self, **kwargs):
         kwargs['link_old_file'] = self.object.get_archivo_url()
@@ -103,8 +109,8 @@ class DeleteSoporteAdministrativoView(LoginRequiredMixin,
     model = Soporte
     pk_url_kwarg = 'id_soporte'
     success_url = '../../'
-    template_name = 'rh/soportes/eliminarSoporte.html'
-    permission_required = "administrativos.rh"
+    template_name = 'rh/soportes/eliminar.html'
+    permission_required = "permisos_sican.rh.administrativos_soportes.eliminar"
 
     def get_context_data(self, **kwargs):
         kwargs['nombre_administrativo'] = Administrativo.objects.get(id=self.kwargs['pk']).get_full_name
@@ -118,11 +124,16 @@ class DeleteSoporteAdministrativoView(LoginRequiredMixin,
         return HttpResponseRedirect(success_url)
 
 
+
 class CargosView(LoginRequiredMixin,
                  PermissionRequiredMixin,
                  TemplateView):
-    template_name = 'rh/cargos.html'
-    permission_required = "rh"
+    template_name = 'rh/cargos/lista.html'
+    permission_required = "permisos_sican.rh.cargos.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.cargos.crear')
+        return super(CargosView, self).get_context_data(**kwargs)
 
 class NuevoCargoView(LoginRequiredMixin,
                      PermissionRequiredMixin,
@@ -130,8 +141,8 @@ class NuevoCargoView(LoginRequiredMixin,
     model = Cargo
     form_class = NuevoCargoForm
     success_url = '/rh/cargos/'
-    template_name = 'rh/nuevoCargo.html'
-    permission_required = "rh"
+    template_name = 'rh/cargos/nuevo.html'
+    permission_required = "permisos_sican.rh.cargos.crear"
 
 class DeleteCargoView(LoginRequiredMixin,
                       PermissionRequiredMixin,
@@ -139,8 +150,8 @@ class DeleteCargoView(LoginRequiredMixin,
     model = Cargo
     pk_url_kwarg = 'pk'
     success_url = '/rh/cargos/'
-    template_name = 'rh/eliminarCargo.html'
-    permission_required = "rh"
+    template_name = 'rh/cargos/eliminar.html'
+    permission_required = "permisos_sican.rh.cargos.eliminar"
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -156,8 +167,8 @@ class UpdateCargoView(LoginRequiredMixin,
     form_class = EditarCargoForm
     pk_url_kwarg = 'pk'
     success_url = '/rh/cargos/'
-    template_name = 'rh/editarCargo.html'
-    permission_required = "rh"
+    template_name = 'rh/cargos/editar.html'
+    permission_required = "permisos_sican.rh.cargos.editar"
 
     def get_context_data(self, **kwargs):
         try:
