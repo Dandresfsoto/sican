@@ -2,6 +2,7 @@ from django.conf.urls import url
 from rh.views import AdministrativoView, NuevoAdministrativoView, CargosView, NuevoCargoView, DeleteCargoView,UpdateCargoView
 from rh.views import DeleteAdministrativoView, UpdateAdministrativoView, SoporteAdministrativoView, NuevoSoporteAdministrativoView
 from rh.views import UpdateSoporteAdministrativoView, DeleteSoporteAdministrativoView
+from rh.views import TipoSoporteAdministrativoView, NuevoTipoSoporteAdministrativoView, UpdateTipoSoporteAdministrativoView, DeleteTipoSoporteAdministrativoView
 
 urlpatterns = [
     url(r'^administrativos/$', AdministrativoView.as_view()),
@@ -20,4 +21,9 @@ urlpatterns = [
     url(r'^cargos/nuevo/$', NuevoCargoView.as_view()),
     url(r'^cargos/editar/(?P<pk>[0-9]+)/$', UpdateCargoView.as_view()),
     url(r'^cargos/eliminar/(?P<pk>[0-9]+)/$', DeleteCargoView.as_view()),
+
+    url(r'^tipo_soporte/$', TipoSoporteAdministrativoView.as_view()),
+    url(r'^tipo_soporte/nuevo/$', NuevoTipoSoporteAdministrativoView.as_view()),
+    url(r'^tipo_soporte/editar/(?P<pk>[0-9]+)/$', UpdateTipoSoporteAdministrativoView.as_view()),
+    url(r'^tipo_soporte/eliminar/(?P<pk>[0-9]+)/$', DeleteTipoSoporteAdministrativoView.as_view()),
 ]

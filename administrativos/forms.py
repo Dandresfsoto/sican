@@ -6,6 +6,7 @@ from administrativos.models import Administrativo
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, HTML
 from administrativos.models import Cargo, Soporte
+from rh.models import TipoSoporte
 
 class NuevoForm(forms.ModelForm):
 
@@ -85,6 +86,7 @@ class NuevoSoporteForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NuevoSoporteForm, self).__init__(*args, **kwargs)
+        self.fields['tipo'].queryset = TipoSoporte.objects.exclude(oculto = True)
         if 'data' in kwargs:
             kwargs['data']['administrativo'] = kwargs['initial']['administrativo']
         self.helper = FormHelper(self)
@@ -116,11 +118,15 @@ class NuevoSoporteForm(forms.ModelForm):
     class Meta:
         model = Soporte
         fields = '__all__'
+        widgets = {
+            'tipo': forms.Select()
+        }
 
 class UpdateSoporteAdministrativoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UpdateSoporteAdministrativoForm, self).__init__(*args, **kwargs)
+        self.fields['tipo'].queryset = TipoSoporte.objects.exclude(oculto = True)
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(

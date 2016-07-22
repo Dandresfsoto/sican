@@ -6,6 +6,8 @@ from cargos.forms import NuevoCargoForm, EditarCargoForm
 from django.http import HttpResponseRedirect
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from administrativos.forms import UpdateSoporteAdministrativoForm
+from rh.models import TipoSoporte
+from rh.forms import NuevoTipoSoporteForm
 
 
 class AdministrativoView(LoginRequiredMixin,
@@ -178,3 +180,52 @@ class UpdateCargoView(LoginRequiredMixin,
         kwargs['manual_link'] = url
         kwargs['manual_filename'] = self.object.manual_filename
         return super(UpdateCargoView, self).get_context_data(**kwargs)
+
+
+
+
+class TipoSoporteAdministrativoView(LoginRequiredMixin,
+                 PermissionRequiredMixin,
+                 TemplateView):
+    template_name = 'rh/tipo_soporte/lista.html'
+    permission_required = "permisos_sican.rh.rh_tipo_soporte.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.rh_tipo_soporte.crear')
+        return super(TipoSoporteAdministrativoView, self).get_context_data(**kwargs)
+
+
+class NuevoTipoSoporteAdministrativoView(LoginRequiredMixin,
+                     PermissionRequiredMixin,
+                     CreateView):
+    model = TipoSoporte
+    form_class = NuevoTipoSoporteForm
+    success_url = '/rh/tipo_soporte/'
+    template_name = 'rh/tipo_soporte/nuevo.html'
+    permission_required = "permisos_sican.rh.rh_tipo_soporte.crear"
+
+class DeleteTipoSoporteAdministrativoView(LoginRequiredMixin,
+                      PermissionRequiredMixin,
+                      DeleteView):
+    model = TipoSoporte
+    pk_url_kwarg = 'pk'
+    success_url = '/rh/tipo_soporte/'
+    template_name = 'rh/tipo_soporte/eliminar.html'
+    permission_required = "permisos_sican.rh.cargos.eliminar"
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.oculto = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)
+
+class UpdateTipoSoporteAdministrativoView(LoginRequiredMixin,
+                      PermissionRequiredMixin,
+                      UpdateView):
+    model = TipoSoporte
+    form_class = NuevoTipoSoporteForm
+    pk_url_kwarg = 'pk'
+    success_url = '/rh/tipo_soporte/'
+    template_name = 'rh/tipo_soporte/editar.html'
+    permission_required = "permisos_sican.rh.rh_tipo_soporte.editar"
