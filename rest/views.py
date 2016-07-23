@@ -14,6 +14,7 @@ from permisos_sican.models import UserPermissionSican
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from rh.models import TipoSoporte
+from operator import itemgetter
 
 # Create your views here.
 
@@ -44,7 +45,7 @@ class UserPermissionList(APIView):
         perms_user = list(user.get_all_permissions())
 
         categories = {
-            'adminuser':{'name':'Administración de usuarios',
+            'adminuser':{'name':'Usuarios',
                   'icon':'icons:account-circle',
                   'id':'usuarios',
                   'links':[]
@@ -58,24 +59,26 @@ class UserPermissionList(APIView):
 
         links = {
             'permisos':{
-                'ver':{'name':'Permisos de usuario','link':'/adminuser/permisos/'}
+                'ver':{'name':'Permisos','link':'/adminuser/permisos/'}
             },
             'usuarios':{
                 'ver':{'name':'Usuarios','link':'/adminuser/usuarios/'}
             },
             'grupos':{
-                'ver':{'name':'Grupos de usuarios','link':'/adminuser/grupos/'}
+                'ver':{'name':'Grupos','link':'/adminuser/grupos/'}
             },
             'administrativos':{
-                'ver':{'name':'Listado de administrativos','link':'/rh/administrativos/'}
+                'ver':{'name':'Administrativos','link':'/rh/administrativos/'}
             },
             'cargos':{
-                'ver':{'name':'Listado de cargos','link':'/rh/cargos/'}
+                'ver':{'name':'Cargos','link':'/rh/cargos/'}
             },
             'rh_tipo_soporte':{
                 'ver':{'name':'Tipo de soportes','link':'/rh/tipo_soporte/'}
             },
         }
+
+
 
 
         perms_response = []
@@ -86,22 +89,35 @@ class UserPermissionList(APIView):
         permissions = Permission.objects.filter(content_type=content_type).exclude(codename__in=exclude_perms).values_list('codename',flat=True)
         app = 'permisos_sican.'
 
+        array_tuple = []
+
         for perm_user in perms_user:
 
             if perm_user.replace(app,'') in permissions:
                 category, links_group, link = perm_user.replace(app,'').split('.')
                 if links_group in links:
                     if link in links[links_group]:
-                        perms_dict[category] = categories[category]
-                        perms_dict[category]['links'].append(links[links_group][link])
+                        array_tuple.append(([category,links_group,link],categories[category]['name'],links[links_group][link]['name']))
+                        array_tuple.sort(key=itemgetter(1,2))
+
+        for perm in array_tuple:
+            perms_dict[perm[0][0]] = categories[perm[0][0]]
+            perms_dict[perm[0][0]]['links'].append(links[perm[0][1]][perm[0][2]])
 
 
         for key, value in perms_dict.iteritems():
-            perms_response.append(value)
+            perms_response.append((key,value,categories[key]['name']))
+            perms_response.sort(key=itemgetter(2))
+
+        r = []
+
+        for res in perms_response:
+            r.append(res[1])
 
 
 
-        return Response(perms_response)
+
+        return Response(r)
 
 class AdministrativosRh(BaseDatatableView):
     """
