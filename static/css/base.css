@@ -3,7 +3,7 @@
 }
 .login-logo {
   height: 100px;
-  background: #0056a3;
+  background: #004c99;
   padding: 20px;
 }
 .login-form-container {
@@ -30,18 +30,21 @@
   border-top: solid 1px #b6b6b6;
 }
 .icon-hover:hover {
-  background: #76b82a;
+  background: #f89f08;
   color: #fff;
 }
 .background-avatar {
-  background-color: #0056a3;
+  background-color: #004c99;
+}
+.breadcrumb-paper-icon-item-class:hover {
+  background-color: #16b821;
 }
 .help_container {
   margin-top: 10px;
   margin-bottom: 10px;
   border-radius: 20px;
   padding: 20px;
-  border: 1px solid #0056a3;
+  border: 1px solid #004c99;
   text-align: justify;
 }
 .title-help {
@@ -101,7 +104,7 @@ fieldset {
   border: none;
 }
 legend {
-  color: #0056a3;
+  color: #004c99;
   font-weight: bold;
   font-size: 24px;
 }
@@ -177,8 +180,19 @@ legend {
   margin-right: 6px;
 }
 .title-delete-p {
-  color: #0056a3;
+  color: #004c99;
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 30px;
+}
+.pagination>.active>a,
+.pagination>.active>a:focus,
+.pagination>.active>a:hover,
+.pagination>.active>span,
+.pagination>.active>span:focus,
+.pagination>.active>span:hover {
+  z-index: 0;
+}
+.bootstrap-select>.dropdown-toggle {
+  z-index: 0;
 }

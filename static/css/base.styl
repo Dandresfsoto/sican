@@ -1,6 +1,6 @@
 //************************* COLORS THEME ***********************************************
 
-DARK_PRIMARY_COLOR = #0056a3
+DARK_PRIMARY_COLOR = #004c99
 PRIMARY_COLOR = #2196F3
 LIGHT_PRIMARY_COLOR = #BBDEFB
 TEXT_ICONS = #FFFFFF
@@ -56,11 +56,14 @@ background-linear-gradient(direction,color-stop1,color-stop2,url-image)
   border-top solid 1px DIVIDER_COLOR
 
 .icon-hover:hover
-  background #76b82a
+  background #F89f08
   color white
 
 .background-avatar
-  background-color #0056a3
+  background-color #004c99
+
+.breadcrumb-paper-icon-item-class:hover
+  background-color #16B821
 
 
 //****************************** SCROLL HEADER PANEL *************************************************
@@ -130,7 +133,7 @@ fieldset
   border none
 
 legend
-  color #0056a3
+  color #004c99
   font-weight bold
   font-size 24px
 
@@ -183,7 +186,13 @@ legend
 
 
 .title-delete-p
-  color #0056a3
+  color #004c99
   font-size 20px
   font-weight bold
   margin-bottom 30px
+
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover
+  z-index 0
+
+.bootstrap-select>.dropdown-toggle
+  z-index 0

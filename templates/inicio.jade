@@ -30,7 +30,7 @@ block head_content
         |    margin-right: 20px;
         |}
         |.toolbar-sican{
-        |   --paper-toolbar-background: #0056a3;
+        |   --paper-toolbar-background: #004c99;
         |   --paper-toolbar-title:{
         |       font-weight: bold;
         |   };
@@ -57,7 +57,7 @@ block head_content
 
         |#cuenta{
         |   --paper-header-panel:{
-        |       background: #eee;
+        |       background: #004c99;
         |   };
         |}
 
@@ -83,8 +83,8 @@ block head_content
         |}
 
         |#collapse{
-        |   color:black;
-        |   background:#eee;
+        |   color:white;
+        |   background:#F29B00;
         |}
 
 
@@ -104,28 +104,33 @@ block head_content
 
         |.return{
         |   --paper-button:{
-        |       background: #0056a3;
+        |       background: #004c99;
         |       color: white;
         |   }
         |}
 
         |.breadcrumb-paper-icon-item-class{
-        |   margin: 10px 0px;
-        |   --paper-item:{
+        |   margin: 2px 0px;
+        |   color:white;
+        |   --paper-icon-item:{
         |       background:#76b82a;
-        |       color:white;
+        |       padding-bottom: 10px;
+        |       padding-top: 10px;
         |   };
         |}
 
         |.breadcrum_active{
-        |   margin: 10px 0px;
-        |   --paper-item:{
-        |       background:#ddd;
-        |       color:black;
+        |   margin: 2px 0px;
+        |   color:white;
+        |   --paper-icon-item:{
+        |       background:#169fdb;
+        |       padding-bottom: 10px;
+        |       padding-top: 10px;
         |   };
         |}
 
     block custom_style_panel
+
 
 block body_content
     input(id="user_id",value="{{user.id}}",hidden)
@@ -158,6 +163,10 @@ block body_content
                                     iron-icon(icon="icons:power-settings-new",item-icon)
                                     |Cerrar sesión
                     block breadcrum
+                        |{% if inicio %}
+                        paper-icon-item(class="breadcrum_active",disabled) Inicio
+                            iron-icon(icon="check",item-icon)
+                        |{% endif %}
             block header_panel_content
 
         paper-scroll-header-panel(id="scrollheader",main,fixed)

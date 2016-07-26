@@ -117,3 +117,7 @@ class Confirmation(TemplateView):
 
 class Proyectos(LoginRequiredMixin,TemplateView):
     template_name = "proyectos.html"
+
+    def get_context_data(self, **kwargs):
+        kwargs['inicio'] = True
+        return super(Proyectos,self).get_context_data(**kwargs)

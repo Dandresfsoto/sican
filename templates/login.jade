@@ -3,12 +3,18 @@ block title
    |Iniciar Sesión
 
 block head_content
-   link(rel="import",href="{% static 'bower_components/gold-email-input/gold-email-input.html'%}")
-   link(rel="import",href="{% static 'bower_components/paper-input/paper-input.html'%}")
-   link(rel="import",href="{% static 'bower_components/paper-button/paper-button.html'%}")
-   link(rel="import",href="{% static 'bower_components/paper-toast/paper-toast.html'%}")
+    link(rel="import",href="{% static 'bower_components/gold-email-input/gold-email-input.html'%}")
+    link(rel="import",href="{% static 'bower_components/paper-input/paper-input.html'%}")
+    link(rel="import",href="{% static 'bower_components/paper-button/paper-button.html'%}")
+    link(rel="import",href="{% static 'bower_components/paper-toast/paper-toast.html'%}")
 
-
+    style(is="custom-style")
+        |#submit{
+        |   --paper-button:{
+        |       background: #004c99;
+        |       color: white;
+        |   }
+        |}
 
 
 block body_content
