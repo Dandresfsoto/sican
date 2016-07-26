@@ -1,15 +1,14 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from rh.models import TipoSoporte
 from region.models import Region
 from cargos.models import Cargo
 from bancos.models import Banco
-from rh.models import TipoSoporte
 import os
 
 # Create your models here.
-
-class Administrativo(models.Model):
+class Formador(models.Model):
     #---------- REGION----------------------
     region = models.ManyToManyField(Region)
 
@@ -23,8 +22,7 @@ class Administrativo(models.Model):
     #---------- INFORMACION PROFESIONAL ----------------------
     cargo = models.ForeignKey(Cargo)
     profesion = models.CharField(max_length=100,blank=True)
-    correo_corporativo = models.EmailField(max_length=100,blank=True)
-    celular_corporativo = models.CharField(max_length=100,blank=True)
+
     fecha_contratacion = models.DateField(null=True,blank=True)
     fecha_terminacion = models.DateField(null=True,blank=True)
 
@@ -52,13 +50,13 @@ class Administrativo(models.Model):
         return self.nombres + " " + self.apellidos
 
 class Soporte(models.Model):
-    administrativo = models.ForeignKey(Administrativo)
+    formador = models.ForeignKey(Formador)
     creacion = models.DateField(auto_now=True)
     fecha = models.DateField()
-    tipo = models.ForeignKey(TipoSoporte)
+    tipo = models.ForeignKey(TipoSoporte,related_name='soporte_formador')
     descripcion = models.TextField(max_length=1000,blank=True)
     oculto = models.BooleanField(default=False)
-    archivo = models.FileField(upload_to='Administratios/Soportes/',blank=True)
+    archivo = models.FileField(upload_to='Formadores/Soportes/',blank=True)
 
     def __unicode__(self):
         return self.administrativo.get_full_name()

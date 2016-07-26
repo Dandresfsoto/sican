@@ -8,6 +8,9 @@ from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from administrativos.forms import UpdateSoporteAdministrativoForm
 from rh.models import TipoSoporte
 from rh.forms import NuevoTipoSoporteForm
+from formadores.models import Formador
+from formadores.forms import FormadorForm, NuevoSoporteFormadorForm
+from formadores.models import Soporte as SoporteFormador
 
 
 class AdministrativoView(LoginRequiredMixin,
@@ -60,7 +63,7 @@ class UpdateAdministrativoView(LoginRequiredMixin,
 class SoporteAdministrativoView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
-    template_name = 'rh/soportes/lista.html'
+    template_name = 'rh/administrativos/soportes/lista.html'
     permission_required = "permisos_sican.rh.administrativos_soportes.ver"
 
     def get_context_data(self, **kwargs):
@@ -77,7 +80,7 @@ class NuevoSoporteAdministrativoView(LoginRequiredMixin,
     model = Soporte
     form_class = NuevoSoporteForm
     success_url = '../'
-    template_name = 'rh/soportes/nuevo.html'
+    template_name = 'rh/administrativos/soportes/nuevo.html'
     permission_required = "permisos_sican.rh.administrativos_soportes.crear"
 
     def get_context_data(self, **kwargs):
@@ -95,7 +98,7 @@ class UpdateSoporteAdministrativoView(LoginRequiredMixin,
     form_class = UpdateSoporteAdministrativoForm
     pk_url_kwarg = 'id_soporte'
     success_url = '../../'
-    template_name = 'rh/soportes/editar.html'
+    template_name = 'rh/administrativos/soportes/editar.html'
     permission_required = "permisos_sican.rh.administrativos_soportes.editar"
 
     def get_context_data(self, **kwargs):
@@ -111,7 +114,7 @@ class DeleteSoporteAdministrativoView(LoginRequiredMixin,
     model = Soporte
     pk_url_kwarg = 'id_soporte'
     success_url = '../../'
-    template_name = 'rh/soportes/eliminar.html'
+    template_name = 'rh/administrativos/soportes/eliminar.html'
     permission_required = "permisos_sican.rh.administrativos_soportes.eliminar"
 
     def get_context_data(self, **kwargs):
@@ -229,3 +232,118 @@ class UpdateTipoSoporteAdministrativoView(LoginRequiredMixin,
     success_url = '/rh/tipo_soporte/'
     template_name = 'rh/tipo_soporte/editar.html'
     permission_required = "permisos_sican.rh.rh_tipo_soporte.editar"
+
+
+
+class FormadoresView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'rh/formadores/lista.html'
+    permission_required = "permisos_sican.rh.formadores.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores.crear')
+        return super(FormadoresView, self).get_context_data(**kwargs)
+
+class NuevoFormadorView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = Formador
+    form_class = FormadorForm
+    success_url = '/rh/formadores/'
+    template_name = 'rh/formadores/nuevo.html'
+    permission_required = "permisos_sican.rh.formadores.crear"
+
+class UpdateFormadorView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = Formador
+    form_class = FormadorForm
+    pk_url_kwarg = 'pk'
+    success_url = '/rh/formadores/'
+    template_name = 'rh/formadores/editar.html'
+    permission_required = "permisos_sican.rh.formadores.editar"
+
+class DeleteFormadorView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               DeleteView):
+    model = Formador
+    pk_url_kwarg = 'pk'
+    success_url = '/rh/formadores/'
+    template_name = 'rh/formadores/eliminar.html'
+    permission_required = "permisos_sican.rh.formadores.eliminar"
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.oculto = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)
+
+
+class SoporteFormadorView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'rh/formadores/soportes/lista.html'
+    permission_required = "permisos_sican.rh.formadores_soportes.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_formador'] = Formador.objects.get(id=kwargs['pk']).get_full_name
+        kwargs['id_formador'] = kwargs['pk']
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores_soportes.crear')
+        return super(SoporteFormadorView, self).get_context_data(**kwargs)
+
+class NuevoSoporteFormadorView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = SoporteFormador
+    form_class = NuevoSoporteFormadorForm
+    success_url = '../'
+    template_name = 'rh/formadores/soportes/nuevo.html'
+    permission_required = "permisos_sican.rh.formadores_soportes.crear"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_formador'] = Formador.objects.get(id=self.kwargs['pk']).get_full_name
+        return super(NuevoSoporteFormadorView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'formador':self.kwargs['pk']}
+
+class UpdateSoporteFormadorView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = SoporteFormador
+    form_class = NuevoSoporteFormadorForm
+    pk_url_kwarg = 'id_soporte'
+    success_url = '../../'
+    template_name = 'rh/formadores/soportes/editar.html'
+    permission_required = "permisos_sican.rh.formadores_soportes.editar"
+
+    def get_context_data(self, **kwargs):
+        kwargs['link_old_file'] = self.object.get_archivo_url()
+        kwargs['old_file'] = self.object.archivo_filename()
+        kwargs['nombre_formador'] = Formador.objects.get(id=self.kwargs['pk']).get_full_name
+        return super(UpdateSoporteFormadorView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'formador':self.kwargs['pk']}
+
+class DeleteSoporteFormadorView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               DeleteView):
+    model = SoporteFormador
+    pk_url_kwarg = 'id_soporte'
+    success_url = '../../'
+    template_name = 'rh/formadores/soportes/eliminar.html'
+    permission_required = "permisos_sican.rh.formadores_soportes.eliminar"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_formador'] = Formador.objects.get(id=self.kwargs['pk']).get_full_name
+        return super(DeleteSoporteFormadorView, self).get_context_data(**kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.oculto = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)

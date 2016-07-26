@@ -15,6 +15,8 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from rh.models import TipoSoporte
 from operator import itemgetter
+from formadores.models import Formador
+from formadores.models import Soporte as SoporteFormador
 
 # Create your views here.
 
@@ -75,6 +77,9 @@ class UserPermissionList(APIView):
             },
             'rh_tipo_soporte':{
                 'ver':{'name':'Tipo de soportes','link':'/rh/tipo_soporte/'}
+            },
+            'formadores':{
+                'ver':{'name':'Formadores','link':'/rh/formadores/'}
             },
         }
 
@@ -442,3 +447,126 @@ class TipoSoporteRh(BaseDatatableView):
             q = Q(nombre__icontains=search) | Q(descripcion__icontains=search)
             qs = qs.filter(q)
         return qs
+
+class FormadoresRh(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cargo
+    3.region
+    4.cedula
+    5.correo_personal
+    6.celular_personal
+    7.profesion
+    8.fecha_contratacion
+    9.fecha_terminacion
+    10.banco
+    11.tipo_cuenta
+    12.numero_cuenta
+    13.eps
+    14.pension
+    15.arl
+    16.permiso para editar
+    17.permiso para eliminar
+    18.permiso para ver soportes
+    """
+    model = Formador
+    columns = ['id','nombres','cargo','region','cedula','correo_personal','celular_personal','profesion',
+               'fecha_contratacion','fecha_terminacion','banco','tipo_cuenta','numero_cuenta','eps',
+               'pension','arl']
+
+    order_columns = ['','nombres','cargo','']
+    max_display_length = 10
+
+    def get_initial_queryset(self):
+        return Formador.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+                Q(region__numero__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+
+            region_str = ''
+            for region in item.region.values_list('numero',flat=True):
+                region_str = region_str + str(region) + ','
+            region_str = region_str[:-1]
+
+            if item.banco != None:
+                banco = item.banco.nombre
+            else:
+                banco = ''
+
+            json_data.append([
+                item.id,
+                item.nombres + " " + item.apellidos,
+                item.cargo.nombre,
+                region_str,
+                item.cedula,
+                item.correo_personal,
+                item.celular_personal,
+                item.profesion,
+                item.fecha_contratacion,
+                item.fecha_terminacion,
+                banco,
+                item.tipo_cuenta,
+                item.numero_cuenta,
+                item.eps,
+                item.pension,
+                item.arl,
+                self.request.user.has_perm('permisos_sican.rh.formadores.editar'),
+                self.request.user.has_perm('permisos_sican.rh.formadores.eliminar'),
+                self.request.user.has_perm('permisos_sican.rh.formadores_soportes.ver'),
+            ])
+        return json_data
+
+class FormadoresRhSoportes(BaseDatatableView):
+    """
+    0.id
+    1.tipo
+    2.fecha
+    3.descripcion
+    4.archivo (url o string vacio)
+    5.creacion
+    6.permiso para editar
+    7.permiso para eliminar
+    """
+    model = SoporteFormador
+    columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
+
+    order_columns = ['id','tipo','fecha','descripcion']
+    max_display_length = 10
+
+    def get_initial_queryset(self):
+        return SoporteFormador.objects.filter(oculto = False,formador__id=self.kwargs['id_formador'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(tipo__nombre__icontains=search) | Q(tipo__descripcion__icontains=search) | Q(fecha__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.tipo.nombre,
+                item.fecha,
+                item.tipo.descripcion,
+                item.get_archivo_url(),
+                item.creacion,
+                self.request.user.has_perm('permisos_sican.rh.formadores_soportes.editar'),
+                self.request.user.has_perm('permisos_sican.rh.formadores_soportes.eliminar'),
+            ])
+        return json_data

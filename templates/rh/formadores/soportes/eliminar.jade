@@ -1,12 +1,11 @@
-extends ../../inicio
+extends ../../../inicio
 block scroll_header_panel_title
-    span(class="title") ADMINISTRATIVOS
+    span(class="title") FORMADORES
 block help_content
     p(class="title-help") Descripción:
     p.
-        ATENCIÓN! Estas a punto de eliminar un soporte del funcionario {{object.administrativo.get_full_name}},
+        ATENCIÓN! Estas a punto de eliminar un soporte del formador {{object.administrativo.get_full_name}},
         si necesitas recuperarlo comunicate con el administrador del sistema de información SICAN.
-
 block head_content_inicio
     link(rel="import",href="{% static 'bower_components/paper-button/paper-button.html'%}")
     link(rel="import",href="{% static 'bower_components/file-upload-sican/file-upload-sican.html'%}")
@@ -19,11 +18,11 @@ block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
-    a(href="/rh/administrativos/",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Listado de administrativos
+    a(href="/rh/formadores/",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Listado de formadores
             iron-icon(icon="check",item-icon)
     a(href="../../",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Soportes de {{nombre_administrativo}}
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Soportes de {{nombre_formador}}
             iron-icon(icon="check",item-icon)
     paper-icon-item(class="breadcrum_active",disabled) Eliminar: {{object.tipo}}
         iron-icon(icon="check",item-icon)
@@ -34,8 +33,8 @@ block scroll_header_panel_content
                 form(action="",method="POST",enctype="multipart/form-data",id="form-Deletesoporte")
                     | {% csrf_token %}
                     p(class="title-delete-p") Estas a punto de eliminar el siguiente soporte:
-                    p(class="inline bold-p") Administrativo:
-                        p(class="inline") {{nombre_administrativo}}
+                    p(class="inline bold-p") Formador:
+                        p(class="inline") {{nombre_formador}}
                     p(class="inline bold-p") Fecha de creación:
                         p(class="inline") {{object.creacion}}
                     p(class="inline bold-p") Fecha de registro:

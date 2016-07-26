@@ -165,14 +165,14 @@
             </iron-collapse><a href="/proyectos/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Inicio
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
-              </paper-icon-item></a><a href="/rh/administrativos/" class="link_button">
-              <paper-icon-item class="breadcrumb-paper-icon-item-class">Listado de administrativos
+              </paper-icon-item></a><a href="/rh/formadores/" class="link_button">
+              <paper-icon-item class="breadcrumb-paper-icon-item-class">Listado de formadores
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
-              </paper-icon-item></a><a href="../" class="link_button">
-              <paper-icon-item class="breadcrumb-paper-icon-item-class">Soportes de {{nombre_administrativo}}
+              </paper-icon-item></a><a href="../../" class="link_button">
+              <paper-icon-item class="breadcrumb-paper-icon-item-class">Soportes de {{nombre_formador}}
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
               </paper-icon-item></a>
-            <paper-icon-item disabled="disabled" class="breadcrum_active">Nuevo
+            <paper-icon-item disabled="disabled" class="breadcrum_active">Eliminar: {{object.tipo}}
               <iron-icon icon="check" item-icon="item-icon"></iron-icon>
             </paper-icon-item>
           </div>
@@ -183,7 +183,7 @@
           <paper-icon-button id="navicon" icon="menu" paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
           <iron-icon src="{% static 'img/SICAN.svg'%}" class="icon-sican"></iron-icon>
           <!--paper-icon-button(icon="communication:email",id="inbox")-->
-          <!--paper-badge(for="inbox",label="0",hidden,id="badge_chat")--><span class="title">ADMINISTRATIVOS</span>
+          <!--paper-badge(for="inbox",label="0",hidden,id="badge_chat")--><span class="title">FORMADORES</span>
           <paper-icon-button icon="help" id="help_button"></paper-icon-button>
         </paper-toolbar>
         <iron-collapse id="help">
@@ -193,9 +193,8 @@
                 <div class="help_container">
                   <p class="title-help">Descripción:</p>
                   <p>
-                    Con el formulario que aparece en la parte inferior puedes agregar un nuevo integrante administrativo al sistema de información,
-                    los campos que tienen un asterisco (*) son obligatorios y deben contener un valor coherente en cada caso.
-                    
+                    ATENCIÓN! Estas a punto de eliminar un soporte del formador {{object.administrativo.get_full_name}},
+                    si necesitas recuperarlo comunicate con el administrador del sistema de información SICAN.
                   </p>
                 </div>
               </div>
@@ -205,11 +204,31 @@
         <div class="container-fluid container-index">
           <div class="row">
             <div class="col-sm-8 col-sm-offset-2">
-              <form action="" method="POST" enctype="multipart/form-data" id="form-soporte">
-                {% csrf_token %}
-                {% crispy form %}
+              <form action="" method="POST" enctype="multipart/form-data" id="form-Deletesoporte">{% csrf_token %}
+                <p class="title-delete-p">Estas a punto de eliminar el siguiente soporte:</p>
+                <p class="inline bold-p">Formador:
+                  <p class="inline">{{nombre_formador}}</p>
+                </p>
+                <p class="inline bold-p">Fecha de creación:
+                  <p class="inline">{{object.creacion}}</p>
+                </p>
+                <p class="inline bold-p">Fecha de registro:
+                  <p class="inline">{{object.fecha}}</p>
+                </p>
+                <p class="inline bold-p">Tipo de soporte:
+                  <p class="inline">{{object.tipo}}</p>
+                </p>
+                <p class="inline bold-p">Descripción del soporte:
+                  <p class="inline">{{object.descripcion}}</p>
+                </p>
+                <p class="inline bold-p">
+                  Archivo:
+                  {% if object.get_archivo_url != ""%}<a href="{{object.get_archivo_url}}" target="_blank"><img src="{% static 'img/file.png'%}" height="32"/></a>{% else %}
+                  <p class="inline">No hay ningun archivo cargado.</p>{% endif %}
+                </p>
                 <div class="text-right login-form-button">
-                  <paper-button id="submit_form" class="submit">Guardar</paper-button>
+                  <paper-button id="return" class="return">Cancelar</paper-button>
+                  <paper-button id="submit_form" class="delete">Eliminar</paper-button>
                 </div>
               </form>
             </div>
@@ -283,15 +302,11 @@
       });
     </script>
     <script>
-      var dateNow = new Date();
-      $('#id_fecha').datetimepicker({
-          locale: 'es',
-          format: 'DD/MM/YYYY',
-          defaultDate:dateNow
-      });
-      
       $('#submit_form').on('click', function () {
-          $('#form-soporte').submit();
+          $('#form-Deletesoporte').submit();
+      });
+      $('#return').on('click', function () {
+          window.history.back();
       });
     </script>
   </body>
