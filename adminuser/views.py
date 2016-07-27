@@ -33,7 +33,7 @@ class UpdateUserView(LoginRequiredMixin,
 
     def form_valid(self, form):
         form.save()
-        user = User.objects.get(email=form.data['email'])
+        user = User.objects.get(email=self.object.email)
         user.fullname = user.first_name + " " + user.last_name
         user.save()
         return HttpResponseRedirect('/adminuser/usuarios/')

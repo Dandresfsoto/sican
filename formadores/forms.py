@@ -101,7 +101,8 @@ class NuevoSoporteFormadorForm(forms.ModelForm):
                 ),
                 Div(
                     HTML("""
-                            <file-upload-sican style="margin-left:14px;" name="archivo">Archivo</file-upload-sican>
+                            <file-upload-sican style="margin-left:14px;" name="archivo" old_file="{{old_file}}"
+                            link_old_file="{{link_old_file}}">Archivo</file-upload-sican>
                         """),
                     css_class = 'row'
                 ),
