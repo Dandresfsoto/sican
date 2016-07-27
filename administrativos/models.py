@@ -39,6 +39,9 @@ class Administrativo(models.Model):
 
     oculto = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['nombre']
+
     def __unicode__(self):
         return self.nombres
 
@@ -59,6 +62,9 @@ class Soporte(models.Model):
     descripcion = models.TextField(max_length=1000,blank=True)
     oculto = models.BooleanField(default=False)
     archivo = models.FileField(upload_to='Administratios/Soportes/',blank=True)
+
+    class Meta:
+        ordering = ['administrativo']
 
     def __unicode__(self):
         return self.administrativo.get_full_name()

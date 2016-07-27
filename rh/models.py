@@ -8,5 +8,8 @@ class TipoSoporte(models.Model):
     descripcion = models.TextField(max_length=500,blank=True)
     oculto = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['nombre']
+
     def __unicode__(self):
         return self.nombre

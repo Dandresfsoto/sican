@@ -7,5 +7,8 @@ class Region(models.Model):
     nombre = models.CharField(max_length=100)
     numero = models.IntegerField()
 
+    class Meta:
+        ordering = ['nombre']
+
     def __unicode__(self):
         return self.nombre

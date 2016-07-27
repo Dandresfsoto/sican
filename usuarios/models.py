@@ -61,6 +61,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     photo = ContentTypeRestrictedFileField(upload_to='Usuarios/Foto',blank=True,null=True,content_types=['image/jpg', 'image/jpeg', 'image/png'],max_upload_size=10485760)
 
 
+    class Meta:
+        ordering = ['first_name']
+
     def get_full_name(self):
         return self.email
     def get_short_name(self):

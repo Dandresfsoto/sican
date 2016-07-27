@@ -10,6 +10,8 @@ class Cargo(models.Model):
     manual = models.FileField(upload_to="Manual Funciones",blank=True)
     oculto = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['nombre']
 
     def __unicode__(self):
         return self.nombre
