@@ -727,7 +727,7 @@ class RadicadosList(BaseDatatableView):
     9.permiso para eliminar
     """
     model = Secretaria
-    columns = ['id','numero','secretaria','secretaria','nombre_sede','dane_sede','tipo','ubicacion']
+    columns = ['id','numero','secretaria','municipio','nombre_sede','dane_sede','tipo','ubicacion']
 
     order_columns = ['id','numero','secretaria','municipio','nombre_sede','dane_sede','tipo','ubicacion']
     max_display_length = 10
@@ -750,7 +750,7 @@ class RadicadosList(BaseDatatableView):
                 item.id,
                 item.numero,
                 item.secretaria.nombre,
-                item.secretaria.municipio.nombre,
+                item.municipio.nombre,
                 item.nombre_sede,
                 item.dane_sede,
                 item.tipo,

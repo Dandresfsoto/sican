@@ -6,6 +6,7 @@ from secretarias.models import Secretaria
 # Create your models here.
 class Radicado(models.Model):
     secretaria = models.ForeignKey(Secretaria)
+    municipio = models.ForeignKey(Municipio)
     numero = models.BigIntegerField()
     nombre_sede = models.CharField(max_length=200)
     dane_sede = models.BigIntegerField()
