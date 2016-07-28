@@ -19,6 +19,8 @@ from formadores.models import Formador
 from formadores.models import Soporte as SoporteFormador
 from departamentos.models import Departamento
 from municipios.models import Municipio
+from secretarias.models import Secretaria
+from radicados.models import Radicado
 
 # Create your views here.
 
@@ -93,6 +95,12 @@ class UserPermissionList(APIView):
             },
             'municipios':{
                 'ver':{'name':'Municipios','link':'/bases/municipios/'}
+            },
+            'secretarias':{
+                'ver':{'name':'Secretarias de educación','link':'/bases/secretarias/'}
+            },
+            'radicados':{
+                'ver':{'name':'Radicados','link':'/bases/radicados/'}
             },
         }
 
@@ -653,11 +661,101 @@ class MunicipiosList(BaseDatatableView):
         for item in qs:
             json_data.append([
                 item.id,
-                item.departamento.nombre,
                 item.nombre,
+                item.departamento.nombre,
                 item.codigo_municipio,
                 item.codigo_auditoria,
                 self.request.user.has_perm('permisos_sican.bases.municipios.editar'),
                 self.request.user.has_perm('permisos_sican.bases.municipios.eliminar'),
+            ])
+        return json_data
+
+class SecretariasList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.departamento
+    3.tipo
+    4.direccion
+    5.web
+    6.permiso para editar
+    7.permiso para eliminar
+    """
+    model = Secretaria
+    columns = ['id','nombre','municipio','tipo','direccion','web']
+
+    order_columns = ['id','nombre','municipio','tipo','direccion','web']
+    max_display_length = 10
+
+    def get_initial_queryset(self):
+        return Secretaria.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(municipio__departamento__nombre__icontains=search) | Q(municipio__nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.municipio.departamento.nombre,
+                item.tipo,
+                item.direccion,
+                item.web,
+                self.request.user.has_perm('permisos_sican.bases.secretarias.editar'),
+                self.request.user.has_perm('permisos_sican.bases.secretarias.eliminar'),
+            ])
+        return json_data
+
+class RadicadosList(BaseDatatableView):
+    """
+    0.id
+    1.numero
+    2.secretaria
+    3.municipio
+    4.nombre_sede
+
+    5.dane_sede
+    6.tipo
+    7.ubicacion
+    8.permiso para editar
+    9.permiso para eliminar
+    """
+    model = Secretaria
+    columns = ['id','numero','secretaria','secretaria','nombre_sede','dane_sede','tipo','ubicacion']
+
+    order_columns = ['id','numero','secretaria','municipio','nombre_sede','dane_sede','tipo','ubicacion']
+    max_display_length = 10
+
+    def get_initial_queryset(self):
+        return Radicado.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(numero__icontains=search) | Q(secretaria__nombre__icontains=search) | \
+                Q(municipio__nombre__icontains=search) | Q(departamento__municipio__nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.numero,
+                item.secretaria.nombre,
+                item.secretaria.municipio.nombre,
+                item.nombre_sede,
+                item.dane_sede,
+                item.tipo,
+                item.ubicacion,
+                self.request.user.has_perm('permisos_sican.bases.radicados.editar'),
+                self.request.user.has_perm('permisos_sican.bases.radicados.eliminar'),
             ])
         return json_data

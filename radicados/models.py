@@ -2,16 +2,16 @@ from __future__ import unicode_literals
 
 from django.db import models
 from municipios.models import Municipio
-from secretarias.models import Secreatia
+from secretarias.models import Secretaria
 # Create your models here.
 class Radicado(models.Model):
-    municipio = models.ForeignKey(Municipio)
-    secretaria = models.ForeignKey(Secreatia)
+    secretaria = models.ForeignKey(Secretaria)
     numero = models.BigIntegerField()
     nombre_sede = models.CharField(max_length=200)
     dane_sede = models.BigIntegerField()
     tipo = models.IntegerField()
     ubicacion = models.IntegerField()
+    oculto = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['nombre_sede']

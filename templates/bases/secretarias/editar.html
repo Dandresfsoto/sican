@@ -165,8 +165,8 @@
             </iron-collapse><a href="/proyectos/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Inicio
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
-              </paper-icon-item></a><a href="/bases/municipios/" class="link_button">
-              <paper-icon-item class="breadcrumb-paper-icon-item-class">Lista de municipios
+              </paper-icon-item></a><a href="/bases/secretarias/" class="link_button">
+              <paper-icon-item class="breadcrumb-paper-icon-item-class">Lista de secretarías
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
               </paper-icon-item></a>
             <paper-icon-item disabled="disabled" class="breadcrum_active">Editar: {{object.nombre}}
@@ -180,7 +180,7 @@
           <paper-icon-button id="navicon" icon="menu" paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
           <iron-icon src="{% static 'img/SICAN.svg'%}" class="icon-sican"></iron-icon>
           <!--paper-icon-button(icon="communication:email",id="inbox")-->
-          <!--paper-badge(for="inbox",label="0",hidden,id="badge_chat")--><span class="title">MUNICIPIOS</span>
+          <!--paper-badge(for="inbox",label="0",hidden,id="badge_chat")--><span class="title">SECRETARÍAS</span>
           <paper-icon-button icon="help" id="help_button"></paper-icon-button>
         </paper-toolbar>
         <iron-collapse id="help">
@@ -190,7 +190,7 @@
                 <div class="help_container">
                   <p class="title-help">Descripción:</p>
                   <p>
-                    Con este formulario puedes editar el municipio "{{object.nombre}}" en el sistema de información SICAN,
+                    Con este formulario puedes editar la secretaría de educación "{{object.nombre}}" en el sistema de información SICAN,
                     la información inicial fue suministrada por el programa Computadores para Educar.
                     
                   </p>
