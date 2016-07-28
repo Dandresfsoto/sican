@@ -40,7 +40,7 @@ class Administrativo(models.Model):
     oculto = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['nombre']
+        ordering = ['nombres']
 
     def __unicode__(self):
         return self.nombres

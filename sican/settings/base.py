@@ -72,7 +72,12 @@ LOCAL_APPS = [
     'bancos',
     'adminuser',
     'permisos_sican',
-    'formadores'
+    'formadores',
+    'departamentos',
+    'municipios',
+    'secretarias',
+    'radicados',
+    'bases'
 ]
 
 THIRD_PARTY_APPS = [

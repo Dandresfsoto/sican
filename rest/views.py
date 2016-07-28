@@ -17,6 +17,8 @@ from rh.models import TipoSoporte
 from operator import itemgetter
 from formadores.models import Formador
 from formadores.models import Soporte as SoporteFormador
+from departamentos.models import Departamento
+from municipios.models import Municipio
 
 # Create your views here.
 
@@ -57,6 +59,11 @@ class UserPermissionList(APIView):
                   'id':'rh',
                   'links':[]
             },
+            'bases':{'name':'Bases de datos',
+                  'icon':'icons:dashboard',
+                  'id':'bases',
+                  'links':[]
+            },
         }
 
         links = {
@@ -80,6 +87,12 @@ class UserPermissionList(APIView):
             },
             'formadores':{
                 'ver':{'name':'Formadores','link':'/rh/formadores/'}
+            },
+            'departamentos':{
+                'ver':{'name':'Departamentos','link':'/bases/departamentos/'}
+            },
+            'municipios':{
+                'ver':{'name':'Municipios','link':'/bases/municipios/'}
             },
         }
 
@@ -568,5 +581,83 @@ class FormadoresRhSoportes(BaseDatatableView):
                 item.creacion,
                 self.request.user.has_perm('permisos_sican.rh.formadores_soportes.editar'),
                 self.request.user.has_perm('permisos_sican.rh.formadores_soportes.eliminar'),
+            ])
+        return json_data
+
+class DepartamentosList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.codigo_departamento
+    3.codigo_auditoria
+    4.permiso para editar
+    5.permiso para eliminar
+    """
+    model = Departamento
+    columns = ['id','nombre','codigo_departamento']
+
+    order_columns = ['id','nombre','codigo_departamento']
+    max_display_length = 10
+
+    def get_initial_queryset(self):
+        return Departamento.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombre__icontains=search) | Q(codigo_departamento__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.codigo_departamento,
+                item.codigo_auditoria,
+                self.request.user.has_perm('permisos_sican.bases.departamentos.editar'),
+                self.request.user.has_perm('permisos_sican.bases.departamentos.eliminar'),
+            ])
+        return json_data
+
+class MunicipiosList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.departamento
+    3.codigo_municipio
+    4.codigo_auditoria
+    5.permiso para editar
+    6.permiso para eliminar
+    """
+    model = Municipio
+    columns = ['id','nombre','departamento','codigo_municipio','codigo_auditoria']
+
+    order_columns = ['id','nombre','departamento','codigo_municipio','codigo_auditoria']
+    max_display_length = 10
+
+    def get_initial_queryset(self):
+        return Municipio.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(departamento__nombre__icontains=search) | Q(nombre__icontains=search) | Q(codigo_municipio__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.departamento.nombre,
+                item.nombre,
+                item.codigo_municipio,
+                item.codigo_auditoria,
+                self.request.user.has_perm('permisos_sican.bases.municipios.editar'),
+                self.request.user.has_perm('permisos_sican.bases.municipios.eliminar'),
             ])
         return json_data
