@@ -739,7 +739,7 @@ class RadicadosList(BaseDatatableView):
         search = self.request.GET.get(u'search[value]', None)
         if search:
             q = Q(numero__icontains=search) | Q(secretaria__nombre__icontains=search) | \
-                Q(municipio__nombre__icontains=search) | Q(departamento__municipio__nombre__icontains=search)
+                Q(municipio__nombre__icontains=search) | Q(municipio__departamento__nombre__icontains=search)
             qs = qs.filter(q)
         return qs
 
