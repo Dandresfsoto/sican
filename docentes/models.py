@@ -25,3 +25,17 @@ class DocentesMinEducacion(models.Model):
 
     def __unicode__(self):
         return ("%s %s %s %s") % (self.primer_nombre,self.segundo_nombre,self.primer_apellido, self.segundo_apellido)
+
+class DocentesDocentic(models.Model):
+    cedula = models.BigIntegerField(unique=True)
+    nombres = models.CharField(max_length=100)
+    apellidos = models.CharField(max_length=100)
+    region = models.CharField(max_length=100)
+    formador = models.CharField(max_length=100)
+    cedula_formador = models.BigIntegerField()
+
+    class Meta:
+        ordering = ['nombres']
+
+    def __unicode__(self):
+        return self.cedula
