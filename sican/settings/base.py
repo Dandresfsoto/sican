@@ -77,7 +77,8 @@ LOCAL_APPS = [
     'municipios',
     'secretarias',
     'radicados',
-    'bases'
+    'bases',
+    'docentes'
 ]
 
 THIRD_PARTY_APPS = [
