@@ -10,7 +10,7 @@ from preinscripcion.models import DocentesPreinscritos
 class ConsultaView(FormView):
     template_name = 'preinscripcion/consulta.html'
     form_class = Consulta
-    success_url = '/preinscripcion/'
+    success_url = '/preinscripcion/completo/'
 
     def form_valid(self, form):
         cedula = form.cleaned_data['cedula']
@@ -25,7 +25,7 @@ class ConsultaView(FormView):
             redirect = '/preinscripcion/preregistro/'+str(cedula)
 
         elif docentic.count() == 1 and preinscritos.count() == 0 and mineducacion.count() == 0:
-            redirect = '/diploma/'+str(cedula)
+            redirect = '/preinscripcion/diploma/'+str(cedula)
 
         elif preinscritos.count() == 1:
             redirect = '/preinscripcion/modificar/'+str(cedula)
@@ -36,19 +36,25 @@ class RegistroView(CreateView):
     model = DocentesPreinscritos
     template_name = 'preinscripcion/registro.html'
     form_class = Registro
-    success_url = '/preinscripcion/'
+    success_url = '/preinscripcion/completo/'
+
+    def get_initial(self):
+        return {'cedula':self.kwargs['cedula']}
 
 class PreregistroView(CreateView):
     model = DocentesPreinscritos
     template_name = 'preinscripcion/registro.html'
     form_class = PregistroForm
-    success_url = '/preinscripcion/'
+    success_url = '/preinscripcion/completo/'
+
+    def get_initial(self):
+        return {'cedula':self.kwargs['cedula']}
 
 class UpdateRegistroView(UpdateView):
     model = DocentesPreinscritos
     template_name = 'preinscripcion/update.html'
     form_class = UpdateRegistroForm
-    success_url = '/preinscripcion/'
+    success_url = '/preinscripcion/completo/'
 
     def get_object(self, queryset=None):
         return self.model.objects.get(cedula=self.kwargs['cedula'])

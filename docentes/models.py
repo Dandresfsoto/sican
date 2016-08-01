@@ -13,9 +13,9 @@ class DocentesMinEducacion(models.Model):
     primer_nombre = models.CharField(max_length=100)
     segundo_nombre = models.CharField(max_length=100,blank=True)
     cargo = models.CharField(max_length=100)
-    correo = models.EmailField(max_length=100,blank=True)
-    telefono_fijo = models.BigIntegerField(blank=True)
-    telefono_celular = models.BigIntegerField(blank=True)
+    correo = models.EmailField(max_length=100,blank=True,null=True)
+    telefono_fijo = models.BigIntegerField(blank=True,null=True)
+    telefono_celular = models.BigIntegerField(blank=True,null=True)
     departamento = models.ForeignKey(Departamento,blank=True,null=True)
     municipio = models.ForeignKey(Municipio,blank=True,null=True)
     radicado = models.ForeignKey(Radicado,blank=True,null=True)
@@ -38,4 +38,4 @@ class DocentesDocentic(models.Model):
         ordering = ['nombres']
 
     def __unicode__(self):
-        return self.cedula
+        return str(self.cedula)

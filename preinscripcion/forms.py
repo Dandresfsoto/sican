@@ -7,6 +7,7 @@ from crispy_forms.layout import Layout, Div, Fieldset, HTML
 from preinscripcion.models import DocentesPreinscritos
 from municipios.models import Municipio
 from radicados.models import Radicado
+from docentes.models import DocentesMinEducacion
 
 class Consulta(forms.Form):
 
@@ -33,6 +34,14 @@ class Registro(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(Registro, self).__init__(*args, **kwargs)
+        docente = DocentesMinEducacion.objects.get(cedula=kwargs['initial']['cedula'])
+
+        self.fields['primer_apellido'].initial = docente.primer_apellido
+        self.fields['segundo_apellido'].initial = docente.segundo_apellido
+        self.fields['primer_nombre'].initial = docente.primer_nombre
+        self.fields['segundo_nombre'].initial = docente.segundo_nombre
+        self.fields['cedula'].initial = docente.cedula
+        self.fields['cargo'].initial = docente.cargo
 
         if 'data' not in kwargs:
             self.fields['municipio'].widget.choices = (('','---------'),)
@@ -107,13 +116,15 @@ class Registro(forms.ModelForm):
         model = DocentesPreinscritos
         fields = '__all__'
         widgets = {
-            'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo docente','Directivo docente')))
+            'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo docente','Directivo Docente')))
         }
 
 class PregistroForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PregistroForm, self).__init__(*args, **kwargs)
+
+        self.fields['cedula'].initial = kwargs['initial']['cedula']
 
         if 'data' not in kwargs:
             self.fields['municipio'].widget.choices = (('','---------'),)
@@ -190,7 +201,7 @@ class PregistroForm(forms.ModelForm):
         model = DocentesPreinscritos
         fields = '__all__'
         widgets = {
-            'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo docente','Directivo docente')))
+            'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo docente','Directivo Docente')))
         }
 
 class UpdateRegistroForm(forms.ModelForm):
