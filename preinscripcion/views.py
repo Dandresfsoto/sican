@@ -26,7 +26,7 @@ class ConsultaView(FormView):
         elif docentic.count() == 0 and preinscritos.count() == 0 and mineducacion.count() == 0:
             redirect = '/preinscripcion/preregistro/'+str(cedula)
 
-        elif docentic.count() == 1 and preinscritos.count() == 0 and mineducacion.count() == 0:
+        elif docentic.count() == 1:
             redirect = '/preinscripcion/diploma/'+str(cedula)
 
         elif preinscritos.count() == 1:

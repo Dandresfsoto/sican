@@ -116,7 +116,7 @@ class Registro(forms.ModelForm):
         model = DocentesPreinscritos
         fields = '__all__'
         widgets = {
-            'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo docente','Directivo Docente')))
+            'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo Docente','Directivo Docente')))
         }
 
 class PregistroForm(forms.ModelForm):
@@ -201,7 +201,7 @@ class PregistroForm(forms.ModelForm):
         model = DocentesPreinscritos
         fields = '__all__'
         widgets = {
-            'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo docente','Directivo Docente')))
+            'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo Docente','Directivo Docente')))
         }
 
 class UpdateRegistroForm(forms.ModelForm):
