@@ -4,7 +4,8 @@ body {
 fieldset {
   border: none;
 }
-h2 {
+h2,
+h3 {
   color: #fff;
   margin: 20px;
 }

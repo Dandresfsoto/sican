@@ -13,12 +13,13 @@ class DocentesPreinscritos(models.Model):
     primer_nombre = models.CharField(max_length=100)
     segundo_nombre = models.CharField(max_length=100,blank=True)
     cargo = models.CharField(max_length=100)
-    correo = models.EmailField(max_length=100,blank=True)
-    telefono_fijo = models.BigIntegerField(blank=True)
-    telefono_celular = models.BigIntegerField(blank=True)
+    correo = models.EmailField(max_length=100,blank=True,null=True)
+    telefono_fijo = models.BigIntegerField(blank=True,null=True)
+    telefono_celular = models.BigIntegerField(blank=True,null=True)
     departamento = models.ForeignKey(Departamento)
     municipio = models.ForeignKey(Municipio)
     radicado = models.ForeignKey(Radicado)
+    verificado = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['primer_apellido']

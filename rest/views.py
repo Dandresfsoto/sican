@@ -30,6 +30,8 @@ class MunicipiosChainedList(APIView):
     """
     def get(self, request, format=None):
         id_departamento = request._request.GET['departamento']
+        if id_departamento == '':
+            id_departamento = 0
         municipios = Municipio.objects.filter(departamento__id=id_departamento).values_list('id','nombre')
 
         response = {}
@@ -44,7 +46,12 @@ class RadicadosChainedList(APIView):
 
     """
     def get(self, request, format=None):
-        id_municipio = request._request.GET['municipio']
+        try:
+            id_municipio = request._request.GET['municipio']
+        except:
+            id_municipio = 0
+        if id_municipio == '':
+            id_municipio = 0
         radicados = Radicado.objects.filter(municipio__id=id_municipio).values_list('id','nombre_sede')
 
         response = {}
