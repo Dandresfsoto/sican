@@ -49,7 +49,7 @@ class Registro(forms.ModelForm):
             if id_municipio == '':
                 id_municipio = 0
             self.fields['radicado'].widget.choices = Radicado.objects.filter(municipio__id=id_municipio).values_list('id','nombre_sede')
-
+            self.fields['verificado'].initial = True
 
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
@@ -118,7 +118,7 @@ class PregistroForm(forms.ModelForm):
         if 'data' not in kwargs:
             self.fields['municipio'].widget.choices = (('','---------'),)
             self.fields['radicado'].widget.choices = (('','---------'),)
-            self.fields['verificado'].initial = True
+            self.fields['verificado'].initial = False
 
         else:
             id_departamento = kwargs['data']['departamento']
@@ -130,7 +130,7 @@ class PregistroForm(forms.ModelForm):
             if id_municipio == '':
                 id_municipio = 0
             self.fields['radicado'].widget.choices = Radicado.objects.filter(municipio__id=id_municipio).values_list('id','nombre_sede')
-
+            self.fields['verificado'].initial = False
 
         self.helper = FormHelper(self)
         self.helper.layout = Layout(

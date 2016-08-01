@@ -38,13 +38,11 @@ class RegistroView(CreateView):
     form_class = Registro
     success_url = '/preinscripcion/'
 
-
 class PreregistroView(CreateView):
     model = DocentesPreinscritos
     template_name = 'preinscripcion/registro.html'
     form_class = PregistroForm
     success_url = '/preinscripcion/'
-
 
 class UpdateRegistroView(UpdateView):
     model = DocentesPreinscritos
@@ -63,7 +61,6 @@ class DiplomaView(TemplateView):
         kwargs['nombre_docente'] = docente.nombres + " " + docente.apellidos
         kwargs['cedula_docente'] = docente.cedula
         return super(DiplomaView, self).get_context_data(**kwargs)
-
 
 class Completo(TemplateView):
     template_name = 'preinscripcion/completo.html'
