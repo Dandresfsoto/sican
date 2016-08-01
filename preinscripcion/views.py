@@ -18,6 +18,8 @@ class ConsultaView(FormView):
         mineducacion = DocentesMinEducacion.objects.filter(cedula=cedula)
         preinscritos = DocentesPreinscritos.objects.filter(cedula=cedula)
 
+        redirect = '/preinscripcion/'
+
         if docentic.count() == 0 and preinscritos.count() == 0 and mineducacion.count() == 1:
             redirect = '/preinscripcion/registro/'+str(cedula)
 
