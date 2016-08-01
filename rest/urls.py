@@ -3,6 +3,7 @@ from rest.views import UserList, UserChatList, UserDetail, UserPermissionList, A
 from rest.views import AdministrativosRhSoportes, AdminUserList, GroupUserList, AdminUserPermissionList, TipoSoporteRh
 from rest.views import FormadoresRh, FormadoresRhSoportes
 from rest.views import DepartamentosList, MunicipiosList, SecretariasList, RadicadosList
+from rest.views import MunicipiosChainedList, RadicadosChainedList
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -29,4 +30,6 @@ urlpatterns = [
     url(r'bases/municipios/$', MunicipiosList.as_view()),
     url(r'bases/secretarias/$', SecretariasList.as_view()),
     url(r'bases/radicados/$', RadicadosList.as_view()),
+    url(r'chained/municipios/$', MunicipiosChainedList.as_view()),
+    url(r'chained/radicados/$', RadicadosChainedList.as_view()),
 ]

@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^adminuser-sican/', admin.site.urls),
+    url(r'^chaining/', include('smart_selects.urls')),
     url(r'^$', Login.as_view(),name='login'),
     url(r'^logout/', Logout.as_view()),
     url(r'^recovery/$', Recovery.as_view()),
@@ -33,6 +34,7 @@ urlpatterns = [
     url(r'^rh/', include('rh.urls', namespace='rh')),
     url(r'^adminuser/', include('adminuser.urls', namespace='adminuser')),
     url(r'^bases/', include('bases.urls', namespace='bases')),
+    url(r'^preinscripcion/', include('preinscripcion.urls', namespace='preinscripcion')),
 ]
 
 if settings.DEBUG:

@@ -24,6 +24,36 @@ from radicados.models import Radicado
 
 # Create your views here.
 
+class MunicipiosChainedList(APIView):
+    """
+
+    """
+    def get(self, request, format=None):
+        id_departamento = request._request.GET['departamento']
+        municipios = Municipio.objects.filter(departamento__id=id_departamento).values_list('id','nombre')
+
+        response = {}
+
+        for municipio in municipios:
+            response[municipio[0]] = municipio[1]
+
+        return Response(response)
+
+class RadicadosChainedList(APIView):
+    """
+
+    """
+    def get(self, request, format=None):
+        id_municipio = request._request.GET['municipio']
+        radicados = Radicado.objects.filter(municipio__id=id_municipio).values_list('id','nombre_sede')
+
+        response = {}
+
+        for radicado in radicados:
+            response[radicado[0]] = radicado[1]
+
+        return Response(response)
+
 class UserList(APIView):
     """
     Retorna la informacion de los usuarios excluyendo al que realiza el request.

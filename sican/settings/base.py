@@ -78,7 +78,8 @@ LOCAL_APPS = [
     'secretarias',
     'radicados',
     'bases',
-    'docentes'
+    'docentes',
+    'preinscripcion'
 ]
 
 THIRD_PARTY_APPS = [
@@ -87,7 +88,8 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'channels',
     'guardian',
-    'crispy_forms'
+    'crispy_forms',
+    'smart_selects'
 ]
 
 
