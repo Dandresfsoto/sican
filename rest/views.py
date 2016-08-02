@@ -21,6 +21,7 @@ from departamentos.models import Departamento
 from municipios.models import Municipio
 from secretarias.models import Secretaria
 from radicados.models import Radicado
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
 
@@ -28,6 +29,9 @@ class MunicipiosChainedList(APIView):
     """
 
     """
+
+    permission_classes = (AllowAny,)
+
     def get(self, request, format=None):
         id_departamento = request._request.GET['departamento']
         if id_departamento == '':
@@ -45,6 +49,7 @@ class RadicadosChainedList(APIView):
     """
 
     """
+    permission_classes = (AllowAny,)
     def get(self, request, format=None):
         try:
             id_municipio = request._request.GET['municipio']
