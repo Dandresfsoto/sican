@@ -20,6 +20,7 @@ class DocentesPreinscritos(models.Model):
     municipio = models.ForeignKey(Municipio)
     radicado = models.ForeignKey(Radicado)
     verificado = models.BooleanField(default=False)
+    fecha = models.DateField(auto_now=True)
 
     class Meta:
         ordering = ['primer_apellido']
