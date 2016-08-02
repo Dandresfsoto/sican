@@ -23,7 +23,7 @@ class Consulta(forms.Form):
                     css_class = 'row'
                 ),
                 HTML("""
-                <button type="submit" class="btn btn-primary">Consultar</button>
+                <button type="submit" class="btn btn-cpe">Consultar</button>
                 """)
             ),
         )
@@ -42,11 +42,12 @@ class Registro(forms.ModelForm):
         self.fields['segundo_nombre'].initial = docente.segundo_nombre
         self.fields['cedula'].initial = docente.cedula
         self.fields['cargo'].initial = docente.cargo
+        self.fields['verificado'].initial = True
 
         if 'data' not in kwargs:
             self.fields['municipio'].widget.choices = (('','---------'),)
             self.fields['radicado'].widget.choices = (('','---------'),)
-            self.fields['verificado'].initial = True
+
 
         else:
             id_departamento = kwargs['data']['departamento']
@@ -58,7 +59,6 @@ class Registro(forms.ModelForm):
             if id_municipio == '':
                 id_municipio = 0
             self.fields['radicado'].widget.choices = Radicado.objects.filter(municipio__id=id_municipio).values_list('id','nombre_sede')
-            self.fields['verificado'].initial = True
 
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
@@ -66,7 +66,7 @@ class Registro(forms.ModelForm):
                 '',
 
                 HTML("""
-                <p style="color:white;">Porfavor actualice sus datos personales en el siguiente formulario:</p>
+                <p style="color:white;">Porfavor actualiza tus datos personales en el siguiente formulario:</p>
                 <br>
                 """),
 
@@ -105,9 +105,14 @@ class Registro(forms.ModelForm):
                     css_class = 'row'
                 ),
 
+                Div(
+                    Div('verificado',css_class='col-sm-3 col-sm-offset-2'),
+                    css_class = 'hidden'
+                ),
+
 
                 HTML("""
-                <button type="submit" class="btn btn-primary">Preinscribirme</button>
+                <div class="row"><button type="submit" class="btn btn-cpe">Preinscribirme</button></div>
                 """)
             ),
         )
@@ -125,11 +130,11 @@ class PregistroForm(forms.ModelForm):
         super(PregistroForm, self).__init__(*args, **kwargs)
 
         self.fields['cedula'].initial = kwargs['initial']['cedula']
+        self.fields['verificado'].initial = False
 
         if 'data' not in kwargs:
             self.fields['municipio'].widget.choices = (('','---------'),)
             self.fields['radicado'].widget.choices = (('','---------'),)
-            self.fields['verificado'].initial = False
 
         else:
             id_departamento = kwargs['data']['departamento']
@@ -141,7 +146,6 @@ class PregistroForm(forms.ModelForm):
             if id_municipio == '':
                 id_municipio = 0
             self.fields['radicado'].widget.choices = Radicado.objects.filter(municipio__id=id_municipio).values_list('id','nombre_sede')
-            self.fields['verificado'].initial = False
 
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
@@ -190,9 +194,14 @@ class PregistroForm(forms.ModelForm):
                     css_class = 'row'
                 ),
 
+                Div(
+                    Div('verificado',css_class='col-sm-3 col-sm-offset-2'),
+                    css_class = 'hidden'
+                ),
+
 
                 HTML("""
-                <button type="submit" class="btn btn-primary">Preinscribirme</button>
+                <div class="row"><button type="submit" class="btn btn-cpe">Preinscribirme</button></div>
                 """)
             ),
         )
@@ -224,7 +233,7 @@ class UpdateRegistroForm(forms.ModelForm):
                 '',
 
                 HTML("""
-                <p style="color:white;">Si lo requiere actualice sus datos personales en el siguiente formulario:</p>
+                <p style="color:white;">Si lo requieres actualiza tus datos personales en el siguiente formulario:</p>
                 <br>
                 """),
 
@@ -265,7 +274,7 @@ class UpdateRegistroForm(forms.ModelForm):
 
 
                 HTML("""
-                <button type="submit" class="btn btn-primary">Actualizar</button>
+                <button type="submit" class="btn btn-cpe">Actualizar</button>
                 """)
             ),
         )

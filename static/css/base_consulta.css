@@ -11,7 +11,7 @@ h3 {
 }
 .container-fluid {
   margin-top: 20px;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 }
 label {
   color: #fff;
@@ -27,4 +27,16 @@ label {
 .has-error.radio label,
 .has-error.radio-inline label {
   color: #df4113;
+}
+.btn-cpe,
+.btn-cpe:active,
+.btn-cpe:visited {
+  margin-top: 20px;
+  background-color: #df4113;
+  color: #fff;
+}
+.btn-cpe:hover {
+  margin-top: 20px;
+  background-color: #da4f1f;
+  color: #fff;
 }
