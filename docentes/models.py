@@ -33,6 +33,8 @@ class DocentesDocentic(models.Model):
     region = models.CharField(max_length=100)
     formador = models.CharField(max_length=100)
     cedula_formador = models.BigIntegerField()
+    directivo = models.BooleanField(default=False)
+    informatica = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['nombres']

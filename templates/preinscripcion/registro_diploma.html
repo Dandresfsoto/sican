@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <title>REGISTRO COMPLETO</title>
+    <title>REGISTRO</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"/>
     <meta property="og:type" content="article"/>
@@ -28,8 +28,20 @@
       <div class="row">
         <div class="col-md-12 text-center"><img src="{% static 'img/logocpe.png'%}"/>
           <h2 class="title-white">Participa en la oferta TIC de formación de Computadores para Educar</h2>
-          <h3>Preinscripción completa, pronto nos comunicaremos contigo.</h3><a href="http://www.computadoresparaeducar.gov.co/">
-            <button class="btn btn-cpe">Visita la pagina de Computadores para Educar</button></a>
+          <p style="color:white;">
+            Apreciado docente, fuiste formado durante la vigencia 2015 en el
+            diplomado DocenTIC.
+          </p>
+          <p style="color:white;">Nombre: {{nombre_docente}}</p>
+          <p style="color:white;">Cedula: {{cedula_docente}}</p><a href="http://cpe.utp.edu.co/" target="_blank">
+            <button class="btn btn-cpe">Descarga tu certificado</button></a>
+          <h3 class="title-white">Este año tenemos una nueva oferta con TecnoTIC y DirecTIC.</h3>
+          <div class="text-center">
+            <form action="" method="POST" enctype="multipart/form-data" id="form-administrador">
+              {% csrf_token %}
+              {% crispy form %}
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -53,5 +65,17 @@
     <script src="{% static 'bower_components/bootstrap-select/dist/js/i18n/defaults-es_CL.min.js'%}"></script>
     <script src="{% static 'bower_components/chained/jquery.chained.min.js'%}"></script>
     <script src="{% static 'bower_components/chained/jquery.chained.remote.min.js'%}"></script>
+    <script>
+      $(document).ready(function () {
+          $("#id_municipio").remoteChained({
+              parents: "#id_departamento",
+              url: "/rest/chained/municipios/"
+          });
+          $("#id_radicado").remoteChained({
+              parents: "#id_municipio",
+              url: "/rest/chained/radicados/"
+          });
+      });
+    </script>
   </body>
 </html>

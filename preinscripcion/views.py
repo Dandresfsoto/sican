@@ -27,7 +27,10 @@ class ConsultaView(FormView):
             redirect = '/preinscripcion/preregistro/'+str(cedula)
 
         elif docentic.count() == 1:
-            redirect = '/preinscripcion/diploma/'+str(cedula)
+            if docentic[0].informatica or docentic[0].directivo:
+                redirect = '/preinscripcion/diploma_reingreso/'+str(cedula)
+            else:
+                redirect = '/preinscripcion/diploma/'+str(cedula)
 
         elif preinscritos.count() == 1:
             redirect = '/preinscripcion/modificar/'+str(cedula)
@@ -72,3 +75,18 @@ class DiplomaView(TemplateView):
 
 class Completo(TemplateView):
     template_name = 'preinscripcion/completo.html'
+
+class DiplomaReingresoView(CreateView):
+    model = DocentesPreinscritos
+    template_name = 'preinscripcion/registro_diploma.html'
+    form_class = Registro
+    success_url = '/preinscripcion/completo/'
+
+    def get_initial(self):
+        return {'cedula':self.kwargs['cedula']}
+
+    def get_context_data(self, **kwargs):
+        docente = DocentesDocentic.objects.get(cedula=self.kwargs['cedula'])
+        kwargs['nombre_docente'] = docente.nombres + " " + docente.apellidos
+        kwargs['cedula_docente'] = docente.cedula
+        return super(DiplomaReingresoView, self).get_context_data(**kwargs)
