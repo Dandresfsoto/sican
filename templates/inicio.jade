@@ -184,6 +184,8 @@ block body_content
                         div(class="col-md-12")
                             div(class="help_container")
                                 block help_content
+            div(class="container-fluid")
+                div(class="realtime")
             block scroll_header_panel_content
             div(style="margin-top:25px;")
             input(type="hidden",value="{{mensaje}}",id="input_mensaje")
@@ -233,7 +235,7 @@ block body_script
 
 
         $('#inbox').on("click",function(event){
-            window.location.replace(window.location.origin+"/chat/");
+            window.location.replace(window.location.origin+"/realtime/");
         });
 
 

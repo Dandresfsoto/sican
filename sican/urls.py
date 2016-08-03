@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^recovery/confirmation/$', Confirmation.as_view()),
     url(r'^proyectos/', Proyectos.as_view()),
     url(r'^usuario/', include('usuarios.urls', namespace='usuarios')),
-    url(r'^chat/', include('inbox.urls', namespace='inbox')),
+    url(r'^realtime/', include('inbox.urls', namespace='inbox')),
     url(r'^rest/', include('rest.urls', namespace='rest')),
     url(r'^rh/', include('rh.urls', namespace='rh')),
     url(r'^adminuser/', include('adminuser.urls', namespace='adminuser')),

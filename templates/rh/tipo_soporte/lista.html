@@ -199,6 +199,9 @@
             </div>
           </div>
         </iron-collapse>
+        <div class="container-fluid">
+          <div class="realtime"></div>
+        </div>
         <div class="container-fluid container-index">{% if nuevo_permiso %}<a href="nuevo" class="link_button">
             <paper-button class="submit">Nuevo</paper-button></a>{% endif %}
           <table id="table" width="100%" class="display responsive no-wrap table table-striped table-bordered">
@@ -277,7 +280,7 @@
       
       
       $('#inbox').on("click",function(event){
-          window.location.replace(window.location.origin+"/chat/");
+          window.location.replace(window.location.origin+"/realtime/");
       });
       
       

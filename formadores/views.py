@@ -32,6 +32,24 @@ class VinculosView(TemplateView):
         kwargs['formador'] = formador.nombres + " " + formador.apellidos
         kwargs['tipo'] = formador.cargo.nombre
         kwargs['link_contrato'] = link
+
+        dic = {
+            '1':{
+                'Formador Tipo 1':'Diplomados R1.pdf',
+                'Formador Tipo 2':'Diplomados R1.pdf',
+                'Formador Tipo 3':'Diplomados R1.pdf',
+                'Formador Tipo 4':'Escuela Tic R1.pdf',
+            },
+            '2':{
+                'Formador Tipo 1':'Diplomados R2.pdf',
+                'Formador Tipo 2':'Diplomados R2.pdf',
+                'Formador Tipo 3':'Diplomados R2.pdf',
+                'Formador Tipo 4':'Escuela Tic R2.pdf',
+            },
+        }
+
+        kwargs['carta'] = '/static/documentos/'+dic[str(formador.region.all()[0].numero)][formador.cargo.nombre]
+
         return super(VinculosView,self).get_context_data(**kwargs)
 
 class LegalizacionView(UpdateView):

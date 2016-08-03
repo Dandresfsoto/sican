@@ -223,6 +223,9 @@
             </div>
           </div>
         </iron-collapse>
+        <div class="container-fluid">
+          <div class="realtime"></div>
+        </div>
         <paper-drawer-panel id="drawerPanelChat" force-narrow="true" drawer-width="320px">
           <paper-header-panel mode="scroll" id="cuenta" drawer="drawer" fixed="fixed">
             <paper-toolbar class="conctat_toolbar">
@@ -291,7 +294,7 @@
       
       
       $('#inbox').on("click",function(event){
-          window.location.replace(window.location.origin+"/chat/");
+          window.location.replace(window.location.origin+"/realtime/");
       });
       
       

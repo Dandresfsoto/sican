@@ -1,5 +1,5 @@
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var socket = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/chat/");
+    var socket = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/realtime/");
 
     socket.onmessage = function(message) {
         var contact_selected = document.getElementById("contact_selected");
@@ -7,7 +7,7 @@
 
 
         var data = JSON.parse(message.data);
-        if(data.hasOwnProperty('conected') && window.location.pathname == '/chat/'){
+        if(data.hasOwnProperty('conected') && window.location.pathname == '/realtime/'){
             for(i=0;i<data.conected.length;i++){
                 var contacto_list = document.getElementById("conected_list_"+data.conected[i].id);
                 var contacto_container = document.getElementById("conected_container_"+data.conected[i].id);
@@ -27,7 +27,7 @@
         }
 
 
-        if(data.hasOwnProperty('mensaje') && window.location.pathname == '/chat/'){
+        if(data.hasOwnProperty('mensaje') && window.location.pathname == '/realtime/'){
             if(data.mensaje.de == user_id.value.toString()){
                 if(data.mensaje.para == contact_selected.value.toString()){
                     $('#chat-list').prepend("<div class='me style-scope chat-container-sican'><div class='bubble style-scope chat-container-sican'><p class='me_p style-scope chat-container-sican'>"+ data.mensaje.mensaje +"</p></div></div>");

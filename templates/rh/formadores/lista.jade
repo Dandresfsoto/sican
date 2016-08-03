@@ -22,6 +22,19 @@ block breadcrum
     paper-icon-item(class="breadcrum_active",disabled) Listado de formadores
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
+    div(class="modal fade",id="myModal",tabindex="-1",role="dialog")
+        div(class="modal-dialog",role="document")
+            div(class="modal-content")
+                div(class="modal-header")
+                    button(type="button",class="close",data-dismiss="modal",aria-label="Close")
+                        span(aria-hidden="true") &times;
+                    h4(class="modal-title")
+                div(class="modal-body")
+                    div(class="progress")
+                        div(class="progress-bar",role="progressbar",
+                        aria-valuenow="60",aria-valuemin="0",aria-valuemax="100",style="width: 60%;") 60%
+                div(class="modal-footer")
+
     div(class="container-fluid container-index")
         div(class="header-buttons")
             | {% if nuevo_permiso %}
@@ -31,10 +44,10 @@ block scroll_header_panel_content
             | {% endif %}
             | {% if masivo_permiso %}
             div
-                select(class="selectpicker")
+                select(class="selectpicker",id="select_accion")
                     option(value="") ---------
-                    option(value="1") Enviar al email registrado la copia del contrato
-                button(class="btn") Ir
+                    option(value="/acciones/rh/reporte_soportes/") Enviar al email registrado la copia del contrato
+                button(class="btn",id="accion") Ir
             | {% endif %}
 
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
@@ -59,6 +72,12 @@ block scroll_header_panel_content
                     td Seleccion
 
 block body_script_content
+    script.
+        $("#accion").on("click",function(){
+            if($("#select_accion").val() != ''){
+                $('#myModal').modal('show');
+            }
+        });
     script.
         $("#check_all").on("change",function(){
             var checks = $(".check_seleccion");

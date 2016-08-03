@@ -192,6 +192,9 @@
             </div>
           </div>
         </iron-collapse>
+        <div class="container-fluid">
+          <div class="realtime"></div>
+        </div>
         <div class="container-fluid container-index">
           <permissions-sican url="/rest/usuarios/permisos/"></permissions-sican>
         </div>
@@ -252,7 +255,7 @@
       
       
       $('#inbox').on("click",function(event){
-          window.location.replace(window.location.origin+"/chat/");
+          window.location.replace(window.location.origin+"/realtime/");
       });
       
       
