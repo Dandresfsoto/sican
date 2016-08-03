@@ -48,6 +48,20 @@ class LegalizacionView(UpdateView):
             'seguridad_social':8
         }
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        for key, value in self.dic.iteritems():
+            try:
+                Soporte.objects.filter(formador=self.object, oculto=False).get(tipo__id=value)
+            except:
+                nuevo = Soporte(formador=self.object,fecha=datetime.datetime.now(),tipo=TipoSoporte.objects.get(id=value))
+                nuevo.save()
+            else:
+                pass
+        return self.render_to_response(self.get_context_data())
+
+
+
     def get_object(self, queryset=None):
         return Formador.objects.get(cedula=self.kwargs['cedula'])
 
