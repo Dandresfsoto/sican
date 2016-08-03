@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^adminuser/', include('adminuser.urls', namespace='adminuser')),
     url(r'^bases/', include('bases.urls', namespace='bases')),
     url(r'^preinscripcion/', include('preinscripcion.urls', namespace='preinscripcion')),
+    url(r'^formadores/', include('formadores.urls', namespace='formadores')),
 ]
 
 if settings.DEBUG:

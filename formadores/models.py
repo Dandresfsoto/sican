@@ -65,7 +65,7 @@ class Soporte(models.Model):
         ordering = ['formador']
 
     def __unicode__(self):
-        return self.administrativo.get_full_name()
+        return str(self.formador.cedula)
 
     def get_archivo_url(self):
         try:

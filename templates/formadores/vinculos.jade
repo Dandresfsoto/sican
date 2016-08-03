@@ -1,0 +1,23 @@
+extends base
+block title
+    | FORMADORES
+block body_content
+    div(class="container-fluid margin-top-container-two")
+        div(class="row margin-logo")
+            div(class="col-sm-4 col-sm-offset-4")
+                img(src="{% static 'img/SICAN.svg'%}",class="img-responsive")
+        div(class="row")
+            div(class="col-sm-8 col-sm-offset-2 text-center")
+                p.
+                    Apreciado formador, este espacio esta destinado a compartir información con el sistema de información
+                    SICAN.
+                h3(style="margin-bottom:30px;") {{formador}} - {{tipo}}
+                div(class="row")
+                    div(class="col-md-4 col-md-offset-4 text-center")
+                        div(class="list-group")
+                            |{% if link_contrato == "#" %}
+                            a(href="{{link_contrato}}",class="list-group-item disabled") Descargar contrato
+                            |{% else %}
+                            a(href="{{link_contrato}}",class="list-group-item",target="_blank") Descargar contrato
+                            |{% endif %}
+                            a(href="legalizacion",class="list-group-item") Legalización de documentos

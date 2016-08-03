@@ -165,10 +165,10 @@
                   <paper-icon-item class="icon-hover">
                     <iron-icon icon="icons:power-settings-new" item-icon="item-icon"></iron-icon>Cerrar sesión
                   </paper-icon-item></a></div>
-            </iron-collapse>{% if nuevo_permiso %}<a href="/proyectos/" class="link_button">
+            </iron-collapse><a href="/proyectos/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Inicio
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
-              </paper-icon-item></a>{% endif %}
+              </paper-icon-item></a>
             <paper-icon-item disabled="disabled" class="breadcrum_active">Listado de formadores
               <iron-icon icon="check" item-icon="item-icon"></iron-icon>
             </paper-icon-item>
@@ -199,8 +199,19 @@
             </div>
           </div>
         </iron-collapse>
-        <div class="container-fluid container-index"><a href="nuevo" class="link_button">
-            <paper-button class="submit">Nuevo</paper-button></a>
+        <div class="container-fluid container-index">
+          <div class="header-buttons">{% if nuevo_permiso %}
+            <div class="block-right"><a href="nuevo" class="link_button">
+                <paper-button class="submit">Nuevo</paper-button></a></div>{% endif %}
+            {% if masivo_permiso %}
+            <div>
+              <select class="selectpicker">
+                <option value="">---------</option>
+                <option value="1">Enviar al email registrado la copia del contrato</option>
+              </select>
+              <button class="btn">Ir</button>
+            </div>{% endif %}
+          </div>
           <table id="table" width="100%" class="display responsive no-wrap table table-striped table-bordered">
             <thead>
               <tr>
@@ -210,6 +221,9 @@
                 <th>Región</th>
                 <th>Soportes</th>
                 <th>Eliminar</th>
+                <th>
+                  <input type="checkbox" id="check_all"/>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -220,10 +234,12 @@
                 <td>Región</td>
                 <td>Soportes</td>
                 <td>Eliminar</td>
+                <td>Seleccion</td>
               </tr>
             </tbody>
           </table>
         </div>
+        <div style="margin-top:25px;"></div>
         <input type="hidden" value="{{mensaje}}" id="input_mensaje"/>
         <paper-toast id="toast_message" text="{{mensaje}}" duration="5000"></paper-toast>
       </paper-scroll-header-panel>
@@ -292,6 +308,14 @@
       });
     </script>
     <script>
+      $("#check_all").on("change",function(){
+          var checks = $(".check_seleccion");
+          for(i=0;i<checks.length;i++){
+              checks[i].checked = this.checked;
+          }
+      });
+    </script>
+    <script>
       $(document).ready(function () {
           var table = $('#table').DataTable({
               "stateSave": true,
@@ -311,6 +335,7 @@
                       "data": null,
                       "defaultContent": ''
                   },
+      
                   {
                       "data": 1,
                       "render": function (data, type, row, meta) {
@@ -330,6 +355,7 @@
                   {
                       "data": 3,
                       "orderable": false,
+                      "className": 'text-center',
                   },
                   {
                       "orderable": false,
@@ -357,6 +383,15 @@
                           }
                       },
                       "defaultContent": ''
+                  },
+                  {
+                      "data": 0,
+                      "className": 'text-center',
+                      "orderable": false,
+                      "render": function (data, type, row, meta) {
+                          return '<input type="checkbox" class="check_seleccion" id="'+data+'">';
+                      }
+      
                   },
               ]
           });

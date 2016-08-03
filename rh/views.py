@@ -243,6 +243,7 @@ class FormadoresView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores.crear')
+        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores.masivo')
         return super(FormadoresView, self).get_context_data(**kwargs)
 
 class NuevoFormadorView(LoginRequiredMixin,

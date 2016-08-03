@@ -539,7 +539,7 @@ class FormadoresRh(BaseDatatableView):
                'pension','arl']
 
     order_columns = ['','nombres','cargo','']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return Formador.objects.filter(oculto = False)
