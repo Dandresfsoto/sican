@@ -59,7 +59,10 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites'
 ]
+
+SITE_ID = 1
 
 LOCAL_APPS = [
     'usuarios',
@@ -89,7 +92,8 @@ THIRD_PARTY_APPS = [
     'channels',
     'guardian',
     'crispy_forms',
-    'smart_selects'
+    'smart_selects',
+    'telegrambot',
 ]
 
 
@@ -204,3 +208,58 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
 
 AUTH_USER_MODEL = "usuarios.User"
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'django.request': {
+            'handlers': ['mail_admins', 'console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['mail_admins', 'console'],
+            'propagate': False,
+            'level': 'WARNING',
+        },
+        'telegrambot.views': {
+            'handlers': ['console'],
+            'propagate': False,
+            'level': 'DEBUG',
+        },
+    }
+}
+
+TELEGRAM_BOT_HANDLERS_CONF = "telegrambotsican.handlers"
+TELEGRAM_BOT_TOKEN_EXPIRATION = "2"

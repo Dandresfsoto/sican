@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^bases/', include('bases.urls', namespace='bases')),
     url(r'^preinscripcion/', include('preinscripcion.urls', namespace='preinscripcion')),
     url(r'^formadores/', include('formadores.urls', namespace='formadores')),
+    url(r'^telegrambot/', include('telegrambot.urls', namespace="telegrambot")),
 ]
 
 if settings.DEBUG:
