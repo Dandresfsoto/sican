@@ -89,11 +89,13 @@ THIRD_PARTY_APPS = [
     'mail_templated',
     'django_cleanup',
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_swagger',
     'channels',
     'guardian',
     'crispy_forms',
     'smart_selects',
-    'telegrambot',
+    'permabots',
 ]
 
 
@@ -193,6 +195,20 @@ USE_L10N = True
 USE_TZ = True
 
 
+
+SWAGGER_SETTINGS = {
+    'exclude_namespaces': ['permabots'],
+    'info': {
+        'description': 'Permabots API works with Authorization header. '
+                       'All requests should have HTTP Token Authorization header in the form of:'
+                       '<br><br>Authorization: Token <b>"your_api_token"</b>'
+                       '<br><br>You can view your API Token in your user details page.',
+        'title': 'Permabots API',
+    },
+}
+
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
@@ -208,58 +224,49 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
 
 AUTH_USER_MODEL = "usuarios.User"
+MICROBOT_WEBHOOK_DOMAIN = 'https://sican.asoandes.org'
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s '
+                      '%(process)d %(thread)d %(message)s'
+        },
+    },
     'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['require_debug_false'],
+            'formatter': 'verbose',
         },
     },
     'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'propagate': True,
-            'level': 'INFO',
-        },
         'django.request': {
-            'handlers': ['mail_admins', 'console'],
+            'handlers': ['mail_admins'],
             'level': 'ERROR',
-            'propagate': False,
+            'propagate': True
         },
-        'django.db.backends': {
-            'handlers': ['mail_admins', 'console'],
-            'propagate': False,
-            'level': 'WARNING',
+        'permabots': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
         },
-        'telegrambot.views': {
+        'permabots': {
             'handlers': ['console'],
-            'propagate': False,
             'level': 'DEBUG',
+            'propagate': True,
         },
     }
 }
-
-TELEGRAM_BOT_HANDLERS_CONF = "telegrambotsican.handlers"
-TELEGRAM_BOT_TOKEN_EXPIRATION = "2"
