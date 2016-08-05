@@ -224,7 +224,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
 
 AUTH_USER_MODEL = "usuarios.User"
-MICROBOT_WEBHOOK_DOMAIN = 'https://sican.asoandes.org'
 
 LOGGING = {
     'version': 1,
