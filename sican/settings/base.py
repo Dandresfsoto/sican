@@ -59,10 +59,8 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites'
 ]
 
-SITE_ID = 1
 
 LOCAL_APPS = [
     'usuarios',
@@ -94,8 +92,7 @@ THIRD_PARTY_APPS = [
     'channels',
     'guardian',
     'crispy_forms',
-    'smart_selects',
-    'permabots',
+    'smart_selects'
 ]
 
 
@@ -196,21 +193,9 @@ USE_TZ = True
 
 
 
-SWAGGER_SETTINGS = {
-    'exclude_namespaces': ['permabots'],
-    'info': {
-        'description': 'Permabots API works with Authorization header. '
-                       'All requests should have HTTP Token Authorization header in the form of:'
-                       '<br><br>Authorization: Token <b>"your_api_token"</b>'
-                       '<br><br>You can view your API Token in your user details page.',
-        'title': 'Permabots API',
-    },
-}
 
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
 
@@ -224,48 +209,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
 
 AUTH_USER_MODEL = "usuarios.User"
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'formatters': {
-        'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s '
-                      '%(process)d %(thread)d %(message)s'
-        },
-    },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True
-        },
-        'permabots': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-        'permabots': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    }
-}

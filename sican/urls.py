@@ -36,8 +36,6 @@ urlpatterns = [
     url(r'^bases/', include('bases.urls', namespace='bases')),
     url(r'^preinscripcion/', include('preinscripcion.urls', namespace='preinscripcion')),
     url(r'^formadores/', include('formadores.urls', namespace='formadores')),
-    url(r'^processing/', include('permabots.urls_processing', namespace="permabots")),
-    url(r'^api/v1/', include('permabots.urls_api', namespace="api")),
 ]
 
 if settings.DEBUG:
