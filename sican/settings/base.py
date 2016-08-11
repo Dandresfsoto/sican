@@ -4,6 +4,13 @@ Sican 2.0
 
 import os
 from celery.schedules import crontab
+import locale
+import sys
+if sys.platform in ['win32']:
+    locale.setlocale(locale.LC_ALL, "eso")
+
+if sys.platform in ['linux2']:
+    locale.setlocale(locale.LC_ALL, "es_CO.UTF-8")
 
 # CELERY STUFF
 BROKER_URL = 'redis://localhost:6379'

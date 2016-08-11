@@ -3,10 +3,9 @@ from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from formadores.models import SolicitudTransporte
 from formadores.forms import SolicitudTransporteForm
 from financiera.tasks import construir_pdf
-import locale
 from usuarios.tasks import send_mail_templated
 from sican.settings.base import DEFAULT_FROM_EMAIL
-locale.setlocale(locale.LC_ALL, "es_CO.UTF-8")
+
 
 
 # Create your views here.
