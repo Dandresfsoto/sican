@@ -1,6 +1,7 @@
 
 {% load staticfiles %}
 {% load crispy_forms_tags %}
+{% load django_tables2 %}
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -25,21 +26,43 @@
     <link rel="stylesheet" href="{% static 'css/base_formadores.css'%}"/>
   </head>
   <body>
+    <ol class="breadcrumb">
+      <li><a href="../../../">Inicio</a></li>
+      <li><a href="../../">Transportes</a></li>
+      <li class="active">Subir Soporte: {{object.nombre}}</li>
+    </ol>
     <div class="container-fluid margin-top-container-two">
       <div class="row margin-logo">
         <div class="col-sm-4 col-sm-offset-4"><img src="{% static 'img/SICAN.svg'%}" class="img-responsive"/></div>
       </div>
       <div class="row">
-        <div class="col-sm-8 col-sm-offset-2 text-center">
+        <div class="col-sm-12 text-center">
+          <h1>Solicitud de transportes</h1>
+          <p>Haz clic en el icono de la columna "Excel" en la ventana anterior, imprimelo, firmalo y cargalo en este formulario.</p>
           <p>
-            Apreciado formador, este espacio esta destinado a compartir información con el sistema de información
-            SICAN.
+            Atención: Verifica el archivo que vas a enviar, una vez cargado no se puede modificar.
+            
           </p>
-          <h3 style="margin-bottom:30px;">{{formador}} - {{tipo}}</h3>
-          <div class="row">
-            <div class="col-md-4 col-md-offset-4 text-center">
-              <div class="list-group">{% if link_contrato == "#" %}<a href="{{link_contrato}}" class="list-group-item disabled">Descargar contrato</a>{% else %}<a href="{{link_contrato}}" target="_blank" class="list-group-item">Descargar contrato</a>{% endif %}<a href="legalizacion" class="list-group-item">Legalización de documentos</a><a href="{{carta}}" target="_blank" class="list-group-item">Carta de presentación</a></div>
+          <h3 style="margin-bottom:30px;">{{object.formador.nombres}} {{object.formador.apellidos}} - {{object.formador.cargo}}</h3>
+          <div style="margin-bottom:30px;" class="row">
+            <div class="col-md-6 col-md-offset-3 text-center">
+              <form action="" method="POST" enctype="multipart/form-data" id="form-administrador">{% crispy form %}</form>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="modal" tabindex="-1" role="dialog" class="modal fade">
+      <div role="document" class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="cerrar_totorial" class="btn btn-default">No quiero ver mas este tutorial</button>
+            <button type="button" data-dismiss="modal" class="btn btn-primary">Entendido</button>
           </div>
         </div>
       </div>
@@ -60,5 +83,7 @@
     <script src="{% static 'bower_components/bootstrap-fileinput/js/plugins/purify.min.js'%}"></script>
     <script src="{% static 'bower_components/bootstrap-fileinput/js/fileinput.min.js'%}"></script>
     <script src="{% static 'bower_components/bootstrap-fileinput/js/locales/es.js'%}"></script>
+    <script src="{% static 'bower_components/jquery-maskmoney/src/jquery.maskMoney.js'%}"></script>
+    <script>$("#id_archivo").fileinput({showUpload: false});</script>
   </body>
 </html>

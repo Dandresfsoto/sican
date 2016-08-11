@@ -12,3 +12,4 @@ def add():
     for value in range(10000):
         sleep(0.1)
         current_task.update_state(state="PROGRESS",meta={'current': value})
+

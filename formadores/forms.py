@@ -11,6 +11,9 @@ from rh.models import TipoSoporte
 from formadores.models import Soporte
 from django.forms.models import modelformset_factory
 from formadores.models import Soporte
+from departamentos.models import Departamento
+from municipios.models import Municipio
+from formadores.models import SolicitudTransporte
 
 class FormadorForm(forms.ModelForm):
 
@@ -279,3 +282,379 @@ class LegalizacionForm(forms.ModelForm):
             'tipo_cuenta':'Tipo cuenta*',
             'numero_cuenta':'Numero de cuenta*'
         }
+
+class NuevaSolicitudTransportes(forms.Form):
+    nombre = forms.CharField(label="Nombre de la solicitud",max_length=20)
+
+    fecha_1 = forms.DateField(label="Fecha")
+    departamento_origen_1 = forms.CharField(label="Departamento (origen)",widget=forms.Select())
+    municipio_origen_1 = forms.CharField(label="Municipio (origen)",widget=forms.Select())
+    departamento_destino_1 = forms.CharField(label="Departamento (destino)",widget=forms.Select())
+    municipio_destino_1 = forms.CharField(label="Municipio (destino)",widget=forms.Select())
+    valor_1 = forms.CharField(label="Valor ($)")
+
+    fecha_2 = forms.DateField(label="",required=False)
+    departamento_origen_2 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_origen_2 = forms.CharField(label="",widget=forms.Select(),required=False)
+    departamento_destino_2 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_destino_2 = forms.CharField(label="",widget=forms.Select(),required=False)
+    valor_2 = forms.CharField(label="",required=False)
+
+    fecha_3 = forms.DateField(label="",required=False)
+    departamento_origen_3 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_origen_3 = forms.CharField(label="",widget=forms.Select(),required=False)
+    departamento_destino_3 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_destino_3 = forms.CharField(label="",widget=forms.Select(),required=False)
+    valor_3 = forms.CharField(label="",required=False)
+
+    fecha_4 = forms.DateField(label="",required=False)
+    departamento_origen_4 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_origen_4 = forms.CharField(label="",widget=forms.Select(),required=False)
+    departamento_destino_4 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_destino_4 = forms.CharField(label="",widget=forms.Select(),required=False)
+    valor_4 = forms.CharField(label="",required=False)
+
+    fecha_5 = forms.DateField(label="",required=False)
+    departamento_origen_5 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_origen_5 = forms.CharField(label="",widget=forms.Select(),required=False)
+    departamento_destino_5 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_destino_5 = forms.CharField(label="",widget=forms.Select(),required=False)
+    valor_5 = forms.CharField(label="",required=False)
+
+    fecha_6 = forms.DateField(label="",required=False)
+    departamento_origen_6 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_origen_6 = forms.CharField(label="",widget=forms.Select(),required=False)
+    departamento_destino_6 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_destino_6 = forms.CharField(label="",widget=forms.Select(),required=False)
+    valor_6 = forms.CharField(label="",required=False)
+
+    fecha_7 = forms.DateField(label="",required=False)
+    departamento_origen_7 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_origen_7 = forms.CharField(label="",widget=forms.Select(),required=False)
+    departamento_destino_7 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_destino_7 = forms.CharField(label="",widget=forms.Select(),required=False)
+    valor_7 = forms.CharField(label="",required=False)
+
+    fecha_8 = forms.DateField(label="",required=False)
+    departamento_origen_8 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_origen_8 = forms.CharField(label="",widget=forms.Select(),required=False)
+    departamento_destino_8 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_destino_8 = forms.CharField(label="",widget=forms.Select(),required=False)
+    valor_8 = forms.CharField(label="",required=False)
+
+    fecha_9 = forms.DateField(label="",required=False)
+    departamento_origen_9 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_origen_9 = forms.CharField(label="",widget=forms.Select(),required=False)
+    departamento_destino_9 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_destino_9 = forms.CharField(label="",widget=forms.Select(),required=False)
+    valor_9 = forms.CharField(label="",required=False)
+
+    fecha_10 = forms.DateField(label="",required=False)
+    departamento_origen_10 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_origen_10 = forms.CharField(label="",widget=forms.Select(),required=False)
+    departamento_destino_10 = forms.CharField(label="",widget=forms.Select(),required=False)
+    municipio_destino_10 = forms.CharField(label="",widget=forms.Select(),required=False)
+    valor_10 = forms.CharField(label="",required=False)
+
+
+    def __init__(self, *args, **kwargs):
+        super(NuevaSolicitudTransportes, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        if 'data' in kwargs.keys():
+            if kwargs['data']['departamento_origen_1'] != '':
+                departamento_id = kwargs['data']['departamento_origen_1']
+                self.fields['municipio_origen_1'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+            if kwargs['data']['departamento_origen_2'] != '':
+                departamento_id = kwargs['data']['departamento_origen_2']
+                self.fields['municipio_origen_2'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+            if kwargs['data']['departamento_origen_3'] != '':
+                departamento_id = kwargs['data']['departamento_origen_3']
+                self.fields['municipio_origen_3'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+            if kwargs['data']['departamento_origen_4'] != '':
+                departamento_id = kwargs['data']['departamento_origen_4']
+                self.fields['municipio_origen_4'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+            if kwargs['data']['departamento_origen_5'] != '':
+                departamento_id = kwargs['data']['departamento_origen_5']
+                self.fields['municipio_origen_5'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+            if kwargs['data']['departamento_origen_6'] != '':
+                departamento_id = kwargs['data']['departamento_origen_6']
+                self.fields['municipio_origen_6'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+            if kwargs['data']['departamento_origen_7'] != '':
+                departamento_id = kwargs['data']['departamento_origen_7']
+                self.fields['municipio_origen_7'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+            if kwargs['data']['departamento_origen_8'] != '':
+                departamento_id = kwargs['data']['departamento_origen_8']
+                self.fields['municipio_origen_8'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+            if kwargs['data']['departamento_origen_9'] != '':
+                departamento_id = kwargs['data']['departamento_origen_9']
+                self.fields['municipio_origen_9'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+            if kwargs['data']['departamento_origen_10'] != '':
+                departamento_id = kwargs['data']['departamento_origen_10']
+                self.fields['municipio_origen_10'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+
+
+
+
+
+            if kwargs['data']['departamento_destino_1'] != '':
+                departamento_id = kwargs['data']['departamento_destino_1']
+                self.fields['municipio_destino_1'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+            if kwargs['data']['departamento_destino_2'] != '':
+                departamento_id = kwargs['data']['departamento_destino_2']
+                self.fields['municipio_destino_2'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+            if kwargs['data']['departamento_destino_3'] != '':
+                departamento_id = kwargs['data']['departamento_destino_3']
+                self.fields['municipio_destino_3'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+            if kwargs['data']['departamento_destino_4'] != '':
+                departamento_id = kwargs['data']['departamento_destino_4']
+                self.fields['municipio_destino_4'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+            if kwargs['data']['departamento_destino_5'] != '':
+                departamento_id = kwargs['data']['departamento_destino_5']
+                self.fields['municipio_destino_5'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+            if kwargs['data']['departamento_destino_6'] != '':
+                departamento_id = kwargs['data']['departamento_destino_6']
+                self.fields['municipio_destino_6'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+            if kwargs['data']['departamento_destino_7'] != '':
+                departamento_id = kwargs['data']['departamento_destino_7']
+                self.fields['municipio_destino_7'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+            if kwargs['data']['departamento_destino_8'] != '':
+                departamento_id = kwargs['data']['departamento_destino_8']
+                self.fields['municipio_destino_8'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+            if kwargs['data']['departamento_destino_9'] != '':
+                departamento_id = kwargs['data']['departamento_destino_9']
+                self.fields['municipio_destino_9'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+
+            if kwargs['data']['departamento_destino_10'] != '':
+                departamento_id = kwargs['data']['departamento_destino_10']
+                self.fields['municipio_destino_10'].widget.choices = Municipio.objects.filter(departamento__id=departamento_id).values_list('id','nombre')
+
+        departamentos_queryset = Departamento.objects.values_list('id','nombre')
+        departamentos = [('','---------')]
+
+        for y in departamentos_queryset:
+            departamentos.append((str(y[0]),y[1]))
+
+
+        self.fields['departamento_origen_1'].widget.choices = departamentos
+        self.fields['departamento_origen_2'].widget.choices = departamentos
+        self.fields['departamento_origen_3'].widget.choices = departamentos
+        self.fields['departamento_origen_4'].widget.choices = departamentos
+        self.fields['departamento_origen_5'].widget.choices = departamentos
+        self.fields['departamento_origen_6'].widget.choices = departamentos
+        self.fields['departamento_origen_7'].widget.choices = departamentos
+        self.fields['departamento_origen_8'].widget.choices = departamentos
+        self.fields['departamento_origen_9'].widget.choices = departamentos
+        self.fields['departamento_origen_10'].widget.choices = departamentos
+
+
+        self.fields['departamento_destino_1'].widget.choices = departamentos
+        self.fields['departamento_destino_2'].widget.choices = departamentos
+        self.fields['departamento_destino_3'].widget.choices = departamentos
+        self.fields['departamento_destino_4'].widget.choices = departamentos
+        self.fields['departamento_destino_5'].widget.choices = departamentos
+        self.fields['departamento_destino_6'].widget.choices = departamentos
+        self.fields['departamento_destino_7'].widget.choices = departamentos
+        self.fields['departamento_destino_8'].widget.choices = departamentos
+        self.fields['departamento_destino_9'].widget.choices = departamentos
+        self.fields['departamento_destino_10'].widget.choices = departamentos
+
+
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    Div('nombre',css_class='col-sm-4'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('fecha_1',css_class='col-sm-2'),
+                    Div('departamento_origen_1',css_class='col-sm-2'),
+                    Div('municipio_origen_1',css_class='col-sm-2'),
+                    Div('departamento_destino_1',css_class='col-sm-2'),
+                    Div('municipio_destino_1',css_class='col-sm-2'),
+                    Div('valor_1',css_class='col-sm-2'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('fecha_2',css_class='col-sm-2'),
+                    Div('departamento_origen_2',css_class='col-sm-2'),
+                    Div('municipio_origen_2',css_class='col-sm-2'),
+                    Div('departamento_destino_2',css_class='col-sm-2'),
+                    Div('municipio_destino_2',css_class='col-sm-2'),
+                    Div('valor_2',css_class='col-sm-2'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('fecha_3',css_class='col-sm-2'),
+                    Div('departamento_origen_3',css_class='col-sm-2'),
+                    Div('municipio_origen_3',css_class='col-sm-2'),
+                    Div('departamento_destino_3',css_class='col-sm-2'),
+                    Div('municipio_destino_3',css_class='col-sm-2'),
+                    Div('valor_3',css_class='col-sm-2'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('fecha_4',css_class='col-sm-2'),
+                    Div('departamento_origen_4',css_class='col-sm-2'),
+                    Div('municipio_origen_4',css_class='col-sm-2'),
+                    Div('departamento_destino_4',css_class='col-sm-2'),
+                    Div('municipio_destino_4',css_class='col-sm-2'),
+                    Div('valor_4',css_class='col-sm-2'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('fecha_5',css_class='col-sm-2'),
+                    Div('departamento_origen_5',css_class='col-sm-2'),
+                    Div('municipio_origen_5',css_class='col-sm-2'),
+                    Div('departamento_destino_5',css_class='col-sm-2'),
+                    Div('municipio_destino_5',css_class='col-sm-2'),
+                    Div('valor_5',css_class='col-sm-2'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('fecha_6',css_class='col-sm-2'),
+                    Div('departamento_origen_6',css_class='col-sm-2'),
+                    Div('municipio_origen_6',css_class='col-sm-2'),
+                    Div('departamento_destino_6',css_class='col-sm-2'),
+                    Div('municipio_destino_6',css_class='col-sm-2'),
+                    Div('valor_6',css_class='col-sm-2'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('fecha_7',css_class='col-sm-2'),
+                    Div('departamento_origen_7',css_class='col-sm-2'),
+                    Div('municipio_origen_7',css_class='col-sm-2'),
+                    Div('departamento_destino_7',css_class='col-sm-2'),
+                    Div('municipio_destino_7',css_class='col-sm-2'),
+                    Div('valor_7',css_class='col-sm-2'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('fecha_8',css_class='col-sm-2'),
+                    Div('departamento_origen_8',css_class='col-sm-2'),
+                    Div('municipio_origen_8',css_class='col-sm-2'),
+                    Div('departamento_destino_8',css_class='col-sm-2'),
+                    Div('municipio_destino_8',css_class='col-sm-2'),
+                    Div('valor_8',css_class='col-sm-2'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('fecha_9',css_class='col-sm-2'),
+                    Div('departamento_origen_9',css_class='col-sm-2'),
+                    Div('municipio_origen_9',css_class='col-sm-2'),
+                    Div('departamento_destino_9',css_class='col-sm-2'),
+                    Div('municipio_destino_9',css_class='col-sm-2'),
+                    Div('valor_9',css_class='col-sm-2'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('fecha_10',css_class='col-sm-2'),
+                    Div('departamento_origen_10',css_class='col-sm-2'),
+                    Div('municipio_origen_10',css_class='col-sm-2'),
+                    Div('departamento_destino_10',css_class='col-sm-2'),
+                    Div('municipio_destino_10',css_class='col-sm-2'),
+                    Div('valor_10',css_class='col-sm-2'),
+                    css_class = 'row'
+                ),
+
+                HTML("""
+                    <div class="row"><button type="submit" class="btn btn-cpe">Enviar</button></div>
+                    """),
+                css_class='text-center'
+            )
+        )
+
+class SolicitudTransporteForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(SolicitudTransporteForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Solicitud de transporte:',
+                Div(
+                    HTML("""
+                    <p>Formador: {{object.formador.nombres}} {{object.formador.apellidos}}</p>
+                    <p>Solicitud: {{object.nombre}}</p>
+                    <p>Valor solicitado: {{valor_solicitado}}</p>
+                    <p>Archivo: <a href="{{archivo_url}}">{{archivo_nombre}}</a></p>
+                    """)
+                ),
+                Div(
+                    Div('estado',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('observacion',css_class='col-sm-12'),
+                    css_class = 'row'
+                )
+
+            ),
+        )
+
+    class Meta:
+        model = SolicitudTransporte
+        fields = ['estado','observacion']
+        widgets = {
+            'estado' : forms.Select(choices=(('aprobado','Aprobado'),('consignado','Consignado'),('revision','En revisión'),('rechazado','Rechazado')))
+        }
+
+class SubirSoporteForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(SubirSoporteForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Div(
+                Div('archivo',css_class='col-sm-12 text-left'),
+                css_class = 'row'
+            ),
+
+            HTML("""
+                <div class="row"><button type="submit" class="btn btn-cpe">Enviar</button></div>
+            """),
+
+        )
+
+    class Meta:
+        model = SolicitudTransporte
+        fields = ['archivo']

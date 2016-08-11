@@ -80,7 +80,8 @@ LOCAL_APPS = [
     'radicados',
     'bases',
     'docentes',
-    'preinscripcion'
+    'preinscripcion',
+    'financiera'
 ]
 
 THIRD_PARTY_APPS = [
@@ -92,7 +93,8 @@ THIRD_PARTY_APPS = [
     'channels',
     'guardian',
     'crispy_forms',
-    'smart_selects'
+    'smart_selects',
+    'django_tables2'
 ]
 
 

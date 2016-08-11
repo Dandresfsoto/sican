@@ -22,6 +22,7 @@ from municipios.models import Municipio
 from secretarias.models import Secretaria
 from radicados.models import Radicado
 from rest_framework.permissions import AllowAny
+from formadores.models import SolicitudTransporte
 
 # Create your views here.
 
@@ -33,7 +34,26 @@ class MunicipiosChainedList(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
-        id_departamento = request._request.GET['departamento']
+
+        keys = [
+            'departamento',
+            'departamento_origen_1','departamento_destino_1',
+            'departamento_origen_2','departamento_destino_2',
+            'departamento_origen_3','departamento_destino_3',
+            'departamento_origen_4','departamento_destino_4',
+            'departamento_origen_5','departamento_destino_5',
+            'departamento_origen_6','departamento_destino_6',
+            'departamento_origen_7','departamento_destino_7',
+            'departamento_origen_8','departamento_destino_8',
+            'departamento_origen_9','departamento_destino_9',
+            'departamento_origen_10','departamento_destino_10',
+
+        ]
+
+        for key in keys:
+            if key in request._request.GET:
+                id_departamento = request._request.GET[key]
+
         if id_departamento == '':
             id_departamento = 0
         municipios = Municipio.objects.filter(departamento__id=id_departamento).values_list('id','nombre')
@@ -108,6 +128,11 @@ class UserPermissionList(APIView):
                   'id':'bases',
                   'links':[]
             },
+            'financiera':{'name':'Financiera',
+                  'icon':'icons:payment',
+                  'id':'financiera',
+                  'links':[]
+            },
         }
 
         links = {
@@ -143,6 +168,9 @@ class UserPermissionList(APIView):
             },
             'radicados':{
                 'ver':{'name':'Radicados','link':'/bases/radicados/'}
+            },
+            'transportes':{
+                'ver':{'name':'Solicitudes de transporte','link':'/financiera/transportes/'}
             },
         }
 
@@ -547,6 +575,7 @@ class FormadoresRh(BaseDatatableView):
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         if search:
+            search = unicode(search).capitalize()
             q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
                 Q(region__numero__icontains=search) | Q(cedula__icontains=search)
             qs = qs.filter(q)
@@ -799,5 +828,67 @@ class RadicadosList(BaseDatatableView):
                 item.ubicacion,
                 self.request.user.has_perm('permisos_sican.bases.radicados.editar'),
                 self.request.user.has_perm('permisos_sican.bases.radicados.eliminar'),
+            ])
+        return json_data
+
+class SolicitudesTransporteList(BaseDatatableView):
+    """
+    0.id
+    1.formador
+    2.fecha
+    3.valor
+    4.valor_aprobado
+    5.desplazamientos
+    6.estado
+    7.archivo
+    8.nombre
+    9.permiso para editar
+    10.permiso para eliminar
+    """
+    model = SolicitudTransporte
+    columns = ['id','formador','creacion','valor','valor_aprobado','estado','archivo']
+
+    order_columns = ['id','formador','creacion','valor','valor_aprobado','estado','archivo']
+    max_display_length = 10
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) | \
+                Q(formador__cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            formador = item.formador.nombres + " " + item.formador.apellidos
+
+            desplazamientos_response = []
+
+            for desplazamiento in item.desplazamientos.all():
+                desplazamientos_response.append([
+                    desplazamiento.fecha,
+                    desplazamiento.departamento_origen.nombre,
+                    desplazamiento.municipio_origen.nombre,
+                    desplazamiento.departamento_destino.nombre,
+                    desplazamiento.municipio_destino.nombre,
+                    desplazamiento.valor
+                ])
+
+            json_data.append([
+                item.id,
+                formador,
+                item.creacion,
+                item.valor,
+                item.valor_aprobado,
+                desplazamientos_response,
+                item.estado,
+                item.get_archivo_url(),
+                item.nombre,
+                self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
+                self.request.user.has_perm('permisos_sican.financiera.transportes.eliminar'),
             ])
         return json_data

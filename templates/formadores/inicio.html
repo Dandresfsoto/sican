@@ -1,6 +1,7 @@
 
 {% load staticfiles %}
 {% load crispy_forms_tags %}
+{% load django_tables2 %}
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -25,6 +26,8 @@
     <link rel="stylesheet" href="{% static 'css/base_formadores.css'%}"/>
   </head>
   <body>
+    <ol class="breadcrumb">
+    </ol>
     <div class="container-fluid margin-top-container">
       <div class="row margin-logo">
         <div class="col-sm-4 col-sm-offset-4"><img src="{% static 'img/SICAN.svg'%}" class="img-responsive"/></div>
@@ -35,6 +38,21 @@
             {% csrf_token %}
             {% crispy form %}
           </form>
+        </div>
+      </div>
+    </div>
+    <div id="modal" tabindex="-1" role="dialog" class="modal fade">
+      <div role="document" class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="cerrar_totorial" class="btn btn-default">No quiero ver mas este tutorial</button>
+            <button type="button" data-dismiss="modal" class="btn btn-primary">Entendido</button>
+          </div>
         </div>
       </div>
     </div>
@@ -54,5 +72,6 @@
     <script src="{% static 'bower_components/bootstrap-fileinput/js/plugins/purify.min.js'%}"></script>
     <script src="{% static 'bower_components/bootstrap-fileinput/js/fileinput.min.js'%}"></script>
     <script src="{% static 'bower_components/bootstrap-fileinput/js/locales/es.js'%}"></script>
+    <script src="{% static 'bower_components/jquery-maskmoney/src/jquery.maskMoney.js'%}"></script>
   </body>
 </html>

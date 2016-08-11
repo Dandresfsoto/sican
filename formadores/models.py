@@ -5,6 +5,8 @@ from rh.models import TipoSoporte
 from region.models import Region
 from cargos.models import Cargo
 from bancos.models import Banco
+from departamentos.models import Departamento
+from municipios.models import Municipio
 import os
 
 # Create your models here.
@@ -70,6 +72,53 @@ class Soporte(models.Model):
     def get_archivo_url(self):
         try:
             url = self.archivo.url
+        except:
+            url = ""
+        return url
+
+
+    def archivo_filename(self):
+        return os.path.basename(self.archivo.name)
+
+class Desplazamiento(models.Model):
+    departamento_origen = models.ForeignKey(Departamento,related_name="departamento_origen_desplazamiento")
+    municipio_origen = models.ForeignKey(Municipio,related_name="municipio_origen_desplazamiento")
+    departamento_destino = models.ForeignKey(Departamento,related_name="departamento_destino_desplazamiento")
+    municipio_destino = models.ForeignKey(Municipio,related_name="municipio_destino_desplazamiento")
+    valor = models.BigIntegerField()
+    creacion = models.DateTimeField(auto_now=True)
+    fecha = models.DateField()
+
+    def __unicode__(self):
+        return unicode(self.id)
+
+class SolicitudTransporte(models.Model):
+    formador = models.ForeignKey(Formador,related_name="formador_solicitud_transporte")
+    nombre = models.CharField(max_length=100)
+    creacion = models.DateTimeField(auto_now=True)
+    desplazamientos = models.ManyToManyField(Desplazamiento,blank=True,null=True)
+    estado = models.CharField(max_length=100,default="revision")
+    observacion = models.TextField(max_length=1000,blank=True,null=True)
+    valor = models.BigIntegerField()
+    terminada = models.BooleanField(default=False)
+    valor_aprobado = models.BigIntegerField(blank=True,null=True)
+    archivo = models.FileField(upload_to='Transportes/Solicitudes/',blank=True,null=True)
+    pdf = models.FileField(upload_to = 'Transportes/Pdf/',blank=True,null=True)
+
+
+    def __unicode__(self):
+        return unicode(self.formador.cedula)
+
+    def get_archivo_url(self):
+        try:
+            url = self.archivo.url
+        except:
+            url = ""
+        return url
+
+    def get_pdf_url(self):
+        try:
+            url = self.pdf.url
         except:
             url = ""
         return url

@@ -56,3 +56,49 @@ a:hover {
   color: #7fbf2f;
   padding: 10 15px;
 }
+thead {
+  background: #df4113;
+}
+tbody {
+  color: #000;
+}
+thead > tr >th > a {
+  color: #fff;
+  vertical-align: middle;
+}
+.table-bordered>tbody>tr>td {
+  vertical-align: middle;
+  border: 1px solid #ddd;
+}
+.odd {
+  background-color: #f9f9f9;
+}
+.table>caption+thead>tr:first-child>td,
+.table>caption+thead>tr:first-child>th,
+.table>colgroup+thead>tr:first-child>td,
+.table>colgroup+thead>tr:first-child>th,
+.table>thead:first-child>tr:first-child>td,
+.table>thead:first-child>tr:first-child>th {
+  border-top: 0;
+  vertical-align: middle;
+  text-align: center;
+}
+.modal-content {
+  color: #333;
+}
+.bold {
+  font-weight: 700;
+}
+.breadcrumb {
+  padding: 8px 15px;
+  margin-bottom: 20px;
+  list-style: none;
+  background-color: #004c99;
+}
+.breadcrumb>.active {
+  color: #ffefd5;
+}
+.breadcrumb > li > a {
+  color: #fff;
+  font-weight: 700;
+}

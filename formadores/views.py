@@ -5,6 +5,11 @@ from django.shortcuts import HttpResponseRedirect
 from formadores.models import TipoSoporte
 from formadores.models import Formador, Soporte
 from django.shortcuts import HttpResponseRedirect
+from formadores.tables import SolicitudTable
+from formadores.models import SolicitudTransporte, Desplazamiento
+from formadores.forms import NuevaSolicitudTransportes, SubirSoporteForm
+from departamentos.models import Departamento
+from municipios.models import Municipio
 import datetime
 
 # Create your views here.
@@ -17,7 +22,7 @@ class InicioView(FormView):
         return HttpResponseRedirect('/formadores/'+str(cedula))
 
 class VinculosView(TemplateView):
-    template_name = 'formadores/vinculos.html'
+    template_name = 'formadores/vinculos/vinculos.html'
 
     def get_context_data(self, **kwargs):
         formador = Formador.objects.get(cedula=kwargs['cedula'])
@@ -145,3 +150,155 @@ class LegalizacionCompletaView(TemplateView):
         kwargs['tipo'] = formador.cargo.nombre
         kwargs['link_contrato'] = link
         return super(LegalizacionCompletaView,self).get_context_data(**kwargs)
+
+class TransportesView(TemplateView):
+    template_name = 'formadores/transportes/tabla.html'
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=kwargs['cedula'])
+        kwargs['formador'] = formador.nombres + " " + formador.apellidos
+        kwargs['tipo'] = formador.cargo.nombre
+        query = SolicitudTransporte.objects.filter(formador=formador)
+        kwargs['table'] = SolicitudTable(query)
+        return super(TransportesView,self).get_context_data(**kwargs)
+
+class NuevaSolicitudTransportesView(FormView):
+    template_name = "formadores/transportes/nuevo.html"
+    form_class = NuevaSolicitudTransportes
+    success_url = '../'
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=self.kwargs['cedula'])
+        kwargs['formador'] = formador.nombres + " " + formador.apellidos
+        kwargs['tipo'] = formador.cargo.nombre
+        return super(NuevaSolicitudTransportesView,self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+
+
+
+        desplazamientos = [
+            {
+                'fecha':form.cleaned_data['fecha_1'],
+                'd_origen':form.cleaned_data['departamento_origen_1'],
+                'm_origen':form.cleaned_data['municipio_origen_1'],
+                'd_destino':form.cleaned_data['departamento_destino_1'],
+                'm_destino':form.cleaned_data['municipio_destino_1'],
+                'valor':float(form.cleaned_data['valor_1'].replace(',','')) if form.cleaned_data['valor_1'] != u'' else 0,
+            },
+            {
+                'fecha':form.cleaned_data['fecha_2'],
+                'd_origen':form.cleaned_data['departamento_origen_2'],
+                'm_origen':form.cleaned_data['municipio_origen_2'],
+                'd_destino':form.cleaned_data['departamento_destino_2'],
+                'm_destino':form.cleaned_data['municipio_destino_2'],
+                'valor':float(form.cleaned_data['valor_2'].replace(',','')) if form.cleaned_data['valor_2'] != u'' else 0,
+            },
+            {
+                'fecha':form.cleaned_data['fecha_3'],
+                'd_origen':form.cleaned_data['departamento_origen_3'],
+                'm_origen':form.cleaned_data['municipio_origen_3'],
+                'd_destino':form.cleaned_data['departamento_destino_3'],
+                'm_destino':form.cleaned_data['municipio_destino_3'],
+                'valor':float(form.cleaned_data['valor_3'].replace(',','')) if form.cleaned_data['valor_3'] != u'' else 0,
+            },
+            {
+                'fecha':form.cleaned_data['fecha_4'],
+                'd_origen':form.cleaned_data['departamento_origen_4'],
+                'm_origen':form.cleaned_data['municipio_origen_4'],
+                'd_destino':form.cleaned_data['departamento_destino_4'],
+                'm_destino':form.cleaned_data['municipio_destino_4'],
+                'valor':float(form.cleaned_data['valor_4'].replace(',','')) if form.cleaned_data['valor_4'] != u'' else 0,
+            },
+            {
+                'fecha':form.cleaned_data['fecha_5'],
+                'd_origen':form.cleaned_data['departamento_origen_5'],
+                'm_origen':form.cleaned_data['municipio_origen_5'],
+                'd_destino':form.cleaned_data['departamento_destino_5'],
+                'm_destino':form.cleaned_data['municipio_destino_5'],
+                'valor':float(form.cleaned_data['valor_5'].replace(',','')) if form.cleaned_data['valor_5'] != u'' else 0,
+            },
+            {
+                'fecha':form.cleaned_data['fecha_6'],
+                'd_origen':form.cleaned_data['departamento_origen_6'],
+                'm_origen':form.cleaned_data['municipio_origen_6'],
+                'd_destino':form.cleaned_data['departamento_destino_6'],
+                'm_destino':form.cleaned_data['municipio_destino_6'],
+                'valor':float(form.cleaned_data['valor_6'].replace(',','')) if form.cleaned_data['valor_6'] != u'' else 0,
+            },
+            {
+                'fecha':form.cleaned_data['fecha_7'],
+                'd_origen':form.cleaned_data['departamento_origen_7'],
+                'm_origen':form.cleaned_data['municipio_origen_7'],
+                'd_destino':form.cleaned_data['departamento_destino_7'],
+                'm_destino':form.cleaned_data['municipio_destino_7'],
+                'valor':float(form.cleaned_data['valor_7'].replace(',','')) if form.cleaned_data['valor_7'] != u'' else 0,
+            },
+            {
+                'fecha':form.cleaned_data['fecha_8'],
+                'd_origen':form.cleaned_data['departamento_origen_8'],
+                'm_origen':form.cleaned_data['municipio_origen_8'],
+                'd_destino':form.cleaned_data['departamento_destino_8'],
+                'm_destino':form.cleaned_data['municipio_destino_8'],
+                'valor':float(form.cleaned_data['valor_8'].replace(',','')) if form.cleaned_data['valor_8'] != u'' else 0,
+            },
+            {
+                'fecha':form.cleaned_data['fecha_9'],
+                'd_origen':form.cleaned_data['departamento_origen_9'],
+                'm_origen':form.cleaned_data['municipio_origen_9'],
+                'd_destino':form.cleaned_data['departamento_destino_9'],
+                'm_destino':form.cleaned_data['municipio_destino_9'],
+                'valor':float(form.cleaned_data['valor_9'].replace(',','')) if form.cleaned_data['valor_9'] != u'' else 0,
+            },
+            {
+                'fecha':form.cleaned_data['fecha_10'],
+                'd_origen':form.cleaned_data['departamento_origen_10'],
+                'm_origen':form.cleaned_data['municipio_origen_10'],
+                'd_destino':form.cleaned_data['departamento_destino_10'],
+                'm_destino':form.cleaned_data['municipio_destino_10'],
+                'valor':float(form.cleaned_data['valor_10'].replace(',','')) if form.cleaned_data['valor_10'] != u'' else 0,
+            },
+        ]
+
+        desplazamientos_obj = []
+
+        valor = 0
+
+        for desplazamiento in desplazamientos:
+            if desplazamiento['valor'] != None:
+                if desplazamiento['fecha'] != '':
+                    if desplazamiento['d_origen'] != '':
+                        if desplazamiento['m_origen'] != '':
+                            if desplazamiento['d_destino'] != '':
+                                if desplazamiento['m_destino'] != '':
+                                    valor += desplazamiento['valor']
+                                    desplazamientos_obj.append(Desplazamiento.objects.create(
+                                        departamento_origen=Departamento.objects.get(id=desplazamiento['d_origen']),
+                                        municipio_origen=Municipio.objects.get(id=desplazamiento['m_origen']),
+                                        departamento_destino=Departamento.objects.get(id=desplazamiento['d_destino']),
+                                        municipio_destino=Municipio.objects.get(id=desplazamiento['m_destino']),
+                                        valor=desplazamiento['valor'],
+                                        fecha = desplazamiento['fecha']
+                                    ))
+
+        solicitud = SolicitudTransporte.objects.create(
+            formador = Formador.objects.get(cedula=self.kwargs['cedula']),
+            nombre = form.cleaned_data['nombre'],
+            valor = valor
+        )
+
+        for desplazamiento_obj in desplazamientos_obj:
+            solicitud.desplazamientos.add(desplazamiento_obj)
+
+        solicitud.save()
+
+
+
+        return super(NuevaSolicitudTransportesView,self).form_valid(form)
+
+class SubirSoporteTransportesView(UpdateView):
+    template_name = "formadores/transportes/subir_soporte.html"
+    model = SolicitudTransporte
+    success_url = "../../"
+    pk_url_kwarg = 'id_soporte'
+    form_class = SubirSoporteForm

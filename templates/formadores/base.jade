@@ -1,5 +1,6 @@
 | {% load staticfiles %}
 | {% load crispy_forms_tags %}
+| {% load django_tables2 %}
 <!DOCTYPE html>
 html(lang="es")
     head
@@ -25,7 +26,23 @@ html(lang="es")
         link(rel="stylesheet",href="{% static 'css/base_formadores.css'%}")
         block head_content
     body
+
+        ol(class="breadcrumb")
+            block breadcrumb_block
         block body_content
+
+        div(class="modal fade",id="modal",tabindex="-1",role="dialog")
+            div(class="modal-dialog modal-lg",role="document")
+                div(class="modal-content")
+                    div(class="modal-header")
+                        button(type="button",class="close",data-dismiss="modal",aria-label="Close")
+                            span(aria-hidden="true") &times;
+                        block modal_title
+                    div(class="modal-body")
+                        block modal_body
+                    div(class="modal-footer")
+                        button(type="button",class="btn btn-default",id="cerrar_totorial") No quiero ver mas este tutorial
+                        button(type="button",class="btn btn-primary",data-dismiss="modal") Entendido
 
         script(src="{% static 'bower_components/jquery/dist/jquery.min.js'%}")
         script(src="{% static 'bower_components/moment/min/moment.min.js'%}")
@@ -43,4 +60,5 @@ html(lang="es")
         script(src="{% static 'bower_components/bootstrap-fileinput/js/plugins/purify.min.js'%}")
         script(src="{% static 'bower_components/bootstrap-fileinput/js/fileinput.min.js'%}")
         script(src="{% static 'bower_components/bootstrap-fileinput/js/locales/es.js'%}")
+        script(src="{% static 'bower_components/jquery-maskmoney/src/jquery.maskMoney.js'%}")
         block body_script
