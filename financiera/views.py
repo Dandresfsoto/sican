@@ -5,6 +5,7 @@ from formadores.forms import SolicitudTransporteForm
 from financiera.tasks import construir_pdf
 from usuarios.tasks import send_mail_templated
 from sican.settings.base import DEFAULT_FROM_EMAIL
+import locale
 
 
 
