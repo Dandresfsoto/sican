@@ -4,8 +4,6 @@ from __future__ import unicode_literals
 import django_tables2 as tables
 from formadores.models import SolicitudTransporte
 from django.utils.safestring import mark_safe
-import locale
-locale.setlocale(locale.LC_ALL, "es_CO.UTF-8")
 
 class SolicitudTable(tables.Table):
     nombre = tables.Column('Nombre')
