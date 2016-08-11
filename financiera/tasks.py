@@ -53,7 +53,7 @@ def construir_pdf(id_solicitud):
 
     i = 15
     for desplazamiento in desplazamientos:
-        ws.cell(row=i,column=2).value = desplazamiento.creacion.strftime('%d/%m/%Y')
+        ws.cell(row=i,column=2).value = desplazamiento.fecha.strftime('%d/%m/%Y')
         ws.cell(row=i,column=3).value = solicitud.formador.get_full_name()
         ws.cell(row=i,column=5).value = solicitud.formador.celular_personal
         ws.cell(row=i,column=6).value = desplazamiento.departamento_origen.nombre + ', ' + desplazamiento.municipio_origen.nombre

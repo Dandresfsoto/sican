@@ -201,9 +201,8 @@
         <div class="container-fluid">
           <div class="realtime"></div>
         </div>
-        <div class="container-fluid container-index">{% if nuevo_permiso %}
-          <!--a(href="nuevo",class="link_button")paper-button(class="submit") Nuevo
-          -->{% endif %}
+        <div class="container-fluid container-index">{% if nuevo_permiso %}<a href="nuevo" class="link_button">
+            <paper-button class="submit">Nuevo</paper-button></a>{% endif %}
           <table id="table" width="100%" class="display responsive no-wrap table table-striped table-bordered">
             <thead>
               <tr>
@@ -246,6 +245,9 @@
     <script src="{% static 'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js'%}"></script>
     <script src="{% static 'bower_components/bootstrap-select/dist/js/i18n/defaults-es_CL.min.js'%}"></script>
     <script src="{% static 'bower_components/accounting/accounting.min.js'%}"></script>
+    <script src="{% static 'bower_components/chained/jquery.chained.min.js'%}"></script>
+    <script src="{% static 'bower_components/chained/jquery.chained.remote.min.js'%}"></script>
+    <script src="{% static 'bower_components/jquery-maskmoney/src/jquery.maskMoney.js'%}"></script>
     <script src="{% static 'bower_components/reconnectingWebsocket/reconnecting-websocket.min.js'%}"></script>
     <script src="{% static 'js/chat.js'%}"></script>
     <script>
@@ -362,21 +364,40 @@
                       "data": 6,
                       "className": 'text-center',
                       "render": function (data, type, row, meta) {
-                          if(data == "aprobado"){
-                              return '<a href="estado/' + row[0] + '" style="color:#004c99;">Aprobada</a>';
+                          if (row[11]) {
+                              if (data == "aprobado") {
+                                  return '<a href="estado/' + row[0] + '" style="color:#004c99;">Aprobada</a>';
+                              }
+                              if (data == "revision") {
+                                  return '<a href="estado/' + row[0] + '" style="color:#004c99;">En revisión</a>';
+                              }
+                              if (data == "rechazado") {
+                                  return '<a href="estado/' + row[0] + '" style="color:#004c99;">Rechazado</a>';
+                              }
+                              if (data == "consignado") {
+                                  return '<a href="estado/' + row[0] + '" style="color:#004c99;">Consignado</a>';
+                              }
+                              else {
+                                  return data;
+                              }
                           }
-                          if(data == "revision"){
-                              return '<a href="estado/' + row[0] + '" style="color:#004c99;">En revisión</a>';
-                          }
-                          if(data == "rechazado"){
-                              return '<a href="estado/' + row[0] + '" style="color:#004c99;">Rechazado</a>';
-                          }
-                          if(data == "consignado"){
-                              return '<a href="estado/' + row[0] + '" style="color:#004c99;">Consignado</a>';
-                          }
-                          else
-                          {
-                              return data;
+      
+                          else{
+                              if (data == "aprobado") {
+                                  return 'Aprobada';
+                              }
+                              if (data == "revision") {
+                                  return 'En revisión';
+                              }
+                              if (data == "rechazado") {
+                                  return 'Rechazado';
+                              }
+                              if (data == "consignado") {
+                                  return 'Consignado';
+                              }
+                              else {
+                                  return data;
+                              }
                           }
       
                       },

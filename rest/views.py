@@ -844,6 +844,7 @@ class SolicitudesTransporteList(BaseDatatableView):
     8.nombre
     9.permiso para editar
     10.permiso para eliminar
+    11.permiso para cambiar estado
     """
     model = SolicitudTransporte
     columns = ['id','formador','creacion','valor','valor_aprobado','estado','archivo']
@@ -890,5 +891,6 @@ class SolicitudesTransporteList(BaseDatatableView):
                 item.nombre,
                 self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
                 self.request.user.has_perm('permisos_sican.financiera.transportes.eliminar'),
+                self.request.user.has_perm('permisos_sican.financiera.transportes.estado'),
             ])
         return json_data
