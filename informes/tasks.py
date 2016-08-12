@@ -8,13 +8,14 @@ from informes.functions import construir_reporte
 from informes.models import InformesExcel
 from django.core.files import File
 from usuarios.models import User
-from formadores.models import Formador
+from formadores.models import Formador, Soporte
+from rh.models import TipoSoporte
 
 
 @app.task
 def formadores(email):
     usuario = User.objects.get(email=email)
-    nombre = "Directorio formadores"
+    nombre = "Directorio de formadores"
     proceso = "RH-INF01"
     informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
     fecha = informe.creacion
@@ -51,6 +52,56 @@ def formadores(email):
             formador.pension,
             formador.arl
         ])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def formadores_soportes(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Soportes cargados por formador"
+    proceso = "RH-INF02"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Nombres','Apellidos','Cedula','Región']
+
+    formatos = ['General','General','General','General','General']
+
+
+    ancho_columnas =  [30,20,20,15,15]
+
+    contenidos = []
+
+    tipos_soportes = TipoSoporte.objects.exclude(oculto=True).values_list('id','nombre')
+
+    for tipo_soporte in tipos_soportes:
+        titulos.append(tipo_soporte[1])
+        formatos.append('General')
+        ancho_columnas.append(30)
+
+    for formador in Formador.objects.exclude(oculto=True):
+        row =[
+                'FOR-'+unicode(formador.id),
+                formador.nombres,
+                formador.apellidos,
+                formador.cedula,
+                formador.get_region_string(),
+            ]
+        for tipo_soporte in tipos_soportes:
+            try:
+                soporte = Soporte.objects.filter(formador=formador).get(tipo__id=tipo_soporte[0])
+            except:
+                row.append('No')
+            else:
+                if soporte.get_archivo_url() != "":
+                    row.append('Si')
+                else:
+                    row.append('No')
+
+        contenidos.append(row)
 
     output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
     filename = unicode(informe.creacion) + '.xlsx'

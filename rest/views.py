@@ -25,7 +25,7 @@ from rest_framework.permissions import AllowAny
 from formadores.models import SolicitudTransporte
 from informes.models import InformesExcel
 from django.http import HttpResponse
-from informes.tasks import formadores
+from informes.tasks import formadores, formadores_soportes
 
 # Create your views here.
 class ReportesView(APIView):
@@ -37,6 +37,8 @@ class ReportesView(APIView):
 
         if id_accion == '1':
             x = formadores.delay(request.user.email)
+        if id_accion == '2':
+            x = formadores_soportes.delay(request.user.email)
 
         return HttpResponse(status=200)
 
