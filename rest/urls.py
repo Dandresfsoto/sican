@@ -4,7 +4,7 @@ from rest.views import AdministrativosRhSoportes, AdminUserList, GroupUserList, 
 from rest.views import FormadoresRh, FormadoresRhSoportes
 from rest.views import DepartamentosList, MunicipiosList, SecretariasList, RadicadosList
 from rest.views import MunicipiosChainedList, RadicadosChainedList
-from rest.views import SolicitudesTransporteList
+from rest.views import SolicitudesTransporteList, InformesExcelList, ReportesView
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -35,4 +35,6 @@ urlpatterns = [
     url(r'chained/radicados/$', RadicadosChainedList.as_view()),
 
     url(r'financiera/transportes/$', SolicitudesTransporteList.as_view()),
+    url(r'informes/excel/$', InformesExcelList.as_view()),
+    url(r'reportes/$', ReportesView.as_view()),
 ]

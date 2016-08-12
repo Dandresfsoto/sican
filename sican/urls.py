@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^preinscripcion/', include('preinscripcion.urls', namespace='preinscripcion')),
     url(r'^formadores/', include('formadores.urls', namespace='formadores')),
     url(r'^financiera/', include('financiera.urls', namespace='financiera')),
+    url(r'^informes/', include('informes.urls', namespace='informes')),
 ]
 
 if settings.DEBUG:

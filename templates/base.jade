@@ -25,6 +25,21 @@ html(lang="es")
 
    body
       block body_content
+      div(class="modal fade",id="myModal",tabindex="-1",role="dialog")
+        div(class="modal-dialog",role="document")
+            div(class="modal-content")
+                div(class="modal-header")
+                    button(type="button",class="close",data-dismiss="modal",aria-label="Close")
+                        span(aria-hidden="true") &times;
+                    h4(class="modal-title") Se esta generando el reporte
+                div(class="modal-body")
+                   p.
+                     El informe se esta construyendo, el tiempo que tarda en generarse depende de la cantidad de información
+                     por favor ten paciencia.
+                   p.
+                     Para ver tus informes generados dirijete a la pestaña "Mis informes - Informes en excel".
+                div(class="modal-footer")
+                   button(type="button",class="btn btn-default",data-dismiss="modal") Cerrar
       script(src="{% static 'bower_components/jquery/dist/jquery.min.js'%}")
       script(src="{% static 'bower_components/moment/min/moment.min.js'%}")
       script(src="{% static 'bower_components/moment/locale/es.js'%}")

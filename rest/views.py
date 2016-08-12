@@ -23,8 +23,22 @@ from secretarias.models import Secretaria
 from radicados.models import Radicado
 from rest_framework.permissions import AllowAny
 from formadores.models import SolicitudTransporte
+from informes.models import InformesExcel
+from django.http import HttpResponse
+from informes.tasks import formadores
 
 # Create your views here.
+class ReportesView(APIView):
+    """
+    Retorna la informacion de los usuarios excluyendo al que realiza el request.
+    """
+    def get(self, request, format=None):
+        id_accion = request._request.GET['action']
+
+        if id_accion == '1':
+            x = formadores.delay(request.user.email)
+
+        return HttpResponse(status=200)
 
 class MunicipiosChainedList(APIView):
     """
@@ -133,6 +147,12 @@ class UserPermissionList(APIView):
                   'id':'financiera',
                   'links':[]
             },
+            'informes':{'name':'Mis informes',
+                  'icon':'icons:assessment',
+                  'id':'informes',
+                  'links':[]
+            },
+
         }
 
         links = {
@@ -171,6 +191,9 @@ class UserPermissionList(APIView):
             },
             'transportes':{
                 'ver':{'name':'Solicitudes de transporte','link':'/financiera/transportes/'}
+            },
+            'excel':{
+                'ver':{'name':'Informes en excel','link':'/informes/excel/'}
             },
         }
 
@@ -892,5 +915,42 @@ class SolicitudesTransporteList(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
                 self.request.user.has_perm('permisos_sican.financiera.transportes.eliminar'),
                 self.request.user.has_perm('permisos_sican.financiera.transportes.estado'),
+            ])
+        return json_data
+
+class InformesExcelList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.creacion
+    3.archivo
+    4.permiso para editar
+    5.permiso para eliminar
+    """
+    model = InformesExcel
+    columns = ['id','nombre','creacion','archivo']
+
+    order_columns = ['id','nombre','creacion','archivo']
+    max_display_length = 10
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.creacion,
+                item.get_archivo_url(),
+                self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
+                self.request.user.has_perm('permisos_sican.financiera.transportes.eliminar'),
             ])
         return json_data

@@ -88,7 +88,8 @@ LOCAL_APPS = [
     'bases',
     'docentes',
     'preinscripcion',
-    'financiera'
+    'financiera',
+    'informes'
 ]
 
 THIRD_PARTY_APPS = [
