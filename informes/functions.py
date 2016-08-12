@@ -29,6 +29,24 @@ def construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,us
             if col_num != 0:
                 ws.column_dimensions[openpyxl.cell.get_column_letter(col_num+1)].width = ancho_columnas[col_num]
 
+            ws.cell(row=row_num,column=col_num+1).style = Style(font=Font(name='Arial',
+                                                                          size=11,
+                                                                          bold=True,
+                                                                          color='FFFFFFFF'
+                                                                        ),
+                                                                fill=PatternFill(
+                                                                    fill_type='solid',
+                                                                    start_color='CB2E0F',
+                                                                    end_color='FF000000'
+                                                                ),
+                                                                alignment=Alignment(
+                                                                    horizontal='center',
+                                                                    vertical='center',
+                                                                    wrap_text=True
+                                                                ),
+                                                                number_format='General'
+                                                                )
+
         for contenido in contenidos:
             row_num += 1
             for col_num in xrange(len(contenido)):
