@@ -933,6 +933,8 @@ class InformesExcelList(BaseDatatableView):
     order_columns = ['id','nombre','creacion','archivo']
     max_display_length = 10
 
+    def get_initial_queryset(self):
+        return InformesExcel.objects.filter(usuario = self.request.user)
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)

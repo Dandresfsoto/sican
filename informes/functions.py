@@ -4,6 +4,7 @@ from StringIO import StringIO
 from sican.settings import base as settings
 from openpyxl.drawing.image import Image
 from openpyxl.styles import Style, PatternFill, Border, Side, Alignment, Protection, Font
+from dateutil.tz import tzutc, tzlocal
 
 def construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso):
     if len(ancho_columnas) != len(formatos) != len(titulos) != len(contenidos[0]):
@@ -17,7 +18,7 @@ def construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,us
         logo_andes.drawing.left = 8
         ws.add_image(logo_andes)
         ws.cell('B1').value = "   Nombre: " + nombre
-        ws.cell('B3').value = "   Fecha: " + fecha.strftime("%A %d de %B a las %X %p")
+        ws.cell('B3').value = "   Fecha: " + fecha.astimezone(tzlocal()).strftime("%A %d de %B, %X")
         ws.cell('B5').value = "   Usuario: " + usuario.email
         ws.cell('B7').value = "   Proceso: " + proceso
 
