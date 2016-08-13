@@ -18,7 +18,7 @@ def construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,us
         logo_andes.drawing.left = 8
         ws.add_image(logo_andes)
         ws.cell('B1').value = "   Nombre: " + nombre
-        ws.cell('B3').value = "   Fecha: " + fecha.astimezone(tzlocal()).strftime("%A %d de %B, %X")
+        ws.cell('B3').value = "   Fecha: " + fecha.astimezone(tzlocal()).strftime("%A %d de %B, %X").decode('UTF_8')
         ws.cell('B5').value = "   Usuario: " + usuario.email
         ws.cell('B7').value = "   Proceso: " + proceso
 

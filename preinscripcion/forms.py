@@ -285,3 +285,147 @@ class UpdateRegistroForm(forms.ModelForm):
         widgets = {
             'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo docente','Directivo docente')))
         }
+
+class DocentesPreinscritosForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(DocentesPreinscritosForm, self).__init__(*args, **kwargs)
+
+        if 'data' not in kwargs:
+            self.fields['municipio'].widget.choices = (('','---------'),)
+            self.fields['radicado'].widget.choices = (('','---------'),)
+
+
+        else:
+            id_departamento = kwargs['data']['departamento']
+            if id_departamento == '':
+                id_departamento = 0
+            self.fields['municipio'].widget.choices = Municipio.objects.filter(departamento__id=id_departamento).values_list('id','nombre')
+
+            id_municipio = kwargs['data']['municipio']
+            if id_municipio == '':
+                id_municipio = 0
+            self.fields['radicado'].widget.choices = Radicado.objects.filter(municipio__id=id_municipio).values_list('id','nombre_sede')
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Nueva preinscripción de docente:',
+
+                Div(
+                    Div('primer_apellido',css_class='col-sm-6'),
+                    Div('segundo_apellido',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+
+
+                Div(
+                    Div('primer_nombre',css_class='col-sm-6'),
+                    Div('segundo_nombre',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+
+
+                Div(
+                    Div('cedula',css_class='col-sm-6'),
+                    Div('cargo',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('correo',css_class='col-sm-4'),
+                    Div('telefono_fijo',css_class='col-sm-4'),
+                    Div('telefono_celular',css_class='col-sm-4'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('departamento',css_class='col-sm-4'),
+                    Div('municipio',css_class='col-sm-4'),
+                    Div('radicado',css_class='col-sm-4'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('verificado',css_class='col-sm-3 col-sm-offset-2'),
+                    css_class = 'hidden'
+                ),
+            ),
+        )
+
+    class Meta:
+        model = DocentesPreinscritos
+        fields = '__all__'
+        widgets = {
+            'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo Docente','Directivo Docente')))
+        }
+
+class DocentesPreinscritosUpdateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(DocentesPreinscritosUpdateForm, self).__init__(*args, **kwargs)
+
+        id_departamento = self.initial['departamento']
+        if id_departamento == '':
+            id_departamento = 0
+        self.fields['municipio'].widget.choices = Municipio.objects.filter(departamento__id=id_departamento).values_list('id','nombre')
+
+        id_municipio = self.initial['municipio']
+        if id_municipio == '':
+            id_municipio = 0
+        self.fields['radicado'].widget.choices = Radicado.objects.filter(municipio__id=id_municipio).values_list('id','nombre_sede')
+
+
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Editar preinscripción:',
+
+                Div(
+                    Div('primer_apellido',css_class='col-sm-6'),
+                    Div('segundo_apellido',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+
+
+                Div(
+                    Div('primer_nombre',css_class='col-sm-6'),
+                    Div('segundo_nombre',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+
+
+                Div(
+                    Div('cedula',css_class='col-sm-6'),
+                    Div('cargo',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('correo',css_class='col-sm-4'),
+                    Div('telefono_fijo',css_class='col-sm-4'),
+                    Div('telefono_celular',css_class='col-sm-4'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('departamento',css_class='col-sm-4'),
+                    Div('municipio',css_class='col-sm-4'),
+                    Div('radicado',css_class='col-sm-4'),
+                    css_class = 'row'
+                ),
+
+                Div(
+                    Div('verificado',css_class='col-sm-3 col-sm-offset-2'),
+                    css_class = 'hidden'
+                ),
+            ),
+        )
+
+    class Meta:
+        model = DocentesPreinscritos
+        fields = '__all__'
+        widgets = {
+            'cargo':forms.Select(choices=(('Docente','Docente'),('Directivo Docente','Directivo Docente')))
+        }

@@ -25,7 +25,8 @@ from rest_framework.permissions import AllowAny
 from formadores.models import SolicitudTransporte
 from informes.models import InformesExcel
 from django.http import HttpResponse
-from informes.tasks import formadores, formadores_soportes
+from informes.tasks import formadores, formadores_soportes, preinscritos
+from preinscripcion.models import DocentesPreinscritos
 
 # Create your views here.
 class ReportesView(APIView):
@@ -39,6 +40,8 @@ class ReportesView(APIView):
             x = formadores.delay(request.user.email)
         if id_accion == '2':
             x = formadores_soportes.delay(request.user.email)
+        if id_accion == '3':
+            x = preinscritos.delay(request.user.email)
 
         return HttpResponse(status=200)
 
@@ -154,6 +157,11 @@ class UserPermissionList(APIView):
                   'id':'informes',
                   'links':[]
             },
+            'formacion':{'name':'Formación',
+                  'icon':'icons:language',
+                  'id':'formacion',
+                  'links':[]
+            },
 
         }
 
@@ -196,6 +204,9 @@ class UserPermissionList(APIView):
             },
             'excel':{
                 'ver':{'name':'Informes en excel','link':'/informes/excel/'}
+            },
+            'preinscritos':{
+                'ver':{'name':'Docentes preinscritos','link':'/formacion/preinscritos/'}
             },
         }
 
@@ -956,5 +967,62 @@ class InformesExcelList(BaseDatatableView):
                 item.get_archivo_url(),
                 self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
                 self.request.user.has_perm('permisos_sican.financiera.transportes.eliminar'),
+            ])
+        return json_data
+
+class PreinscritosList(BaseDatatableView):
+    """
+    0.id
+    1.primer apellido
+    2.cargo
+    3.departamento
+    4.verificado
+    5.cedula
+    6.correo
+    7.telefono_fijo
+    8.telefono_celular
+    9.radicado
+    10.fecha
+    11.permiso para editar
+    12.permiso para eliminar
+    """
+    model = DocentesPreinscritos
+    columns = ['id','primer_apellido','cargo','departamento','verificado']
+
+    order_columns = ['id','primer_apellido','cargo','departamento','verificado']
+    max_display_length = 10
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(primer_apellido__icontains=search) | Q(segundo_apellido__icontains=search) |\
+                Q(primer_nombre__icontains=search) | Q(segundo_nombre__icontains=search) |\
+                Q(cargo__icontains=search) | Q(cargo__icontains=search) | Q(cedula__icontains=search) |\
+                Q(departamento__nombre__icontains=search) | Q(municipio__nombre__icontains=search) |\
+                Q(radicado__numero__icontains=search)
+
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.primer_apellido + ' ' + item.segundo_apellido + ' ' + item.primer_nombre + ' ' + item.segundo_nombre,
+                item.cargo,
+                item.departamento.nombre + ', ' + item.municipio.nombre,
+                'Si' if item.verificado else 'No',
+                item.cedula,
+                item.correo,
+                item.telefono_fijo,
+                item.telefono_celular,
+                item.radicado.numero,
+                item.fecha,
+                self.request.user.has_perm('permisos_sican.formacion.preinscritos.editar'),
+                self.request.user.has_perm('permisos_sican.formacion.preinscritos.eliminar'),
             ])
         return json_data

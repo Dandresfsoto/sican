@@ -10,6 +10,7 @@ from django.core.files import File
 from usuarios.models import User
 from formadores.models import Formador, Soporte
 from rh.models import TipoSoporte
+from preinscripcion.models import DocentesPreinscritos
 
 
 @app.task
@@ -23,8 +24,8 @@ def formadores(email):
     titulos = ['ID','Nombres','Apellidos','Cedula','Región','Correo','Celular','Cargo','Profesión','Inicio contrato',
                'Fin contrato','Banco','Tipo cuenta','Numero cuenta','Eps','Pensión','Arl']
 
-    formatos = ['General','General','General','General','General','General','General','General','General','m/d/yy',
-               'm/d/yy','General','General','General','General','General','General']
+    formatos = ['General','General','General','General','General','General','General','General','General','d/m/yy',
+               'd/m/yy','General','General','General','General','General','General']
 
 
     ancho_columnas =  [30,20,20,15,15,50,25,20,20,10,
@@ -102,6 +103,50 @@ def formadores_soportes(email):
                     row.append('No')
 
         contenidos.append(row)
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def preinscritos(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Reporte de docentes preinscritos"
+    proceso = "FOR-INF01"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Cedula','Primer apellido','Segundo apellido','Primer nombre','Segundo nombre','Cargo','Correo',
+               'Telefono fijo','Celular','Departamento','Municipio','Radicado','Base Mineducación','Fecha registro']
+
+    formatos = ['General','0','General','General','General','General','General','General',
+                'General','General','General','General','0','General','d/m/yy']
+
+
+    ancho_columnas =  [30,20,15,15,15,15,15,30,
+                       15,15,20,20,15,10,15]
+
+    contenidos = []
+
+    for docente in DocentesPreinscritos.objects.all():
+        contenidos.append([
+            'PRE-'+unicode(docente.id),
+            docente.cedula,
+            docente.primer_apellido,
+            docente.segundo_apellido,
+            docente.primer_nombre,
+            docente.segundo_nombre,
+            docente.cargo,
+            docente.correo,
+            docente.telefono_fijo,
+            docente.telefono_celular,
+            docente.departamento.nombre if docente.departamento != None else '',
+            docente.municipio.nombre if docente.municipio != None else '',
+            docente.radicado.numero if docente.radicado != None else '',
+            'Si' if docente.verificado else 'No',
+            docente.fecha,
+        ])
 
     output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
     filename = unicode(informe.creacion) + '.xlsx'
