@@ -1,4 +1,6 @@
-from django.shortcuts import render
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.views.generic import TemplateView, CreateView, DeleteView, UpdateView
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from usuarios.models import User
