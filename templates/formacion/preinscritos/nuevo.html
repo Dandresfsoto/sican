@@ -257,6 +257,10 @@
     <script src="{% static 'bower_components/chained/jquery.chained.remote.min.js'%}"></script>
     <script src="{% static 'bower_components/jquery-maskmoney/src/jquery.maskMoney.js'%}"></script>
     <script>
+      $('#submit_form').on('click', function () {
+          $('#form-formador').submit();
+      });
+      
       $(document).ready(function() {
           $("#id_municipio").remoteChained({
               parents: "#id_departamento",

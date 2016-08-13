@@ -36,6 +36,11 @@ block scroll_header_panel_content
 
 block body_script
     script.
+
+        $('#submit_form').on('click', function () {
+            $('#form-formador').submit();
+        });
+
         $(document).ready(function() {
             $("#id_municipio").remoteChained({
                 parents: "#id_departamento",
