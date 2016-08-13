@@ -55,7 +55,7 @@ class NewUserView(LoginRequiredMixin,
         user.fullname = user.first_name + " " + user.last_name
         user.save()
 
-        password = "".join( [random.choice(string.letters) for i in xrange(6)] )
+        password = "".join([random.choice(string.ascii_letters) for i in xrange(6)])
         user.set_password(password)
         user.save()
         send_mail_templated.delay('email/new_user.tpl',
