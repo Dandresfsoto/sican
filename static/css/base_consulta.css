@@ -40,3 +40,14 @@ label {
   background-color: #da4f1f;
   color: #fff;
 }
+.fieldset_class {
+  color: #fff;
+  text-align: justify;
+}
+.fieldset_class> legend {
+  border-bottom: none;
+}
+.slider.slider-horizontal {
+  width: 100%;
+  height: 20px;
+}

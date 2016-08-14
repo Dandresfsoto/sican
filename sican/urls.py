@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^financiera/', include('financiera.urls', namespace='financiera')),
     url(r'^informes/', include('informes.urls', namespace='informes')),
     url(r'^formacion/', include('formacion.urls', namespace='formacion')),
+    url(r'^encuestas/', include('encuestas.urls', namespace='encuestas')),
 ]
 
 if settings.DEBUG:

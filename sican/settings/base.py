@@ -90,7 +90,8 @@ LOCAL_APPS = [
     'preinscripcion',
     'financiera',
     'informes',
-    'formacion'
+    'formacion',
+    'encuestas'
 ]
 
 THIRD_PARTY_APPS = [

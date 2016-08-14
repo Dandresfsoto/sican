@@ -29,6 +29,7 @@
     "bootstrap-fileinput": "^4.3.3",
     "chosen": "^1.6.1",
     "accounting": "^0.3.2",
-    "jquery-maskmoney": "jquery.maskMoney#^3.0.2"
+    "jquery-maskmoney": "jquery.maskMoney#^3.0.2",
+    "seiyria-bootstrap-slider": "^9.1.3"
   }
 }

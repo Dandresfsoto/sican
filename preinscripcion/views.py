@@ -5,12 +5,13 @@ from docentes.models import DocentesDocentic, DocentesMinEducacion
 from preinscripcion.models import DocentesPreinscritos
 from django.shortcuts import HttpResponseRedirect
 from preinscripcion.models import DocentesPreinscritos
+from django.shortcuts import redirect
 # Create your views here.
 
 class ConsultaView(FormView):
     template_name = 'preinscripcion/consulta.html'
     form_class = Consulta
-    success_url = '/preinscripcion/completo/'
+    success_url = 'completo/'
 
     def form_valid(self, form):
         cedula = form.cleaned_data['cedula']
@@ -41,7 +42,7 @@ class RegistroView(CreateView):
     model = DocentesPreinscritos
     template_name = 'preinscripcion/registro.html'
     form_class = Registro
-    success_url = '/preinscripcion/completo/'
+    success_url = 'completo/'
 
     def get_initial(self):
         return {'cedula':self.kwargs['cedula']}
@@ -50,7 +51,7 @@ class PreregistroView(CreateView):
     model = DocentesPreinscritos
     template_name = 'preinscripcion/registro.html'
     form_class = PregistroForm
-    success_url = '/preinscripcion/completo/'
+    success_url = 'completo/'
 
     def get_initial(self):
         return {'cedula':self.kwargs['cedula']}
@@ -59,7 +60,7 @@ class UpdateRegistroView(UpdateView):
     model = DocentesPreinscritos
     template_name = 'preinscripcion/update.html'
     form_class = UpdateRegistroForm
-    success_url = '/preinscripcion/completo/'
+    success_url = 'completo/'
 
     def get_object(self, queryset=None):
         return self.model.objects.get(cedula=self.kwargs['cedula'])
@@ -76,11 +77,14 @@ class DiplomaView(TemplateView):
 class Completo(TemplateView):
     template_name = 'preinscripcion/completo.html'
 
+    def get(self, request, *args, **kwargs):
+        return redirect('/encuestas/percepcioninicial/'+self.kwargs['cedula'])
+
 class DiplomaReingresoView(CreateView):
     model = DocentesPreinscritos
     template_name = 'preinscripcion/registro_diploma.html'
     form_class = Registro
-    success_url = '/preinscripcion/completo/'
+    success_url = 'completo/'
 
     def get_initial(self):
         return {'cedula':self.kwargs['cedula']}
