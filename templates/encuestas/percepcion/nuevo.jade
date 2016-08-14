@@ -15,7 +15,7 @@ block body_content
 block body_script
     script.
         $(document).ready(function(){
-            if( $('#id_area').val() == "Otras" ){
+            if( $('#id_area').val() == "15" ){
                 $('#otra_area').removeClass('hidden');
             }
             else{
@@ -45,7 +45,7 @@ block body_script
 
     script.
         $('#id_area').on('change',function(){
-            if( $('#id_area').val() == "Otras" ){
+            if( $('#id_area').val() == "15" ){
                 $('#otra_area').removeClass('hidden');
             }
             else{
