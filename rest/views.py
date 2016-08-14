@@ -39,7 +39,7 @@ class ResultadosPercepcionInicial(APIView):
 
         response = {'0':encuestas.count(),
                     '1':{'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'11':0,'12':0,'13':0,'14':0,'15':0,},
-                    '2':{'1':0,'2':0,'3':0,'4':0,'5':0},
+                    '2':{'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0},
                     '3':{'si':0,'no':0},
                     '4':{'1':0,'2':0,'3':0,'4':0},
                     '5':{'1':0,'2':0,'3':0,'4':0},
@@ -52,23 +52,33 @@ class ResultadosPercepcionInicial(APIView):
                     '12':{'si':0,'no':0},
                     '13':{'1':0,'2':0,'3':0,'4':0},
                     '14':{'si':0,'no':0},
-                    '15':{'1':0,'2':0,'3':0,'4':0,'5':0},
+                    '15':{'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0},
         }
 
         for encuesta in encuestas:
             response['1'][encuesta.area] += 1
             antiguedad = int(encuesta.antiguedad)
 
-            if antiguedad > 0 and antiguedad <= 10:
+            if antiguedad > 0 and antiguedad <= 5:
                 response['2']['1'] += 1
-            if antiguedad > 10 and antiguedad <= 20:
+            if antiguedad > 5 and antiguedad <= 10:
                 response['2']['2'] += 1
-            if antiguedad > 20 and antiguedad <= 30:
+            if antiguedad > 10 and antiguedad <= 15:
                 response['2']['3'] += 1
-            if antiguedad > 30 and antiguedad <= 40:
+            if antiguedad > 15 and antiguedad <= 20:
                 response['2']['4'] += 1
-            if antiguedad > 40 and antiguedad <= 50:
+            if antiguedad > 20 and antiguedad <= 25:
                 response['2']['5'] += 1
+            if antiguedad > 25 and antiguedad <= 30:
+                response['2']['6'] += 1
+            if antiguedad > 30 and antiguedad <= 35:
+                response['2']['7'] += 1
+            if antiguedad > 35 and antiguedad <= 40:
+                response['2']['8'] += 1
+            if antiguedad > 40 and antiguedad <= 45:
+                response['2']['9'] += 1
+            if antiguedad > 45 and antiguedad <= 50:
+                response['2']['10'] += 1
 
             if encuesta.pregunta_1 == 'Si':
                 response['3']['si'] += 1
@@ -111,16 +121,26 @@ class ResultadosPercepcionInicial(APIView):
             if encuesta.pregunta_13 != '':
                 escala = int(encuesta.pregunta_13)
 
-                if escala > 0 and escala <= 20:
+                if escala > 0 and escala <= 10:
                     response['15']['1'] += 1
-                if escala > 20 and escala <= 40:
+                if escala > 10 and escala <= 20:
                     response['15']['2'] += 1
-                if escala > 40 and escala <= 60:
+                if escala > 20 and escala <= 30:
                     response['15']['3'] += 1
-                if escala > 60 and escala <= 80:
+                if escala > 30 and escala <= 40:
                     response['15']['4'] += 1
-                if escala > 80 and escala <= 100:
+                if escala > 40 and escala <= 50:
                     response['15']['5'] += 1
+                if escala > 50 and escala <= 60:
+                    response['15']['6'] += 1
+                if escala > 60 and escala <= 70:
+                    response['15']['7'] += 1
+                if escala > 70 and escala <= 80:
+                    response['15']['8'] += 1
+                if escala > 80 and escala <= 90:
+                    response['15']['9'] += 1
+                if escala > 90 and escala <= 100:
+                    response['15']['10'] += 1
 
         return Response(response)
 
