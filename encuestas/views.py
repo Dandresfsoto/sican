@@ -4,6 +4,7 @@ from docentes.models import DocentesDocentic, DocentesMinEducacion
 from preinscripcion.models import DocentesPreinscritos
 from encuestas.forms import Consulta, PercepcionInicialForm
 from encuestas.models import PercepcionInicial
+from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 
 # Create your views here.
 class InicioView(FormView):
@@ -70,3 +71,10 @@ class EncuestaView(FormView):
 
 class CompletoView(TemplateView):
     template_name = 'encuestas/percepcion/completo.html'
+
+
+class ResultadosPercepcionInicialView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'encuestas/percepcion/resultados.html'
+    permission_required = "permisos_sican.encuestas.percepcioninicial.ver"

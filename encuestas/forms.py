@@ -99,6 +99,7 @@ class PercepcionInicialForm(forms.Form):
                 if pregunta_11 == "":
                     self.add_error('pregunta_11','Este campo es requerido')
 
+    #1
     area = forms.CharField(label='',max_length=100,widget=forms.Select(choices=(
         ('','------------------'),
         ('1','Ciencias naturales y educación ambiental'),
@@ -120,26 +121,28 @@ class PercepcionInicialForm(forms.Form):
 
     area_1 = forms.CharField(required=False,label='',max_length=100)
 
+    #2
     antiguedad = forms.CharField(label='',max_length=100)
+    #3
     pregunta_1 = forms.ChoiceField(label='',
                                  widget=forms.RadioSelect(),choices=(('Si','Si'),('No','No')))
     pregunta_1_1 = forms.CharField(required=False,label="",
                                    max_length=1000,widget=forms.Textarea())
-
+    #4
     pregunta_2 = forms.ChoiceField(required=False,label="",widget=forms.RadioSelect(),choices=(
         ('1','a. Formación en herramientas del dispositivo'),
         ('2','b. Formación en contenidos para uso didáctico'),
         ('3','c. Formación en uso avanzado (Programación)'),
         ('4','d. Formación en uso administrativo')
     ))
-
+    #5
     pregunta_3 = forms.ChoiceField(required=False,label="",widget=forms.RadioSelect(),choices=(
         ('1','a. Los usas para algunos contenidos (Uso inferior a 4 h semanales)'),
         ('2','b. Los usas para la mayoría los contenidos (Uso entre 4h a 8h semanales)'),
         ('3','c. Los usas de manera intensiva'),
         ('4','d. No usas los dispositivos')
     ))
-
+    #6
     pregunta_4 = forms.ChoiceField(required=False,label="",widget=forms.RadioSelect(),choices=(
         ('1','a. Estudio autónomo dentro de la clase de los alumnos'),
         ('2','b. Estudio guiado (clase magistral más trabajo con dispositivos)'),
@@ -147,14 +150,14 @@ class PercepcionInicialForm(forms.Form):
         ('4','d. Trabajo lúdico'),
         ('5','e. Otros'),
     ))
-
+    #7
     pregunta_5 = forms.ChoiceField(required=False,label="",widget=forms.RadioSelect(),choices=(
         ('1','a. Sirve como evidencia para ser presentada en el proceso de evaluación de docentes y directivos docentes '),
         ('2','b. Facilita el fortalecimiento de la gestión institucional'),
         ('3','c. Es una herramienta para buscar apoyo académico y técnico a los proyectos de los docentes'),
         ('4','d. Es una herramienta para mejorar la toma de decisiones, articulada a objetivos claros de la institución para el mejoramiento de la calidad'),
     ))
-
+    #8
     pregunta_6 = forms.ChoiceField(required=False,label="",widget=forms.RadioSelect(),choices=(
         ('1','a. Ascender en el escalafón docente'),
         ('2','b. Fortalecer tus aprendizajes en el uso pedagógico de las TIC'),
@@ -163,40 +166,40 @@ class PercepcionInicialForm(forms.Form):
     ))
 
     pregunta_6_1 = forms.CharField(required=False,label="",max_length=1000,widget=forms.Textarea())
-
+    #9
     pregunta_7 = forms.ChoiceField(required=False,label='',
                                  widget=forms.RadioSelect(),choices=(('Si','Si'),('No','No')))
-
+    #10
     pregunta_8 = forms.ChoiceField(required=False,label="",widget=forms.RadioSelect(),choices=(
         ('1','a. Proyectos didácticos (Una sola disciplina)'),
         ('2','b. Proyectos productivos (Una sola disciplina)'),
         ('3','c. Proyectos de articulación con otras disciplinas'),
         ('4','d. Otros proyectos no clasificados'),
     ))
-
+    #11
     pregunta_9 = forms.ChoiceField(required=False,label="",widget=forms.RadioSelect(),choices=(
         ('1','a. Sirven como evidencia para la evaluación docente'),
         ('2','b. Permiten participar en eventos nacionales o internacionales'),
         ('3','c. Facilitan los aprendizajes de los estudiantes y las prácticas de enseñanza del docente'),
         ('4','d. Son una oportunidad para seguir cualificando la práctica docente'),
     ))
-
+    #12
     pregunta_10 = forms.ChoiceField(required=False,label='',
                                  widget=forms.RadioSelect(),choices=(('Si','Si'),('No','No')))
-
+    #13
     pregunta_11 = forms.ChoiceField(required=False,label="",widget=forms.RadioSelect(),choices=(
         ('1','a. 1-2 Horas semanales'),
         ('2','b. 2-6 Horas semanales'),
         ('3','c. 6 o más horas semanales'),
         ('4','d. No dedicaría tiempo adicional'),
     ))
-
+    #14
     pregunta_12 = forms.ChoiceField(required=False,label='',
                                  widget=forms.RadioSelect(),choices=(('Si','Si'),('No','No')))
 
     pregunta_12_1 = forms.CharField(required=False,label="",max_length=1000,widget=forms.Textarea())
 
-
+    #15
     pregunta_13 = forms.CharField(required=False,label="",max_length=100)
 
     def __init__(self,*args, **kwargs):

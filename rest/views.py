@@ -27,8 +27,103 @@ from informes.models import InformesExcel
 from django.http import HttpResponse
 from informes.tasks import formadores, formadores_soportes, preinscritos
 from preinscripcion.models import DocentesPreinscritos
+from encuestas.models import PercepcionInicial
 
 # Create your views here.
+class ResultadosPercepcionInicial(APIView):
+    """
+    Retorna los resultados de la encuesta de percepcion inicial.
+    """
+    def get(self, request, format=None):
+        encuestas = PercepcionInicial.objects.all()
+
+        response = {'0':encuestas.count(),
+                    '1':{'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'11':0,'12':0,'13':0,'14':0,'15':0,},
+                    '2':{'1':0,'2':0,'3':0,'4':0,'5':0},
+                    '3':{'si':0,'no':0},
+                    '4':{'1':0,'2':0,'3':0,'4':0},
+                    '5':{'1':0,'2':0,'3':0,'4':0},
+                    '6':{'1':0,'2':0,'3':0,'4':0,'5':0},
+                    '7':{'1':0,'2':0,'3':0,'4':0},
+                    '8':{'1':0,'2':0,'3':0,'4':0},
+                    '9':{'si':0,'no':0},
+                    '10':{'1':0,'2':0,'3':0,'4':0},
+                    '11':{'1':0,'2':0,'3':0,'4':0},
+                    '12':{'si':0,'no':0},
+                    '13':{'1':0,'2':0,'3':0,'4':0},
+                    '14':{'si':0,'no':0},
+                    '15':{'1':0,'2':0,'3':0,'4':0,'5':0},
+        }
+
+        for encuesta in encuestas:
+            response['1'][encuesta.area] += 1
+            antiguedad = int(encuesta.antiguedad)
+
+            if antiguedad > 0 and antiguedad <= 10:
+                response['2']['1'] += 1
+            if antiguedad > 10 and antiguedad <= 20:
+                response['2']['2'] += 1
+            if antiguedad > 20 and antiguedad <= 30:
+                response['2']['3'] += 1
+            if antiguedad > 30 and antiguedad <= 40:
+                response['2']['4'] += 1
+            if antiguedad > 40 and antiguedad <= 50:
+                response['2']['5'] += 1
+
+            if encuesta.pregunta_1 == 'Si':
+                response['3']['si'] += 1
+            else:
+                response['3']['no'] += 1
+
+            if encuesta.pregunta_2 != '':
+                response['4'][encuesta.pregunta_2] += 1
+            if encuesta.pregunta_3 != '':
+                response['5'][encuesta.pregunta_3] += 1
+            if encuesta.pregunta_4 != '':
+                response['6'][encuesta.pregunta_4] += 1
+            if encuesta.pregunta_5 != '':
+                response['7'][encuesta.pregunta_5] += 1
+            if encuesta.pregunta_5 != '':
+                response['8'][encuesta.pregunta_6] += 1
+
+            if encuesta.pregunta_7 != '':
+                if encuesta.pregunta_7 == 'Si':
+                    response['9']['si'] += 1
+                else:
+                    response['9']['no'] += 1
+            if encuesta.pregunta_9 != '':
+                response['10'][encuesta.pregunta_8] += 1
+            if encuesta.pregunta_9 != '':
+                response['11'][encuesta.pregunta_9] += 1
+            if encuesta.pregunta_10 != '':
+                if encuesta.pregunta_10 == 'Si':
+                    response['12']['si'] += 1
+                else:
+                    response['12']['no'] += 1
+            if encuesta.pregunta_11 != '':
+                response['13'][encuesta.pregunta_11] += 1
+            if encuesta.pregunta_12 != '':
+                if encuesta.pregunta_12 == 'Si':
+                    response['14']['si'] += 1
+                else:
+                    response['14']['no'] += 1
+
+            if encuesta.pregunta_13 != '':
+                escala = int(encuesta.pregunta_13)
+
+                if escala > 0 and escala <= 20:
+                    response['15']['1'] += 1
+                if escala > 20 and escala <= 40:
+                    response['15']['2'] += 1
+                if escala > 40 and escala <= 60:
+                    response['15']['3'] += 1
+                if escala > 60 and escala <= 80:
+                    response['15']['4'] += 1
+                if escala > 80 and escala <= 100:
+                    response['15']['5'] += 1
+
+        return Response(response)
+
 class ReportesView(APIView):
     """
     Retorna la informacion de los usuarios excluyendo al que realiza el request.
@@ -162,10 +257,17 @@ class UserPermissionList(APIView):
                   'id':'formacion',
                   'links':[]
             },
-
+            'encuestas':{'name':'Encuestas',
+                  'icon':'icons:assessment',
+                  'id':'encuestas',
+                  'links':[]
+            },
         }
 
         links = {
+            'percepcioninicial':{
+                'ver':{'name':'Percepción inicial y detección de necesidades','link':'/encuestas/resultados/percepcioninicial/'}
+            },
             'permisos':{
                 'ver':{'name':'Permisos','link':'/adminuser/permisos/'}
             },
