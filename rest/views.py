@@ -403,7 +403,7 @@ class AdministrativosRh(BaseDatatableView):
                'banco','tipo_cuenta','numero_cuenta','eps','pension','arl']
 
     order_columns = ['','nombres','cargo','']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return Administrativo.objects.filter(oculto = False)
@@ -469,7 +469,7 @@ class CargosRh(BaseDatatableView):
     columns = ['id','nombre','manual','descripcion']
 
     order_columns = ['','nombre','']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return Cargo.objects.filter(oculto = False)
@@ -515,7 +515,7 @@ class AdministrativosRhSoportes(BaseDatatableView):
     columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
 
     order_columns = ['id','tipo','fecha','descripcion']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return Soporte.objects.filter(oculto = False,administrativo__id=self.kwargs['id_administrativo'])
@@ -559,7 +559,7 @@ class AdminUserList(BaseDatatableView):
     columns = ['id','email','first_name','last_name','is_active','cargo','telefono_personal','correo_personal']
 
     order_columns = ['id','email','first_name','last_name']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return User.objects.exclude(email="AnonymousUser")
@@ -600,7 +600,7 @@ class GroupUserList(BaseDatatableView):
     columns = ['id','name','permissions']
 
     order_columns = ['id','name']
-    max_display_length = 10
+    max_display_length = 100
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
@@ -636,7 +636,7 @@ class AdminUserPermissionList(BaseDatatableView):
     model = Permission
     columns = ['id','name','codename']
     order_columns = ['id','name','codename']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         content_type = ContentType.objects.get_for_model(UserPermissionSican)
@@ -673,7 +673,7 @@ class TipoSoporteRh(BaseDatatableView):
     model = TipoSoporte
     columns = ['id','nombre','descripcion']
     order_columns = ['id','nombre','descripcion']
-    max_display_length = 10
+    max_display_length = 100
 
     def prepare_results(self, qs):
         json_data = []
@@ -793,7 +793,7 @@ class FormadoresRhSoportes(BaseDatatableView):
     columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
 
     order_columns = ['id','tipo','fecha','descripcion']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return SoporteFormador.objects.filter(oculto = False,formador__id=self.kwargs['id_formador'])
@@ -834,7 +834,7 @@ class DepartamentosList(BaseDatatableView):
     columns = ['id','nombre','codigo_departamento']
 
     order_columns = ['id','nombre','codigo_departamento']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return Departamento.objects.filter(oculto = False)
@@ -873,7 +873,7 @@ class MunicipiosList(BaseDatatableView):
     columns = ['id','nombre','departamento','codigo_municipio','codigo_auditoria']
 
     order_columns = ['id','nombre','departamento','codigo_municipio','codigo_auditoria']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return Municipio.objects.filter(oculto = False)
@@ -914,7 +914,7 @@ class SecretariasList(BaseDatatableView):
     columns = ['id','nombre','municipio','tipo','direccion','web']
 
     order_columns = ['id','nombre','municipio','tipo','direccion','web']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return Secretaria.objects.filter(oculto = False)
@@ -959,7 +959,7 @@ class RadicadosList(BaseDatatableView):
     columns = ['id','numero','secretaria','municipio','nombre_sede','dane_sede','tipo','ubicacion']
 
     order_columns = ['id','numero','secretaria','municipio','nombre_sede','dane_sede','tipo','ubicacion']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return Radicado.objects.filter(oculto = False)
@@ -1008,7 +1008,7 @@ class SolicitudesTransporteList(BaseDatatableView):
     columns = ['id','formador','creacion','valor','valor_aprobado','estado','archivo']
 
     order_columns = ['id','formador','creacion','valor','valor_aprobado','estado','archivo']
-    max_display_length = 10
+    max_display_length = 100
 
 
     def filter_queryset(self, qs):
@@ -1066,7 +1066,7 @@ class InformesExcelList(BaseDatatableView):
     columns = ['id','nombre','creacion','archivo']
 
     order_columns = ['id','nombre','creacion','archivo']
-    max_display_length = 10
+    max_display_length = 100
 
     def get_initial_queryset(self):
         return InformesExcel.objects.filter(usuario = self.request.user)
@@ -1112,7 +1112,7 @@ class PreinscritosList(BaseDatatableView):
     columns = ['id','primer_apellido','cargo','departamento','verificado']
 
     order_columns = ['id','primer_apellido','cargo','departamento','verificado']
-    max_display_length = 10
+    max_display_length = 100
 
 
     def filter_queryset(self, qs):
