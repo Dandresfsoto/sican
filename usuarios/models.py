@@ -79,7 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_photo(self):
         photo = self.photo
         if photo.name == '':
-            avatar = STATIC_URL+"img/unknown-user.png"
+            avatar = STATIC_URL+"img/andes_user.jpg"
         else:
             avatar = photo.url
         return avatar
