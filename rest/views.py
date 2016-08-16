@@ -93,7 +93,7 @@ class ResultadosPercepcionInicial(APIView):
                 response['6'][encuesta.pregunta_4] += 1
             if encuesta.pregunta_5 != '':
                 response['7'][encuesta.pregunta_5] += 1
-            if encuesta.pregunta_5 != '':
+            if encuesta.pregunta_6 != '':
                 response['8'][encuesta.pregunta_6] += 1
 
             if encuesta.pregunta_7 != '':
