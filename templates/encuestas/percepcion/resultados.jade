@@ -297,8 +297,10 @@ block body_script_content
                        },
                        tooltips: {
                            callbacks: {
-                               label: function(tooltipItems, data) {
-                                   return tooltipItems.yLabel + ' %';
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
                                }
                            }
                        }
@@ -331,8 +333,10 @@ block body_script_content
                        },
                        tooltips: {
                            callbacks: {
-                               label: function(tooltipItems, data) {
-                                   return tooltipItems.yLabel + ' %';
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
                                }
                            }
                        }
@@ -349,6 +353,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -364,6 +379,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C', '#E64A19', '#2196F3']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -378,6 +404,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C', '#E64A19', '#2196F3']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -394,6 +431,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C', '#E64A19', '#2196F3','#727272']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -408,6 +456,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C', '#E64A19', '#2196F3']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -422,6 +481,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C', '#E64A19', '#2196F3']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -436,6 +506,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -451,6 +532,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C', '#E64A19', '#2196F3']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -465,6 +557,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C', '#E64A19', '#2196F3']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -478,6 +581,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -493,6 +607,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C', '#E64A19', '#2196F3']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
@@ -506,6 +631,17 @@ block body_script_content
                            ],
                            backgroundColor: ['#004c99','#388E3C']
                        }],
+                   },
+                   options: {
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItem, data) {
+                                      var value = data.datasets[0].data[tooltipItem.index];
+                                      var label = data.labels[tooltipItem.index];
+                                      return label + ': ' + value + ' %';
+                               }
+                           }
+                       }
                    }
                });
 
