@@ -294,6 +294,13 @@ block body_script_content
                                    beginAtZero: true
                                }
                            }]
+                       },
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItems, data) {
+                                   return tooltipItems.yLabel + ' %';
+                               }
+                           }
                        }
                    }
                });
@@ -314,13 +321,20 @@ block body_script_content
                            backgroundColor: '#004c99'
                        }],
                    },
-                   options: {
+                    options: {
                        scales: {
                            yAxes: [{
                                ticks: {
                                    beginAtZero: true
                                }
                            }]
+                       },
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItems, data) {
+                                   return tooltipItems.yLabel + ' %';
+                               }
+                           }
                        }
                    }
                });
@@ -518,8 +532,15 @@ block body_script_content
                                    beginAtZero: true
                                }
                            }]
+                       },
+                       tooltips: {
+                           callbacks: {
+                               label: function(tooltipItems, data) {
+                                   return tooltipItems.yLabel + ' %';
+                               }
+                           }
                        }
-                   }
+                   },
                });
 
            }
