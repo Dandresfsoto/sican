@@ -165,7 +165,7 @@ def transportes(email):
                'Nombre solicitud','Fecha','Estado','Valor solicitado','Valor Aprobado','Observación']
 
     formatos = ['General','General','General','General','General','General','General','General',
-                'General','d/m/yy h:mm','General','"$"#,##0_);("$"#,##0)','"$"#,##0_);("$"#,##0)','General']
+                'General','d/m/yy h:mm:ss AM/PM','General','"$"#,##0_);("$"#,##0)','"$"#,##0_);("$"#,##0)','General']
 
 
     ancho_columnas =  [30,30,15,15,15,15,15,20,
