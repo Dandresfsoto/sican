@@ -201,8 +201,17 @@
         <div class="container-fluid">
           <div class="realtime"></div>
         </div>
-        <div class="container-fluid container-index">{% if nuevo_permiso %}<a href="nuevo" class="link_button">
-            <paper-button class="submit">Nuevo</paper-button></a>{% endif %}
+        <div class="container-fluid container-index">{% if nuevo_permiso %}
+          <div class="block-right"><a href="nuevo" class="link_button">
+              <paper-button class="submit">Nuevo</paper-button></a></div>{% endif %}
+          {% if reporte_permiso %}
+          <div>
+            <select id="select_accion" class="selectpicker">
+              <option value="">---------</option>
+              <option value="4">Reporte de solicitudes de transporte</option>
+            </select>
+            <button id="accion" class="btn">Generar reporte</button>
+          </div>{% endif %}
           <table id="table" width="100%" class="display responsive no-wrap table table-striped table-bordered">
             <thead>
               <tr>
@@ -247,7 +256,7 @@
               El informe se esta construyendo, el tiempo que tarda en generarse depende de la cantidad de información
               por favor ten paciencia.
             </p>
-            <p>Para ver tus informes generados dirijete a la pestaña "Mis informes - Informes en excel".</p>
+            <p>Para ver tus informes generados dirígete a la pestaña "Mis informes - Informes en excel".</p>
           </div>
           <div class="modal-footer">
             <button type="button" data-dismiss="modal" class="btn btn-default">Cerrar</button>
@@ -320,6 +329,22 @@
           toast_message.horizontalAlign = "right";
           if ($('#input_mensaje').val() != ""){
               toast_message.open();
+          }
+      });
+    </script>
+    <script>
+      $("#accion").on("click", function () {
+          var action = $("#select_accion").val();
+          if (action != '') {
+              $.ajax({
+                  type: "GET",
+                  url: '/rest/reportes/?action=' + action,
+                  success: function (data) {
+                      $('#myModal').modal('show');
+                      $("#select_accion").val('');
+                      $("#select_accion").selectpicker('refresh');
+                  }
+              });
           }
       });
     </script>

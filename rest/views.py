@@ -25,7 +25,7 @@ from rest_framework.permissions import AllowAny
 from formadores.models import SolicitudTransporte
 from informes.models import InformesExcel
 from django.http import HttpResponse
-from informes.tasks import formadores, formadores_soportes, preinscritos
+from informes.tasks import formadores, formadores_soportes, preinscritos, transportes
 from preinscripcion.models import DocentesPreinscritos
 from encuestas.models import PercepcionInicial
 
@@ -157,6 +157,8 @@ class ReportesView(APIView):
             x = formadores_soportes.delay(request.user.email)
         if id_accion == '3':
             x = preinscritos.delay(request.user.email)
+        if id_accion == '4':
+            x = transportes.delay(request.user.email)
 
         return HttpResponse(status=200)
 

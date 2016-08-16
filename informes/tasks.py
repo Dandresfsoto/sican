@@ -8,7 +8,7 @@ from informes.functions import construir_reporte
 from informes.models import InformesExcel
 from django.core.files import File
 from usuarios.models import User
-from formadores.models import Formador, Soporte
+from formadores.models import Formador, Soporte, SolicitudTransporte
 from rh.models import TipoSoporte
 from preinscripcion.models import DocentesPreinscritos
 
@@ -146,6 +146,49 @@ def preinscritos(email):
             docente.radicado.numero if docente.radicado != None else '',
             'Si' if docente.verificado else 'No',
             docente.fecha,
+        ])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def transportes(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Reporte de solicitudes de desplazamiento"
+    proceso = "FIN-INF01"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Formador','Cedula','Región','Cargo','Banco','Tipo de cuenta','Numero de cuenta',
+               'Nombre solicitud','Fecha','Estado','Valor solicitado','Valor Aprobado','Observación']
+
+    formatos = ['General','General','General','General','General','General','General','General',
+                'General','d/m/yy h:mm','General','"$"#,##0_);("$"#,##0)','"$"#,##0_);("$"#,##0)','General']
+
+
+    ancho_columnas =  [30,30,15,15,15,15,15,20,
+                       50,15,20,15,15,60]
+
+    contenidos = []
+
+    for solicitud in SolicitudTransporte.objects.all():
+        contenidos.append([
+            'PRE-'+unicode(solicitud.id),
+            solicitud.formador.get_full_name(),
+            solicitud.formador.cedula,
+            solicitud.formador.get_region_string(),
+            solicitud.formador.cargo.nombre if solicitud.formador.cargo != None else "",
+            solicitud.formador.banco.nombre if solicitud.formador.banco != None else "",
+            solicitud.formador.tipo_cuenta,
+            solicitud.formador.numero_cuenta,
+            solicitud.nombre,
+            solicitud.creacion,
+            solicitud.estado,
+            solicitud.valor,
+            solicitud.valor_aprobado,
+            solicitud.observacion
         ])
 
     output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
