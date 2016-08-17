@@ -13,7 +13,8 @@ from django.views.generic.edit import ModelFormMixin
 from departamentos.models import Departamento
 from municipios.models import Municipio
 from formadores.models import Formador
-
+from productos.models import Diplomado, Nivel, Sesion
+from productos.forms import DiplomadoForm, UpdateDiplomadoForm, NivelForm, UpdateNivelForm, SesionForm, UpdateSesionForm
 
 
 # Create your views here.
@@ -27,6 +28,7 @@ class TransportesView(LoginRequiredMixin,
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.financiera.transportes.crear')
         kwargs['reporte_permiso'] = self.request.user.has_perm('permisos_sican.financiera.transportes.informe')
         return super(TransportesView, self).get_context_data(**kwargs)
+
 
 class TransportesEstadoView(LoginRequiredMixin,
                                PermissionRequiredMixin,
@@ -146,6 +148,7 @@ class TransportesEliminarView(LoginRequiredMixin,
         kwargs['archivo_url'] = self.object.get_archivo_url()
         kwargs['archivo_filename'] = self.object.archivo_filename()
         return super(TransportesEliminarView,self).get_context_data(**kwargs)
+
 
 class TransportesCreateView(LoginRequiredMixin,
                                PermissionRequiredMixin,
@@ -277,6 +280,7 @@ class TransportesCreateView(LoginRequiredMixin,
 
 
         return super(TransportesCreateView,self).form_valid(form)
+
 
 class TransportesUpdateView(LoginRequiredMixin,
                                PermissionRequiredMixin,
@@ -416,3 +420,100 @@ class TransportesUpdateView(LoginRequiredMixin,
 
 
         return super(TransportesUpdateView,self).form_valid(form)
+
+
+class DiplomadosListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/diplomados/lista.html'
+    permission_required = "permisos_sican.financiera.diplomados.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.financiera.diplomados.crear')
+        return super(DiplomadosListView, self).get_context_data(**kwargs)
+
+
+class DiplomadoCreateView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               CreateView):
+    model = Diplomado
+    form_class = DiplomadoForm
+    success_url = '/financiera/diplomados/'
+    template_name = 'financiera/diplomados/nuevo.html'
+    permission_required = "permisos_sican.financiera.diplomados.crear"
+
+
+class DiplomadoUpdateView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = Diplomado
+    form_class = UpdateDiplomadoForm
+    pk_url_kwarg = 'pk'
+    success_url = '/financiera/diplomados/'
+    template_name = 'financiera/diplomados/editar.html'
+    permission_required = "permisos_sican.financiera.diplomados.editar"
+
+
+
+class NivelesListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/niveles/lista.html'
+    permission_required = "permisos_sican.financiera.niveles.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.financiera.niveles.crear')
+        return super(NivelesListView, self).get_context_data(**kwargs)
+
+
+class NivelesCreateView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               CreateView):
+    model = Nivel
+    form_class = NivelForm
+    success_url = '/financiera/niveles/'
+    template_name = 'financiera/niveles/nuevo.html'
+    permission_required = "permisos_sican.financiera.niveles.crear"
+
+
+class NivelesUpdateView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = Nivel
+    form_class = UpdateNivelForm
+    pk_url_kwarg = 'pk'
+    success_url = '/financiera/niveles/'
+    template_name = 'financiera/niveles/editar.html'
+    permission_required = "permisos_sican.financiera.niveles.editar"
+
+
+class SesionesListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/sesiones/lista.html'
+    permission_required = "permisos_sican.financiera.sesiones.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.financiera.sesiones.crear')
+        return super(SesionesListView, self).get_context_data(**kwargs)
+
+
+class SesionesCreateView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               CreateView):
+    model = Sesion
+    form_class = SesionForm
+    success_url = '/financiera/sesiones/'
+    template_name = 'financiera/sesiones/nuevo.html'
+    permission_required = "permisos_sican.financiera.sesiones.crear"
+
+
+class SesionesUpdateView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = Sesion
+    form_class = UpdateSesionForm
+    pk_url_kwarg = 'pk'
+    success_url = '/financiera/sesiones/'
+    template_name = 'financiera/sesiones/editar.html'
+    permission_required = "permisos_sican.financiera.sesiones.editar"

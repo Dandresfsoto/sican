@@ -28,6 +28,7 @@ from django.http import HttpResponse
 from informes.tasks import formadores, formadores_soportes, preinscritos, transportes
 from preinscripcion.models import DocentesPreinscritos
 from encuestas.models import PercepcionInicial
+from productos.models import Diplomado, Nivel, Sesion
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -287,6 +288,21 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'sesiones':{
+                'ver':{'name':'Sesiones','link':'/financiera/sesiones/'}
+            },
+            'niveles':{
+                'ver':{'name':'Niveles','link':'/financiera/niveles/'}
+            },
+            'diplomados':{
+                'ver':{'name':'Diplomados','link':'/financiera/diplomados/'}
+            },
+            'productos':{
+                'ver':{'name':'Productos diplomados','link':'/financiera/productos/'}
+            },
+            'revision':{
+                'ver':{'name':'Revisión documental','link':'/formacion/revision/'}
+            },
             'percepcioninicial':{
                 'ver':{'name':'Percepción inicial y detección de necesidades','link':'/encuestas/resultados/percepcioninicial/'}
             },
@@ -1018,7 +1034,7 @@ class SolicitudesTransporteList(BaseDatatableView):
         search = unicode(search).capitalize()
         if search:
             q = Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) | \
-                Q(formador__cedula__icontains=search)
+                Q(formador__cedula__icontains=search) | Q(estado__icontains=search.lower())
             qs = qs.filter(q)
         return qs
 
@@ -1148,5 +1164,123 @@ class PreinscritosList(BaseDatatableView):
                 item.fecha,
                 self.request.user.has_perm('permisos_sican.formacion.preinscritos.editar'),
                 self.request.user.has_perm('permisos_sican.formacion.preinscritos.eliminar'),
+            ])
+        return json_data
+
+class DiplomadosList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.numero
+    3.permiso para editar
+    4.permiso para eliminar
+    """
+    model = Diplomado
+    columns = ['id','nombre','numero']
+
+    order_columns = ['id','nombre','numero']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search) | Q(numero__icontains=search)
+
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.numero,
+                self.request.user.has_perm('permisos_sican.financiera.diplomados.editar'),
+                self.request.user.has_perm('permisos_sican.financiera.diplomados.eliminar'),
+            ])
+        return json_data
+
+class NivelesList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.numero
+    3.diplomado
+    4.permiso para editar
+    5.permiso para eliminar
+    """
+    model = Nivel
+    columns = ['id','nombre','numero','diplomado']
+
+    order_columns = ['id','nombre','numero','diplomado']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search) | Q(numero__icontains=search) | Q(diplomado__nombre__icontains=search)
+
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.numero,
+                item.diplomado.nombre,
+                self.request.user.has_perm('permisos_sican.financiera.niveles.editar'),
+                self.request.user.has_perm('permisos_sican.financiera.niveles.eliminar'),
+            ])
+        return json_data
+
+class SesionesList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.numero
+    3.diplomado
+    4.nivel
+    5.permiso para editar
+    6.permiso para eliminar
+    """
+    model = Sesion
+    columns = ['id','nombre','numero','diplomado','nivel']
+
+    order_columns = ['id','nombre','numero','diplomado','nivel']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search) | Q(numero__icontains=search) | Q(nivel__nombre__icontains=search) | \
+                Q(nivel__diplomado__nombre__icontains=search)
+
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.numero,
+                item.nivel.diplomado.nombre,
+                item.nivel.nombre,
+                self.request.user.has_perm('permisos_sican.financiera.sesiones.editar'),
+                self.request.user.has_perm('permisos_sican.financiera.sesiones.eliminar'),
             ])
         return json_data

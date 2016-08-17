@@ -91,7 +91,8 @@ LOCAL_APPS = [
     'financiera',
     'informes',
     'formacion',
-    'encuestas'
+    'encuestas',
+    'productos'
 ]
 
 THIRD_PARTY_APPS = [

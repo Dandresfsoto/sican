@@ -5,6 +5,7 @@ from rest.views import FormadoresRh, FormadoresRhSoportes
 from rest.views import DepartamentosList, MunicipiosList, SecretariasList, RadicadosList
 from rest.views import MunicipiosChainedList, RadicadosChainedList
 from rest.views import SolicitudesTransporteList, InformesExcelList, ReportesView,PreinscritosList, ResultadosPercepcionInicial
+from rest.views import DiplomadosList, NivelesList, SesionesList
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -40,4 +41,9 @@ urlpatterns = [
     url(r'formacion/preinscritos/$', PreinscritosList.as_view()),
 
     url(r'encuestas/percepcioninicial/$', ResultadosPercepcionInicial.as_view()),
+
+
+    url(r'financiera/diplomados/$', DiplomadosList.as_view()),
+    url(r'financiera/niveles/$', NivelesList.as_view()),
+    url(r'financiera/sesiones/$', SesionesList.as_view()),
 ]

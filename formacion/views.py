@@ -72,3 +72,14 @@ class DeletePreinscritoView(LoginRequiredMixin,
     success_url = '/formacion/preinscritos/'
     template_name = 'formacion/preinscritos/eliminar.html'
     permission_required = "permisos_sican.formacion.preinscritos.eliminar"
+
+class ListaRevisionView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/revision/lista.html'
+    permission_required = "permisos_sican.formacion.revision.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores.crear')
+        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores.masivo')
+        return super(ListaRevisionView, self).get_context_data(**kwargs)
