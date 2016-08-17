@@ -81,7 +81,7 @@ class Recovery(TemplateView):
                 return self.render_to_response(context)
             else:
                 user = User.objects.get(email=email)
-                user.recovery = "".join( [random.choice(string.letters) for i in xrange(15)] )
+                user.recovery = "".join( [random.choice(string.ascii_letters) for i in xrange(15)] )
                 user.new_password = password1
                 user.save()
                 send_mail_templated.delay('email/recovery_password.tpl', {'code':user.recovery,'url_base':url_base,'email': email,'password':password1,'fullname':user.fullname}, DEFAULT_FROM_EMAIL, [email])

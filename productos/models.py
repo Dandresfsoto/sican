@@ -16,7 +16,7 @@ class Nivel(models.Model):
     numero = models.IntegerField()
 
     def __unicode__(self):
-        return self.nombre
+        return ("%s - %s") % (self.diplomado.nombre,self.nombre)
 
 class Sesion(models.Model):
     nivel = models.ForeignKey(Nivel,related_name="sesion_nivel")
