@@ -8,9 +8,11 @@ from bancos.models import Banco
 from departamentos.models import Departamento
 from municipios.models import Municipio
 import os
+from usuarios.models import User
 
 # Create your models here.
 class Formador(models.Model):
+    lider = models.ForeignKey(User,blank=True,null=True)
     #---------- REGION----------------------
     region = models.ManyToManyField(Region)
 
@@ -88,6 +90,7 @@ class Desplazamiento(models.Model):
     valor = models.BigIntegerField()
     creacion = models.DateTimeField(auto_now=True)
     fecha = models.DateField()
+    motivo = models.CharField(max_length=100)
 
     def __unicode__(self):
         return unicode(self.id)
@@ -102,6 +105,7 @@ class SolicitudTransporte(models.Model):
     valor = models.BigIntegerField()
     terminada = models.BooleanField(default=False)
     valor_aprobado = models.BigIntegerField(blank=True,null=True)
+    valor_aprobado_lider = models.BigIntegerField(blank=True,null=True)
     archivo = models.FileField(upload_to='Transportes/Solicitudes/',blank=True,null=True)
     pdf = models.FileField(upload_to = 'Transportes/Pdf/',blank=True,null=True)
 

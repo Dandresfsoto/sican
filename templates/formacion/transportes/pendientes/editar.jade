@@ -1,4 +1,4 @@
-extends ../../inicio
+extends ../../../inicio
 block scroll_header_panel_title
     span(class="title") SOLICITUDES DE TRANSPORTE
 block help_content
@@ -17,12 +17,10 @@ block breadcrum
     a(href="/financiera/transportes/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Listado de solicitudes
             iron-icon(icon="check",item-icon)
-
     a(href="../../",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Solicitudes de: {{ formador }}
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Solicitud nombre: {{ formador }}
             iron-icon(icon="check",item-icon)
-
-    paper-icon-item(class="breadcrum_active",disabled) Editar: {{solicitud}}
+    paper-icon-item(class="breadcrum_active",disabled) Editar solicitud: {{nombre_solicitud}}
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
     div(class="container-fluid container-panel")

@@ -30,13 +30,75 @@ class TransportesView(LoginRequiredMixin,
         return super(TransportesView, self).get_context_data(**kwargs)
 
 
+class TransportesConsignadasFinancieraView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/transportes/consignadas/lista.html'
+    permission_required = "permisos_sican.financiera.transportes.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador_id'] = self.kwargs['id_formador']
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador'])
+        return super(TransportesConsignadasFinancieraView,self).get_context_data(**kwargs)
+
+
+class TransportesAprobadasFinancieraView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/transportes/aprobadasfinanciera/lista.html'
+    permission_required = "permisos_sican.financiera.transportes.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador_id'] = self.kwargs['id_formador']
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador'])
+        return super(TransportesAprobadasFinancieraView,self).get_context_data(**kwargs)
+
+
+class TransportesAprobadasLideresView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/transportes/aprobadaslideres/lista.html'
+    permission_required = "permisos_sican.financiera.transportes.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador_id'] = self.kwargs['id_formador']
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador'])
+        return super(TransportesAprobadasLideresView,self).get_context_data(**kwargs)
+
+
+class TransportesRechazadasView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/transportes/rechazadas/lista.html'
+    permission_required = "permisos_sican.financiera.transportes.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador_id'] = self.kwargs['id_formador']
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador'])
+        return super(TransportesRechazadasView,self).get_context_data(**kwargs)
+
+
+class TransportesPendientesView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/transportes/pendientes/lista.html'
+    permission_required = "permisos_sican.financiera.transportes.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador_id'] = self.kwargs['id_formador']
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador'])
+        return super(TransportesPendientesView,self).get_context_data(**kwargs)
+
+
+
+
 class TransportesEstadoView(LoginRequiredMixin,
                                PermissionRequiredMixin,
                                UpdateView):
     model = SolicitudTransporte
     form_class = SolicitudTransporteForm
     pk_url_kwarg = 'pk'
-    success_url = '/financiera/transportes/'
+    success_url = '../../'
     template_name = 'financiera/transportes/estado.html'
     permission_required = "permisos_sican.financiera.transportes.estado"
 
@@ -52,6 +114,10 @@ class TransportesEstadoView(LoginRequiredMixin,
         valor_aprobado = 0
         for valor in valores:
             valor_aprobado += valor
+
+        if self.object.estado == 'aprobado_lider':
+            self.object.valor_aprobado = 0
+            self.object.save()
 
         if self.object.estado == 'aprobado':
             construir_pdf.delay(self.object.id)
@@ -127,6 +193,7 @@ class TransportesEstadoView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         kwargs['valor_solicitado'] = locale.currency(self.object.valor,grouping=True)
+        kwargs['valor_aprobado_lider'] = locale.currency(self.object.valor_aprobado_lider,grouping=True)
         kwargs['archivo_url'] = self.object.get_archivo_url()
         kwargs['archivo_filename'] = self.object.archivo_filename()
         return super(TransportesEstadoView,self).get_context_data(**kwargs)
@@ -137,7 +204,7 @@ class TransportesEliminarView(LoginRequiredMixin,
                                DeleteView):
     model = SolicitudTransporte
     pk_url_kwarg = 'pk'
-    success_url = '/financiera/transportes/'
+    success_url = '../../'
     template_name = 'financiera/transportes/eliminar.html'
     permission_required = "permisos_sican.financiera.transportes.eliminar"
 
@@ -286,7 +353,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                                PermissionRequiredMixin,
                                FormView):
     form_class = SolicitudTransporteUpdateForm
-    success_url = '/financiera/transportes/'
+    success_url = '../../'
     template_name = 'financiera/transportes/editar.html'
     permission_required = "permisos_sican.financiera.transportes.editar"
 
@@ -296,6 +363,7 @@ class TransportesUpdateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         solicitud = SolicitudTransporte.objects.get(id=self.kwargs['pk'])
         kwargs['formador'] = Formador.objects.get(id = solicitud.formador.id).get_full_name()
+        kwargs['solicitud'] = solicitud.nombre
         return super(TransportesUpdateView,self).get_context_data(**kwargs)
 
     def form_valid(self, form):
@@ -308,6 +376,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                 'd_destino':form.cleaned_data['departamento_destino_1'],
                 'm_destino':form.cleaned_data['municipio_destino_1'],
                 'valor':float(form.cleaned_data['valor_1'].replace(',','')) if form.cleaned_data['valor_1'] != u'' else 0,
+                'motivo':form.cleaned_data['motivo_1'],
             },
             {
                 'id':form.cleaned_data['id_2'],
@@ -317,6 +386,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                 'd_destino':form.cleaned_data['departamento_destino_2'],
                 'm_destino':form.cleaned_data['municipio_destino_2'],
                 'valor':float(form.cleaned_data['valor_2'].replace(',','')) if form.cleaned_data['valor_2'] != u'' else 0,
+                'motivo':form.cleaned_data['motivo_2'],
             },
             {
                 'id':form.cleaned_data['id_3'],
@@ -326,6 +396,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                 'd_destino':form.cleaned_data['departamento_destino_3'],
                 'm_destino':form.cleaned_data['municipio_destino_3'],
                 'valor':float(form.cleaned_data['valor_3'].replace(',','')) if form.cleaned_data['valor_3'] != u'' else 0,
+                'motivo':form.cleaned_data['motivo_3'],
             },
             {
                 'id':form.cleaned_data['id_4'],
@@ -335,6 +406,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                 'd_destino':form.cleaned_data['departamento_destino_4'],
                 'm_destino':form.cleaned_data['municipio_destino_4'],
                 'valor':float(form.cleaned_data['valor_4'].replace(',','')) if form.cleaned_data['valor_4'] != u'' else 0,
+                'motivo':form.cleaned_data['motivo_4'],
             },
             {
                 'id':form.cleaned_data['id_5'],
@@ -344,6 +416,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                 'd_destino':form.cleaned_data['departamento_destino_5'],
                 'm_destino':form.cleaned_data['municipio_destino_5'],
                 'valor':float(form.cleaned_data['valor_5'].replace(',','')) if form.cleaned_data['valor_5'] != u'' else 0,
+                'motivo':form.cleaned_data['motivo_5'],
             },
             {
                 'id':form.cleaned_data['id_6'],
@@ -353,6 +426,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                 'd_destino':form.cleaned_data['departamento_destino_6'],
                 'm_destino':form.cleaned_data['municipio_destino_6'],
                 'valor':float(form.cleaned_data['valor_6'].replace(',','')) if form.cleaned_data['valor_6'] != u'' else 0,
+                'motivo':form.cleaned_data['motivo_6'],
             },
             {
                 'id':form.cleaned_data['id_7'],
@@ -362,6 +436,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                 'd_destino':form.cleaned_data['departamento_destino_7'],
                 'm_destino':form.cleaned_data['municipio_destino_7'],
                 'valor':float(form.cleaned_data['valor_7'].replace(',','')) if form.cleaned_data['valor_7'] != u'' else 0,
+                'motivo':form.cleaned_data['motivo_7'],
             },
             {
                 'id':form.cleaned_data['id_8'],
@@ -371,6 +446,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                 'd_destino':form.cleaned_data['departamento_destino_8'],
                 'm_destino':form.cleaned_data['municipio_destino_8'],
                 'valor':float(form.cleaned_data['valor_8'].replace(',','')) if form.cleaned_data['valor_8'] != u'' else 0,
+                'motivo':form.cleaned_data['motivo_8'],
             },
             {
                 'id':form.cleaned_data['id_9'],
@@ -380,6 +456,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                 'd_destino':form.cleaned_data['departamento_destino_9'],
                 'm_destino':form.cleaned_data['municipio_destino_9'],
                 'valor':float(form.cleaned_data['valor_9'].replace(',','')) if form.cleaned_data['valor_9'] != u'' else 0,
+                'motivo':form.cleaned_data['motivo_9'],
             },
             {
                 'id':form.cleaned_data['id_10'],
@@ -389,6 +466,7 @@ class TransportesUpdateView(LoginRequiredMixin,
                 'd_destino':form.cleaned_data['departamento_destino_10'],
                 'm_destino':form.cleaned_data['municipio_destino_10'],
                 'valor':float(form.cleaned_data['valor_10'].replace(',','')) if form.cleaned_data['valor_10'] != u'' else 0,
+                'motivo':form.cleaned_data['motivo_10'],
             },
         ]
 
@@ -410,11 +488,12 @@ class TransportesUpdateView(LoginRequiredMixin,
                                         editar.municipio_destino = Municipio.objects.get(id=desplazamiento['m_destino'])
                                         editar.valor = desplazamiento['valor']
                                         editar.fecha = desplazamiento['fecha']
+                                        editar.motivo = desplazamiento['motivo']
                                         editar.save()
 
         solicitud = SolicitudTransporte.objects.get(id=self.kwargs['pk'])
         solicitud.valor_aprobado = valor
-        solicitud.observacion = 'Se modificaron los valores de desplazamiento'
+        solicitud.observacion = 'Se modificaron los valores de desplazamiento por el eje financiero'
         solicitud.save()
 
 

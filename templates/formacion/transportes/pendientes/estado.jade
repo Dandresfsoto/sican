@@ -1,4 +1,4 @@
-extends ../../inicio
+extends ../../../inicio
 block scroll_header_panel_title
     span(class="title") SOLICITUDES DE TRANSPORTE
 block help_content
@@ -11,7 +11,6 @@ block head_content_inicio
     link(rel="import",href="{% static 'bower_components/paper-input/paper-input.html'%}")
     link(rel="import",href="{% static 'bower_components/file-upload-sican/file-upload-sican.html'%}")
     link(rel="import",href="{% static 'bower_components/gold-email-input/gold-email-input.html'%}")
-
 block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
@@ -20,9 +19,10 @@ block breadcrum
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Lista de solicitudes
             iron-icon(icon="check",item-icon)
     a(href="../../",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Solicitudes de {{object.formador.nombres}} {{object.formador.apellidos}}
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Solicitudes de: {{object.formador.nombres}} {{object.formador.apellidos}}
             iron-icon(icon="check",item-icon)
-    paper-icon-item(class="breadcrum_active",disabled) Nombre: {{object.nombre}}
+
+    paper-icon-item(class="breadcrum_active",disabled) Nombre solicitud: {{object.nombre}}
         iron-icon(icon="check",item-icon)
 
 block scroll_header_panel_content
@@ -33,7 +33,6 @@ block scroll_header_panel_content
                     | {% crispy form %}
                     div(class="text-right login-form-button")
                         paper-button(class="submit",id="submit_form") Guardar
-
 block body_script_content
     script.
         $('#id_groups').selectpicker({});

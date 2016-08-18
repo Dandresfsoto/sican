@@ -288,6 +288,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'transportesformacion':{
+                'ver':{'name':'Solicitudes de transporte','link':'/formacion/transportes/'}
+            },
             'sesiones':{
                 'ver':{'name':'Sesiones','link':'/financiera/sesiones/'}
             },
@@ -1009,65 +1012,47 @@ class RadicadosList(BaseDatatableView):
 
 class SolicitudesTransporteList(BaseDatatableView):
     """
-    0.id
-    1.formador
-    2.fecha
-    3.valor
-    4.valor_aprobado
-    5.desplazamientos
-    6.estado
-    7.archivo
-    8.nombre
+    0.formador
+    1.cedula
+    2.Lider
+    3.id
+    4.cantidad consignadas
+    5.cantidad aprobadas financiera
+    6.cantidad aprobadas lider
+    7.cantidad rechazadas
+    8.cantidad pendientes
     9.permiso para editar
-    10.permiso para eliminar
-    11.permiso para cambiar estado
     """
-    model = SolicitudTransporte
-    columns = ['id','formador','creacion','valor','valor_aprobado','estado','archivo']
+    model = Formador
+    columns = ['nombres','cedula','lider','id']
 
-    order_columns = ['id','formador','creacion','valor','valor_aprobado','estado','archivo']
+    order_columns = ['nombres','cedula','lider','id']
     max_display_length = 100
-
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         search = unicode(search).capitalize()
         if search:
-            q = Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) | \
-                Q(formador__cedula__icontains=search) | Q(estado__icontains=search.lower())
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | \
+                Q(cedula__icontains=search) | Q(lider__first_name__icontains=search) | Q(lider__last_name__icontains=search)
             qs = qs.filter(q)
         return qs
 
     def prepare_results(self, qs):
         json_data = []
         for item in qs:
-            formador = item.formador.nombres + " " + item.formador.apellidos
-
-            desplazamientos_response = []
-
-            for desplazamiento in item.desplazamientos.all():
-                desplazamientos_response.append([
-                    desplazamiento.fecha,
-                    desplazamiento.departamento_origen.nombre,
-                    desplazamiento.municipio_origen.nombre,
-                    desplazamiento.departamento_destino.nombre,
-                    desplazamiento.municipio_destino.nombre,
-                    desplazamiento.valor
-                ])
-
+            solicitudes = SolicitudTransporte.objects.filter(formador__cedula=item.cedula)
             json_data.append([
+                item.get_full_name(),
+                item.cedula,
+                item.lider.get_full_name_string() if item.lider != None else '',
                 item.id,
-                formador,
-                item.creacion,
-                item.valor,
-                item.valor_aprobado,
-                desplazamientos_response,
-                item.estado,
-                item.get_archivo_url(),
-                item.nombre,
+                solicitudes.filter(estado="consignado").count(),
+                solicitudes.filter(estado="aprobado").count(),
+                solicitudes.filter(estado="aprobado_lider").count(),
+                solicitudes.filter(estado="rechazado").count(),
+                solicitudes.filter(estado="revision").count(),
                 self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
-                self.request.user.has_perm('permisos_sican.financiera.transportes.eliminar'),
-                self.request.user.has_perm('permisos_sican.financiera.transportes.estado'),
             ])
         return json_data
 
@@ -1282,5 +1267,190 @@ class SesionesList(BaseDatatableView):
                 item.nivel.nombre,
                 self.request.user.has_perm('permisos_sican.financiera.sesiones.editar'),
                 self.request.user.has_perm('permisos_sican.financiera.sesiones.eliminar'),
+            ])
+        return json_data
+
+class SolicitudesTransporteFormacionList(BaseDatatableView):
+    """
+    0.id
+    1.formador
+    2.cedula
+    3.cantidad aprobadas
+    4.cantidad rechazadas
+    5.cantidad pendientes
+    6.permiso para editar
+    """
+    model = Formador
+    columns = ['nombres','cedula','id']
+
+    order_columns = ['nombres','cedula','id']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Formador.objects.filter(lider = self.request.user)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | \
+                Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            solicitudes = SolicitudTransporte.objects.filter(formador__cedula=item.cedula)
+            json_data.append([
+                item.get_full_name(),
+                item.cedula,
+                item.id,
+                solicitudes.filter(estado="aprobado_lider").count(),
+                solicitudes.filter(estado="rechazado").count(),
+                solicitudes.filter(estado="revision").count(),
+                self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
+            ])
+        return json_data
+
+class SolicitudesTransporteFormadorList(BaseDatatableView):
+    """
+    0.id
+    1.formador
+    2.fecha
+    3.valor
+    4.valor_aprobado_lider
+    5.valor_aprobado
+    6.desplazamientos
+    7.estado
+    8.archivo
+    9.nombre
+    10.permiso para editar
+    11.permiso para eliminar
+    12.permiso para cambiar estado
+    """
+    model = SolicitudTransporte
+    columns = ['id','nombre','creacion','valor','valor_aprobado_lider','valor_aprobado','estado']
+
+    order_columns = ['id','nombre','creacion','valor','valor_aprobado_lider','valor_aprobado','estado']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        estado = self.request.GET['estado']
+        return SolicitudTransporte.objects.filter(formador__id=self.kwargs['id_formador']).filter(estado=estado)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) | \
+                Q(formador__cedula__icontains=search) | Q(estado__icontains=search.lower())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            formador = item.formador.nombres + " " + item.formador.apellidos
+
+            desplazamientos_response = []
+
+            for desplazamiento in item.desplazamientos.all():
+                desplazamientos_response.append([
+                    desplazamiento.fecha,
+                    desplazamiento.departamento_origen.nombre,
+                    desplazamiento.municipio_origen.nombre,
+                    desplazamiento.departamento_destino.nombre,
+                    desplazamiento.municipio_destino.nombre,
+                    desplazamiento.valor,
+                    desplazamiento.motivo
+                ])
+
+            json_data.append([
+                item.id,
+                formador,
+                item.creacion,
+                item.valor,
+                item.valor_aprobado_lider,
+                item.valor_aprobado,
+                desplazamientos_response,
+                item.estado,
+                item.get_archivo_url(),
+                item.nombre,
+                self.request.user.has_perm('permisos_sican.formacion.transportesformacion.editar'),
+                self.request.user.has_perm('permisos_sican.formacion.transportesformacion.eliminar'),
+                self.request.user.has_perm('permisos_sican.formacion.transportesformacion.estado'),
+            ])
+        return json_data
+
+class SolicitudesTransporteFormadorFinancieraList(BaseDatatableView):
+    """
+    0.id
+    1.formador
+    2.fecha
+    3.valor
+    4.valor_aprobado_lider
+    5.valor_aprobado
+    6.desplazamientos
+    7.estado
+    8.archivo
+    9.nombre
+    10.permiso para editar
+    11.permiso para eliminar
+    12.permiso para cambiar estado
+    """
+    model = SolicitudTransporte
+    columns = ['id','nombre','creacion','valor','valor_aprobado_lider','valor_aprobado','estado']
+
+    order_columns = ['id','nombre','creacion','valor','valor_aprobado_lider','valor_aprobado','estado']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        estado = self.request.GET['estado']
+        return SolicitudTransporte.objects.filter(formador__id=self.kwargs['id_formador']).filter(estado=estado)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) | \
+                Q(formador__cedula__icontains=search) | Q(estado__icontains=search.lower())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            formador = item.formador.nombres + " " + item.formador.apellidos
+
+            desplazamientos_response = []
+
+            for desplazamiento in item.desplazamientos.all():
+                desplazamientos_response.append([
+                    desplazamiento.fecha,
+                    desplazamiento.departamento_origen.nombre,
+                    desplazamiento.municipio_origen.nombre,
+                    desplazamiento.departamento_destino.nombre,
+                    desplazamiento.municipio_destino.nombre,
+                    desplazamiento.valor,
+                    desplazamiento.motivo
+                ])
+
+            json_data.append([
+                item.id,
+                formador,
+                item.creacion,
+                item.valor,
+                item.valor_aprobado_lider,
+                item.valor_aprobado,
+                desplazamientos_response,
+                item.estado,
+                item.get_archivo_url(),
+                item.nombre,
+                self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
+                self.request.user.has_perm('permisos_sican.financiera.transportes.eliminar'),
+                self.request.user.has_perm('permisos_sican.financiera.transportes.estado'),
             ])
         return json_data

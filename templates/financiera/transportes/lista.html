@@ -215,26 +215,26 @@
           <table id="table" width="100%" class="display responsive no-wrap table table-striped table-bordered">
             <thead>
               <tr>
-                <th></th>
                 <th>Formador</th>
-                <th>Fecha</th>
-                <th>Valor solicitado</th>
-                <th>Valor aprobado</th>
-                <th>Estado</th>
-                <th>Soporte</th>
-                <th>Eliminar</th>
+                <th>Cedula</th>
+                <th>Lider</th>
+                <th>Consignadas</th>
+                <th>Aprobadas financiera</th>
+                <th>Aprobadas lideres</th>
+                <th>Rechazadas</th>
+                <th>Pendientes</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td></td>
                 <td>Formador</td>
-                <td>Fecha</td>
-                <td>Valor solicitado</td>
-                <td>Valor aprobado</td>
-                <td>Estado</td>
-                <td>Soporte</td>
-                <td>Eliminar</td>
+                <td>Cedula</td>
+                <td>Lider</td>
+                <td>Consignadas</td>
+                <td>Solicitudes aprobadas financiera</td>
+                <td>Solicitudes aprobadas lideres</td>
+                <td>Solicitudes rechazadas</td>
+                <td>Solicitudes pendientes</td>
               </tr>
             </tbody>
           </table>
@@ -360,162 +360,66 @@
               "language": {
                   "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
               },
-              "order": [[1, "asc"]],
+              "order": [[0, "asc"]],
               "columns": [
                   {
-                      "className": 'details-control',
-                      "orderable": false,
-                      "data": null,
-                      "defaultContent": ''
+                      "data": 0,
+                      "orderable": true,
                   },
                   {
                       "data": 1,
-                      "render": function (data, type, row, meta) {
-                          if (row[9]) {
-                              return '<a href="editar/' + row[0] + '" style="color:#004c99;">'+ data +'</a>';
-                          }
-                          else {
-                              return data;
-                          }
-                      },
+                      "className": 'text-center',
                       "orderable": true,
                   },
-      
                   {
                       "data": 2,
                       "className": 'text-center',
-                      "render": function (data, type, row, meta) {
-                          var date = new Date(data);
-                          return date.toLocaleString();
-                      },
-                      "orderable": true,
-                  },
-                  {
-                      "data": 3,
-                      "className": 'text-center',
-                      "render": function (data, type, row, meta) {
-                          return accounting.formatMoney(data);
-                      },
                       "orderable": true,
                   },
                   {
                       "data": 4,
                       "className": 'text-center',
                       "render": function (data, type, row, meta) {
-                          return accounting.formatMoney(data);
+                          return '<a href="consignadas/' + row[3] + '" style="color:#004c99;">' + data + '</a>';
                       },
-                      "orderable": true,
+                      "orderable": false,
+                  },
+                  {
+                      "data": 5,
+                      "className": 'text-center',
+                      "render": function (data, type, row, meta) {
+                          return '<a href="aprobadasfinanciera/' + row[3] + '" style="color:#004c99;">' + data + '</a>';
+                      },
+                      "orderable": false,
                   },
                   {
                       "data": 6,
                       "className": 'text-center',
                       "render": function (data, type, row, meta) {
-                          if (row[11]) {
-                              if (data == "aprobado") {
-                                  return '<a href="estado/' + row[0] + '" style="color:#004c99;">Aprobada</a>';
-                              }
-                              if (data == "revision") {
-                                  return '<a href="estado/' + row[0] + '" style="color:#004c99;">En revisión</a>';
-                              }
-                              if (data == "rechazado") {
-                                  return '<a href="estado/' + row[0] + '" style="color:#004c99;">Rechazado</a>';
-                              }
-                              if (data == "consignado") {
-                                  return '<a href="estado/' + row[0] + '" style="color:#004c99;">Consignado</a>';
-                              }
-                              else {
-                                  return data;
-                              }
-                          }
-      
-                          else{
-                              if (data == "aprobado") {
-                                  return 'Aprobada';
-                              }
-                              if (data == "revision") {
-                                  return 'En revisión';
-                              }
-                              if (data == "rechazado") {
-                                  return 'Rechazado';
-                              }
-                              if (data == "consignado") {
-                                  return 'Consignado';
-                              }
-                              else {
-                                  return data;
-                              }
-                          }
-      
+                          return '<a href="aprobadaslideres/' + row[3] + '" style="color:#004c99;">' + data + '</a>';
                       },
-                      "orderable": true,
+                      "orderable": false,
                   },
-      
                   {
                       "data": 7,
                       "className": 'text-center',
                       "render": function (data, type, row, meta) {
-                          if (data != '') {
-                              return '<a target="_blank" href="' + data + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
-                          }
-                          else {
-                              return '';
-                          }
-      
+                          return '<a href="rechazadas/' + row[3] + '" style="color:#004c99;">' + data + '</a>';
                       },
-                      "orderable": true,
-                  },
-      
-                  {
                       "orderable": false,
-                      "className": 'text-center',
-                      "data": null,
-                      "render": function (data, type, row, meta) {
-                          if (row[10]) {
-                              return '<a href="eliminar/' + row[0] + '" style="color:#004c99;"><img src="/static/img/delete.png" height="24"></a>';
-                          }
-                          else {
-                              return '<img src="/static/img/delete_gray.png" height="24">';
-                          }
-                      },
-                      "defaultContent": ''
                   },
-      
+                  {
+                      "data": 8,
+                      "className": 'text-center',
+                      "render": function (data, type, row, meta) {
+                          return '<a href="pendientes/' + row[3] + '" style="color:#004c99;">' + data + '</a>';
+                      },
+                      "orderable": false,
+                  }
               ]
           });
-          // Add event listener for opening and closing details
-          $('#table tbody').on('click', 'td.details-control', function () {
-              var tr = $(this).closest('tr');
-              var row = table.row(tr);
-              if (row.child.isShown()) {
-                  // This row is already open - close it
-                  row.child.hide();
-                  tr.removeClass('shown');
-              }
-              else {
-                  // Open this row
-                  row.child(format(row.data())).show();
-                  tr.addClass('shown');
-              }
-          });
+      
       });
-      function format(d) {
-          // `d` is the original data object for the row
-          var desplazamientos = '';
-          for (i = 0; i < d[5].length; i++) {
-              var valor = accounting.formatMoney(d[5][i][5]);
-              desplazamientos += '<b>Fecha: </b>'+ d[5][i][0] +'- - -<b>Origen: </b>'+ d[5][i][1] + ',' +d[5][i][2] + '- - -<b>Destino:</b>'
-                      + d[5][i][3] + ',' +d[5][i][4] + '- - -<b>Valor: </b>' + valor + '<br>';
-          }
-          return '<table class="table table-striped">' +
-                  '<tr>' +
-                      '<td><p class="bold-p">Nombre:</p>' + d[8] + '</td>' +
-                  '</tr>' +
-                  '<tr>' +
-                      '<td><p class="bold-p">Desplazamientos:</p>' + desplazamientos + '</td>' +
-                  '</tr>' +
-                  '<tr>' +
-                  '</table>';
-      }
     </script>
   </body>
 </html>

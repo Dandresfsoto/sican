@@ -102,3 +102,6 @@ thead > tr >th > a {
   color: #fff;
   font-weight: 700;
 }
+fieldset {
+  margin-bottom: 40px;
+}

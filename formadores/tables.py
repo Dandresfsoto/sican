@@ -18,7 +18,7 @@ class SolicitudTable(tables.Table):
 
 
     def render_estado(self,value,record):
-        if value == 'revision':
+        if value == 'revision' or value == 'aprobado_lider':
             return mark_safe('<img src="/static/img/reloj.png" height="32" width="32">'
                              '<p>Esperando aprobación</p>')
 
@@ -66,7 +66,7 @@ class SolicitudTable(tables.Table):
             return ''
 
     def render_valor_aprobado(self,value,record):
-        if record.estado == 'revision':
+        if record.estado == 'revision' or record.estado == 'aprobado_lider':
             return ''
         if record.estado == 'aprobado' or record.estado == 'consignado':
             return locale.currency(value,grouping=True)

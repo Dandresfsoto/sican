@@ -70,6 +70,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         return self.email
+
+    def get_full_name_string(self):
+        return self.first_name
+
     def get_short_name(self):
         return self.email
 
