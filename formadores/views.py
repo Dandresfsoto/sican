@@ -54,6 +54,7 @@ class VinculosView(TemplateView):
         }
 
         kwargs['carta'] = '/static/documentos/'+dic[str(formador.region.all()[0].numero)][formador.cargo.nombre]
+        kwargs['cargo'] = formador.cargo.nombre
 
         return super(VinculosView,self).get_context_data(**kwargs)
 

@@ -383,24 +383,24 @@
                       "data": 7,
                       "className": 'text-center',
                       "render": function (data, type, row, meta) {
-                              if (data == "aprobado_lider") {
-                                  return 'Aprobada lider';
-                              }
-                              if (data == "aprobado") {
-                                  return 'Aprobada financiera';
-                              }
-                              if (data == "revision") {
-                                  return 'En revisión';
-                              }
-                              if (data == "rechazado") {
-                                  return 'Rechazado';
-                              }
-                              if (data == "consignado") {
-                                  return 'Consignado';
-                              }
-                              else {
-                                  return data;
-                              }
+                          if (data == "aprobado_lider") {
+                              return 'Aprobada lider';
+                          }
+                          if (data == "aprobado") {
+                              return 'Aprobada financiera';
+                          }
+                          if (data == "revision") {
+                              return 'En revisión';
+                          }
+                          if (data == "rechazado") {
+                              return 'Rechazado';
+                          }
+                          if (data == "consignado") {
+                              return 'Consignado';
+                          }
+                          else {
+                              return data;
+                          }
                       },
                       "orderable": true,
                   },
@@ -440,25 +440,25 @@
           var desplazamientos = '';
           for (i = 0; i < d[6].length; i++) {
               var valor = accounting.formatMoney(d[6][i][5]);
-              desplazamientos += '<tr><td colspan="6"><p class="bold-p">Motivo:</p>'+ d[6][i][6] +'</td></tr>' +
+              desplazamientos += '<tr><td colspan="6"><p class="bold-p">Motivo:</p>' + d[6][i][6] + '</td></tr>' +
                       '<tr>' +
-                      '<td><p class="bold-p">Fecha:</p>'+ d[6][i][0] +'</td>' +
-                      '<td><p class="bold-p">Origen:</p>'+ d[6][i][1] +', '+ d[6][i][2] +'</td>' +
-                      '<td><p class="bold-p">Destino:</p>'+ d[6][i][3] +', '+ d[6][i][4] +'</td>' +
-                      '<td><p class="bold-p">Valor:</p>'+ valor +'</td>' +
+                      '<td><p class="bold-p">Fecha:</p>' + d[6][i][0] + '</td>' +
+                      '<td><p class="bold-p">Origen:</p>' + d[6][i][1] + ', ' + d[6][i][2] + '</td>' +
+                      '<td><p class="bold-p">Destino:</p>' + d[6][i][3] + ', ' + d[6][i][4] + '</td>' +
+                      '<td><p class="bold-p">Valor:</p>' + valor + '</td>' +
                       '</tr>'
           }
           return '<table class="table table-striped">' +
-                      '<tr>' +
-                          '<td><p class="bold-p">Nombre:</p>' + d[9] + '</td>' +
-                          '<td></td>'+
-                          '<td></td>'+
-                          '<td></td>'+
-                          '<td></td>'+
-                      '</tr>' +
-                      '<tr>' +
-                          '<td colspan="6"><p class="text-center bold-p"">Desplazamientos</p></td>' +
-                      '</tr>' + desplazamientos +
+                  '<tr>' +
+                  '<td><p class="bold-p">Nombre:</p>' + d[9] + '</td>' +
+                  '<td></td>' +
+                  '<td></td>' +
+                  '<td></td>' +
+                  '<td></td>' +
+                  '</tr>' +
+                  '<tr>' +
+                  '<td colspan="6"><p class="text-center bold-p"">Desplazamientos</p></td>' +
+                  '</tr>' + desplazamientos +
                   '</table>';
       }
     </script>

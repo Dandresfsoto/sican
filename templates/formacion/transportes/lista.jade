@@ -28,14 +28,18 @@ block scroll_header_panel_content
             thead
                     th Formador
                     th Cedula
-                    th Solicitudes aprobadas
-                    th Solicitudes rechazadas
-                    th Solicitudes pendientes
+                    th Consignadas
+                    th Aprobadas financiera
+                    th Aprobadas lideres
+                    th Rechazadas
+                    th Pendientes
             tbody
                 tr
                     td Formador
                     td Cedula
-                    td Solicitudes aprobadas
+                    td Consignadas
+                    td Solicitudes aprobadas financiera
+                    td Solicitudes aprobadas lideres
                     td Solicitudes rechazadas
                     td Solicitudes pendientes
 
@@ -52,7 +56,7 @@ block body_script_content
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
-                "order": [[0, "desc"]],
+                "order": [[0, "asc"]],
                 "columns": [
                     {
                         "data": 0,
@@ -67,7 +71,12 @@ block body_script_content
                         "data": 3,
                         "className": 'text-center',
                         "render": function (data, type, row, meta) {
-                            return '<a href="aprobadas/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
+                            if(row[8]){
+                                return '<a href="consignadas/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
+                            }
+                            else{
+                                return data;
+                            }
                         },
                         "orderable": false,
                     },
@@ -75,7 +84,12 @@ block body_script_content
                         "data": 4,
                         "className": 'text-center',
                         "render": function (data, type, row, meta) {
-                            return '<a href="rechazadas/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
+                            if(row[8]){
+                                return '<a href="aprobadasfinanciera/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
+                            }
+                            else{
+                                return data;
+                            }
                         },
                         "orderable": false,
                     },
@@ -83,7 +97,38 @@ block body_script_content
                         "data": 5,
                         "className": 'text-center',
                         "render": function (data, type, row, meta) {
-                            return '<a href="pendientes/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
+                            if(row[8]){
+                                return '<a href="aprobadaslideres/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
+                            }
+                            else{
+                                return data;
+                            }
+                        },
+                        "orderable": false,
+                    },
+                    {
+                        "data": 6,
+                        "className": 'text-center',
+                        "render": function (data, type, row, meta) {
+                            if(row[8]){
+                                return '<a href="rechazadas/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
+                            }
+                            else{
+                                return data;
+                            }
+                        },
+                        "orderable": false,
+                    },
+                    {
+                        "data":7,
+                        "className": 'text-center',
+                        "render": function (data, type, row, meta) {
+                            if(row[8]){
+                                return '<a href="pendientes/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
+                            }
+                            else{
+                                return data;
+                            }
                         },
                         "orderable": false,
                     }

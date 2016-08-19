@@ -1017,8 +1017,8 @@ class SolicitudesTransporteList(BaseDatatableView):
     2.Lider
     3.id
     4.cantidad consignadas
-    5.cantidad aprobadas financiera
-    6.cantidad aprobadas lider
+    5.cantidad aprobadasfinanciera financiera
+    6.cantidad aprobadasfinanciera lider
     7.cantidad rechazadas
     8.cantidad pendientes
     9.permiso para editar
@@ -1032,10 +1032,32 @@ class SolicitudesTransporteList(BaseDatatableView):
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         search = unicode(search).capitalize()
-        if search:
-            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | \
-                Q(cedula__icontains=search) | Q(lider__first_name__icontains=search) | Q(lider__last_name__icontains=search)
+        if search == "Aprobadas lideres":
+            solicitudes = SolicitudTransporte.objects.filter(estado="aprobado_lider").values_list('formador__id',flat=True)
+            q = Q(id__in = solicitudes)
             qs = qs.filter(q)
+        elif search == "Consignadas":
+            solicitudes = SolicitudTransporte.objects.filter(estado="consignado").values_list('formador__id',flat=True)
+            q = Q(id__in = solicitudes)
+            qs = qs.filter(q)
+        elif search == "Aprobadas financiera":
+            solicitudes = SolicitudTransporte.objects.filter(estado="aprobado").values_list('formador__id',flat=True)
+            q = Q(id__in = solicitudes)
+            qs = qs.filter(q)
+        elif search == "Rechazadas":
+            solicitudes = SolicitudTransporte.objects.filter(estado="rechazado").values_list('formador__id',flat=True)
+            q = Q(id__in = solicitudes)
+            qs = qs.filter(q)
+        elif search == "Pendientes":
+            solicitudes = SolicitudTransporte.objects.filter(estado="revision").values_list('formador__id',flat=True)
+            q = Q(id__in = solicitudes)
+            qs = qs.filter(q)
+        else:
+            if search:
+                q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | \
+                    Q(cedula__icontains=search) | Q(lider__first_name__icontains=search) | Q(lider__last_name__icontains=search)
+                qs = qs.filter(q)
+
         return qs
 
     def prepare_results(self, qs):
@@ -1272,13 +1294,15 @@ class SesionesList(BaseDatatableView):
 
 class SolicitudesTransporteFormacionList(BaseDatatableView):
     """
-    0.id
-    1.formador
-    2.cedula
-    3.cantidad aprobadas
-    4.cantidad rechazadas
-    5.cantidad pendientes
-    6.permiso para editar
+    0.formador
+    1.cedula
+    2.id
+    3.cantidad consignadas
+    4.cantidad aprobadasfinanciera financiera
+    5.cantidad aprobadasfinanciera lider
+    6.cantidad rechazadas
+    7.cantidad pendientes
+    8.permiso para editar
     """
     model = Formador
     columns = ['nombres','cedula','id']
@@ -1292,10 +1316,32 @@ class SolicitudesTransporteFormacionList(BaseDatatableView):
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         search = unicode(search).capitalize()
-        if search:
-            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | \
-                Q(cedula__icontains=search)
+        if search == "Aprobadas lideres":
+            solicitudes = SolicitudTransporte.objects.filter(estado="aprobado_lider").values_list('formador__id',flat=True)
+            q = Q(id__in = solicitudes)
             qs = qs.filter(q)
+        elif search == "Consignadas":
+            solicitudes = SolicitudTransporte.objects.filter(estado="consignado").values_list('formador__id',flat=True)
+            q = Q(id__in = solicitudes)
+            qs = qs.filter(q)
+        elif search == "Aprobadas financiera":
+            solicitudes = SolicitudTransporte.objects.filter(estado="aprobado").values_list('formador__id',flat=True)
+            q = Q(id__in = solicitudes)
+            qs = qs.filter(q)
+        elif search == "Rechazadas":
+            solicitudes = SolicitudTransporte.objects.filter(estado="rechazado").values_list('formador__id',flat=True)
+            q = Q(id__in = solicitudes)
+            qs = qs.filter(q)
+        elif search == "Pendientes":
+            solicitudes = SolicitudTransporte.objects.filter(estado="revision").values_list('formador__id',flat=True)
+            q = Q(id__in = solicitudes)
+            qs = qs.filter(q)
+        else:
+            if search:
+                q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | \
+                    Q(cedula__icontains=search)
+                qs = qs.filter(q)
+
         return qs
 
     def prepare_results(self, qs):
@@ -1306,6 +1352,8 @@ class SolicitudesTransporteFormacionList(BaseDatatableView):
                 item.get_full_name(),
                 item.cedula,
                 item.id,
+                solicitudes.filter(estado="consignado").count(),
+                solicitudes.filter(estado="aprobado").count(),
                 solicitudes.filter(estado="aprobado_lider").count(),
                 solicitudes.filter(estado="rechazado").count(),
                 solicitudes.filter(estado="revision").count(),

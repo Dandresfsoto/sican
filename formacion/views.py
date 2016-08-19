@@ -103,17 +103,39 @@ class ListaTransportesView(LoginRequiredMixin,
     permission_required = "permisos_sican.formacion.transportesformacion.ver"
 
 
-class ListaTransportesAprobadasView(LoginRequiredMixin,
+class ListaTransportesConsignadasView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
-    template_name = 'formacion/transportes/aprobadas/lista.html'
+    template_name = 'formacion/transportes/consignadas/lista.html'
     permission_required = "permisos_sican.formacion.transportesformacion.ver"
 
     def get_context_data(self, **kwargs):
         kwargs['formador'] = Formador.objects.get(id=self.kwargs['id'])
         kwargs['formador_id'] = self.kwargs['id']
-        return super(ListaTransportesAprobadasView,self).get_context_data(**kwargs)
+        return super(ListaTransportesConsignadasView,self).get_context_data(**kwargs)
 
+
+class ListaTransportesAprobadasFinancieraView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/transportes/aprobadasfinanciera/lista.html'
+    permission_required = "permisos_sican.formacion.transportesformacion.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id'])
+        kwargs['formador_id'] = self.kwargs['id']
+        return super(ListaTransportesAprobadasFinancieraView,self).get_context_data(**kwargs)
+
+class ListaTransportesAprobadasLideresView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/transportes/aprobadaslideres/lista.html'
+    permission_required = "permisos_sican.formacion.transportesformacion.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id'])
+        kwargs['formador_id'] = self.kwargs['id']
+        return super(ListaTransportesAprobadasLideresView,self).get_context_data(**kwargs)
 
 
 class ListaTransportesRechazadasView(LoginRequiredMixin,

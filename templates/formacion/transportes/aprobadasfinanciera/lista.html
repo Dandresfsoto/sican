@@ -168,8 +168,11 @@
             </iron-collapse><a href="/proyectos/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Inicio
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
+              </paper-icon-item></a><a href="/formacion/transportes/" class="link_button">
+              <paper-icon-item class="breadcrumb-paper-icon-item-class">Lista de solicitudes
+                <iron-icon icon="check" item-icon="item-icon"></iron-icon>
               </paper-icon-item></a>
-            <paper-icon-item disabled="disabled" class="breadcrum_active">Lista de solicitudes
+            <paper-icon-item disabled="disabled" class="breadcrum_active">Solicitudes de: {{formador}}
               <iron-icon icon="check" item-icon="item-icon"></iron-icon>
             </paper-icon-item>
           </div>
@@ -189,10 +192,7 @@
               <div class="col-md-12">
                 <div class="help_container">
                   <p class="title-help">Descripción:</p>
-                  <p>
-                    En esta tabla encuentras el listado de las solicitudes de transporte realizadas por los formadores.
-                    
-                  </p>
+                  <p>En esta tabla encuentras el listado de las solicitudes de transporte realizadas por los formadores.</p>
                 </div>
               </div>
             </div>
@@ -204,23 +204,27 @@
         <div class="container-fluid container-index">
           <table id="table" width="100%" class="display responsive no-wrap table table-striped table-bordered">
             <thead>
-              <th>Formador</th>
-              <th>Cedula</th>
-              <th>Consignadas</th>
-              <th>Aprobadas financiera</th>
-              <th>Aprobadas lideres</th>
-              <th>Rechazadas</th>
-              <th>Pendientes</th>
+              <tr>
+                <th></th>
+                <th>Formador</th>
+                <th>Fecha</th>
+                <th>Valor solicitado</th>
+                <th>Valor aprobado lider</th>
+                <th>Valor aprobado financiera</th>
+                <th>Estado</th>
+                <th>Soporte</th>
+              </tr>
             </thead>
             <tbody>
               <tr>
+                <td></td>
                 <td>Formador</td>
-                <td>Cedula</td>
-                <td>Consignadas</td>
-                <td>Solicitudes aprobadas financiera</td>
-                <td>Solicitudes aprobadas lideres</td>
-                <td>Solicitudes rechazadas</td>
-                <td>Solicitudes pendientes</td>
+                <td>Fecha</td>
+                <td>Valor solicitado</td>
+                <td>Valor aprobado lider</td>
+                <td>Valor aprobado financiera</td>
+                <td>Estado</td>
+                <td>Soporte</td>
               </tr>
             </tbody>
           </table>
@@ -326,90 +330,137 @@
               "processing": true,
               "serverSide": true,
               "scrollX": true,
-              "ajax": "/rest/formacion/transportes/",
+              "ajax": "/rest/formacion/transportes/{{formador_id}}/?estado=aprobado",
               "language": {
                   "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
               },
-              "order": [[0, "asc"]],
+              "order": [[1, "desc"]],
               "columns": [
                   {
-                      "data": 0,
-                      "orderable": true,
+                      "className": 'details-control',
+                      "orderable": false,
+                      "data": null,
+                      "defaultContent": ''
                   },
                   {
                       "data": 1,
+                      "orderable": true,
+                  },
+                  {
+                      "data": 2,
                       "className": 'text-center',
+                      "render": function (data, type, row, meta) {
+                          var date = new Date(data);
+                          return date.toLocaleString();
+                      },
                       "orderable": true,
                   },
                   {
                       "data": 3,
                       "className": 'text-center',
                       "render": function (data, type, row, meta) {
-                          if(row[8]){
-                              return '<a href="consignadas/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
-                          }
-                          else{
-                              return data;
-                          }
+                          return accounting.formatMoney(data);
                       },
-                      "orderable": false,
+                      "orderable": true,
                   },
                   {
                       "data": 4,
                       "className": 'text-center',
                       "render": function (data, type, row, meta) {
-                          if(row[8]){
-                              return '<a href="aprobadasfinanciera/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
-                          }
-                          else{
-                              return data;
-                          }
+                          return accounting.formatMoney(data);
                       },
-                      "orderable": false,
+                      "orderable": true,
                   },
                   {
                       "data": 5,
                       "className": 'text-center',
                       "render": function (data, type, row, meta) {
-                          if(row[8]){
-                              return '<a href="aprobadaslideres/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
-                          }
-                          else{
-                              return data;
-                          }
+                          return accounting.formatMoney(data);
                       },
-                      "orderable": false,
+                      "orderable": true,
                   },
                   {
-                      "data": 6,
+                      "data": 7,
                       "className": 'text-center',
                       "render": function (data, type, row, meta) {
-                          if(row[8]){
-                              return '<a href="rechazadas/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
-                          }
-                          else{
-                              return data;
-                          }
+                              if (data == "aprobado_lider") {
+                                  return 'Aprobada lider';
+                              }
+                              if (data == "aprobado") {
+                                  return 'Aprobada financiera';
+                              }
+                              if (data == "revision") {
+                                  return 'En revisión';
+                              }
+                              if (data == "rechazado") {
+                                  return 'Rechazado';
+                              }
+                              if (data == "consignado") {
+                                  return 'Consignado';
+                              }
+                              else {
+                                  return data;
+                              }
                       },
-                      "orderable": false,
+                      "orderable": true,
                   },
                   {
-                      "data":7,
+                      "data": 8,
                       "className": 'text-center',
                       "render": function (data, type, row, meta) {
-                          if(row[8]){
-                              return '<a href="pendientes/' + row[2] + '" style="color:#004c99;">' + data + '</a>';
+                          if (data != '') {
+                              return '<a target="_blank" href="' + data + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
                           }
-                          else{
-                              return data;
+                          else {
+                              return '';
                           }
                       },
-                      "orderable": false,
+                      "orderable": true,
                   }
               ]
           });
-      
+          // Add event listener for opening and closing details
+          $('#table tbody').on('click', 'td.details-control', function () {
+              var tr = $(this).closest('tr');
+              var row = table.row(tr);
+              if (row.child.isShown()) {
+                  // This row is already open - close it
+                  row.child.hide();
+                  tr.removeClass('shown');
+              }
+              else {
+                  // Open this row
+                  row.child(format(row.data())).show();
+                  tr.addClass('shown');
+              }
+          });
       });
+      function format(d) {
+          // `d` is the original data object for the row
+          var desplazamientos = '';
+          for (i = 0; i < d[6].length; i++) {
+              var valor = accounting.formatMoney(d[6][i][5]);
+              desplazamientos += '<tr><td colspan="6"><p class="bold-p">Motivo:</p>'+ d[6][i][6] +'</td></tr>' +
+                      '<tr>' +
+                      '<td><p class="bold-p">Fecha:</p>'+ d[6][i][0] +'</td>' +
+                      '<td><p class="bold-p">Origen:</p>'+ d[6][i][1] +', '+ d[6][i][2] +'</td>' +
+                      '<td><p class="bold-p">Destino:</p>'+ d[6][i][3] +', '+ d[6][i][4] +'</td>' +
+                      '<td><p class="bold-p">Valor:</p>'+ valor +'</td>' +
+                      '</tr>'
+          }
+          return '<table class="table table-striped">' +
+                      '<tr>' +
+                          '<td><p class="bold-p">Nombre:</p>' + d[9] + '</td>' +
+                          '<td></td>'+
+                          '<td></td>'+
+                          '<td></td>'+
+                          '<td></td>'+
+                      '</tr>' +
+                      '<tr>' +
+                          '<td colspan="6"><p class="text-center bold-p"">Desplazamientos</p></td>' +
+                      '</tr>' + desplazamientos +
+                  '</table>';
+      }
     </script>
   </body>
 </html>
