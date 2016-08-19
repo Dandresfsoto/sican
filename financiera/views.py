@@ -120,6 +120,8 @@ class TransportesEstadoView(LoginRequiredMixin,
             self.object.save()
 
         elif self.object.estado == 'aprobado':
+            self.object.valor_aprobado = valor_aprobado
+            self.object.save()
             construir_pdf.delay(self.object.id)
             send_mail_templated.delay('email/desplazamiento.tpl',
                                       {
@@ -134,8 +136,6 @@ class TransportesEstadoView(LoginRequiredMixin,
                                       },
                                       DEFAULT_FROM_EMAIL, [self.object.formador.correo_personal])
 
-            self.object.valor_aprobado = valor_aprobado
-            self.object.save()
 
         elif self.object.estado == 'consignado':
             self.object.terminada = True
