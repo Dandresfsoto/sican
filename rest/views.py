@@ -1357,7 +1357,7 @@ class SolicitudesTransporteFormacionList(BaseDatatableView):
                 solicitudes.filter(estado="aprobado_lider").count(),
                 solicitudes.filter(estado="rechazado").count(),
                 solicitudes.filter(estado="revision").count(),
-                self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
+                self.request.user.has_perm('permisos_sican.financiera.transportesformacion.editar'),
             ])
         return json_data
 
