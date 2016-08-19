@@ -29,7 +29,7 @@ def construir_pdf(id_solicitud):
 
     logo_pais = Image(settings.STATICFILES_DIRS[0]+'/img/pais_transporte.png',size=(194,142))
     logo_pais.drawing.top = 22
-    logo_pais.drawing.left = 800
+    logo_pais.drawing.left = 900
 
     ws.add_image(logo_cpe)
     ws.add_image(logo_pais)
