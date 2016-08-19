@@ -183,7 +183,7 @@ class TransporteFormView(LoginRequiredMixin,
             self.object.valor_aprobado_lider = valor_aprobado
             self.object.save()
 
-        if self.object.estado == 'rechazado':
+        elif self.object.estado == 'rechazado':
             self.object.valor_aprobado_lider = 0
             self.object.save()
             send_mail_templated.delay('email/desplazamiento.tpl',

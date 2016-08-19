@@ -119,7 +119,7 @@ class TransportesEstadoView(LoginRequiredMixin,
             self.object.valor_aprobado = 0
             self.object.save()
 
-        if self.object.estado == 'aprobado':
+        elif self.object.estado == 'aprobado':
             construir_pdf.delay(self.object.id)
             send_mail_templated.delay('email/desplazamiento.tpl',
                                       {
@@ -137,7 +137,7 @@ class TransportesEstadoView(LoginRequiredMixin,
             self.object.valor_aprobado = valor_aprobado
             self.object.save()
 
-        if self.object.estado == 'consignado':
+        elif self.object.estado == 'consignado':
             self.object.terminada = True
             self.object.valor_aprobado = valor_aprobado
             self.object.save()
@@ -155,7 +155,7 @@ class TransportesEstadoView(LoginRequiredMixin,
                                       DEFAULT_FROM_EMAIL, [self.object.formador.correo_personal])
 
 
-        if self.object.estado == 'rechazado':
+        elif self.object.estado == 'rechazado':
             self.object.valor_aprobado = 0
             self.object.save()
             send_mail_templated.delay('email/desplazamiento.tpl',
@@ -171,21 +171,9 @@ class TransportesEstadoView(LoginRequiredMixin,
                                       },
                                       DEFAULT_FROM_EMAIL, [self.object.formador.correo_personal])
 
-        if self.object.estado == 'revision':
+        elif self.object.estado == 'revision':
             self.object.valor_aprobado = 0
             self.object.save()
-            send_mail_templated.delay('email/desplazamiento.tpl',
-                                      {
-                                          'url_base':'http://sican.asoandes.org/',
-                                          'fullname':self.object.formador.get_full_name(),
-                                          'nombre_solicitud': self.object.nombre,
-                                          'fecha_solicitud': self.object.creacion.strftime('%d/%m/%Y'),
-                                          'valor_solicitado': locale.currency(self.object.valor,grouping=True),
-                                          'valor_aprobado': locale.currency(valor_aprobado,grouping=True),
-                                          'observacion': form.cleaned_data['observacion'],
-                                          'estado': 'En revisión'
-                                      },
-                                      DEFAULT_FROM_EMAIL, [self.object.formador.correo_personal])
 
 
 
@@ -193,7 +181,11 @@ class TransportesEstadoView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         kwargs['valor_solicitado'] = locale.currency(self.object.valor,grouping=True)
-        kwargs['valor_aprobado_lider'] = locale.currency(self.object.valor_aprobado_lider,grouping=True)
+        lider = self.object.valor_aprobado_lider
+        if lider != None:
+            kwargs['valor_aprobado_lider'] = locale.currency(lider,grouping=True)
+        else:
+            kwargs['valor_aprobado_lider'] = locale.currency(0,grouping=True)
         kwargs['archivo_url'] = self.object.get_archivo_url()
         kwargs['archivo_filename'] = self.object.archivo_filename()
         return super(TransportesEstadoView,self).get_context_data(**kwargs)
