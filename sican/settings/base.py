@@ -101,7 +101,7 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
-    'channels',
+    #'channels',
     'guardian',
     'crispy_forms',
     'smart_selects',
@@ -112,15 +112,15 @@ THIRD_PARTY_APPS = [
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgi_redis.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
-        },
-        "ROUTING": "inbox.routing.channel_routing",
-    },
-}
+#CHANNEL_LAYERS = {
+#    "default": {
+#        "BACKEND": "asgi_redis.RedisChannelLayer",
+#        "CONFIG": {
+#            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+#        },
+#        "ROUTING": "inbox.routing.channel_routing",
+#    },
+#}
 
 
 REST_FRAMEWORK = {
