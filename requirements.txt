@@ -31,6 +31,7 @@ django-guardian==1.4.4
 django-mail-templated==2.6.2
 django-rest-swagger==2.0.3
 django-smart-selects==1.2.2
+django-sslserver==0.19
 django-tables2==1.2.5
 django-telegram-bot==0.6.0
 djangorestframework==3.3.3

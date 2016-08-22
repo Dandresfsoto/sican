@@ -92,7 +92,8 @@ LOCAL_APPS = [
     'informes',
     'formacion',
     'encuestas',
-    'productos'
+    'productos',
+    'messenger'
 ]
 
 THIRD_PARTY_APPS = [
@@ -105,7 +106,8 @@ THIRD_PARTY_APPS = [
     'guardian',
     'crispy_forms',
     'smart_selects',
-    'django_tables2'
+    'django_tables2',
+    'sslserver',
 ]
 
 

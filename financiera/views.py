@@ -165,7 +165,7 @@ class TransportesEstadoView(LoginRequiredMixin,
                                           'nombre_solicitud': self.object.nombre,
                                           'fecha_solicitud': self.object.creacion.strftime('%d/%m/%Y'),
                                           'valor_solicitado': locale.currency(self.object.valor,grouping=True),
-                                          'valor_aprobado': locale.currency(valor_aprobado,grouping=True),
+                                          'valor_aprobado': locale.currency(0,grouping=True),
                                           'observacion': form.cleaned_data['observacion'],
                                           'estado': 'Solicitud rechazada'
                                       },
