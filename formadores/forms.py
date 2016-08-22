@@ -1865,7 +1865,6 @@ class SolicitudTransporteUpdateForm(forms.Form):
             )
         )
 
-
 class SolicitudTransporteLiderForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -1900,3 +1899,25 @@ class SolicitudTransporteLiderForm(forms.ModelForm):
         widgets = {
             'estado' : forms.Select(choices=(('aprobado_lider','Aprobado'),('revision','En revisión'),('rechazado','Rechazado')))
         }
+
+class OtroSiForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(OtroSiForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Div(
+                Div('archivo',css_class='col-sm-12'),
+                css_class = 'row'
+            ),
+            Div(
+                Div('observacion',css_class='col-sm-12'),
+                css_class = 'row'
+            ),
+            HTML("""
+                    <div class="row"><button type="submit" class="btn btn-cpe">Enviar</button></div>
+                    """),
+        )
+
+    class Meta:
+        model = Soporte
+        fields = ['archivo']

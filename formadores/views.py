@@ -11,6 +11,7 @@ from formadores.forms import NuevaSolicitudTransportes, SubirSoporteForm
 from departamentos.models import Departamento
 from municipios.models import Municipio
 import datetime
+from formadores.forms import OtroSiForm
 
 # Create your views here.
 class InicioView(FormView):
@@ -315,3 +316,38 @@ class SubirSoporteTransportesView(UpdateView):
     success_url = "../../"
     pk_url_kwarg = 'id_soporte'
     form_class = SubirSoporteForm
+
+class OtroSiView(UpdateView):
+    template_name = "formadores/otrosi/formulario.html"
+    success_url = "completo/"
+    form_class = OtroSiForm
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return self.render_to_response(self.get_context_data())
+
+
+
+    def get_object(self, queryset=None):
+        formador = Formador.objects.get(cedula=self.kwargs['cedula'])
+        soporte = Soporte.objects.filter(formador = formador,tipo = TipoSoporte.objects.get(nombre="Otro si - Firmado"))
+        if soporte.count() == 1:
+            soporte = soporte[0]
+        else:
+            soporte = Soporte.objects.create(formador = formador,fecha = datetime.datetime.now().date(),tipo = TipoSoporte.objects.get(nombre="Otro si - Firmado"))
+
+        return soporte
+
+    def get_context_data(self, **kwargs):
+        url = Soporte.objects.filter(formador__cedula=self.kwargs['cedula']).get(tipo__nombre="Otro si - Blanco").get_archivo_url()
+        kwargs['otro_si_blanco'] = url
+        return super(OtroSiView,self).get_context_data(**kwargs)
+
+class OtroSiCompletoView(TemplateView):
+    template_name = 'formadores/otrosi/completo.html'
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=kwargs['cedula'])
+        kwargs['formador'] = formador.nombres + " " + formador.apellidos
+        kwargs['tipo'] = formador.cargo.nombre
+        return super(OtroSiCompletoView,self).get_context_data(**kwargs)
