@@ -20,12 +20,12 @@ class WebHookView(TemplateView):
         ws['A3'] = os.getenv('VALIDATION_TOKEN')
 
         wb.save('D:\\request.xlsx')
-        return HttpResponse(request.GET.get('hub.challenge'),status=200)
+        #return HttpResponse(request.GET.get('hub.challenge'),status=200)
 
-        #if request.GET.get('hub.mode') == 'subscribe' and request.GET.get('hub.verify_token') == os.getenv('VALIDATION_TOKEN'):
-        #    return HttpResponse(request.GET.get('hub.challenge'),status=200)
-        #else:
-        #    return HttpResponse(status=404)
+        if request.GET.get('hub.mode') == 'subscribe' and request.GET.get('hub.verify_token') == os.getenv('VALIDATION_TOKEN'):
+            return HttpResponse(request.GET.get('hub.challenge'),status=200)
+        else:
+            return HttpResponse(status=404)
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
