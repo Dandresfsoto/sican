@@ -42,7 +42,9 @@
           <h3 style="margin-bottom:30px;">{{formador}} - {{tipo}}</h3>
           <div class="row">
             <div class="col-md-6 col-md-offset-3 text-center">
-              <div class="list-group">{% if link_contrato == "#" %}<a href="{{link_contrato}}" class="list-group-item disabled">Descargar contrato</a>{% else %}<a href="{{link_contrato}}" target="_blank" class="list-group-item">Descargar contrato</a>{% endif %}<a href="otrosi" class="list-group-item">Firma otrosí</a><a href="legalizacion" class="list-group-item">Legalización de documentos</a><a href="{{carta}}" target="_blank" class="list-group-item">Carta de presentación</a><a href="transportes" class="list-group-item">Solicitud de transporte</a></div>
+              <div class="list-group">{% if link_contrato == "#" %}<a href="{{link_contrato}}" class="list-group-item disabled">Descargar contrato</a>{% else %}<a href="{{link_contrato}}" target="_blank" class="list-group-item">Descargar contrato</a>{% endif %}
+                {% if cargo != "Formador Tipo 4" %}<a href="otrosi" class="list-group-item">Firma otrosí</a>{% endif %}<a href="legalizacion" class="list-group-item">Legalización de documentos</a><a href="{{carta}}" target="_blank" class="list-group-item">Carta de presentación</a><a href="transportes" class="list-group-item">Solicitud de transporte</a>
+              </div>
             </div>
           </div>
         </div>
