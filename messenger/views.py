@@ -11,7 +11,7 @@ class WebHookView(TemplateView):
 
 
     def get(self, request, *args, **kwargs):
-        if request.GET.get('hub.mode') == 'subscribe' and request.GET.get('hub.verify_token') == os.getenv('VALIDATION_TOKEN'):
+        if request.GET.get('hub.mode') == 'subscribe' and str(request.GET.get('hub.verify_token')) == str(os.getenv('VALIDATION_TOKEN')):
             return HttpResponse(request.GET.get('hub.challenge'),status=200)
         else:
             return HttpResponse(status=404)
