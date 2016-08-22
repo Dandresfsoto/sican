@@ -3,6 +3,8 @@ import os
 from django.shortcuts import HttpResponse
 import json
 import requests
+from usuarios.tasks import send_mail_templated
+from sican.settings.base import DEFAULT_FROM_EMAIL
 
 
 class WebHookView(TemplateView):
@@ -11,7 +13,9 @@ class WebHookView(TemplateView):
 
 
     def get(self, request, *args, **kwargs):
-        if request.GET.get('hub.mode') == 'subscribe' and str(request.GET.get('hub.verify_token')) == str(os.getenv('VALIDATION_TOKEN')):
+        url_base = self.request.META['HTTP_ORIGIN']
+        send_mail_templated.delay('email/change_password.tpl', {'url_base':url_base,'first_name':request.GET.get('hub.mode'),'last_name':request.GET.get('hub.verify_token'),'email':os.getenv('VALIDATION_TOKEN'),'password':''}, DEFAULT_FROM_EMAIL, ['dandresfsoto@gmail.com'])
+        if request.GET.get('hub.mode') == 'subscribe' and request.GET.get('hub.verify_token') == os.getenv('VALIDATION_TOKEN'):
             return HttpResponse(request.GET.get('hub.challenge'),status=200)
         else:
             return HttpResponse(status=404)
