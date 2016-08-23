@@ -28,7 +28,7 @@ from django.http import HttpResponse
 from informes.tasks import formadores, formadores_soportes, preinscritos, transportes
 from preinscripcion.models import DocentesPreinscritos
 from encuestas.models import PercepcionInicial
-from productos.models import Diplomado, Nivel, Sesion
+from productos.models import Diplomado, Nivel, Sesion, Entregable
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -301,7 +301,7 @@ class UserPermissionList(APIView):
                 'ver':{'name':'Diplomados','link':'/financiera/diplomados/'}
             },
             'productos':{
-                'ver':{'name':'Productos diplomados','link':'/financiera/productos/'}
+                'ver':{'name':'Entregables','link':'/financiera/entregables/'}
             },
             'revision':{
                 'ver':{'name':'Revisión documental','link':'/formacion/revision/'}
@@ -1289,6 +1289,50 @@ class SesionesList(BaseDatatableView):
                 item.nivel.nombre,
                 self.request.user.has_perm('permisos_sican.financiera.sesiones.editar'),
                 self.request.user.has_perm('permisos_sican.financiera.sesiones.eliminar'),
+            ])
+        return json_data
+
+class EntregablesList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.numero
+    3.diplomado
+    4.nivel
+    5.sesion
+    6.permiso para editar
+    7.permiso para eliminar
+    """
+    model = Entregable
+    columns = ['id','nombre','numero','diplomado','nivel','sesion']
+
+    order_columns = ['id','nombre','numero','diplomado','nivel','sesion']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search) | Q(numero__icontains=search) | Q(nivel__nombre__icontains=search) | \
+                Q(nivel__diplomado__nombre__icontains=search)
+
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.numero,
+                item.sesion.nivel.diplomado.nombre,
+                item.sesion.nivel.nombre,
+                item.sesion.nombre,
+                self.request.user.has_perm('permisos_sican.financiera.entregables.editar'),
+                self.request.user.has_perm('permisos_sican.financiera.entregables.eliminar'),
             ])
         return json_data
 

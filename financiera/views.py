@@ -15,7 +15,8 @@ from municipios.models import Municipio
 from formadores.models import Formador
 from productos.models import Diplomado, Nivel, Sesion
 from productos.forms import DiplomadoForm, UpdateDiplomadoForm, NivelForm, UpdateNivelForm, SesionForm, UpdateSesionForm
-
+from productos.forms import EntregableForm, UpdateEntregableForm
+from productos.models import Entregable
 
 # Create your views here.
 class TransportesView(LoginRequiredMixin,
@@ -588,3 +589,35 @@ class SesionesUpdateView(LoginRequiredMixin,
     success_url = '/financiera/sesiones/'
     template_name = 'financiera/sesiones/editar.html'
     permission_required = "permisos_sican.financiera.sesiones.editar"
+
+
+
+class EntregablesListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/entregables/lista.html'
+    permission_required = "permisos_sican.financiera.entregables.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.financiera.entregables.crear')
+        return super(EntregablesListView, self).get_context_data(**kwargs)
+
+
+class EntregablesCreateView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               CreateView):
+    model = Entregable
+    form_class = EntregableForm
+    success_url = '/financiera/entregables/'
+    template_name = 'financiera/entregables/nuevo.html'
+    permission_required = "permisos_sican.financiera.entregables.crear"
+
+class EntregablesUpdateView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = Entregable
+    form_class = UpdateEntregableForm
+    pk_url_kwarg = 'pk'
+    success_url = '/financiera/entregables/'
+    template_name = 'financiera/entregables/editar.html'
+    permission_required = "permisos_sican.financiera.entregables.editar"

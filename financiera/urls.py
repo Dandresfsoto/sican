@@ -6,6 +6,7 @@ from financiera.views import NivelesListView, NivelesCreateView, NivelesUpdateVi
 from financiera.views import SesionesListView, SesionesCreateView, SesionesUpdateView
 from financiera.views import TransportesAprobadasFinancieraView, TransportesAprobadasLideresView, TransportesRechazadasView, TransportesPendientesView
 from financiera.views import TransportesConsignadasFinancieraView
+from financiera.views import EntregablesListView, EntregablesCreateView, EntregablesUpdateView
 
 urlpatterns = [
     url(r'^transportes/$', TransportesView.as_view()),
@@ -46,6 +47,10 @@ urlpatterns = [
     url(r'^transportes/eliminar/(?P<pk>\w+)/$', TransportesEliminarView.as_view()),
     url(r'^transportes/editar/(?P<pk>\w+)/$', TransportesUpdateView.as_view()),
 
+
+
+
+
     url(r'^diplomados/$', DiplomadosListView.as_view()),
     url(r'^diplomados/nuevo/$', DiplomadoCreateView.as_view()),
     url(r'^diplomados/editar/(?P<pk>\w+)/$', DiplomadoUpdateView.as_view()),
@@ -57,4 +62,8 @@ urlpatterns = [
     url(r'^sesiones/$', SesionesListView.as_view()),
     url(r'^sesiones/nuevo/$', SesionesCreateView.as_view()),
     url(r'^sesiones/editar/(?P<pk>\w+)/$', SesionesUpdateView.as_view()),
+
+    url(r'^entregables/$', EntregablesListView.as_view()),
+    url(r'^entregables/nuevo/$', EntregablesCreateView.as_view()),
+    url(r'^entregables/editar/(?P<pk>\w+)/$', EntregablesUpdateView.as_view()),
 ]

@@ -6,7 +6,7 @@ from rest.views import DepartamentosList, MunicipiosList, SecretariasList, Radic
 from rest.views import MunicipiosChainedList, RadicadosChainedList
 from rest.views import SolicitudesTransporteList, InformesExcelList, ReportesView,PreinscritosList, ResultadosPercepcionInicial
 from rest.views import DiplomadosList, NivelesList, SesionesList, SolicitudesTransporteFormacionList, SolicitudesTransporteFormadorList
-from rest.views import SolicitudesTransporteFormadorFinancieraList
+from rest.views import SolicitudesTransporteFormadorFinancieraList, EntregablesList
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -50,6 +50,7 @@ urlpatterns = [
     url(r'financiera/diplomados/$', DiplomadosList.as_view()),
     url(r'financiera/niveles/$', NivelesList.as_view()),
     url(r'financiera/sesiones/$', SesionesList.as_view()),
+    url(r'financiera/entregables/$', EntregablesList.as_view()),
 
     url(r'formacion/transportes/$', SolicitudesTransporteFormacionList.as_view()),
     url(r'formacion/transportes/(?P<id_formador>\w+)/$', SolicitudesTransporteFormadorList.as_view()),

@@ -23,6 +23,9 @@ class Sesion(models.Model):
     nombre = models.CharField(max_length=100)
     numero = models.IntegerField()
 
+    def __unicode__(self):
+        return ("%s - %s - %s") % (self.nivel.diplomado.nombre,self.nivel.nombre,self.nombre)
+
 class Entregable(models.Model):
     sesion = models.ForeignKey(Sesion,related_name="entregable_sesion")
     nombre = models.CharField(max_length=100)

@@ -5,7 +5,7 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, HTML
 from rh.models import TipoSoporte
-from productos.models import Diplomado, Nivel, Sesion
+from productos.models import Diplomado, Nivel, Sesion, Entregable
 
 class DiplomadoForm(forms.ModelForm):
 
@@ -159,4 +159,66 @@ class UpdateSesionForm(forms.ModelForm):
 
     class Meta:
         model = Sesion
+        fields = '__all__'
+
+class EntregableForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EntregableForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Nuevo entregable',
+                Div(
+                    Div('nombre',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('numero',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('sesion',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('valor',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+            ),
+        )
+
+    class Meta:
+        model = Entregable
+        fields = '__all__'
+
+class UpdateEntregableForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateEntregableForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Editar entregable',
+                Div(
+                    Div('nombre',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('numero',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('sesion',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('valor',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+            ),
+        )
+
+    class Meta:
+        model = Entregable
         fields = '__all__'
