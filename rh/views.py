@@ -17,10 +17,10 @@ class AdministrativoView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
     template_name = 'rh/administrativos/lista.html'
-    permission_required = "permisos_sican.rh.cargos.ver"
+    permission_required = "permisos_sican.rh.administrativos.ver"
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.cargos.crear')
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.administrativos.crear')
         return super(AdministrativoView, self).get_context_data(**kwargs)
 
 class NuevoAdministrativoView(LoginRequiredMixin,
@@ -30,7 +30,7 @@ class NuevoAdministrativoView(LoginRequiredMixin,
     form_class = NuevoForm
     success_url = '/rh/administrativos/'
     template_name = 'rh/administrativos/nuevo.html'
-    permission_required = "permisos_sican.rh.cargos.crear"
+    permission_required = "permisos_sican.rh.administrativos.crear"
 
 class DeleteAdministrativoView(LoginRequiredMixin,
                                PermissionRequiredMixin,
@@ -39,7 +39,7 @@ class DeleteAdministrativoView(LoginRequiredMixin,
     pk_url_kwarg = 'pk'
     success_url = '/rh/administrativos/'
     template_name = 'rh/administrativos/eliminar.html'
-    permission_required = "permisos_sican.rh.cargos.eliminar"
+    permission_required = "permisos_sican.rh.administrativos.eliminar"
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -56,7 +56,7 @@ class UpdateAdministrativoView(LoginRequiredMixin,
     pk_url_kwarg = 'pk'
     success_url = '/rh/administrativos/'
     template_name = 'rh/administrativos/editar.html'
-    permission_required = "permisos_sican.rh.cargos.editar"
+    permission_required = "permisos_sican.rh.administrativos.editar"
 
 
 
