@@ -49,12 +49,12 @@
     <iron-ajax auto url="{{ url }}" handle-as="json" last-response="{{ permission }}"></iron-ajax>
     <div role="listbox">
         <template is="dom-repeat" items="[[permission]]">
-            <div class="permission_class">
-                <a class="paper-item-link" href="#">
-                    <paper-icon-item class="permission" on-tap="expand" id="[[item.id]]">
-                        <paper-item-body>[[item.name]]</paper-item-body>
-                        <iron-icon icon="[[item.icon]]" item-icon></iron-icon>
-                        <iron-icon icon="arrow-drop-down" id="icon_arrow_[[item.id]]"></iron-icon>
+            <div class="permission_class" id="[[item.id]]" on-tap="expand">
+                <a class="paper-item-link" href="#" id="[[item.id]]">
+                    <paper-icon-item class="permission" id="[[item.id]]">
+                        <paper-item-body id="[[item.id]]">[[item.name]]</paper-item-body>
+                        <iron-icon icon="[[item.icon]]" id="[[item.id]]" item-icon></iron-icon>
+                        <iron-icon icon="arrow-drop-down" id="[[item.id]]"></iron-icon>
                     </paper-icon-item>
                 </a>
                 <iron-collapse id="collapse_[[item.id]]">
@@ -89,20 +89,12 @@
     },
 
     expand: function(e){
-        for(i=0;i< e.path.length;i++){
-            if(e.path[i].nodeName == 'PAPER-ICON-ITEM'){
-                var id_paper_item_icon = e.path[i].id;
-                break;
-            }
-        }
-        $('#collapse_'+id_paper_item_icon)[0].toggle();
 
-        if($('#collapse_'+id_paper_item_icon)[0].opened == false){
-            $('#icon_arrow_'+id_paper_item_icon)[0].icon = "arrow-drop-down";
-        }
-        else{
-            $('#icon_arrow_'+id_paper_item_icon)[0].icon = "arrow-drop-up";
-        }
+        collapse_text = '#collapse_' + e.target.id;
+
+        var collapse = Polymer.dom(e.currentTarget).querySelector(collapse_text);
+
+        collapse.toggle();
     }
 
   });
