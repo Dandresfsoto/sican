@@ -300,7 +300,7 @@ class UserPermissionList(APIView):
             'diplomados':{
                 'ver':{'name':'Diplomados','link':'/financiera/diplomados/'}
             },
-            'productos':{
+            'entregables':{
                 'ver':{'name':'Entregables','link':'/financiera/entregables/'}
             },
             'revision':{
