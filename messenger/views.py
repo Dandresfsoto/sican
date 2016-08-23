@@ -13,15 +13,6 @@ class WebHookView(TemplateView):
 
 
     def get(self, request, *args, **kwargs):
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws['A1'] = request.GET.get('hub.mode')
-        ws['A2'] = request.GET.get('hub.verify_token')
-        ws['A3'] = os.getenv('VALIDATION_TOKEN')
-
-        wb.save('D:\\request.xlsx')
-        #return HttpResponse(request.GET.get('hub.challenge'),status=200)
-
         if request.GET.get('hub.mode') == 'subscribe' and request.GET.get('hub.verify_token') == os.getenv('VALIDATION_TOKEN'):
             return HttpResponse(request.GET.get('hub.challenge'),status=200)
         else:
