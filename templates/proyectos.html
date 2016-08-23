@@ -37,7 +37,7 @@
     <link rel="import" href="{% static 'bower_components/iron-collapse/iron-collapse.html'%}"/>
     <link rel="import" href="{% static 'bower_components/paper-toast/paper-toast.html'%}"/>
     <link rel="import" href="{% static 'bower_components/paper-badge/paper-badge.html'%}"/>
-    <link rel="import" href="{% static 'bower_components/permissions-sican/permissions-sican.html'%}"/>
+    <link rel="import" href="{% static 'bower_components/permission-sican/permission-sican.html'%}"/>
     <style is="custom-style">
       .icon-sican{
          --iron-icon-height: 100px;
@@ -196,7 +196,7 @@
           <div class="realtime"></div>
         </div>
         <div class="container-fluid container-index">
-          <permissions-sican url="/rest/usuarios/permisos/"></permissions-sican>
+          <permission-sican url="/rest/usuarios/permisos/"></permission-sican>
         </div>
         <div style="margin-top:25px;"></div>
         <input type="hidden" value="{{mensaje}}" id="input_mensaje"/>
