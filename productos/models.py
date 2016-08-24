@@ -47,5 +47,5 @@ class Entregable(models.Model):
         if self.formato != None:
             name = self.formato.name
         else:
-            name = "aefaf"
+            name = ""
         return os.path.basename(name)
