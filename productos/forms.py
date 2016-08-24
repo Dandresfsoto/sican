@@ -182,7 +182,7 @@ class EntregableForm(forms.ModelForm):
                     css_class = 'row'
                 ),
                 Div(
-                    Div('valor',css_class='col-sm-12'),
+                    Div('tipo',css_class='col-sm-12'),
                     css_class = 'row'
                 ),
             ),
@@ -191,6 +191,9 @@ class EntregableForm(forms.ModelForm):
     class Meta:
         model = Entregable
         fields = '__all__'
+        widgets = {
+            'tipo':forms.Select(choices=(('Virtual','Virtual',),('Presencial','Presencial')))
+        }
 
 class UpdateEntregableForm(forms.ModelForm):
 
@@ -213,7 +216,7 @@ class UpdateEntregableForm(forms.ModelForm):
                     css_class = 'row'
                 ),
                 Div(
-                    Div('valor',css_class='col-sm-12'),
+                    Div('tipo',css_class='col-sm-12'),
                     css_class = 'row'
                 ),
             ),
@@ -222,3 +225,7 @@ class UpdateEntregableForm(forms.ModelForm):
     class Meta:
         model = Entregable
         fields = '__all__'
+
+        widgets = {
+            'tipo':forms.Select(choices=(('Virtual','Virtual',),('Presencial','Presencial')))
+        }

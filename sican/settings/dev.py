@@ -11,10 +11,10 @@ INSTALLED_APPS += (
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'sican',
+            'NAME': 'sican_2016',
 
-            'USER': 'sican',
-            'PASSWORD': 'sican12345%',
+            'USER': 'root',
+            'PASSWORD': '%4nd3s2015%',
             'HOST': 'localhost',
             'PORT': '3306',
         }

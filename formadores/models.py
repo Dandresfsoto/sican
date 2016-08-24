@@ -10,7 +10,6 @@ from municipios.models import Municipio
 import os
 from usuarios.models import User
 
-# Create your models here.
 class Formador(models.Model):
     lider = models.ForeignKey(User,blank=True,null=True)
     #---------- REGION----------------------

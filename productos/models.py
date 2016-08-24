@@ -30,3 +30,4 @@ class Entregable(models.Model):
     sesion = models.ForeignKey(Sesion,related_name="entregable_sesion")
     nombre = models.CharField(max_length=100)
     numero = models.IntegerField()
+    tipo = models.CharField(max_length=100)
