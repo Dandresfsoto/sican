@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+import os
 
 # Create your models here.
 class Diplomado(models.Model):
@@ -31,3 +32,20 @@ class Entregable(models.Model):
     nombre = models.CharField(max_length=100)
     numero = models.IntegerField()
     tipo = models.CharField(max_length=100)
+    formato = models.FileField(upload_to="Entregables/Formatos",blank=True,null=True)
+
+    def get_archivo_url(self):
+        try:
+            url = self.formato.url
+        except:
+            url = ""
+        return url
+
+
+
+    def archivo_filename(self):
+        if self.formato != None:
+            name = self.formato.name
+        else:
+            name = "aefaf"
+        return os.path.basename(name)

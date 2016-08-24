@@ -621,3 +621,8 @@ class EntregablesUpdateView(LoginRequiredMixin,
     success_url = '/financiera/entregables/'
     template_name = 'financiera/entregables/editar.html'
     permission_required = "permisos_sican.financiera.entregables.editar"
+
+    def get_context_data(self, **kwargs):
+        kwargs['old_file'] = self.object.archivo_filename()
+        kwargs['link_old_file'] = self.object.get_archivo_url()
+        return super(EntregablesUpdateView,self).get_context_data(**kwargs)

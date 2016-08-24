@@ -1185,14 +1185,14 @@ class DiplomadosList(BaseDatatableView):
     model = Diplomado
     columns = ['id','nombre','numero']
 
-    order_columns = ['id','nombre','numero']
+    order_columns = ['nombre','numero']
     max_display_length = 100
 
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
-
         if search:
+            search = search.upper()
             q = Q(nombre__icontains=search) | Q(numero__icontains=search)
 
             qs = qs.filter(q)
@@ -1223,7 +1223,7 @@ class NivelesList(BaseDatatableView):
     model = Nivel
     columns = ['id','nombre','numero','diplomado']
 
-    order_columns = ['id','nombre','numero','diplomado']
+    order_columns = ['nombre','numero','diplomado']
     max_display_length = 100
 
 
@@ -1231,10 +1231,8 @@ class NivelesList(BaseDatatableView):
         search = self.request.GET.get(u'search[value]', None)
 
         if search:
-            q = Q(nombre__icontains=search) | Q(numero__icontains=search) | Q(diplomado__nombre__icontains=search)
-
+            q = Q(nombre__icontains=search.capitalize()) | Q(numero__icontains=search) | Q(diplomado__nombre__icontains=search.upper())
             qs = qs.filter(q)
-
         return qs
 
     def prepare_results(self, qs):
@@ -1263,7 +1261,7 @@ class SesionesList(BaseDatatableView):
     model = Sesion
     columns = ['id','nombre','numero','diplomado','nivel']
 
-    order_columns = ['id','nombre','numero','diplomado','nivel']
+    order_columns = ['nombre','numero','diplomado','nivel']
     max_display_length = 100
 
 
@@ -1306,7 +1304,7 @@ class EntregablesList(BaseDatatableView):
     model = Entregable
     columns = ['id','nombre','numero','diplomado','nivel','sesion']
 
-    order_columns = ['id','nombre','numero','diplomado','nivel','sesion']
+    order_columns = ['nombre','numero','diplomado','nivel','sesion']
     max_display_length = 100
 
 
@@ -1314,8 +1312,8 @@ class EntregablesList(BaseDatatableView):
         search = self.request.GET.get(u'search[value]', None)
 
         if search:
-            q = Q(nombre__icontains=search) | Q(numero__icontains=search) | Q(nivel__nombre__icontains=search) | \
-                Q(nivel__diplomado__nombre__icontains=search)
+            q = Q(nombre__icontains=search) | Q(numero__icontains=search) | Q(sesion__nivel__nombre__icontains=search.capitalize()) | \
+                Q(sesion__nivel__diplomado__nombre__icontains=search.upper())
 
             qs = qs.filter(q)
 

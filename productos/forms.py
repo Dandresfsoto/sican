@@ -185,6 +185,12 @@ class EntregableForm(forms.ModelForm):
                     Div('tipo',css_class='col-sm-12'),
                     css_class = 'row'
                 ),
+                Div(
+                    HTML("""
+                            <file-upload-sican style="margin-left:14px;" name="formato">Formato</file-upload-sican>
+                        """),
+                    css_class = 'row'
+                ),
             ),
         )
 
@@ -219,6 +225,13 @@ class UpdateEntregableForm(forms.ModelForm):
                     Div('tipo',css_class='col-sm-12'),
                     css_class = 'row'
                 ),
+                Div(
+                    HTML("""
+                            <file-upload-sican style="margin-left:14px;" name="formato" old_file="{{old_file}}"
+                            link_old_file="{{link_old_file}}">Formato</file-upload-sican>
+                        """),
+                    css_class = 'row'
+                )
             ),
         )
 
