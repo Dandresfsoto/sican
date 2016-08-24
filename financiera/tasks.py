@@ -65,3 +65,10 @@ def construir_pdf(id_solicitud):
     filename = unicode(solicitud.creacion) + '.xlsx'
     solicitud.pdf.save(filename,File(output))
     return id_solicitud
+
+@app.task
+def verificar_archivos():
+    solicitudes = SolicitudTransporte.objects.filter(estado="aprobado",pdf="")
+    for solicitud in solicitudes:
+        construir_pdf.delay(solicitud.id)
+    return "Completo"

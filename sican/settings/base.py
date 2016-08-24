@@ -23,11 +23,11 @@ CELERY_TIMEZONE = 'America/Bogota'
 
 CELERYBEAT_SCHEDULE = {
     # Executes every Monday morning at 7:30 A.M
-    #'add-every-monday-morning': {
-    #    'task': 'usuarios.tasks.add',
-    #    'schedule': crontab(),
-    #    'args': (16, 16),
-    #},
+    'verificando-archivos-transportes': {
+        'task': 'financiera.tasks.verificar_archivos',
+        'schedule': crontab(),
+        'args': (),
+    },
 }
 
 
