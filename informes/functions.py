@@ -125,7 +125,7 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics):
 
     row_num = 10
     for tecnotic in EntradaCronograma.objects.filter(id__in=tecnotics):
-        for nivel in tecnotics.nivel.all():
+        for nivel in tecnotic.nivel.all():
             row_num += 1
             ws_tecnotic.cell(row=row_num,column=1).value = tecnotic.formador.get_interventoria_region()
             ws_tecnotic.cell(row=row_num,column=2).value = tecnotic.departamento.nombre.upper()
@@ -151,7 +151,7 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics):
 
     row_num = 10
     for directic in EntradaCronograma.objects.filter(id__in=directics):
-        for nivel in directics.nivel.all():
+        for nivel in directic.nivel.all():
             row_num += 1
             ws_directic.cell(row=row_num,column=1).value = directic.formador.get_interventoria_region()
             ws_directic.cell(row=row_num,column=2).value = directic.departamento.nombre.upper()
