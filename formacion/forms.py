@@ -80,7 +80,7 @@ class EntradaCronogramaform(forms.ModelForm):
         actividades = []
 
         for actividad in Actividades.objects.filter(sesion__nivel__diplomado__numero = tipo).exclude(tipo = "Virtual"):
-            actividades.append((actividad.id,actividad.sesion.nivel.nombre + " - " + actividad.sesion.nombre + " - " + "Horas: " + str(actividad.horas) + " - " + actividad.nombre[:100]))
+            actividades.append((actividad.id,actividad.sesion.nivel.nombre + " - " + actividad.sesion.nombre + " - " + "#" + str(actividad.numero) + " - Horas: " + str(actividad.horas) + " - " + actividad.nombre[:100]))
 
         self.fields['actividades_entrada'].widget.choices = actividades
 
@@ -236,7 +236,7 @@ class EntradaCronogramaUpdateform(forms.ModelForm):
         actividades = []
 
         for actividad in Actividades.objects.filter(sesion__nivel__diplomado__numero = tipo).exclude(tipo = "Virtual"):
-            actividades.append((actividad.id,actividad.sesion.nivel.nombre + " - " + actividad.sesion.nombre + " - " + "Horas: " + str(actividad.horas) + " - " + actividad.nombre[:100]))
+            actividades.append((actividad.id,actividad.sesion.nivel.nombre + " - " + actividad.sesion.nombre + " - " + "#" + str(actividad.numero) + " - Horas: " + str(actividad.horas) + " - " + actividad.nombre[:100]))
 
         self.fields['actividades_entrada'].widget.choices = actividades
 
@@ -251,6 +251,10 @@ class EntradaCronogramaUpdateform(forms.ModelForm):
             horas.append((str(hora)+":00",str(hora-12) + ':00 Pm'))
 
         self.fields['hora_inicio'].widget.choices = horas
+        x = EntradaCronograma.objects.get(id = kwargs['initial']['id']).hora_inicio.hour
+        self.initial['hora_inicio'] = str(x) + ":00"
+        self.fields['hora_inicio'].initial = str(x) + ":00"
+
 
 
         self.helper = FormHelper(self)

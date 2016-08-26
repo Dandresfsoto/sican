@@ -489,7 +489,7 @@ class CronogramaFormadorUpdateView(LoginRequiredMixin,
     permission_required = "permisos_sican.formacion.cronograma.editar"
 
     def get_initial(self):
-        return {'formador':self.kwargs['id']}
+        return {'formador':self.kwargs['id'],'id':self.object.id}
 
     def get_context_data(self, **kwargs):
         inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).tuesday()

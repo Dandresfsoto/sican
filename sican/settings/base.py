@@ -93,7 +93,8 @@ LOCAL_APPS = [
     'formacion',
     'encuestas',
     'productos',
-    'messenger'
+    'messenger',
+    'gestores'
 ]
 
 THIRD_PARTY_APPS = [
