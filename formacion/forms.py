@@ -39,7 +39,7 @@ class EntradaCronogramaform(forms.ModelForm):
         super(EntradaCronogramaform, self).__init__(*args, **kwargs)
         formador = Formador.objects.get(id=kwargs['initial']['formador'])
         self.fields['formador'].initial = formador
-        self.fields['semana'].initial = Semana.objects.get(numero=datetime.datetime.now().isocalendar()[1])
+        self.fields['semana'].initial = Semana.objects.get(numero=datetime.datetime.now().isocalendar()[1]+1)
 
         if 'data' in kwargs:
             if kwargs['data']['departamento'] != "":
@@ -193,7 +193,7 @@ class EntradaCronogramaUpdateform(forms.ModelForm):
         super(EntradaCronogramaUpdateform, self).__init__(*args, **kwargs)
         formador = Formador.objects.get(id=kwargs['initial']['formador'])
         self.fields['formador'].initial = formador
-        self.fields['semana'].initial = Semana.objects.get(numero=datetime.datetime.now().isocalendar()[1])
+        self.fields['semana'].initial = Semana.objects.get(numero=datetime.datetime.now().isocalendar()[1]+1)
 
         if 'data' in kwargs:
             if kwargs['data']['departamento'] != "":
