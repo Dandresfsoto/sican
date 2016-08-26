@@ -1650,7 +1650,7 @@ class FormadoresCronogramasFilterList(BaseDatatableView):
     max_display_length = 100
 
     def get_initial_queryset(self):
-        return EntradaCronograma.objects.filter(formador__id=self.kwargs['id_formador'],semana__numero = datetime.datetime.now().isocalendar()[1])
+        return EntradaCronograma.objects.filter(formador__id=self.kwargs['id_formador'],semana__numero = datetime.datetime.now().isocalendar()[1]+1)
 
 
     def filter_queryset(self, qs):
