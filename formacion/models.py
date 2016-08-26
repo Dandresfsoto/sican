@@ -31,7 +31,7 @@ class EntradaCronograma(models.Model):
     fecha = models.DateField()
     institucion = models.CharField(max_length=200)
     direccion = models.CharField(max_length=200)
-    telefono = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=100,blank=True)
     hora_inicio = models.TimeField()
     hora_finalizacion = models.TimeField(blank=True,null=True)
     ubicacion = models.CharField(max_length=100)

@@ -1616,7 +1616,7 @@ class FormadoresCronogramasList(BaseDatatableView):
                 item.cedula,
                 item.get_departamentos_string(),
                 item.codigo_ruta,
-                self.request.user.has_perm('permisos_sican.financiera.cronograma.editar'),
+                self.request.user.has_perm('permisos_sican.formacion.cronograma.editar'),
             ])
         return json_data
 
@@ -1656,10 +1656,10 @@ class FormadoresCronogramasFilterList(BaseDatatableView):
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         search = unicode(search).capitalize()
-        if search:
-            q = Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) | \
-                Q(formador__cedula__icontains=search) | Q(estado__icontains=search.lower())
-            qs = qs.filter(q)
+        #if search:
+        #    q = Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) | \
+        #        Q(formador__cedula__icontains=search) | Q(estado__icontains=search.lower())
+        #    qs = qs.filter(q)
         return qs
 
     def prepare_results(self, qs):
