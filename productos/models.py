@@ -49,3 +49,13 @@ class Entregable(models.Model):
         else:
             name = ""
         return os.path.basename(name)
+
+class Actividades(models.Model):
+    sesion = models.ForeignKey(Sesion,related_name="actividad_sesion")
+    nombre = models.CharField(max_length=300)
+    numero = models.IntegerField()
+    tipo = models.CharField(max_length=100)
+    horas = models.IntegerField()
+
+    def __unicode__(self):
+        return unicode(self.sesion.nombre + " - " + self.nombre)

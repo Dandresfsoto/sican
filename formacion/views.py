@@ -18,6 +18,12 @@ from django.views.generic.edit import ModelFormMixin
 from usuarios.tasks import send_mail_templated
 from sican.settings.base import DEFAULT_FROM_EMAIL
 import locale
+from formacion.models import Semana
+import datetime
+from isoweek import Week
+from formacion.models import EntradaCronograma
+from formacion.forms import EntradaCronogramaform, EntradaCronogramaUpdateform
+from productos.models import Nivel, Actividades
 
 
 class ListaPreinscritosView(LoginRequiredMixin,
@@ -362,3 +368,204 @@ class TransporteFormUpdateView(LoginRequiredMixin,
 
 
         return super(TransporteFormUpdateView,self).form_valid(form)
+
+
+class ListaCronogramasView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/cronograma/lista.html'
+    permission_required = "permisos_sican.formacion.cronograma.ver"
+
+
+class CronogramaFormadorView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/cronograma/cronograma.html'
+    permission_required = "permisos_sican.formacion.cronograma.editar"
+
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id']).get_full_name()
+        semana, created = Semana.objects.get_or_create(numero = datetime.datetime.now().isocalendar()[1]+1)
+        inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).monday()
+        fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).sunday()
+
+        kwargs['fechas'] = inicio.strftime("%d de %B del %Y") + ' - ' + fin.strftime("%d de %B del %Y")
+        kwargs['id_formador'] = self.kwargs['id']
+
+
+        return super(CronogramaFormadorView,self).get_context_data(**kwargs)
+
+
+class CronogramaFormadorNuevoView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = EntradaCronograma
+    form_class = EntradaCronogramaform
+    success_url = '../'
+    template_name = 'formacion/cronograma/nuevo.html'
+    permission_required = "permisos_sican.formacion.cronograma.crear"
+
+    def get_initial(self):
+        return {'formador':self.kwargs['id']}
+
+    def get_context_data(self, **kwargs):
+        inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).tuesday()
+        fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+2).monday()
+        kwargs['start_date'] = inicio.strftime("%Y-%m-%d")
+        kwargs['end_date'] = fin.strftime("%Y-%m-%d")
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id']).get_full_name()
+        return super(CronogramaFormadorNuevoView,self).get_context_data(**kwargs)
+
+
+    def form_valid(self, form):
+        semana = form.cleaned_data['semana']
+        formador = form.cleaned_data['formador']
+        departamento = form.cleaned_data['departamento']
+        municipio = form.cleaned_data['municipio']
+        secretaria = form.cleaned_data['secretaria']
+        grupo = form.cleaned_data['grupo']
+        numero_sedes = form.cleaned_data['numero_sedes']
+
+        actividades = form.cleaned_data['actividades_entrada']
+        beneficiados = form.cleaned_data['beneficiados']
+        fecha = form.cleaned_data['fecha']
+        institucion = form.cleaned_data['institucion']
+        direccion = form.cleaned_data['direccion']
+        telefono = form.cleaned_data['telefono']
+        hora_inicio = form.cleaned_data['hora_inicio']
+
+        ubicacion = form.cleaned_data['ubicacion']
+        observaciones = form.cleaned_data['observaciones']
+
+        niveles_id = []
+        delta = 0
+
+        for actividad in actividades:
+            delta += actividad.horas
+            if actividad.sesion.nivel.id not in niveles_id:
+                niveles_id.append(actividad.sesion.nivel.id)
+
+        hora_finalizacion = datetime.time(hora_inicio.hour+delta,hora_inicio.minute,hora_inicio.second)
+        x = 0
+
+        self.object = EntradaCronograma(semana = semana,
+                                        formador = formador,
+                                        departamento = departamento,
+                                        municipio = municipio,
+                                        secretaria = secretaria,
+                                        grupo = grupo,
+                                        numero_sedes = numero_sedes,
+                                        beneficiados = beneficiados,
+                                        fecha = fecha,
+                                        institucion = institucion,
+                                        direccion = direccion,
+                                        telefono = telefono,
+                                        hora_inicio = hora_inicio,
+                                        hora_finalizacion = hora_finalizacion,
+                                        ubicacion = ubicacion,
+                                        observaciones = observaciones
+                                        )
+        self.object.save()
+        for actividad in actividades:
+            self.object.actividades_entrada.add(actividad)
+
+        for nivel in Nivel.objects.filter(id__in = niveles_id):
+            self.object.nivel.add(nivel)
+
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class CronogramaFormadorUpdateView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              UpdateView):
+    model = EntradaCronograma
+    form_class = EntradaCronogramaUpdateform
+    success_url = '../../'
+    pk_url_kwarg = 'id_entrada'
+    template_name = 'formacion/cronograma/editar.html'
+    permission_required = "permisos_sican.formacion.cronograma.editar"
+
+    def get_initial(self):
+        return {'formador':self.kwargs['id']}
+
+    def get_context_data(self, **kwargs):
+        inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).tuesday()
+        fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+2).monday()
+        kwargs['start_date'] = inicio.strftime("%Y-%m-%d")
+        kwargs['end_date'] = fin.strftime("%Y-%m-%d")
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id']).get_full_name()
+        return super(CronogramaFormadorUpdateView,self).get_context_data(**kwargs)
+
+
+    def form_valid(self, form):
+        semana = form.cleaned_data['semana']
+        formador = form.cleaned_data['formador']
+        departamento = form.cleaned_data['departamento']
+        municipio = form.cleaned_data['municipio']
+        secretaria = form.cleaned_data['secretaria']
+        grupo = form.cleaned_data['grupo']
+        numero_sedes = form.cleaned_data['numero_sedes']
+
+        actividades = form.cleaned_data['actividades_entrada']
+        beneficiados = form.cleaned_data['beneficiados']
+        fecha = form.cleaned_data['fecha']
+        institucion = form.cleaned_data['institucion']
+        direccion = form.cleaned_data['direccion']
+        telefono = form.cleaned_data['telefono']
+        hora_inicio = form.cleaned_data['hora_inicio']
+
+        ubicacion = form.cleaned_data['ubicacion']
+        observaciones = form.cleaned_data['observaciones']
+
+        niveles_id = []
+        delta = 0
+
+        for actividad in actividades:
+            delta += actividad.horas
+            if actividad.sesion.nivel.id not in niveles_id:
+                niveles_id.append(actividad.sesion.nivel.id)
+
+        hora_finalizacion = datetime.time(hora_inicio.hour+delta,hora_inicio.minute,hora_inicio.second)
+        x = self.object
+        x.actividades_entrada.clear()
+        x.nivel.clear()
+        x.semana = semana
+        x.formador = formador
+        x.departamento = departamento
+        x.municipio = municipio
+        x.secretaria = secretaria
+        x.grupo = grupo
+        x.numero_sedes = numero_sedes
+        x.beneficiados = beneficiados
+        x.fecha = fecha
+        x.institucion = institucion
+        x.direccion = direccion
+        x.telefono = telefono
+        x.hora_inicio = hora_inicio
+        x.hora_finalizacion = hora_finalizacion
+        x.ubicacion = ubicacion
+        x.observaciones = observaciones
+        x.save()
+
+        for actividad in actividades:
+            x.actividades_entrada.add(actividad)
+
+        for nivel in Nivel.objects.filter(id__in = niveles_id):
+            x.nivel.add(nivel)
+
+        x.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class CronogramaFormadorDeleteView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               DeleteView):
+    model = EntradaCronograma
+    pk_url_kwarg = 'id_entrada'
+    success_url = '../../'
+    template_name = 'formacion/cronograma/eliminar.html'
+    permission_required = "permisos_sican.formacion.cronograma.eliminar"

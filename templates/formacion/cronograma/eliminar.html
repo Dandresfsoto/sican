@@ -169,11 +169,14 @@
             </iron-collapse><a href="/proyectos/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Inicio
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
-              </paper-icon-item></a><a href="/rh/formadores/" class="link_button">
+              </paper-icon-item></a><a href="/formacion/cronograma/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Listado de formadores
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
+              </paper-icon-item></a><a href="../../" class="link_button">
+              <paper-icon-item class="breadcrumb-paper-icon-item-class">Cronograma: {{object.formador.get_full_name}}
+                <iron-icon icon="check" item-icon="item-icon"></iron-icon>
               </paper-icon-item></a>
-            <paper-icon-item disabled="disabled" class="breadcrum_active">Editar
+            <paper-icon-item disabled="disabled" class="breadcrum_active">Eliminar: {{object.fecha}}
               <iron-icon icon="check" item-icon="item-icon"></iron-icon>
             </paper-icon-item>
           </div>
@@ -184,7 +187,7 @@
           <paper-icon-button id="navicon" icon="menu" paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
           <iron-icon src="{% static 'img/SICAN.svg'%}" class="icon-sican"></iron-icon>
           <!--paper-icon-button(icon="communication:email",id="inbox")-->
-          <!--paper-badge(for="inbox",label="0",hidden,id="badge_chat")--><span class="title">FORMADORES</span>
+          <!--paper-badge(for="inbox",label="0",hidden,id="badge_chat")--><span class="title">CRONOGRAMAS</span>
           <paper-icon-button icon="help" id="help_button"></paper-icon-button>
         </paper-toolbar>
         <iron-collapse id="help">
@@ -194,8 +197,8 @@
                 <div class="help_container">
                   <p class="title-help">Descripción:</p>
                   <p>
-                    Aqui puedes editar la información del formador "{{object.nombres}} {{object.apellidos}}" en el sistema,
-                    los campos que tienen un asterisco (*) son obligatorios y deben contener un valor coherente en cada caso.
+                    ATENCIÓN! Estas a punto de eliminar una actividad en el cronogama de la proxima semana.
+                    
                   </p>
                 </div>
               </div>
@@ -207,12 +210,66 @@
         </div>
         <div class="container-fluid container-index">
           <div class="row">
-            <div class="col-sm-10 col-sm-offset-1">
-              <form action="" method="POST" enctype="multipart/form-data" id="form-formador">
-                {% csrf_token %}
-                {% crispy form %}
+            <div class="col-sm-8 col-sm-offset-2">
+              <form action="" method="POST" enctype="multipart/form-data" id="form-deleteAdministrativo">{% csrf_token %}
+                <p class="title-delete-p">Estas a punto de eliminar la siguiente actividad del cronograma:</p>
+                <p class="inline bold-p">Semana:
+                  <p class="inline">{{object.semana}}</p>
+                </p>
+                <p class="inline bold-p">Formador:
+                  <p class="inline">{{object.formador.get_full_name}}</p>
+                </p>
+                <p class="inline bold-p">Departamento:
+                  <p class="inline">{{object.departamento}}</p>
+                </p>
+                <p class="inline bold-p">Municipio:
+                  <p class="inline">{{object.municipio}}</p>
+                </p>
+                <p class="inline bold-p">Secretaria:
+                  <p class="inline">{{object.secretaria}}</p>
+                </p>
+                <p class="inline bold-p">Grupo:
+                  <p class="inline">{{object.grupo}}</p>
+                </p>
+                <p class="inline bold-p">Cantidad de sedes:
+                  <p class="inline">{{object.numero_sedes}}</p>
+                </p>
+                <p class="inline bold-p">Cantidad de niveles:
+                  <p class="inline">{{object.nivel.count}}</p>
+                </p>
+                <p class="inline bold-p">Cantidad de actividades:
+                  <p class="inline">{{object.actividades_entrada.count}}</p>
+                </p>
+                <p class="inline bold-p">Cantidad de beneficiados:
+                  <p class="inline">{{object.beneficiados}}</p>
+                </p>
+                <p class="inline bold-p">Fecha:
+                  <p class="inline">{{object.fecha}}</p>
+                </p>
+                <p class="inline bold-p">Institucion:
+                  <p class="inline">{{object.institucion}}</p>
+                </p>
+                <p class="inline bold-p">Direccion:
+                  <p class="inline">{{object.direccion}}</p>
+                </p>
+                <p class="inline bold-p">Telefono:
+                  <p class="inline">{{object.telefono}}</p>
+                </p>
+                <p class="inline bold-p">Hora de inicio:
+                  <p class="inline">{{object.hora_inicio}}</p>
+                </p>
+                <p class="inline bold-p">Hora finalizacioón:
+                  <p class="inline">{{object.hora_finalizacion}}</p>
+                </p>
+                <p class="inline bold-p">Ubicación:
+                  <p class="inline">{{object.ubicacion}}</p>
+                </p>
+                <p class="inline bold-p">Observaciones:
+                  <p class="inline">{{object.observaciones}}</p>
+                </p>
                 <div class="text-right login-form-button">
-                  <paper-button id="submit_form" class="submit">Guardar</paper-button>
+                  <paper-button id="return" class="return">Cancelar</paper-button>
+                  <paper-button id="submit_form" class="delete">Eliminar</paper-button>
                 </div>
               </form>
             </div>
@@ -312,20 +369,11 @@
       });
     </script>
     <script>
-      $('#id_region').selectpicker({});
-      $('#id_departamentos').selectpicker({});
-      $('#id_fecha_contratacion').datetimepicker({
-          locale: 'es',
-          viewMode: 'years',
-          format: 'DD/MM/YYYY'
-      });
-      $('#id_fecha_terminacion').datetimepicker({
-          locale: 'es',
-          viewMode: 'years',
-          format: 'DD/MM/YYYY'
-      });
       $('#submit_form').on('click', function () {
-          $('#form-formador').submit();
+          $('#form-deleteAdministrativo').submit();
+      });
+      $('#return').on('click', function () {
+          window.history.back();
       });
     </script>
   </body>

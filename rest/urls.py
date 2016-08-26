@@ -7,6 +7,7 @@ from rest.views import MunicipiosChainedList, RadicadosChainedList
 from rest.views import SolicitudesTransporteList, InformesExcelList, ReportesView,PreinscritosList, ResultadosPercepcionInicial
 from rest.views import DiplomadosList, NivelesList, SesionesList, SolicitudesTransporteFormacionList, SolicitudesTransporteFormadorList
 from rest.views import SolicitudesTransporteFormadorFinancieraList, EntregablesList
+from rest.views import FormadoresCronogramasList, FormadoresCronogramasFilterList, SecretariasChainedList
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -35,6 +36,7 @@ urlpatterns = [
     url(r'bases/radicados/$', RadicadosList.as_view()),
     url(r'chained/municipios/$', MunicipiosChainedList.as_view()),
     url(r'chained/radicados/$', RadicadosChainedList.as_view()),
+    url(r'chained/secretarias/$', SecretariasChainedList.as_view()),
 
     url(r'financiera/transportes/$', SolicitudesTransporteList.as_view()),
     url(r'financiera/transportes/(?P<id_formador>\w+)/$', SolicitudesTransporteFormadorFinancieraList.as_view()),
@@ -54,4 +56,7 @@ urlpatterns = [
 
     url(r'formacion/transportes/$', SolicitudesTransporteFormacionList.as_view()),
     url(r'formacion/transportes/(?P<id_formador>\w+)/$', SolicitudesTransporteFormadorList.as_view()),
+
+    url(r'formacion/cronogramas/$', FormadoresCronogramasList.as_view()),
+    url(r'formacion/cronogramas/(?P<id_formador>\w+)/$', FormadoresCronogramasFilterList.as_view()),
 ]

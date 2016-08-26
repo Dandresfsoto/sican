@@ -79,6 +79,20 @@ class FormadorForm(forms.ModelForm):
                     css_class = 'row'
                 )
             ),
+            Fieldset(
+                'Departamentos',
+                Div(
+                    Div('departamentos',css_class='col-sm-12'),
+                    css_class = 'row'
+                )
+            ),
+            Fieldset(
+                'Ruta',
+                Div(
+                    Div('codigo_ruta',css_class='col-sm-12'),
+                    css_class = 'row'
+                )
+            ),
         )
 
     class Meta:

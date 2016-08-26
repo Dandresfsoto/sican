@@ -29,6 +29,8 @@ from informes.tasks import formadores, formadores_soportes, preinscritos, transp
 from preinscripcion.models import DocentesPreinscritos
 from encuestas.models import PercepcionInicial
 from productos.models import Diplomado, Nivel, Sesion, Entregable
+from formacion.models import EntradaCronograma
+import datetime
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -223,6 +225,32 @@ class RadicadosChainedList(APIView):
 
         return Response(response)
 
+class SecretariasChainedList(APIView):
+    """
+
+    """
+
+    permission_classes = (AllowAny,)
+
+    def get(self, request, format=None):
+
+        try:
+            id_municipio = request._request.GET['municipio']
+        except:
+            return Response({})
+
+        departamento_id = Municipio.objects.get(id=id_municipio).departamento.id
+        id_municipios = Municipio.objects.filter(departamento__id = departamento_id).values_list('id',flat=True)
+
+        secretarias = Secretaria.objects.filter(municipio__id__in = id_municipios).values_list('id','nombre')
+
+        response = {}
+
+        for secretaria in secretarias:
+            response[secretaria[0]] = secretaria[1]
+
+        return Response(response)
+
 class UserList(APIView):
     """
     Retorna la informacion de los usuarios excluyendo al que realiza el request.
@@ -288,6 +316,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'cronograma':{
+                'ver':{'name':'Cronograma de formación','link':'/formacion/cronograma/'}
+            },
             'transportesformacion':{
                 'ver':{'name':'Solicitudes de transporte','link':'/formacion/transportes/'}
             },
@@ -1542,5 +1573,117 @@ class SolicitudesTransporteFormadorFinancieraList(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
                 self.request.user.has_perm('permisos_sican.financiera.transportes.eliminar'),
                 self.request.user.has_perm('permisos_sican.financiera.transportes.estado'),
+            ])
+        return json_data
+
+
+
+
+class FormadoresCronogramasList(BaseDatatableView):
+    """
+    0.id
+    1.formador
+    2.cedula
+    3.departamentos
+    4.codigo_ruta
+    5.permiso para editar
+    """
+    model = Formador
+    columns = ['id','nombres','cedula']
+
+    order_columns = ['id','nombres','cedula']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Formador.objects.filter(lider = self.request.user)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | \
+                Q(cedula__icontains=search)
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.get_full_name(),
+                item.cedula,
+                item.get_departamentos_string(),
+                item.codigo_ruta,
+                self.request.user.has_perm('permisos_sican.financiera.cronograma.editar'),
+            ])
+        return json_data
+
+
+class FormadoresCronogramasFilterList(BaseDatatableView):
+    """
+    0.id
+    1.departamento
+    2.municipio
+    3.secretaria
+    4.grupo
+    5.sedes atentidas
+    6.nivel
+    7.actividades presenciales
+    8.beneficiados
+    9.fecha
+    10.institucion
+    11.direccion
+    12.telefono
+    13.hora inicio
+    14.hora finalizacion
+    15.ubicacion
+    16.observaciones
+    17.permiso para editar
+    18.permiso para eliminar
+    """
+    model = EntradaCronograma
+    columns = ['id','departamento','municipio','secretaria','grupo','numero_sedes','nivel']
+
+    order_columns = ['id','departamento','municipio','secretaria','grupo','numero_sedes','nivel']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return EntradaCronograma.objects.filter(formador__id=self.kwargs['id_formador'],semana__numero = datetime.datetime.now().isocalendar()[1])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) | \
+                Q(formador__cedula__icontains=search) | Q(estado__icontains=search.lower())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.departamento.nombre,
+                item.municipio.nombre,
+                item.secretaria.nombre,
+                item.grupo.nombre,
+                item.numero_sedes,
+                item.nivel.count(),
+                item.actividades_entrada.count(),
+                item.beneficiados,
+                item.fecha,
+                item.institucion,
+                item.direccion,
+                item.telefono,
+                item.hora_inicio,
+                item.hora_finalizacion,
+                item.ubicacion,
+                item.observaciones,
+                self.request.user.has_perm('permisos_sican.formacion.cronograma.editar'),
+                self.request.user.has_perm('permisos_sican.formacion.cronograma.eliminar'),
             ])
         return json_data

@@ -12,6 +12,8 @@ from usuarios.models import User
 
 class Formador(models.Model):
     lider = models.ForeignKey(User,blank=True,null=True)
+    departamentos = models.ManyToManyField(Departamento,related_name="departamento_formador",blank=True)
+    codigo_ruta = models.CharField(max_length=100,blank=True,null=True)
     #---------- REGION----------------------
     region = models.ManyToManyField(Region)
 
@@ -51,6 +53,13 @@ class Formador(models.Model):
         for region in self.region.values_list('nombre',flat=True):
             value = value + unicode(region) + ', '
         return value[:-2]
+
+    def get_departamentos_string(self):
+        value = ''
+        for departamento in self.departamentos.values_list('nombre',flat=True):
+            value = value + unicode(departamento) + ', '
+        return value[:-2]
+
 
     def get_full_name(self):
         return self.nombres + " " + self.apellidos
@@ -129,3 +138,10 @@ class SolicitudTransporte(models.Model):
 
     def archivo_filename(self):
         return os.path.basename(self.archivo.name)
+
+class Grupos(models.Model):
+    formador = models.ForeignKey(Formador,related_name="formador_grupos")
+    nombre = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.nombre
