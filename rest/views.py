@@ -25,12 +25,14 @@ from rest_framework.permissions import AllowAny
 from formadores.models import SolicitudTransporte
 from informes.models import InformesExcel
 from django.http import HttpResponse
-from informes.tasks import formadores, formadores_soportes, preinscritos, transportes
+from informes.tasks import formadores, formadores_soportes, preinscritos, transportes, cronograma_general
 from preinscripcion.models import DocentesPreinscritos
 from encuestas.models import PercepcionInicial
 from productos.models import Diplomado, Nivel, Sesion, Entregable
 from formacion.models import EntradaCronograma
 import datetime
+from formacion.models import Semana
+from isoweek import Week
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -162,6 +164,8 @@ class ReportesView(APIView):
             x = preinscritos.delay(request.user.email)
         if id_accion == '4':
             x = transportes.delay(request.user.email)
+        if id_accion == '5':
+            x = cronograma_general.delay(request.user.email)
 
         return HttpResponse(status=200)
 
@@ -316,6 +320,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'cronogramafinanciera':{
+                'ver':{'name':'Cronograma de formación','link':'/financiera/cronograma/'}
+            },
             'cronograma':{
                 'ver':{'name':'Cronograma de formación','link':'/formacion/cronograma/'}
             },
@@ -1685,5 +1692,43 @@ class FormadoresCronogramasFilterList(BaseDatatableView):
                 item.observaciones,
                 self.request.user.has_perm('permisos_sican.formacion.cronograma.editar'),
                 self.request.user.has_perm('permisos_sican.formacion.cronograma.eliminar'),
+            ])
+        return json_data
+
+class SemanasList(BaseDatatableView):
+    """
+    0.id
+    1.numero
+    2.creacion
+    3.rango
+    4.permiso para editar
+    """
+    model = Semana
+    columns = ['id','numero','creacion']
+
+    order_columns = ['id','numero','creacion']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(numero__icontains=search)
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            inicio = Week(datetime.datetime.now().isocalendar()[0],item.numero).monday()
+            fin = Week(datetime.datetime.now().isocalendar()[0],item.numero).sunday()
+            json_data.append([
+                item.id,
+                item.numero,
+                item.creacion.strftime("%d de %B del %Y"),
+                inicio.strftime("%d de %B del %Y") + ' - ' + fin.strftime("%d de %B del %Y"),
+                self.request.user.has_perm('permisos_sican.formacion.cronogramafinanciera.editar'),
             ])
         return json_data

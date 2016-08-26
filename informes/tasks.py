@@ -4,13 +4,14 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 
 from sican.celery import app
-from informes.functions import construir_reporte
+from informes.functions import construir_reporte, cronograma_interventoria
 from informes.models import InformesExcel
 from django.core.files import File
 from usuarios.models import User
 from formadores.models import Formador, Soporte, SolicitudTransporte
 from rh.models import TipoSoporte
 from preinscripcion.models import DocentesPreinscritos
+from formacion.models import EntradaCronograma
 
 
 @app.task
@@ -192,6 +193,25 @@ def transportes(email):
         ])
 
     output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+
+@app.task
+def cronograma_general(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Cronograma consolidado financiera"
+
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    innovatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 1").values_list('id',flat=True)
+    tecnotics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 2").values_list('id',flat=True)
+    directics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 3").values_list('id',flat=True)
+    escuelatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 4").values_list('id',flat=True)
+
+    output = cronograma_interventoria(innovatics,tecnotics,directics,escuelatics)
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"

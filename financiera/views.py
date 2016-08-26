@@ -626,3 +626,15 @@ class EntregablesUpdateView(LoginRequiredMixin,
         kwargs['old_file'] = self.object.archivo_filename()
         kwargs['link_old_file'] = self.object.get_archivo_url()
         return super(EntregablesUpdateView,self).get_context_data(**kwargs)
+
+
+class SemanasListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/cronogramas/lista.html'
+    permission_required = "permisos_sican.financiera.cronogramafinanciera.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.financiera.cronogramafinanciera.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.financiera.cronogramafinanciera.informes')
+        return super(SemanasListView, self).get_context_data(**kwargs)

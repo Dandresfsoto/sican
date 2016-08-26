@@ -54,6 +54,12 @@ class Formador(models.Model):
             value = value + unicode(region) + ', '
         return value[:-2]
 
+    def get_interventoria_region(self):
+        value = ''
+        for region in self.region.values_list('numero',flat=True):
+            value = value + "R" + unicode(region) + ', '
+        return value[:-2]
+
     def get_departamentos_string(self):
         value = ''
         for departamento in self.departamentos.values_list('nombre',flat=True):
