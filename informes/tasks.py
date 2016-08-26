@@ -12,6 +12,8 @@ from formadores.models import Formador, Soporte, SolicitudTransporte
 from rh.models import TipoSoporte
 from preinscripcion.models import DocentesPreinscritos
 from formacion.models import EntradaCronograma
+from isoweek import Week
+import datetime
 
 
 @app.task
@@ -206,12 +208,38 @@ def cronograma_general(email):
     informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
     fecha = informe.creacion
 
-    innovatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 1").values_list('id',flat=True)
-    tecnotics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 2").values_list('id',flat=True)
-    directics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 3").values_list('id',flat=True)
-    escuelatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 4").values_list('id',flat=True)
+    innovatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 1").order_by('formador__region').values_list('id',flat=True)
+    tecnotics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 2").order_by('formador__region').values_list('id',flat=True)
+    directics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 3").order_by('formador__region').values_list('id',flat=True)
+    escuelatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 4").order_by('formador__region').values_list('id',flat=True)
+    inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).monday()
+    fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).sunday()
+    rango = inicio.strftime("Del dia %d de %B del %Y") + ' - ' + fin.strftime(" al dia %d de %B del %Y")
 
-    output = cronograma_interventoria(innovatics,tecnotics,directics,escuelatics)
+    output = cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+
+@app.task
+def cronograma_lider(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Cronograma consolidado lider"
+
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    innovatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 1",formador__lider__email = email).values_list('id',flat=True)
+    tecnotics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 2",formador__lider__email = email).values_list('id',flat=True)
+    directics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 3",formador__lider__email = email).values_list('id',flat=True)
+    escuelatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 4",formador__lider__email = email).values_list('id',flat=True)
+
+    inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).monday()
+    fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).sunday()
+    rango = inicio.strftime("Del dia %d de %B del %Y") + ' - ' + fin.strftime(" al dia %d de %B del %Y")
+
+    output = cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango)
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"

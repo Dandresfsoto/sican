@@ -73,7 +73,7 @@ def construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,us
         return output
 
 
-def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics):
+def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
 
     output = StringIO()
     wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Ruteo y Cronograma.xlsx')
@@ -94,6 +94,11 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics):
     ws_tecnotic.cell('F4').value = "ANDES"
     ws_directic.cell('F4').value = "ANDES"
     ws_escuelatic.cell('F4').value = "ANDES"
+
+    ws_innovatic.cell('M5').value = rango
+    ws_tecnotic.cell('M5').value = rango
+    ws_directic.cell('M5').value = rango
+    ws_escuelatic.cell('M5').value = rango
 
     #------------------------------------------tecnotic-------------------------------------------------------------
 

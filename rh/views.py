@@ -11,6 +11,9 @@ from rh.forms import NuevoTipoSoporteForm
 from formadores.models import Formador
 from formadores.forms import FormadorForm, NuevoSoporteFormadorForm
 from formadores.models import Soporte as SoporteFormador
+from lideres.models import Soporte as SoporteLider
+from lideres.models import Lideres
+from lideres.forms import LideresForm, NuevoSoporteLiderForm
 
 
 class AdministrativoView(LoginRequiredMixin,
@@ -235,6 +238,10 @@ class UpdateTipoSoporteAdministrativoView(LoginRequiredMixin,
 
 
 
+
+
+
+
 class FormadoresView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
@@ -280,6 +287,10 @@ class DeleteFormadorView(LoginRequiredMixin,
         self.object.oculto = True
         self.object.save()
         return HttpResponseRedirect(success_url)
+
+
+
+
 
 
 class SoporteFormadorView(LoginRequiredMixin,
@@ -341,6 +352,125 @@ class DeleteSoporteFormadorView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['nombre_formador'] = Formador.objects.get(id=self.kwargs['pk']).get_full_name
         return super(DeleteSoporteFormadorView, self).get_context_data(**kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.oculto = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)
+
+
+
+
+
+class LideresView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'rh/lideres/lista.html'
+    permission_required = "permisos_sican.rh.formadores.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.lideres.crear')
+        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.rh.lideres.masivo')
+        return super(LideresView, self).get_context_data(**kwargs)
+
+class NuevoLiderView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = Lideres
+    form_class = LideresForm
+    success_url = '/rh/lideres/'
+    template_name = 'rh/lideres/nuevo.html'
+    permission_required = "permisos_sican.rh.lideres.crear"
+
+class UpdateLiderView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = Lideres
+    form_class = LideresForm
+    pk_url_kwarg = 'pk'
+    success_url = '/rh/lideres/'
+    template_name = 'rh/lideres/editar.html'
+    permission_required = "permisos_sican.rh.lideres.editar"
+
+class DeleteLiderView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               DeleteView):
+    model = Lideres
+    pk_url_kwarg = 'pk'
+    success_url = '/rh/lideres/'
+    template_name = 'rh/lideres/eliminar.html'
+    permission_required = "permisos_sican.rh.lideres.eliminar"
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.oculto = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)
+
+
+
+class SoporteLiderView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'rh/lideres/soportes/lista.html'
+    permission_required = "permisos_sican.rh.lideres_soportes.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_lider'] = Lideres.objects.get(id=kwargs['pk']).get_full_name
+        kwargs['id_lider'] = kwargs['pk']
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.lideres_soportes.crear')
+        return super(SoporteLiderView, self).get_context_data(**kwargs)
+
+class NuevoSoporteLiderView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = SoporteFormador
+    form_class = NuevoSoporteLiderForm
+    success_url = '../'
+    template_name = 'rh/lideres/soportes/nuevo.html'
+    permission_required = "permisos_sican.rh.lideres_soportes.crear"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_lider'] = Lideres.objects.get(id=self.kwargs['pk']).get_full_name()
+        return super(NuevoSoporteLiderView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'lider':self.kwargs['pk']}
+
+class UpdateSoporteLiderView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = SoporteLider
+    form_class = NuevoSoporteLiderForm
+    pk_url_kwarg = 'id_soporte'
+    success_url = '../../'
+    template_name = 'rh/formadores/soportes/editar.html'
+    permission_required = "permisos_sican.rh.lideres_soportes.editar"
+
+    def get_context_data(self, **kwargs):
+        kwargs['link_old_file'] = self.object.get_archivo_url()
+        kwargs['old_file'] = self.object.archivo_filename()
+        kwargs['nombre_lider'] = Lideres.objects.get(id=self.kwargs['pk']).get_full_name
+        return super(UpdateSoporteLiderView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'lider':self.kwargs['pk']}
+
+class DeleteSoporteLiderView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               DeleteView):
+    model = SoporteLider
+    pk_url_kwarg = 'id_soporte'
+    success_url = '../../'
+    template_name = 'rh/lideres/soportes/eliminar.html'
+    permission_required = "permisos_sican.rh.lideres_soportes.eliminar"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_lider'] = Lideres.objects.get(id=self.kwargs['pk']).get_full_name
+        return super(DeleteSoporteLiderView, self).get_context_data(**kwargs)
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()

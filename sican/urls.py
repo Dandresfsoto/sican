@@ -41,7 +41,7 @@ urlpatterns = [
     url(r'^formacion/', include('formacion.urls', namespace='formacion')),
     url(r'^encuestas/', include('encuestas.urls', namespace='encuestas')),
     url(r'^messenger/', include('messenger.urls', namespace='messenger')),
-    url(r'^gestores/', include('gestores.urls', namespace='gestores')),
+    url(r'^lideres/', include('lideres.urls', namespace='lideres')),
 ]
 
 if settings.DEBUG:

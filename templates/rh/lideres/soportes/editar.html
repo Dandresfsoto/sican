@@ -38,6 +38,7 @@
     <link rel="import" href="{% static 'bower_components/paper-toast/paper-toast.html'%}"/>
     <link rel="import" href="{% static 'bower_components/paper-badge/paper-badge.html'%}"/>
     <link rel="import" href="{% static 'bower_components/paper-button/paper-button.html'%}"/>
+    <link rel="import" href="{% static 'bower_components/file-upload-sican/file-upload-sican.html'%}"/>
     <style is="custom-style">
       .icon-sican{
          --iron-icon-height: 100px;
@@ -168,8 +169,14 @@
             </iron-collapse><a href="/proyectos/" class="link_button">
               <paper-icon-item class="breadcrumb-paper-icon-item-class">Inicio
                 <iron-icon icon="check" item-icon="item-icon"></iron-icon>
+              </paper-icon-item></a><a href="/rh/lideres/" class="link_button">
+              <paper-icon-item class="breadcrumb-paper-icon-item-class">Listado de lideres
+                <iron-icon icon="check" item-icon="item-icon"></iron-icon>
+              </paper-icon-item></a><a href="../../" class="link_button">
+              <paper-icon-item class="breadcrumb-paper-icon-item-class">Soportes de {{nombre_lider}}
+                <iron-icon icon="check" item-icon="item-icon"></iron-icon>
               </paper-icon-item></a>
-            <paper-icon-item disabled="disabled" class="breadcrum_active">Lista de formadores
+            <paper-icon-item disabled="disabled" class="breadcrum_active">Editar {{object.tipo}}
               <iron-icon icon="check" item-icon="item-icon"></iron-icon>
             </paper-icon-item>
           </div>
@@ -180,7 +187,7 @@
           <paper-icon-button id="navicon" icon="menu" paper-drawer-toggle="paper-drawer-toggle"></paper-icon-button>
           <iron-icon src="{% static 'img/SICAN.svg'%}" class="icon-sican"></iron-icon>
           <!--paper-icon-button(icon="communication:email",id="inbox")-->
-          <!--paper-badge(for="inbox",label="0",hidden,id="badge_chat")--><span class="title">CRONOGRAMAS</span>
+          <!--paper-badge(for="inbox",label="0",hidden,id="badge_chat")--><span class="title">LIDERES</span>
           <paper-icon-button icon="help" id="help_button"></paper-icon-button>
         </paper-toolbar>
         <iron-collapse id="help">
@@ -190,8 +197,8 @@
                 <div class="help_container">
                   <p class="title-help">Descripción:</p>
                   <p>
-                    En esta tabla encuentras el listado de los formadores asignados a tu perfil como lider de formación.
-                    
+                    Con este formulario puedes actualizar el soporte "{{object.tipo}}" del formador "{{nombre_lider}}"
+                    cargado en el sistema de información SICAN.
                   </p>
                 </div>
               </div>
@@ -202,36 +209,17 @@
           <div class="realtime"></div>
         </div>
         <div class="container-fluid container-index">
-          <div class="header-buttons">{% if nuevo_permiso %}
-            <div class="block-right"><a href="nuevo" class="link_button">
-                <paper-button class="submit">Nuevo</paper-button></a></div>{% endif %}
-            {% if informes %}
-            <div>
-              <select id="select_accion" class="selectpicker">
-                <option value="">---------</option>
-                <option value="6">Generar reporte cronograma</option>
-              </select>
-              <button id="accion" class="btn">Generar reporte</button>
-            </div>{% endif %}
+          <div class="row">
+            <div class="col-sm-8 col-sm-offset-2">
+              <form action="" method="POST" enctype="multipart/form-data" id="form-soporte">
+                {% csrf_token %}
+                {% crispy form %}
+                <div class="text-right login-form-button">
+                  <paper-button id="submit_form" class="submit">Guardar</paper-button>
+                </div>
+              </form>
+            </div>
           </div>
-          <table id="table" width="100%" class="display responsive no-wrap table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th>Formador</th>
-                <th>Cedula</th>
-                <th>Departamento(s)</th>
-                <th>Ruta</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Formador</td>
-                <td>Cedula</td>
-                <td>Departamento(s)</td>
-                <td>Ruta</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
         <div style="margin-top:25px;"></div>
         <input type="hidden" value="{{mensaje}}" id="input_mensaje"/>
@@ -327,61 +315,14 @@
       });
     </script>
     <script>
-      $("#accion").on("click",function(){
-          var action = $("#select_accion").val();
-          if(action != ''){
-              $.ajax({
-                  type: "GET",
-                  url: '/rest/reportes/?action=' + action,
-                  success: function(data){
-                      $('#myModal').modal('show');
-                      $("#select_accion").val('');
-                      $("#select_accion").selectpicker('refresh');
-                  }
-              });
-          }
+      var dateNow = new Date();
+      $('#id_fecha').datetimepicker({
+          locale: 'es',
+          format: 'DD/MM/YYYY',
+          defaultDate: dateNow
       });
-    </script>
-    <script>
-      $(document).ready(function () {
-          var table = $('#table').DataTable({
-              "stateSave": true,
-              "searching": true,
-              "processing": true,
-              "serverSide": true,
-              "scrollX": true,
-              "ajax": "/rest/formacion/cronogramas/",
-              "language": {
-                  "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
-              },
-              "order": [[1, "asc"]],
-              "columns": [
-                  {
-                      "data": 1,
-                      "render": function (data, type, row, meta) {
-                          if (row[5]) {
-                              return '<a href="editar/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
-                          }
-                          else {
-                              return data;
-                          }
-                      },
-                      "orderable": false,
-                  },
-                  {
-                      "data": 2,
-                      "orderable": true,
-                  },
-                  {
-                      "data": 3,
-                      "orderable": false,
-                  },
-                  {
-                      "data": 4,
-                      "orderable": false,
-                  }
-              ]
-          });
+      $('#submit_form').on('click', function () {
+          $('#form-soporte').submit();
       });
     </script>
   </body>

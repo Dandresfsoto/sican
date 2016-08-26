@@ -24,6 +24,22 @@ block breadcrum
 
 block scroll_header_panel_content
     div(class="container-fluid container-index")
+        div(class="header-buttons")
+            | {% if nuevo_permiso %}
+            div(class="block-right")
+                a(href="nuevo",class="link_button")
+                    paper-button(class="submit") Nuevo
+            | {% endif %}
+
+            | {% if informes %}
+            div
+                select(class="selectpicker",id="select_accion")
+                    option(value="") ---------
+                    option(value="6") Generar reporte cronograma
+
+                button(class="btn",id="accion") Generar reporte
+            | {% endif %}
+
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                tr
@@ -39,6 +55,21 @@ block scroll_header_panel_content
                   td Ruta
 
 block body_script_content
+    script.
+        $("#accion").on("click",function(){
+            var action = $("#select_accion").val();
+            if(action != ''){
+                $.ajax({
+                    type: "GET",
+                    url: '/rest/reportes/?action=' + action,
+                    success: function(data){
+                        $('#myModal').modal('show');
+                        $("#select_accion").val('');
+                        $("#select_accion").selectpicker('refresh');
+                    }
+                });
+            }
+        });
     script.
         $(document).ready(function () {
             var table = $('#table').DataTable({

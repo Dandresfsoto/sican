@@ -5,6 +5,8 @@ from rh.views import UpdateSoporteAdministrativoView, DeleteSoporteAdministrativ
 from rh.views import TipoSoporteAdministrativoView, NuevoTipoSoporteAdministrativoView, UpdateTipoSoporteAdministrativoView, DeleteTipoSoporteAdministrativoView
 from rh.views import FormadoresView, NuevoFormadorView,UpdateFormadorView, DeleteFormadorView
 from rh.views import SoporteFormadorView, NuevoSoporteFormadorView, UpdateSoporteFormadorView, DeleteSoporteFormadorView
+from rh.views import LideresView, NuevoLiderView, UpdateLiderView, DeleteLiderView
+from rh.views import SoporteLiderView, NuevoSoporteLiderView, UpdateSoporteLiderView, DeleteSoporteLiderView
 
 urlpatterns = [
     url(r'^administrativos/$', AdministrativoView.as_view()),
@@ -38,4 +40,17 @@ urlpatterns = [
     url(r'^formadores/soportes/(?P<pk>[0-9]+)/nuevo/$', NuevoSoporteFormadorView.as_view()),
     url(r'^formadores/soportes/(?P<pk>[0-9]+)/editar/(?P<id_soporte>[0-9]+)/$', UpdateSoporteFormadorView.as_view()),
     url(r'^formadores/soportes/(?P<pk>[0-9]+)/eliminar/(?P<id_soporte>[0-9]+)/$', DeleteSoporteFormadorView.as_view()),
+
+
+
+    url(r'^lideres/$', LideresView.as_view()),
+    url(r'^lideres/nuevo/$', NuevoLiderView.as_view()),
+    url(r'^lideres/editar/(?P<pk>[0-9]+)/$', UpdateLiderView.as_view()),
+    url(r'^lideres/eliminar/(?P<pk>[0-9]+)/$', DeleteLiderView.as_view()),
+
+    url(r'^lideres/soportes/(?P<pk>[0-9]+)/$', SoporteLiderView.as_view()),
+    url(r'^lideres/soportes/(?P<pk>[0-9]+)/nuevo/$', NuevoSoporteLiderView.as_view()),
+    url(r'^lideres/soportes/(?P<pk>[0-9]+)/editar/(?P<id_soporte>[0-9]+)/$', UpdateSoporteLiderView.as_view()),
+    url(r'^lideres/soportes/(?P<pk>[0-9]+)/eliminar/(?P<id_soporte>[0-9]+)/$', DeleteSoporteLiderView.as_view()),
+
 ]
