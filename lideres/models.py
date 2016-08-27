@@ -15,7 +15,7 @@ class Lideres(models.Model):
     departamentos = models.ManyToManyField(Departamento,related_name="departamento_lider",blank=True)
     codigo_ruta = models.CharField(max_length=100,blank=True,null=True)
     #---------- REGION----------------------
-    region = models.ManyToManyField(Region)
+    region = models.ForeignKey(Region)
 
     #---------- DATOS PERSONALES----------------------
     nombres = models.CharField(max_length=100)
