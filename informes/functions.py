@@ -106,6 +106,13 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
     for innovatic in EntradaCronograma.objects.filter(id__in=innovatics).order_by('formador__region__numero'):
         for nivel in innovatic.nivel.all():
             row_num += 1
+
+            actividades = ''
+            for actividad in innovatic.actividades_entrada.filter(sesion__nivel=nivel):
+                actividades += str(actividad.numero) + ','
+
+            actividades = actividades[:-1]
+
             ws_innovatic.cell(row=row_num,column=1).value = innovatic.formador.get_interventoria_region()
             ws_innovatic.cell(row=row_num,column=2).value = innovatic.departamento.nombre.upper()
             ws_innovatic.cell(row=row_num,column=3).value = innovatic.municipio.nombre.upper()
@@ -117,7 +124,7 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
             ws_innovatic.cell(row=row_num,column=10).value = innovatic.grupo.nombre.upper()
             ws_innovatic.cell(row=row_num,column=11).value = innovatic.numero_sedes
             ws_innovatic.cell(row=row_num,column=12).value = nivel.nombre.replace(' ','') + 'I'
-            ws_innovatic.cell(row=row_num,column=13).value = innovatic.actividades_entrada.filter(sesion__nivel=nivel).count()
+            ws_innovatic.cell(row=row_num,column=13).value = actividades
             ws_innovatic.cell(row=row_num,column=14).value = innovatic.beneficiados
             ws_innovatic.cell(row=row_num,column=15).value = innovatic.fecha
             ws_innovatic.cell(row=row_num,column=16).value = innovatic.institucion.upper()
@@ -132,6 +139,13 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
     for tecnotic in EntradaCronograma.objects.filter(id__in=tecnotics).order_by('formador__region__numero'):
         for nivel in tecnotic.nivel.all():
             row_num += 1
+
+            actividades = ''
+            for actividad in tecnotic.actividades_entrada.filter(sesion__nivel=nivel):
+                actividades += str(actividad.numero) + ','
+
+            actividades = actividades[:-1]
+
             ws_tecnotic.cell(row=row_num,column=1).value = tecnotic.formador.get_interventoria_region()
             ws_tecnotic.cell(row=row_num,column=2).value = tecnotic.departamento.nombre.upper()
             ws_tecnotic.cell(row=row_num,column=3).value = tecnotic.municipio.nombre.upper()
@@ -143,7 +157,7 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
             ws_tecnotic.cell(row=row_num,column=10).value = tecnotic.grupo.nombre.upper()
             ws_tecnotic.cell(row=row_num,column=11).value = tecnotic.numero_sedes
             ws_tecnotic.cell(row=row_num,column=12).value = nivel.nombre.replace(' ','') + 'T'
-            ws_tecnotic.cell(row=row_num,column=13).value = tecnotic.actividades_entrada.filter(sesion__nivel=nivel).count()
+            ws_tecnotic.cell(row=row_num,column=13).value = actividades
             ws_tecnotic.cell(row=row_num,column=14).value = tecnotic.beneficiados
             ws_tecnotic.cell(row=row_num,column=15).value = tecnotic.fecha
             ws_tecnotic.cell(row=row_num,column=16).value = tecnotic.institucion.upper()
@@ -158,6 +172,13 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
     for directic in EntradaCronograma.objects.filter(id__in=directics).order_by('formador__region__numero'):
         for nivel in directic.nivel.all():
             row_num += 1
+
+            actividades = ''
+            for actividad in directic.actividades_entrada.filter(sesion__nivel=nivel):
+                actividades += str(actividad.numero) + ','
+
+            actividades = actividades[:-1]
+
             ws_directic.cell(row=row_num,column=1).value = directic.formador.get_interventoria_region()
             ws_directic.cell(row=row_num,column=2).value = directic.departamento.nombre.upper()
             ws_directic.cell(row=row_num,column=3).value = directic.municipio.nombre.upper()
@@ -169,7 +190,7 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
             ws_directic.cell(row=row_num,column=10).value = directic.grupo.nombre.upper()
             ws_directic.cell(row=row_num,column=11).value = directic.numero_sedes
             ws_directic.cell(row=row_num,column=12).value = nivel.nombre.replace(' ','') + 'D'
-            ws_directic.cell(row=row_num,column=13).value = directic.actividades_entrada.filter(sesion__nivel=nivel).count()
+            ws_directic.cell(row=row_num,column=13).value = actividades
             ws_directic.cell(row=row_num,column=14).value = directic.beneficiados
             ws_directic.cell(row=row_num,column=15).value = directic.fecha
             ws_directic.cell(row=row_num,column=16).value = directic.institucion.upper()
@@ -184,6 +205,13 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
     for escuelatic in EntradaCronograma.objects.filter(id__in=escuelatics).order_by('formador__region__numero'):
         for nivel in escuelatic.nivel.all():
             row_num += 1
+
+            actividades = ''
+            for actividad in escuelatic.actividades_entrada.filter(sesion__nivel=nivel):
+                actividades += str(actividad.numero) + ','
+
+            actividades = actividades[:-1]
+
             ws_escuelatic.cell(row=row_num,column=1).value = escuelatic.formador.get_interventoria_region()
             ws_escuelatic.cell(row=row_num,column=2).value = escuelatic.departamento.nombre.upper()
             ws_escuelatic.cell(row=row_num,column=3).value = escuelatic.municipio.nombre.upper()
@@ -195,7 +223,7 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
             ws_escuelatic.cell(row=row_num,column=10).value = escuelatic.grupo.nombre.upper()
             ws_escuelatic.cell(row=row_num,column=11).value = escuelatic.numero_sedes
             ws_escuelatic.cell(row=row_num,column=12).value = nivel.nombre.replace(' ','') + 'E'
-            ws_escuelatic.cell(row=row_num,column=13).value = escuelatic.actividades_entrada.filter(sesion__nivel=nivel).count()
+            ws_escuelatic.cell(row=row_num,column=13).value = actividades
             ws_escuelatic.cell(row=row_num,column=14).value = escuelatic.beneficiados
             ws_escuelatic.cell(row=row_num,column=15).value = escuelatic.fecha
             ws_escuelatic.cell(row=row_num,column=16).value = escuelatic.institucion.upper()
