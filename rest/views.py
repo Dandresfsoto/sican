@@ -1790,11 +1790,6 @@ class LideresRh(BaseDatatableView):
 
         for item in qs:
 
-            region_str = ''
-            for region in item.region.values_list('numero',flat=True):
-                region_str = region_str + str(region) + ','
-            region_str = region_str[:-1]
-
             if item.banco != None:
                 banco = item.banco.nombre
             else:
@@ -1804,7 +1799,7 @@ class LideresRh(BaseDatatableView):
                 item.id,
                 item.nombres + " " + item.apellidos,
                 item.cargo.nombre,
-                region_str,
+                item.region.nombre,
                 item.cedula,
                 item.correo_personal,
                 item.celular_personal,
