@@ -28,7 +28,7 @@ class DiplomadoCreateView(LoginRequiredMixin,
     form_class = DiplomadoForm
     success_url = '/estrategia/diplomados/'
     template_name = 'productos/diplomados/nuevo.html'
-    permission_required = "permisos_sican.financiera.productos.crear"
+    permission_required = "permisos_sican.productos.diplomados.crear"
 
 
 class DiplomadoUpdateView(LoginRequiredMixin,
@@ -136,7 +136,7 @@ class EntregablesUpdateView(LoginRequiredMixin,
     model = Entregable
     form_class = UpdateEntregableForm
     pk_url_kwarg = 'pk'
-    success_url = '/financiera/entregables/'
+    success_url = '/estrategia/entregables/'
     template_name = 'productos/entregables/editar.html'
     permission_required = "permisos_sican.productos.entregables.editar"
 
