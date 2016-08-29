@@ -34,6 +34,7 @@ block scroll_header_panel_content
                     th Diplomado
                     th Nivel
                     th Sesion
+                    th Entregable
             tbody
                 tr
                     td Nombre
@@ -41,6 +42,7 @@ block scroll_header_panel_content
                     td Diplomado
                     td Nivel
                     td Sesion
+                    td Entregable
 
 block body_script_content
     script.
@@ -60,7 +62,7 @@ block body_script_content
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[6]) {
+                            if (row[7]) {
                                 return '<a href="editar/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
@@ -88,7 +90,20 @@ block body_script_content
                         "data": 5,
                         "className": 'text-center',
                         "orderable": false,
-                    }
+                    },
+                    {
+                        "orderable": false,
+                        "className": 'text-center',
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            if (row[6] != '') {
+                                return '<a href="' + row[6] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
+                            }
+                            else {
+                                return '';
+                            }
+                        },
+                    },
                 ]
             });
         });

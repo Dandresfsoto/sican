@@ -321,6 +321,11 @@ class UserPermissionList(APIView):
                   'id':'encuestas',
                   'links':[]
             },
+            'productos':{'name':'Estrategia ETIC@',
+                  'icon':'icons:group-work',
+                  'id':'productos',
+                  'links':[]
+            },
         }
 
         links = {
@@ -337,16 +342,16 @@ class UserPermissionList(APIView):
                 'ver':{'name':'Solicitudes de transporte','link':'/formacion/transportes/'}
             },
             'sesiones':{
-                'ver':{'name':'Sesiones','link':'/financiera/sesiones/'}
+                'ver':{'name':'Sesiones','link':'/estrategia/sesiones/'}
             },
             'niveles':{
-                'ver':{'name':'Niveles','link':'/financiera/niveles/'}
+                'ver':{'name':'Niveles','link':'/estrategia/niveles/'}
             },
             'diplomados':{
-                'ver':{'name':'Diplomados','link':'/financiera/diplomados/'}
+                'ver':{'name':'Diplomados','link':'/estrategia/diplomados/'}
             },
             'entregables':{
-                'ver':{'name':'Entregables','link':'/financiera/entregables/'}
+                'ver':{'name':'Entregables','link':'/estrategia/entregables/'}
             },
             'revision':{
                 'ver':{'name':'Revisión documental','link':'/formacion/revision/'}
@@ -1251,8 +1256,8 @@ class DiplomadosList(BaseDatatableView):
                 item.id,
                 item.nombre,
                 item.numero,
-                self.request.user.has_perm('permisos_sican.financiera.diplomados.editar'),
-                self.request.user.has_perm('permisos_sican.financiera.diplomados.eliminar'),
+                self.request.user.has_perm('permisos_sican.productos.diplomados.editar'),
+                self.request.user.has_perm('permisos_sican.productos.diplomados.eliminar'),
             ])
         return json_data
 
@@ -1288,8 +1293,8 @@ class NivelesList(BaseDatatableView):
                 item.nombre,
                 item.numero,
                 item.diplomado.nombre,
-                self.request.user.has_perm('permisos_sican.financiera.niveles.editar'),
-                self.request.user.has_perm('permisos_sican.financiera.niveles.eliminar'),
+                self.request.user.has_perm('permisos_sican.productos.niveles.editar'),
+                self.request.user.has_perm('permisos_sican.productos.niveles.eliminar'),
             ])
         return json_data
 
@@ -1330,8 +1335,8 @@ class SesionesList(BaseDatatableView):
                 item.numero,
                 item.nivel.diplomado.nombre,
                 item.nivel.nombre,
-                self.request.user.has_perm('permisos_sican.financiera.sesiones.editar'),
-                self.request.user.has_perm('permisos_sican.financiera.sesiones.eliminar'),
+                self.request.user.has_perm('permisos_sican.productos.sesiones.editar'),
+                self.request.user.has_perm('permisos_sican.productos.sesiones.eliminar'),
             ])
         return json_data
 
@@ -1343,8 +1348,9 @@ class EntregablesList(BaseDatatableView):
     3.diplomado
     4.nivel
     5.sesion
-    6.permiso para editar
-    7.permiso para eliminar
+    6.soporte
+    7.permiso para editar
+    8.permiso para eliminar
     """
     model = Entregable
     columns = ['id','nombre','numero','diplomado','nivel','sesion']
@@ -1374,8 +1380,9 @@ class EntregablesList(BaseDatatableView):
                 item.sesion.nivel.diplomado.nombre,
                 item.sesion.nivel.nombre,
                 item.sesion.nombre,
-                self.request.user.has_perm('permisos_sican.financiera.entregables.editar'),
-                self.request.user.has_perm('permisos_sican.financiera.entregables.eliminar'),
+                item.get_archivo_url(),
+                self.request.user.has_perm('permisos_sican.productos.entregables.editar'),
+                self.request.user.has_perm('permisos_sican.productos.entregables.eliminar'),
             ])
         return json_data
 

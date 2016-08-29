@@ -1,10 +1,11 @@
 extends ../../inicio
 block scroll_header_panel_title
-    span(class="title") NIVELES
+    span(class="title") ENTREGABLES
+
 block help_content
     p(class="title-help") Descripción:
     p.
-        Con este formulario puedes editar el nivel "{{object.nombre}}" del diplomado "{{object.diplomado.nombre}}" en la
+        Con este formulario puedes editar el entregable "{{object.nombre}}" del diplomado "{{object.sesion.nivel.diplomado.nombre}}" en la
         formación ETIC@del programa Computadores para Educar.
 
 block head_content_inicio
@@ -15,17 +16,15 @@ block custom_style_panel
         | paper-button{
         |   margin-bottom:15px;
         | }
-
 block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
-    a(href="/financiera/niveles/",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Lista de niveles
+    a(href="/estrategia/entregables/",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Lista de entregables
             iron-icon(icon="check",item-icon)
     paper-icon-item(class="breadcrum_active",disabled) Editar: {{object.nombre}}
         iron-icon(icon="check",item-icon)
-
 block scroll_header_panel_content
     div(class="container-fluid container-index")
         div(class="row")
@@ -35,7 +34,6 @@ block scroll_header_panel_content
                     | {% crispy form %}
                     div(class="text-right login-form-button")
                         paper-button(class="submit",id="submit_form") Guardar
-
 block body_script_content
     script.
         $('#submit_form').on('click', function () {
