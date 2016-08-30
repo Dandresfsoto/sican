@@ -121,14 +121,17 @@ def preinscritos(email):
     fecha = informe.creacion
 
     titulos = ['ID','Cedula','Primer apellido','Segundo apellido','Primer nombre','Segundo nombre','Cargo','Correo',
-               'Telefono fijo','Celular','Departamento','Municipio','Radicado','Base Mineducación','Fecha registro']
+               'Telefono fijo','Celular','Departamento','Municipio','Radicado','Base Mineducación','Fecha registro',
+               'Secretaria Radicado','Municipio Radicado','Nombre Sede','Dane Sede','Tipo Sede','Ubicación']
 
     formatos = ['General','0','General','General','General','General','General','General',
-                'General','General','General','General','0','General','d/m/yy']
+                'General','General','General','General','0','General','d/m/yy',
+                'General','General','General','General','General','General']
 
 
     ancho_columnas =  [30,20,15,15,15,15,15,30,
-                       15,15,20,20,15,10,15]
+                       15,15,20,20,15,10,15,
+                       20,20,20,20,20,20]
 
     contenidos = []
 
@@ -149,6 +152,12 @@ def preinscritos(email):
             docente.radicado.numero if docente.radicado != None else '',
             'Si' if docente.verificado else 'No',
             docente.fecha,
+            docente.radicado.secretaria.nombre,
+            docente.radicado.municipio.nombre,
+            docente.radicado.nombre_sede,
+            docente.radicado.dane_sede,
+            docente.radicado.tipo,
+            docente.radicado.ubicacion,
         ])
 
     output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)

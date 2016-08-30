@@ -12,18 +12,23 @@ block custom_style_panel
         | paper-button{
         |   margin-bottom:15px;
         | }
+
 block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
     a(href="/formacion/cronograma/",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Listado de formadores
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Listado de semanas
+            iron-icon(icon="check",item-icon)
+    a(href="../../../../",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Semana {{numero_semana}}
             iron-icon(icon="check",item-icon)
     a(href="../../",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Cronograma: {{formador}}
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Formador: {{formador}}
             iron-icon(icon="check",item-icon)
-    paper-icon-item(class="breadcrum_active",disabled) Editar: {{object.fecha}}
+    paper-icon-item(class="breadcrum_active",disabled) Editar
         iron-icon(icon="check",item-icon)
+
 block scroll_header_panel_content
     input(class="hidden",value="{{start_date}}",id="fecha_inicio",type="text")
     input(class="hidden",value="{{end_date}}",id="fecha_fin",type="text")
@@ -55,3 +60,8 @@ block body_script_content
             parents: "#id_municipio",
             url: "/rest/chained/secretarias/"
         });
+
+        var initial = $('#id_fecha').attr('initial');
+        if(initial != ''){
+            $('#id_fecha').data("DateTimePicker").date(initial);
+        }

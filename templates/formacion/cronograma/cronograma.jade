@@ -20,8 +20,11 @@ block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
+    a(href="../../../../",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Lista de semanas
+            iron-icon(icon="check",item-icon)
     a(href="../../",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Lista de formadores
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Semana {{semana_numero}}
             iron-icon(icon="check",item-icon)
     paper-icon-item(class="breadcrum_active",disabled) Formador: {{formador}}
         iron-icon(icon="check",item-icon)
@@ -68,7 +71,7 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/formacion/cronogramas/{{id_formador}}/",
+                "ajax": "/rest/formacion/cronogramas/{{id_formador}}/{{id_semana}}",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },

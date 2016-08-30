@@ -38,8 +38,11 @@ class EntradaCronogramaform(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EntradaCronogramaform, self).__init__(*args, **kwargs)
         formador = Formador.objects.get(id=kwargs['initial']['formador'])
+
+        semana = Semana.objects.get(id=kwargs['initial']['semana'])
+
         self.fields['formador'].initial = formador
-        self.fields['semana'].initial = Semana.objects.get(numero=datetime.datetime.now().isocalendar()[1]+1)
+        self.fields['semana'].initial = semana
 
         if 'data' in kwargs:
             if kwargs['data']['departamento'] != "":
@@ -49,6 +52,7 @@ class EntradaCronogramaform(forms.ModelForm):
                 id_municipios = Municipio.objects.filter(departamento__id = departamento_id).values_list('id',flat=True)
                 secretarias = Secretaria.objects.filter(municipio__id__in = id_municipios).values_list('id','nombre')
                 self.fields['secretaria'].widget.choices = secretarias
+            self.fields['fecha'].widget.attrs['initial'] = kwargs['data']['fecha']
         else:
             self.fields['municipio'].widget.choices = (('','---------'),)
             self.fields['secretaria'].widget.choices = (('','---------'),)
@@ -162,7 +166,8 @@ class EntradaCronogramaform(forms.ModelForm):
 
         widgets = {
             'hora_inicio': forms.Select(),
-            'ubicacion': forms.Select(choices=(('Urbana','Urbana'),('Rural','Rural')))
+            'ubicacion': forms.Select(choices=(('Urbana','Urbana'),('Rural','Rural'))),
+            'fecha': forms.DateInput(attrs={'initial':''})
         }
 
 class EntradaCronogramaUpdateform(forms.ModelForm):
@@ -191,9 +196,13 @@ class EntradaCronogramaUpdateform(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EntradaCronogramaUpdateform, self).__init__(*args, **kwargs)
+
         formador = Formador.objects.get(id=kwargs['initial']['formador'])
+        semana = Semana.objects.get(id=kwargs['initial']['semana'])
+
         self.fields['formador'].initial = formador
-        self.fields['semana'].initial = Semana.objects.get(numero=datetime.datetime.now().isocalendar()[1]+1)
+        self.fields['semana'].initial = semana
+        self.fields['fecha'].widget.attrs['initial'] = kwargs['initial']['fecha'].strftime('%d/%m%/%Y')
 
         if 'data' in kwargs:
             if kwargs['data']['departamento'] != "":
@@ -203,6 +212,7 @@ class EntradaCronogramaUpdateform(forms.ModelForm):
                 id_municipios = Municipio.objects.filter(departamento__id = departamento_id).values_list('id',flat=True)
                 secretarias = Secretaria.objects.filter(municipio__id__in = id_municipios).values_list('id','nombre')
                 self.fields['secretaria'].widget.choices = secretarias
+            self.fields['fecha'].widget.attrs['initial'] = kwargs['data']['fecha']
         else:
             self.fields['municipio'].widget.choices = Municipio.objects.filter(departamento__id = self.initial['departamento']).values_list('id','nombre')
             id_municipios = Municipio.objects.filter(departamento__id = self.initial['departamento']).values_list('id',flat=True)
@@ -322,5 +332,6 @@ class EntradaCronogramaUpdateform(forms.ModelForm):
 
         widgets = {
             'hora_inicio': forms.Select(),
-            'ubicacion': forms.Select(choices=(('Urbana','Urbana'),('Rural','Rural')))
+            'ubicacion': forms.Select(choices=(('Urbana','Urbana'),('Rural','Rural'))),
+            'fecha': forms.DateInput(attrs={'initial':''})
         }

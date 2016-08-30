@@ -390,7 +390,7 @@ class ListaCronogramasSemanaView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         kwargs['informes'] = self.request.user.has_perm('permisos_sican.formacion.cronograma.informes')
-        kwargs['numero_semana'] = Semana.objects.get(id=self.kwargs['id']).numero
+        kwargs['numero_semana'] = Semana.objects.get(id=self.kwargs['semana_id']).numero
         return super(ListaCronogramasSemanaView,self).get_context_data(**kwargs)
 
 
@@ -403,14 +403,18 @@ class CronogramaFormadorView(LoginRequiredMixin,
 
 
     def get_context_data(self, **kwargs):
+        semana = Semana.objects.get(id=self.kwargs['semana_id'])
         kwargs['formador'] = Formador.objects.get(id=self.kwargs['id']).get_full_name()
-        semana, created = Semana.objects.get_or_create(numero = datetime.datetime.now().isocalendar()[1]+1)
-        inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).monday()
-        fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).sunday()
+        kwargs['semana_numero'] = semana.numero
+        kwargs['id_semana'] = semana.id
+
+        x, created = Semana.objects.get_or_create(numero = datetime.datetime.now().isocalendar()[1]+1)
+
+        inicio = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+1).monday()
+        fin = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+1).sunday()
 
         kwargs['fechas'] = inicio.strftime("%d de %B del %Y") + ' - ' + fin.strftime("%d de %B del %Y")
         kwargs['id_formador'] = self.kwargs['id']
-
 
         return super(CronogramaFormadorView,self).get_context_data(**kwargs)
 
@@ -425,14 +429,18 @@ class CronogramaFormadorNuevoView(LoginRequiredMixin,
     permission_required = "permisos_sican.formacion.cronograma.crear"
 
     def get_initial(self):
-        return {'formador':self.kwargs['id']}
+        return {'formador':self.kwargs['id'],'semana':self.kwargs['semana_id']}
 
     def get_context_data(self, **kwargs):
-        inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).tuesday()
-        fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+2).monday()
+        semana = Semana.objects.get(id=self.kwargs['semana_id'])
+
+        inicio = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+1).tuesday()
+        fin = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+2).monday()
+
         kwargs['start_date'] = inicio.strftime("%Y-%m-%d")
         kwargs['end_date'] = fin.strftime("%Y-%m-%d")
         kwargs['formador'] = Formador.objects.get(id=self.kwargs['id']).get_full_name()
+        kwargs['numero_semana'] = semana.numero
         return super(CronogramaFormadorNuevoView,self).get_context_data(**kwargs)
 
 
@@ -507,14 +515,18 @@ class CronogramaFormadorUpdateView(LoginRequiredMixin,
     permission_required = "permisos_sican.formacion.cronograma.editar"
 
     def get_initial(self):
-        return {'formador':self.kwargs['id'],'id':self.object.id}
+        return {'formador':self.kwargs['id'],'id':self.object.id,'semana':self.kwargs['semana_id'],'fecha':self.object.fecha}
 
     def get_context_data(self, **kwargs):
-        inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).tuesday()
-        fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+2).monday()
+        semana = Semana.objects.get(id=self.kwargs['semana_id'])
+
+        inicio = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+1).tuesday()
+        fin = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+2).monday()
+
         kwargs['start_date'] = inicio.strftime("%Y-%m-%d")
         kwargs['end_date'] = fin.strftime("%Y-%m-%d")
         kwargs['formador'] = Formador.objects.get(id=self.kwargs['id']).get_full_name()
+        kwargs['numero_semana'] = semana.numero
         return super(CronogramaFormadorUpdateView,self).get_context_data(**kwargs)
 
 
