@@ -5,13 +5,14 @@ from django.shortcuts import HttpResponseRedirect
 from formadores.models import TipoSoporte
 from formadores.models import Formador, Soporte
 from django.shortcuts import HttpResponseRedirect
-from formadores.tables import SolicitudTable
+from formadores.tables import SolicitudTable, EntregablesTable
 from formadores.models import SolicitudTransporte, Desplazamiento
 from formadores.forms import NuevaSolicitudTransportes, SubirSoporteForm
 from departamentos.models import Departamento
 from municipios.models import Municipio
 import datetime
 from formadores.forms import OtroSiForm
+from productos.models import Entregable
 
 # Create your views here.
 class InicioView(FormView):
@@ -351,3 +352,27 @@ class OtroSiCompletoView(TemplateView):
         kwargs['formador'] = formador.nombres + " " + formador.apellidos
         kwargs['tipo'] = formador.cargo.nombre
         return super(OtroSiCompletoView,self).get_context_data(**kwargs)
+
+
+class EntregablesView(TemplateView):
+    template_name = 'formadores/entregables/entregables.html'
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=self.kwargs['cedula'])
+        kwargs['formador'] = formador.get_full_name()
+        kwargs['tipo'] = formador.cargo.nombre
+
+        if formador.cargo.nombre == "Formador Tipo 1":
+            numero_diplomado = 1
+        elif formador.cargo.nombre == "Formador Tipo 2":
+            numero_diplomado = 2
+        elif formador.cargo.nombre == "Formador Tipo 3":
+            numero_diplomado = 3
+        elif formador.cargo.nombre == "Formador Tipo 4":
+            numero_diplomado = 4
+        else:
+            numero_diplomado = 0
+
+        query = Entregable.objects.all().filter(sesion__nivel__diplomado__numero = numero_diplomado).order_by('numero')
+        kwargs['table'] = EntregablesTable(query)
+        return super(EntregablesView,self).get_context_data(**kwargs)

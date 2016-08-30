@@ -6,6 +6,8 @@ from departamentos.models import Departamento
 from municipios.models import Municipio
 from secretarias.models import Secretaria
 from productos.models import Nivel, Actividades
+import datetime
+from isoweek import Week
 
 # Create your models here.
 
@@ -15,6 +17,11 @@ class Semana(models.Model):
 
     def __unicode__(self):
         return unicode(self.numero)
+
+    def get_rango_semana(self):
+        inicio = Week(self.creacion.year,self.numero).monday()
+        fin = Week(self.creacion.year,self.numero).sunday()
+        return
 
 
 class EntradaCronograma(models.Model):

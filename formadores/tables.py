@@ -5,6 +5,7 @@ import django_tables2 as tables
 from formadores.models import SolicitudTransporte
 from django.utils.safestring import mark_safe
 import locale
+from productos.models import Entregable
 
 class SolicitudTable(tables.Table):
     nombre = tables.Column('Nombre')
@@ -77,3 +78,24 @@ class SolicitudTable(tables.Table):
     class Meta:
         model = SolicitudTransporte
         fields = ['nombre','creacion','valor','estado','desplazamientos','terminada','observacion','valor_aprobado']
+
+
+class EntregablesTable(tables.Table):
+    sesion = tables.Column('Sesión')
+    nombre = tables.Column('Nombre')
+    numero = tables.Column('Numero')
+    tipo = tables.Column('Tipo')
+    formato = tables.Column('Formato')
+
+
+
+    def render_formato(self,value,record):
+        if record.get_archivo_url() != '':
+            return mark_safe('<a href="'+ record.get_archivo_url() +'"><img src="/static/img/file.png" height="32" width="32"></a>')
+        else:
+            return ''
+
+
+    class Meta:
+        model = Entregable
+        fields = ['sesion','nombre','numero','tipo','formato']

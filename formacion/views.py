@@ -373,12 +373,26 @@ class TransporteFormUpdateView(LoginRequiredMixin,
 class ListaCronogramasView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
-    template_name = 'formacion/cronograma/lista.html'
+    template_name = 'formacion/cronograma/semanas.html'
     permission_required = "permisos_sican.formacion.cronograma.ver"
 
     def get_context_data(self, **kwargs):
         kwargs['informes'] = self.request.user.has_perm('permisos_sican.formacion.cronograma.informes')
         return super(ListaCronogramasView,self).get_context_data(**kwargs)
+
+
+
+class ListaCronogramasSemanaView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/cronograma/lista.html'
+    permission_required = "permisos_sican.formacion.cronograma.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.formacion.cronograma.informes')
+        kwargs['numero_semana'] = Semana.objects.get(id=self.kwargs['id']).numero
+        return super(ListaCronogramasSemanaView,self).get_context_data(**kwargs)
+
 
 
 class CronogramaFormadorView(LoginRequiredMixin,

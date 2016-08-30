@@ -1597,9 +1597,6 @@ class SolicitudesTransporteFormadorFinancieraList(BaseDatatableView):
             ])
         return json_data
 
-
-
-
 class FormadoresCronogramasList(BaseDatatableView):
     """
     0.id
@@ -1640,7 +1637,6 @@ class FormadoresCronogramasList(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.formacion.cronograma.editar'),
             ])
         return json_data
-
 
 class FormadoresCronogramasFilterList(BaseDatatableView):
     """
@@ -1746,8 +1742,6 @@ class SemanasList(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.formacion.cronogramafinanciera.editar'),
             ])
         return json_data
-
-
 
 class LideresRh(BaseDatatableView):
     """
@@ -1865,5 +1859,39 @@ class LideresRhSoportes(BaseDatatableView):
                 item.creacion,
                 self.request.user.has_perm('permisos_sican.rh.lideres_soportes.editar'),
                 self.request.user.has_perm('permisos_sican.rh.lideres_soportes.eliminar'),
+            ])
+        return json_data
+
+class SemanasFormacionList(BaseDatatableView):
+    """
+    0.id
+    1.numero
+    2.rango
+    3.permiso para editar
+    """
+    model = Semana
+    columns = ['id','numero']
+
+    order_columns = ['id','numero']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(numero__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            inicio = Week(datetime.datetime.now().isocalendar()[0],item.numero).monday()
+            fin = Week(datetime.datetime.now().isocalendar()[0],item.numero).sunday()
+            json_data.append([
+                item.id,
+                item.numero,
+                inicio.strftime("%d de %B del %Y") + ' - ' + fin.strftime("%d de %B del %Y"),
+                self.request.user.has_perm('permisos_sican.formacion.cronograma.editar'),
             ])
         return json_data
