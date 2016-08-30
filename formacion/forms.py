@@ -202,7 +202,7 @@ class EntradaCronogramaUpdateform(forms.ModelForm):
 
         self.fields['formador'].initial = formador
         self.fields['semana'].initial = semana
-        self.fields['fecha'].widget.attrs['initial'] = kwargs['initial']['fecha'].strftime('%d/%m%/%Y')
+        self.fields['fecha'].widget.attrs['initial'] = kwargs['initial']['fecha'].strftime('%d/%m/%Y')
 
         if 'data' in kwargs:
             if kwargs['data']['departamento'] != "":
