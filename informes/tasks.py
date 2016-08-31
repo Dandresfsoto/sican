@@ -14,6 +14,7 @@ from preinscripcion.models import DocentesPreinscritos
 from formacion.models import EntradaCronograma
 from isoweek import Week
 import datetime
+from formacion.models import Semana
 
 
 @app.task
@@ -232,17 +233,19 @@ def cronograma_general(email):
 
 
 @app.task
-def cronograma_lider(email):
+def cronograma_lider(email,semana_id):
     usuario = User.objects.get(email=email)
-    nombre = "Cronograma consolidado lider"
+    nombre = "Cronograma semanal lider"
 
     informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
     fecha = informe.creacion
 
-    innovatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 1",formador__lider__email = email).values_list('id',flat=True)
-    tecnotics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 2",formador__lider__email = email).values_list('id',flat=True)
-    directics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 3",formador__lider__email = email).values_list('id',flat=True)
-    escuelatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 4",formador__lider__email = email).values_list('id',flat=True)
+    semana = Semana.objects.get(id=semana_id)
+
+    innovatics = EntradaCronograma.objects.filter(semana=semana,formador__cargo__nombre="Formador Tipo 1",formador__lider__email = email).values_list('id',flat=True)
+    tecnotics = EntradaCronograma.objects.filter(semana=semana,formador__cargo__nombre="Formador Tipo 2",formador__lider__email = email).values_list('id',flat=True)
+    directics = EntradaCronograma.objects.filter(semana=semana,formador__cargo__nombre="Formador Tipo 3",formador__lider__email = email).values_list('id',flat=True)
+    escuelatics = EntradaCronograma.objects.filter(semana=semana,formador__cargo__nombre="Formador Tipo 4",formador__lider__email = email).values_list('id',flat=True)
 
     inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).monday()
     fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).sunday()

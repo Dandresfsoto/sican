@@ -389,9 +389,16 @@ class ListaCronogramasSemanaView(LoginRequiredMixin,
     permission_required = "permisos_sican.formacion.cronograma.ver"
 
     def get_context_data(self, **kwargs):
+        semana = Semana.objects.get(id=self.kwargs['semana_id'])
         kwargs['informes'] = self.request.user.has_perm('permisos_sican.formacion.cronograma.informes')
         kwargs['numero_semana'] = Semana.objects.get(id=self.kwargs['semana_id']).numero
         kwargs['id_semana'] = self.kwargs['semana_id']
+
+        inicio = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+1).monday()
+        fin = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+1).sunday()
+
+        kwargs['fechas'] = inicio.strftime("%d de %B del %Y") + ' - ' + fin.strftime("%d de %B del %Y")
+
         return super(ListaCronogramasSemanaView,self).get_context_data(**kwargs)
 
 

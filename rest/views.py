@@ -169,7 +169,8 @@ class ReportesView(APIView):
         if id_accion == '5':
             x = cronograma_general.delay(request.user.email)
         if id_accion == '6':
-            x = cronograma_lider.delay(request.user.email)
+            semana_id = request._request.GET['semana_id']
+            x = cronograma_lider.delay(request.user.email,semana_id)
 
         return HttpResponse(status=200)
 
