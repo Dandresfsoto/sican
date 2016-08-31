@@ -64,7 +64,7 @@ urlpatterns = [
     url(r'formacion/transportes/$', SolicitudesTransporteFormacionList.as_view()),
     url(r'formacion/transportes/(?P<id_formador>\w+)/$', SolicitudesTransporteFormadorList.as_view()),
 
-    url(r'formacion/cronogramas/$', FormadoresCronogramasList.as_view()),
+    url(r'formacion/cronogramas/(?P<id_semana>\w+)/$', FormadoresCronogramasList.as_view()),
     url(r'formacion/cronogramas/(?P<id_formador>\w+)/(?P<id_semana>\w+)/$', FormadoresCronogramasFilterList.as_view()),
 
     url(r'financiera/cronogramas/$', SemanasList.as_view()),

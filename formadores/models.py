@@ -104,7 +104,7 @@ class Desplazamiento(models.Model):
     valor = models.BigIntegerField()
     creacion = models.DateTimeField(auto_now=True)
     fecha = models.DateField()
-    motivo = models.CharField(max_length=100)
+    motivo = models.CharField(max_length=600)
 
     def __unicode__(self):
         return unicode(self.id)
@@ -149,5 +149,8 @@ class Grupos(models.Model):
     formador = models.ForeignKey(Formador,related_name="formador_grupos")
     nombre = models.CharField(max_length=100)
 
+    class Meta:
+        ordering = ['nombre']
+
     def __unicode__(self):
-        return self.nombre
+        return self.formador.codigo_ruta + "-" + self.nombre

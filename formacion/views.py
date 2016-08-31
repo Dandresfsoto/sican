@@ -391,6 +391,7 @@ class ListaCronogramasSemanaView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['informes'] = self.request.user.has_perm('permisos_sican.formacion.cronograma.informes')
         kwargs['numero_semana'] = Semana.objects.get(id=self.kwargs['semana_id']).numero
+        kwargs['id_semana'] = self.kwargs['semana_id']
         return super(ListaCronogramasSemanaView,self).get_context_data(**kwargs)
 
 

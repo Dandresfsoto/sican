@@ -368,7 +368,7 @@ class LideresView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
     template_name = 'rh/lideres/lista.html'
-    permission_required = "permisos_sican.rh.formadores.ver"
+    permission_required = "permisos_sican.rh.lideres.ver"
 
     def get_context_data(self, **kwargs):
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.lideres.crear')

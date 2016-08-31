@@ -1604,7 +1604,8 @@ class FormadoresCronogramasList(BaseDatatableView):
     2.cedula
     3.departamentos
     4.codigo_ruta
-    5.permiso para editar
+    5.registros
+    6.permiso para editar
     """
     model = Formador
     columns = ['id','nombres','cedula']
@@ -1627,13 +1628,16 @@ class FormadoresCronogramasList(BaseDatatableView):
 
     def prepare_results(self, qs):
         json_data = []
+        semana = Semana.objects.get(id=self.kwargs['id_semana'])
         for item in qs:
+            entradas = EntradaCronograma.objects.filter(semana=semana,formador__id = item.id)
             json_data.append([
                 item.id,
                 item.get_full_name(),
                 item.cedula,
                 item.get_departamentos_string(),
                 item.codigo_ruta,
+                entradas.count(),
                 self.request.user.has_perm('permisos_sican.formacion.cronograma.editar'),
             ])
         return json_data

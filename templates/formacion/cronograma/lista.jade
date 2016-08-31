@@ -50,12 +50,14 @@ block scroll_header_panel_content
                   th Cedula
                   th Departamento(s)
                   th Ruta
+                  th Cantidad de registros
             tbody
                tr
                   td Formador
                   td Cedula
                   td Departamento(s)
                   td Ruta
+                  td Cantidad de registros
 
 block body_script_content
     script.
@@ -81,7 +83,7 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/formacion/cronogramas/",
+                "ajax": "/rest/formacion/cronogramas/{{id_semana}}",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
@@ -90,7 +92,7 @@ block body_script_content
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[5]) {
+                            if (row[6]) {
                                 return '<a href="editar/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
@@ -109,6 +111,10 @@ block body_script_content
                     },
                     {
                         "data": 4,
+                        "orderable": false,
+                    },
+                    {
+                        "data": 5,
                         "orderable": false,
                     }
                 ]
