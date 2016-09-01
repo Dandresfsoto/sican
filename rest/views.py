@@ -167,10 +167,12 @@ class ReportesView(APIView):
         if id_accion == '4':
             x = transportes.delay(request.user.email)
         if id_accion == '5':
-            x = cronograma_general.delay(request.user.email)
+            semana_id = request._request.GET['semana_id']
+            x = cronograma_general.delay(request.user.email,semana_id)
         if id_accion == '6':
             semana_id = request._request.GET['semana_id']
             x = cronograma_lider.delay(request.user.email,semana_id)
+
 
         return HttpResponse(status=200)
 
@@ -1898,6 +1900,53 @@ class SemanasFormacionList(BaseDatatableView):
                 item.id,
                 item.numero,
                 inicio.strftime("%d de %B del %Y") + ' - ' + fin.strftime("%d de %B del %Y"),
+                self.request.user.has_perm('permisos_sican.formacion.cronograma.editar'),
+            ])
+        return json_data
+
+class FormadoresFinancieraCronogramasList(BaseDatatableView):
+    """
+    0.id
+    1.formador
+    2.lider
+    3.cedula
+    4.departamentos
+    5.codigo_ruta
+    6.registros
+    7.permiso para editar
+    """
+    model = Formador
+    columns = ['id','nombres','lider','cedula']
+
+    order_columns = ['nombres','lider','cedula']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Formador.objects.exclude(oculto = True).exclude(lider = None)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | \
+                Q(cedula__icontains=search) | Q(lider__first_name__icontains=search)
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        semana = Semana.objects.get(id=self.kwargs['id_semana'])
+        for item in qs:
+            entradas = EntradaCronograma.objects.filter(semana=semana,formador__id = item.id)
+            json_data.append([
+                item.id,
+                item.get_full_name(),
+                item.lider.first_name,
+                item.cedula,
+                item.get_departamentos_string(),
+                item.codigo_ruta,
+                entradas.count(),
                 self.request.user.has_perm('permisos_sican.formacion.cronograma.editar'),
             ])
         return json_data

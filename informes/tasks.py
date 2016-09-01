@@ -211,19 +211,22 @@ def transportes(email):
 
 
 @app.task
-def cronograma_general(email):
+def cronograma_general(email,semana_id):
     usuario = User.objects.get(email=email)
-    nombre = "Cronograma consolidado financiera"
+    nombre = "Cronograma consolidado general"
 
     informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
     fecha = informe.creacion
 
-    innovatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 1").order_by('formador__region').values_list('id',flat=True)
-    tecnotics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 2").order_by('formador__region').values_list('id',flat=True)
-    directics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 3").order_by('formador__region').values_list('id',flat=True)
-    escuelatics = EntradaCronograma.objects.filter(formador__cargo__nombre="Formador Tipo 4").order_by('formador__region').values_list('id',flat=True)
-    inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).monday()
-    fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).sunday()
+    semana = Semana.objects.get(id=semana_id)
+
+    innovatics = EntradaCronograma.objects.filter(semana=semana,formador__cargo__nombre="Formador Tipo 1").order_by('formador__region').values_list('id',flat=True)
+    tecnotics = EntradaCronograma.objects.filter(semana=semana,formador__cargo__nombre="Formador Tipo 2").order_by('formador__region').values_list('id',flat=True)
+    directics = EntradaCronograma.objects.filter(semana=semana,formador__cargo__nombre="Formador Tipo 3").order_by('formador__region').values_list('id',flat=True)
+    escuelatics = EntradaCronograma.objects.filter(semana=semana,formador__cargo__nombre="Formador Tipo 4").order_by('formador__region').values_list('id',flat=True)
+
+    inicio = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+1).monday()
+    fin = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+1).sunday()
     rango = inicio.strftime("Del dia %d de %B del %Y") + ' - ' + fin.strftime(" al dia %d de %B del %Y")
 
     output = cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango)
@@ -247,8 +250,8 @@ def cronograma_lider(email,semana_id):
     directics = EntradaCronograma.objects.filter(semana=semana,formador__cargo__nombre="Formador Tipo 3",formador__lider__email = email).values_list('id',flat=True)
     escuelatics = EntradaCronograma.objects.filter(semana=semana,formador__cargo__nombre="Formador Tipo 4",formador__lider__email = email).values_list('id',flat=True)
 
-    inicio = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).monday()
-    fin = Week(datetime.datetime.now().isocalendar()[0],datetime.datetime.now().isocalendar()[1]+1).sunday()
+    inicio = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+1).monday()
+    fin = Week(semana.creacion.isocalendar()[0],semana.creacion.isocalendar()[1]+1).sunday()
     rango = inicio.strftime("Del dia %d de %B del %Y") + ' - ' + fin.strftime(" al dia %d de %B del %Y")
 
     output = cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango)

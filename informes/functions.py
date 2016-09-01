@@ -121,7 +121,7 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
             ws_innovatic.cell(row=row_num,column=6).value = innovatic.formador.get_full_name().upper()
             ws_innovatic.cell(row=row_num,column=7).value = innovatic.formador.celular_personal
             ws_innovatic.cell(row=row_num,column=9).value = innovatic.formador.correo_personal
-            ws_innovatic.cell(row=row_num,column=10).value = innovatic.grupo.nombre.upper()
+            ws_innovatic.cell(row=row_num,column=10).value = innovatic.formador.codigo_ruta.upper() + '-' + innovatic.grupo.nombre.upper()
             ws_innovatic.cell(row=row_num,column=11).value = innovatic.numero_sedes
             ws_innovatic.cell(row=row_num,column=12).value = nivel.nombre.replace(' ','') + 'I'
             ws_innovatic.cell(row=row_num,column=13).value = actividades
@@ -154,7 +154,7 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
             ws_tecnotic.cell(row=row_num,column=6).value = tecnotic.formador.get_full_name().upper()
             ws_tecnotic.cell(row=row_num,column=7).value = tecnotic.formador.celular_personal
             ws_tecnotic.cell(row=row_num,column=9).value = tecnotic.formador.correo_personal
-            ws_tecnotic.cell(row=row_num,column=10).value = tecnotic.grupo.nombre.upper()
+            ws_tecnotic.cell(row=row_num,column=10).value = tecnotic.formador.codigo_ruta.upper() + '-' + tecnotic.grupo.nombre.upper()
             ws_tecnotic.cell(row=row_num,column=11).value = tecnotic.numero_sedes
             ws_tecnotic.cell(row=row_num,column=12).value = nivel.nombre.replace(' ','') + 'T'
             ws_tecnotic.cell(row=row_num,column=13).value = actividades
@@ -187,7 +187,7 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
             ws_directic.cell(row=row_num,column=6).value = directic.formador.get_full_name().upper()
             ws_directic.cell(row=row_num,column=7).value = directic.formador.celular_personal
             ws_directic.cell(row=row_num,column=9).value = directic.formador.correo_personal
-            ws_directic.cell(row=row_num,column=10).value = directic.grupo.nombre.upper()
+            ws_directic.cell(row=row_num,column=10).value = directic.formador.codigo_ruta.upper() + '-' + directic.grupo.nombre.upper()
             ws_directic.cell(row=row_num,column=11).value = directic.numero_sedes
             ws_directic.cell(row=row_num,column=12).value = nivel.nombre.replace(' ','') + 'D'
             ws_directic.cell(row=row_num,column=13).value = actividades
@@ -220,7 +220,7 @@ def cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango):
             ws_escuelatic.cell(row=row_num,column=6).value = escuelatic.formador.get_full_name().upper()
             ws_escuelatic.cell(row=row_num,column=7).value = escuelatic.formador.celular_personal
             ws_escuelatic.cell(row=row_num,column=9).value = escuelatic.formador.correo_personal
-            ws_escuelatic.cell(row=row_num,column=10).value = escuelatic.grupo.nombre.upper()
+            ws_escuelatic.cell(row=row_num,column=10).value = escuelatic.formador.codigo_ruta.upper() + '-' + escuelatic.grupo.nombre.upper()
             ws_escuelatic.cell(row=row_num,column=11).value = escuelatic.numero_sedes
             ws_escuelatic.cell(row=row_num,column=12).value = nivel.nombre.replace(' ','') + 'E'
             ws_escuelatic.cell(row=row_num,column=13).value = actividades
