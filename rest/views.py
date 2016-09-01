@@ -1947,6 +1947,6 @@ class FormadoresFinancieraCronogramasList(BaseDatatableView):
                 item.get_departamentos_string(),
                 item.codigo_ruta,
                 entradas.count(),
-                self.request.user.has_perm('permisos_sican.formacion.cronograma.editar'),
+                self.request.user.has_perm('permisos_sican.financiera.cronogramafinanciera.editar'),
             ])
         return json_data
