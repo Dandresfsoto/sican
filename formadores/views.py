@@ -7,7 +7,7 @@ from formadores.models import Formador, Soporte
 from django.shortcuts import HttpResponseRedirect
 from formadores.tables import SolicitudTable, EntregablesTable
 from formadores.models import SolicitudTransporte, Desplazamiento
-from formadores.forms import NuevaSolicitudTransportes, SubirSoporteForm
+from formadores.forms import NuevaSolicitudTransportes, SubirSoporteForm, SeguridadSocialForm
 from departamentos.models import Departamento
 from municipios.models import Municipio
 import datetime
@@ -353,7 +353,6 @@ class OtroSiCompletoView(TemplateView):
         kwargs['tipo'] = formador.cargo.nombre
         return super(OtroSiCompletoView,self).get_context_data(**kwargs)
 
-
 class EntregablesView(TemplateView):
     template_name = 'formadores/entregables/entregables.html'
 
@@ -376,3 +375,109 @@ class EntregablesView(TemplateView):
         query = Entregable.objects.all().filter(sesion__nivel__diplomado__numero = numero_diplomado).order_by('numero')
         kwargs['table'] = EntregablesTable(query)
         return super(EntregablesView,self).get_context_data(**kwargs)
+
+class SeguridadSocialView(FormView):
+    template_name = "formadores/seguridadsocial/seguridadform.html"
+    form_class = SeguridadSocialForm
+    success_url = 'completo'
+    dic = {
+            'agosto':8,
+            'septiembre':17,
+            'octubre':18,
+            'noviembre':19,
+            'diciembre':20
+    }
+
+    def get_object(self, queryset=None):
+        return Formador.objects.get(cedula=self.kwargs['cedula'])
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        for key, value in self.dic.iteritems():
+            try:
+                Soporte.objects.filter(formador=self.object, oculto=False).get(tipo__id=value)
+            except:
+                nuevo = Soporte(formador=self.object,fecha=datetime.datetime.now(),tipo=TipoSoporte.objects.get(id=value))
+                nuevo.save()
+            else:
+                pass
+        return self.render_to_response(self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=self.kwargs['cedula'])
+        kwargs['formador'] = formador.nombres + " " + formador.apellidos
+        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['cedula'] = formador.cedula
+        return super(SeguridadSocialView,self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'cedula':self.kwargs['cedula']}
+
+    def form_valid(self, form):
+        self.object = self.get_object()
+        agosto_db = Soporte.objects.filter(formador=self.object, oculto=False).get(tipo__id=self.dic['agosto'])
+        septiembre_db = Soporte.objects.filter(formador=self.object, oculto=False).get(tipo__id=self.dic['septiembre'])
+        octubre_db = Soporte.objects.filter(formador=self.object, oculto=False).get(tipo__id=self.dic['octubre'])
+        noviembre_db = Soporte.objects.filter(formador=self.object, oculto=False).get(tipo__id=self.dic['noviembre'])
+        diciembre_db = Soporte.objects.filter(formador=self.object, oculto=False).get(tipo__id=self.dic['diciembre'])
+
+        agosto = form.cleaned_data['agosto']
+        septiembre = form.cleaned_data['septiembre']
+        octubre = form.cleaned_data['octubre']
+        noviembre = form.cleaned_data['noviembre']
+        diciembre = form.cleaned_data['diciembre']
+
+        if agosto != False:
+            agosto_db.archivo = agosto
+        else:
+            agosto_db.archivo = None
+
+
+        if septiembre != False:
+            septiembre_db.archivo = septiembre
+        else:
+            septiembre_db.archivo = None
+
+
+        if octubre != False:
+            octubre_db.archivo = octubre
+        else:
+            octubre_db.archivo = None
+
+
+        if noviembre != False:
+            noviembre_db.archivo = noviembre
+        else:
+            noviembre_db.archivo = None
+
+
+        if diciembre != False:
+            diciembre_db.archivo = diciembre
+        else:
+            diciembre_db.archivo = None
+
+        agosto_db.save()
+        septiembre_db.save()
+        octubre_db.save()
+        noviembre_db.save()
+        diciembre_db.save()
+
+
+        return super(SeguridadSocialView,self).form_valid(form)
+
+class SeguridadSocialCompletaView(TemplateView):
+    template_name = 'formadores/seguridadsocial/completo.html'
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=kwargs['cedula'])
+        try:
+            contrato = Soporte.objects.filter(formador=formador).get(nombre="Contrato")
+        except:
+            link = '#'
+        else:
+            link = contrato.get_archivo_url()
+
+        kwargs['formador'] = formador.nombres + " " + formador.apellidos
+        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['link_contrato'] = link
+        return super(SeguridadSocialCompletaView,self).get_context_data(**kwargs)

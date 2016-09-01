@@ -1935,3 +1935,67 @@ class OtroSiForm(forms.ModelForm):
     class Meta:
         model = Soporte
         fields = ['archivo']
+
+class SeguridadSocialForm(forms.Form):
+
+    agosto = forms.FileField(label="Agosto:",required=False)
+    septiembre = forms.FileField(label="Septiembre:",required=False)
+    octubre = forms.FileField(label="Octubre:",required=False)
+    noviembre = forms.FileField(label="Noviembre:",required=False)
+    diciembre = forms.FileField(label="Diciembre:",required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(SeguridadSocialForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        formador = Formador.objects.get(cedula=kwargs['initial']['cedula'])
+
+        self.fields['agosto'].initial = Soporte.objects.filter(formador = formador).get(tipo__id = 8).archivo
+        self.fields['septiembre'].initial = Soporte.objects.filter(formador = formador).get(tipo__id = 17).archivo
+        self.fields['octubre'].initial = Soporte.objects.filter(formador = formador).get(tipo__id = 18).archivo
+        self.fields['noviembre'].initial = Soporte.objects.filter(formador = formador).get(tipo__id = 19).archivo
+        self.fields['diciembre'].initial = Soporte.objects.filter(formador = formador).get(tipo__id = 20).archivo
+
+        self.helper.layout = Layout(
+            Div(
+                Fieldset(
+                    'Seguridad social de agosto:',
+                    Div(
+                        Div('agosto',css_class='col-xs-12'),
+                        css_class = 'row'
+                    ),
+                ),
+                Fieldset(
+                    'Seguridad social de septiembre:',
+                    Div(
+                        Div('septiembre',css_class='col-xs-12'),
+                        css_class = 'row'
+                    ),
+                ),
+                Fieldset(
+                    'Seguridad social de octubre:',
+                    Div(
+                        Div('octubre',css_class='col-xs-12'),
+                        css_class = 'row'
+                    ),
+                ),
+                Fieldset(
+                    'Seguridad social de noviembre:',
+                    Div(
+                        Div('noviembre',css_class='col-xs-12'),
+                        css_class = 'row'
+                    ),
+                ),
+                Fieldset(
+                    'Seguridad social de diciembre:',
+                    Div(
+                        Div('diciembre',css_class='col-xs-12'),
+                        css_class = 'row'
+                    ),
+                ),
+
+                HTML("""
+                    <div class="row"><button type="submit" class="btn btn-cpe">Enviar</button></div>
+                    """),
+            )
+        )
