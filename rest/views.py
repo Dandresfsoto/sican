@@ -1747,7 +1747,7 @@ class SemanasList(BaseDatatableView):
                 item.numero,
                 item.creacion.strftime("%d de %B del %Y"),
                 inicio.strftime("%d de %B del %Y") + ' - ' + fin.strftime("%d de %B del %Y"),
-                self.request.user.has_perm('permisos_sican.formacion.cronogramafinanciera.editar'),
+                self.request.user.has_perm('permisos_sican.financiera.cronogramafinanciera.editar'),
             ])
         return json_data
 
