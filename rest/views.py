@@ -27,6 +27,7 @@ from formadores.models import SolicitudTransporte
 from informes.models import InformesExcel
 from django.http import HttpResponse
 from informes.tasks import formadores, formadores_soportes, preinscritos, transportes, cronograma_general, cronograma_lider
+from informes.tasks import lideres, lideres_soportes
 from preinscripcion.models import DocentesPreinscritos
 from encuestas.models import PercepcionInicial
 from productos.models import Diplomado, Nivel, Sesion, Entregable
@@ -172,6 +173,10 @@ class ReportesView(APIView):
         if id_accion == '6':
             semana_id = request._request.GET['semana_id']
             x = cronograma_lider.delay(request.user.email,semana_id)
+        if id_accion == '7':
+            x = lideres.delay(request.user.email)
+        if id_accion == '8':
+            x = lideres_soportes.delay(request.user.email)
 
 
         return HttpResponse(status=200)

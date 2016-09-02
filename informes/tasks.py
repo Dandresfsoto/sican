@@ -15,6 +15,7 @@ from formacion.models import EntradaCronograma
 from isoweek import Week
 import datetime
 from formacion.models import Semana
+from lideres.models import Lideres, Soporte
 
 
 @app.task
@@ -209,7 +210,6 @@ def transportes(email):
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
 
-
 @app.task
 def cronograma_general(email,semana_id):
     usuario = User.objects.get(email=email)
@@ -234,7 +234,6 @@ def cronograma_general(email,semana_id):
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
 
-
 @app.task
 def cronograma_lider(email,semana_id):
     usuario = User.objects.get(email=email)
@@ -255,6 +254,103 @@ def cronograma_lider(email,semana_id):
     rango = inicio.strftime("Del dia %d de %B del %Y") + ' - ' + fin.strftime(" al dia %d de %B del %Y")
 
     output = cronograma_interventoria(innovatics,tecnotics,directics,escuelatics,rango)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+
+@app.task
+def lideres(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Directorio de lideres"
+    proceso = "RH-INF03"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Nombres','Apellidos','Cedula','Región','Correo','Celular','Cargo','Profesión','Inicio contrato',
+               'Fin contrato','Banco','Tipo cuenta','Numero cuenta','Eps','Pensión','Arl']
+
+    formatos = ['General','General','General','General','General','General','General','General','General','d/m/yy',
+               'd/m/yy','General','General','General','General','General','General']
+
+
+    ancho_columnas =  [30,20,20,15,15,50,25,20,20,10,
+                       10,20,20,20,20,20,20]
+
+    contenidos = []
+
+    for lider in Lideres.objects.exclude(oculto=True):
+        contenidos.append([
+            'LID-'+unicode(lider.id),
+            lider.nombres,
+            lider.apellidos,
+            lider.cedula,
+            lider.region.nombre,
+            lider.correo_personal,
+            lider.celular_personal,
+            lider.cargo.nombre if lider.cargo != None else '',
+            lider.profesion,
+            lider.fecha_contratacion,
+            lider.fecha_terminacion,
+            lider.banco.nombre if lider.banco != None else '',
+            lider.tipo_cuenta,
+            lider.numero_cuenta,
+            lider.eps,
+            lider.pension,
+            lider.arl
+        ])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def lideres_soportes(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Soportes cargados por lider"
+    proceso = "RH-INF04"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Nombres','Apellidos','Cedula','Región']
+
+    formatos = ['General','General','General','General','General']
+
+
+    ancho_columnas =  [30,20,20,15,15]
+
+    contenidos = []
+
+    tipos_soportes = TipoSoporte.objects.exclude(oculto=True).values_list('id','nombre')
+
+    for tipo_soporte in tipos_soportes:
+        titulos.append(tipo_soporte[1])
+        formatos.append('General')
+        ancho_columnas.append(30)
+
+    for lider in Lideres.objects.exclude(oculto=True):
+        row =[
+                'LID-'+unicode(lider.id),
+                lider.nombres,
+                lider.apellidos,
+                lider.cedula,
+                lider.region.nombre,
+            ]
+        for tipo_soporte in tipos_soportes:
+            try:
+                soporte = Soporte.objects.filter(lider=lider).get(tipo__id=tipo_soporte[0])
+            except:
+                row.append('No')
+            else:
+                if soporte.get_archivo_url() != "":
+                    row.append('Si')
+                else:
+                    row.append('No')
+
+        contenidos.append(row)
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"

@@ -1,0 +1,1 @@
+celery -A sican worker -l info
