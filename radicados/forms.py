@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django import forms
-from radicados.models import Radicado
+from radicados.models import Radicado, RadicadoRetoma
 from secretarias.models import Secretaria
 from municipios.models import Municipio
 from crispy_forms.helper import FormHelper
@@ -53,3 +53,44 @@ class RadicadoForm(forms.ModelForm):
     class Meta:
         model = Radicado
         fields = '__all__'
+
+class RadicadoRetomaForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RadicadoRetomaForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Radicado Retoma',
+                Div(
+                    Div('numero',css_class='col-sm-4'),
+                    Div('municipio',css_class='col-sm-4'),
+                    Div('ubicacion',css_class='col-sm-4'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('institucion',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('sede',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('nombre_completo',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('dane',css_class='col-sm-12'),
+                    css_class = 'row'
+                )
+            )
+        )
+
+    class Meta:
+        model = RadicadoRetoma
+        fields = '__all__'
+        widgets = {
+            'ubicacion' : forms.Select(choices=(('Rural','Rural'),('Urbana','Urbana')))
+        }

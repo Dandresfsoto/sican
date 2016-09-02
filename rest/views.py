@@ -37,6 +37,7 @@ from formacion.models import Semana
 from isoweek import Week
 from lideres.models import Lideres
 from preinscripcion.models import DocentesPreinscritos
+from radicados.models import RadicadoRetoma
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -337,9 +338,17 @@ class UserPermissionList(APIView):
                   'id':'productos',
                   'links':[]
             },
+            'acceso':{'name':'Acceso',
+                  'icon':'icons:chrome-reader-mode',
+                  'id':'acceso',
+                  'links':[]
+            },
         }
 
         links = {
+            'radicadosretoma':{
+                'ver':{'name':'Radicados retoma','link':'/acceso/radicadosretoma/'}
+            },
             'lideres':{
                 'ver':{'name':'Lideres Acceso','link':'/rh/lideres/'}
             },
@@ -2002,5 +2011,52 @@ class ResultadosPercepcionInicialList(BaseDatatableView):
                 item.docente_preinscrito.radicado.numero,
                 self.request.user.has_perm('permisos_sican.encuestas.respuestaspercepcioninicial.editar'),
                 self.request.user.has_perm('permisos_sican.encuestas.respuestaspercepcioninicial.eliminar'),
+            ])
+        return json_data
+
+class RadicadosRetomaList(BaseDatatableView):
+    """
+    0.id
+    1.numero
+    2.municipio
+    3.departamento
+    4.ubicacion
+    5.institucion
+    6.sede
+    7.nombre completo
+    8.dane
+    9.permiso para editar
+    10.permiso para eliminar
+    """
+    model = RadicadoRetoma
+    columns = ['id','numero','municipio']
+
+    order_columns = ['id','numero','municipio']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(numero__icontains=search) | Q(municipio__nombre__icontains=search) |\
+                Q(municipio__departamento__nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.numero,
+                item.municipio.nombre,
+                item.municipio.departamento.nombre,
+                item.ubicacion,
+                item.institucion,
+                item.sede,
+                item.nombre_completo,
+                item.dane,
+                self.request.user.has_perm('permisos_sican.acceso.radicadosretoma.editar'),
+                self.request.user.has_perm('permisos_sican.acceso.radicadosretoma.eliminar'),
             ])
         return json_data

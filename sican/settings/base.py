@@ -94,7 +94,8 @@ LOCAL_APPS = [
     'encuestas',
     'productos',
     'messenger',
-    'lideres'
+    'lideres',
+    'acceso'
 ]
 
 THIRD_PARTY_APPS = [

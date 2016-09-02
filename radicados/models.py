@@ -19,3 +19,18 @@ class Radicado(models.Model):
 
     def __unicode__(self):
         return self.nombre_sede
+
+class RadicadoRetoma(models.Model):
+    numero = models.BigIntegerField()
+    municipio = models.ForeignKey(Municipio)
+    ubicacion = models.CharField(max_length=300)
+    institucion = models.CharField(max_length=300)
+    sede = models.CharField(max_length=300)
+    nombre_completo = models.CharField(max_length=300)
+    dane = models.BigIntegerField()
+
+    class Meta:
+        ordering = ['numero']
+
+    def __unicode__(self):
+        return self.numero

@@ -43,6 +43,7 @@ urlpatterns = [
     url(r'^messenger/', include('messenger.urls', namespace='messenger')),
     url(r'^lideres/', include('lideres.urls', namespace='lideres')),
     url(r'^estrategia/', include('productos.urls', namespace='productos')),
+    url(r'^acceso/', include('acceso.urls', namespace='acceso')),
 ]
 
 if settings.DEBUG:
