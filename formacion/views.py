@@ -91,6 +91,7 @@ class DeletePreinscritoView(LoginRequiredMixin,
     template_name = 'formacion/preinscritos/eliminar.html'
     permission_required = "permisos_sican.formacion.preinscritos.eliminar"
 
+
 class ListaRevisionView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):

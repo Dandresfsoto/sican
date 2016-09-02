@@ -28,3 +28,6 @@ class PercepcionInicial(models.Model):
 
     def __unicode__(self):
         return unicode(self.docente_preinscrito.cedula)
+
+    class Meta:
+        ordering = ['docente_preinscrito__primer_nombre']

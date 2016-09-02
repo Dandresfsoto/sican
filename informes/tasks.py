@@ -16,6 +16,7 @@ from isoweek import Week
 import datetime
 from formacion.models import Semana
 from lideres.models import Lideres, Soporte
+from encuestas.models import PercepcionInicial
 
 
 @app.task
@@ -349,6 +350,56 @@ def lideres_soportes(email):
                     row.append('No')
 
         contenidos.append(row)
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+
+@app.task
+def encuesta_percepcion_inicial(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Base de datos respuestas percepción inicial"
+    proceso = "ENC-INF01"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Cedula','Primer Apellido','Segundo Apellido','Primer Nombre','Segundo Nombre','Cargo','Correo','Telefono Fijo','Telefono Celular',
+               'Departamento','Municipio','Verificado','Fecha','Radicado','Secretaria','Municipio Radicado','Nombre Sede','Dane Sede','Ubicación']
+
+    formatos = ['General','0','General','General','General','General','General','General','General','General',
+                'General','General','General','d/m/yy','0','General','General','General','0','General']
+
+
+    ancho_columnas =  [30,20,15,15,15,40,40,40,40,40,
+                       40,40,40,40,40,40,40,40,40,40]
+
+    contenidos = []
+
+    for encuestado in PercepcionInicial.objects.all():
+        contenidos.append([
+            'ENC-'+unicode(encuestado.id),
+            encuestado.docente_preinscrito.cedula,
+            encuestado.docente_preinscrito.primer_apellido,
+            encuestado.docente_preinscrito.segundo_apellido,
+            encuestado.docente_preinscrito.primer_nombre,
+            encuestado.docente_preinscrito.segundo_nombre,
+            encuestado.docente_preinscrito.cargo,
+            encuestado.docente_preinscrito.correo,
+            encuestado.docente_preinscrito.telefono_fijo,
+            encuestado.docente_preinscrito.telefono_celular,
+            encuestado.docente_preinscrito.departamento.nombre if encuestado.docente_preinscrito.departamento != None else '',
+            encuestado.docente_preinscrito.municipio.nombre if encuestado.docente_preinscrito.municipio != None else '',
+            'SI' if encuestado.docente_preinscrito.verificado else 'NO',
+            encuestado.docente_preinscrito.fecha,
+            encuestado.docente_preinscrito.radicado.numero if encuestado.docente_preinscrito.radicado != None else '',
+            encuestado.docente_preinscrito.radicado.secretaria.nombre if encuestado.docente_preinscrito.radicado.secretaria != None else '',
+            encuestado.docente_preinscrito.radicado.municipio.nombre if encuestado.docente_preinscrito.radicado.municipio != None else '',
+            encuestado.docente_preinscrito.radicado.nombre_sede if encuestado.docente_preinscrito.radicado != None else '',
+            encuestado.docente_preinscrito.radicado.dane_sede if encuestado.docente_preinscrito.radicado != None else '',
+            encuestado.docente_preinscrito.radicado.ubicacion if encuestado.docente_preinscrito.radicado != None else '',
+        ])
 
     output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
     filename = unicode(informe.creacion) + '.xlsx'

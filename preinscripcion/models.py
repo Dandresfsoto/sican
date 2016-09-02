@@ -27,3 +27,6 @@ class DocentesPreinscritos(models.Model):
 
     def __unicode__(self):
         return ("%s %s %s %s") % (self.primer_nombre,self.segundo_nombre,self.primer_apellido, self.segundo_apellido)
+
+    def get_full_name(self):
+        return self.primer_nombre + " " + self.segundo_nombre + " " + self.primer_apellido + " " + self.segundo_apellido

@@ -78,3 +78,20 @@ class ResultadosPercepcionInicialView(LoginRequiredMixin,
                          TemplateView):
     template_name = 'encuestas/percepcion/resultados.html'
     permission_required = "permisos_sican.encuestas.percepcioninicial.ver"
+
+
+
+
+
+
+
+class RespuestasPercepcionInicialView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'encuestas/resultados_percepcion/lista.html'
+    permission_required = "permisos_sican.encuestas.respuestaspercepcioninicial.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.encuestas.respuestaspercepcioninicia.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.encuestas.respuestaspercepcioninicia.informes')
+        return super(RespuestasPercepcionInicialView, self).get_context_data(**kwargs)

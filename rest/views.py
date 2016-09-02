@@ -27,7 +27,7 @@ from formadores.models import SolicitudTransporte
 from informes.models import InformesExcel
 from django.http import HttpResponse
 from informes.tasks import formadores, formadores_soportes, preinscritos, transportes, cronograma_general, cronograma_lider
-from informes.tasks import lideres, lideres_soportes
+from informes.tasks import lideres, lideres_soportes, encuesta_percepcion_inicial
 from preinscripcion.models import DocentesPreinscritos
 from encuestas.models import PercepcionInicial
 from productos.models import Diplomado, Nivel, Sesion, Entregable
@@ -36,6 +36,7 @@ import datetime
 from formacion.models import Semana
 from isoweek import Week
 from lideres.models import Lideres
+from preinscripcion.models import DocentesPreinscritos
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -177,6 +178,8 @@ class ReportesView(APIView):
             x = lideres.delay(request.user.email)
         if id_accion == '8':
             x = lideres_soportes.delay(request.user.email)
+        if id_accion == '9':
+            x = encuesta_percepcion_inicial.delay(request.user.email)
 
 
         return HttpResponse(status=200)
@@ -366,6 +369,9 @@ class UserPermissionList(APIView):
             },
             'percepcioninicial':{
                 'ver':{'name':'Percepción inicial y detección de necesidades','link':'/encuestas/resultados/percepcioninicial/'}
+            },
+            'respuestaspercepcioninicial':{
+                'ver':{'name':'Respuestas percepción inicial','link':'/encuestas/respuestas/percepcioninicial/'}
             },
             'permisos':{
                 'ver':{'name':'Permisos','link':'/adminuser/permisos/'}
@@ -1953,5 +1959,48 @@ class FormadoresFinancieraCronogramasList(BaseDatatableView):
                 item.codigo_ruta,
                 entradas.count(),
                 self.request.user.has_perm('permisos_sican.financiera.cronogramafinanciera.editar'),
+            ])
+        return json_data
+
+class ResultadosPercepcionInicialList(BaseDatatableView):
+    """
+    0.id
+    1.nombre completo
+    2.cedula
+    3.departamento
+    4.municipio
+    5.radicado
+    6.permiso para editar
+    7.permiso para eliminar
+    """
+    model = PercepcionInicial
+    columns = ['id','pregunta_1','pregunta_1','pregunta_1','pregunta_1','pregunta_1']
+
+    order_columns = ['pregunta_1','pregunta_1','pregunta_1','pregunta_1','pregunta_1']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(docente_preinscrito__primer_nombre__icontains=search) | Q(docente_preinscrito__segundo_nombre__icontains=search) | \
+                Q(docente_preinscrito__primer_apellido__icontains=search) | Q(docente_preinscrito__segundo_apellido__icontains=search) | \
+                Q(docente_preinscrito__departamento__nombre__icontains=search) | Q(docente_preinscrito__municipio__nombre__icontains=search)
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.docente_preinscrito.get_full_name(),
+                item.docente_preinscrito.cedula,
+                item.docente_preinscrito.departamento.nombre,
+                item.docente_preinscrito.municipio.nombre,
+                item.docente_preinscrito.radicado.numero,
+                self.request.user.has_perm('permisos_sican.encuestas.respuestaspercepcioninicial.editar'),
+                self.request.user.has_perm('permisos_sican.encuestas.respuestaspercepcioninicial.eliminar'),
             ])
         return json_data
