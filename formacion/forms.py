@@ -206,7 +206,7 @@ class EntradaCronogramaUpdateform(forms.ModelForm):
 
             if hora_inicio.hour + delta <= 22:
                 horas = []
-                entradas = EntradaCronograma.objects.filter(formador=formador,fecha=fecha)
+                entradas = EntradaCronograma.objects.filter(formador=formador,fecha=fecha).exclude(id=self.instance.id)
 
                 for entrada in entradas:
                     entrada_hora_inicio = entrada.hora_inicio.hour
