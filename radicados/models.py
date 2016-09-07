@@ -33,4 +33,4 @@ class RadicadoRetoma(models.Model):
         ordering = ['numero']
 
     def __unicode__(self):
-        return self.numero
+        return str(self.numero)

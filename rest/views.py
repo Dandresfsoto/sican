@@ -38,6 +38,7 @@ from isoweek import Week
 from lideres.models import Lideres
 from preinscripcion.models import DocentesPreinscritos
 from radicados.models import RadicadoRetoma
+from acceso.models import Retoma
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -346,6 +347,12 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'contratos':{
+                'ver':{'name':'Contratos','link':'/financiera/contratos/'}
+            },
+            'retoma':{
+                'ver':{'name':'Retoma','link':'/acceso/retoma/'}
+            },
             'radicadosretoma':{
                 'ver':{'name':'Radicados retoma','link':'/acceso/radicadosretoma/'}
             },
@@ -2058,5 +2065,57 @@ class RadicadosRetomaList(BaseDatatableView):
                 item.dane,
                 self.request.user.has_perm('permisos_sican.acceso.radicadosretoma.editar'),
                 self.request.user.has_perm('permisos_sican.acceso.radicadosretoma.eliminar'),
+            ])
+        return json_data
+
+class RetomaList(BaseDatatableView):
+    """
+    0.id
+    1.numero
+    2.municipio
+    3.departamento
+    4.estado
+    5.ubicacion
+    6.institucion
+    7.sede
+    8.nombre completo
+    9.dane
+    10.permiso para editar
+    11.permiso para eliminar
+    """
+    model = Retoma
+    columns = ['id','id','id']
+
+    order_columns = ['id','id','id']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(radicado__numero__icontains=search) | Q(radicado__municipio__nombre__icontains=search) |\
+                Q(radicado__municipio__departamento__nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def get_initial_queryset(self):
+        return Retoma.objects.filter(lider = self.request.user)
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.radicado.numero,
+                item.radicado.municipio.nombre,
+                item.radicado.municipio.departamento.nombre,
+                item.estado,
+                item.radicado.ubicacion,
+                item.radicado.institucion,
+                item.radicado.sede,
+                item.radicado.nombre_completo,
+                item.radicado.dane,
+                self.request.user.has_perm('permisos_sican.acceso.retoma.editar'),
+                self.request.user.has_perm('permisos_sican.acceso.retoma.eliminar'),
             ])
         return json_data

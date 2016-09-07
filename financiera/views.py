@@ -732,3 +732,21 @@ class CronogramaFormadorDeleteView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'formacion/cronograma/eliminar.html'
     permission_required = "permisos_sican.financiera.cronogramafinanciera.eliminar"
+
+
+
+
+
+
+
+
+class ContratosListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/contratos/lista.html'
+    permission_required = "permisos_sican.financiera.contratos.ver"
+
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.financiera.contratos.crear')
+        return super(ContratosListView, self).get_context_data(**kwargs)

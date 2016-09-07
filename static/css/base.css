@@ -220,3 +220,8 @@ legend {
 .ask_link:hover > .ask_div {
   background: #16b821;
 }
+.seleccionchat {
+  height: 100%;
+  background: #fff;
+  border-radius: 10px;
+}

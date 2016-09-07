@@ -5,6 +5,9 @@ from django.views.generic import TemplateView, CreateView, DeleteView, UpdateVie
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from radicados.models import RadicadoRetoma
 from radicados.forms import RadicadoRetomaForm
+from acceso.models import Retoma
+from acceso.forms import RetomaForm
+
 
 
 class ListaRadicadosRetomaView(LoginRequiredMixin,
@@ -48,3 +51,26 @@ class DeleteRadicadosRetomaView(LoginRequiredMixin,
     success_url = '/acceso/radicadosretoma/'
     template_name = 'acceso/radicadosretoma/eliminar.html'
     permission_required = "permisos_acceso.radicadosretoma.eliminar"
+
+
+
+
+class ListaRetomaView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'acceso/retoma/lista.html'
+    permission_required = "permisos_sican.acceso.retoma.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.acceso.retoma.crear')
+        return super(ListaRetomaView, self).get_context_data(**kwargs)
+
+
+class NuevaRetomaView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = Retoma
+    form_class = RetomaForm
+    success_url = '/acceso/retoma/'
+    template_name = 'acceso/retoma/nuevo.html'
+    permission_required = "permisos_acceso.retoma.crear"

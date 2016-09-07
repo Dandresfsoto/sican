@@ -10,7 +10,7 @@ from rest.views import SolicitudesTransporteFormadorFinancieraList, EntregablesL
 from rest.views import FormadoresCronogramasList, FormadoresCronogramasFilterList, SecretariasChainedList
 from rest.views import SemanasList, LideresRh, LideresRhSoportes
 from rest.views import SemanasFormacionList, FormadoresFinancieraCronogramasList
-from rest.views import ResultadosPercepcionInicialList, RadicadosRetomaList
+from rest.views import ResultadosPercepcionInicialList, RadicadosRetomaList, RetomaList
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -74,4 +74,6 @@ urlpatterns = [
 
     url(r'formacion/semanas/$', SemanasFormacionList.as_view()),
     url(r'acceso/radicadosretoma/$', RadicadosRetomaList.as_view()),
+
+    url(r'acceso/retoma/$', RetomaList.as_view()),
 ]
