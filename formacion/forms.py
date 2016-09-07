@@ -31,10 +31,18 @@ class EntradaCronogramaform(forms.ModelForm):
             delta = sum(tiempo)
 
             if hora_inicio.hour + delta <= 22:
-                hora_finalizacion = datetime.time(hora_inicio.hour+delta,hora_inicio.minute,hora_inicio.second)
-                entradas = EntradaCronograma.objects.filter(formador=formador,fecha=fecha).filter(hora_inicio__gte=hora_inicio).filter(hora_finalizacion__lte=hora_finalizacion)
-                if len(entradas) > 0:
-                    self.add_error('hora_inicio','Hay un registro que inicia a las ' + str(entradas[0].hora_inicio) + ' y termina a las ' + str(entradas[0].hora_finalizacion))
+
+                horas = []
+                entradas = EntradaCronograma.objects.filter(formador=formador,fecha=fecha)
+
+                for entrada in entradas:
+                    entrada_hora_inicio = entrada.hora_inicio.hour
+                    entrada_hora_finalizacion = entrada.hora_finalizacion.hour
+                    for hora in range(entrada_hora_inicio,entrada_hora_finalizacion):
+                        horas.append(datetime.time(hora,0))
+
+                if hora_inicio in horas:
+                    self.add_error('hora_inicio','Hay un registro en el intervalo de horas')
 
             else:
                 self.add_error('actividades_entrada','Las actividades planeadas superan las horas disponibles')
@@ -197,10 +205,17 @@ class EntradaCronogramaUpdateform(forms.ModelForm):
             delta = sum(tiempo)
 
             if hora_inicio.hour + delta <= 22:
-                hora_finalizacion = datetime.time(hora_inicio.hour+delta,hora_inicio.minute,hora_inicio.second)
-                entradas = EntradaCronograma.objects.filter(formador=formador,fecha=fecha).filter(hora_inicio__gte=hora_inicio).filter(hora_finalizacion__lte=hora_finalizacion)
-                if len(entradas) > 0:
-                    self.add_error('hora_inicio','Hay un registro que inicia a las ' + str(entradas[0].hora_inicio) + ' y termina a las ' + str(entradas[0].hora_finalizacion))
+                horas = []
+                entradas = EntradaCronograma.objects.filter(formador=formador,fecha=fecha)
+
+                for entrada in entradas:
+                    entrada_hora_inicio = entrada.hora_inicio.hour
+                    entrada_hora_finalizacion = entrada.hora_finalizacion.hour
+                    for hora in range(entrada_hora_inicio,entrada_hora_finalizacion):
+                        horas.append(datetime.time(hora,0))
+
+                if hora_inicio in horas:
+                    self.add_error('hora_inicio','Hay un registro en el intervalo de horas')
 
             else:
                 self.add_error('actividades_entrada','Las actividades planeadas superan las horas disponibles')
