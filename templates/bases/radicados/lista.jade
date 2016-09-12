@@ -53,6 +53,21 @@ block scroll_header_panel_content
                     td Eliminar
 block body_script_content
     script.
+        $("#accion").on("click",function(){
+            var action = $("#select_accion").val();
+            if(action != ''){
+                $.ajax({
+                    type: "GET",
+                    url: '/rest/reportes/?action=' + action,
+                    success: function(data){
+                        $('#myModal').modal('show');
+                        $("#select_accion").val('');
+                        $("#select_accion").selectpicker('refresh');
+                    }
+                });
+            }
+        });
+    script.
         $(document).ready(function () {
             var table = $('#table').DataTable({
                 "stateSave": true,
