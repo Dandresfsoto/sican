@@ -161,6 +161,7 @@ class RadicadoListView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.bases.radicados.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.bases.radicados.informes')
         return super(RadicadoListView, self).get_context_data(**kwargs)
 
 class NuevoRadicadoView(LoginRequiredMixin,

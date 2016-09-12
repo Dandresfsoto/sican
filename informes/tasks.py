@@ -17,6 +17,7 @@ import datetime
 from formacion.models import Semana
 from lideres.models import Lideres, Soporte
 from encuestas.models import PercepcionInicial
+from radicados.models import Radicado
 
 @app.task
 def nueva_semana():
@@ -360,7 +361,6 @@ def lideres_soportes(email):
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
 
-
 @app.task
 def encuesta_percepcion_inicial(email):
     usuario = User.objects.get(email=email)
@@ -428,6 +428,41 @@ def encuesta_percepcion_inicial(email):
             encuestado.pregunta_12,
             encuestado.pregunta_12_1,
             encuestado.pregunta_13,
+        ])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def radicados(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Base de datos radicados"
+    proceso = "DB-INF01"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Numero','Municipio','Departamento','Secretaria','Nombre Sede','Dane Sede','Tipo','Ubicación']
+
+    formatos = ['General','General','General','General','General','General','General','General','General']
+
+
+    ancho_columnas =  [30,30,30,30,30,30,30,30,30]
+
+    contenidos = []
+
+    for radicado in Radicado.objects.exclude(oculto=True):
+        contenidos.append([
+            'RAD-'+unicode(radicado.id),
+            radicado.numero,
+            radicado.municipio.nombre if radicado.municipio != None else '',
+            radicado.municipio.departamento.nombre if radicado.municipio.departamento != None else '',
+            radicado.secretaria.nombre if radicado.secretaria != None else '',
+            radicado.nombre_sede,
+            radicado.dane_sede,
+            radicado.tipo,
+            radicado.ubicacion
         ])
 
     output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)

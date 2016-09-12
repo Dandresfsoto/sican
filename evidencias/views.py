@@ -13,9 +13,5 @@ from productos.models import Entregable
 class DiplomadosListView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
-    template_name = 'productos/diplomados/lista.html'
-    permission_required = "permisos_sican.productos.diplomados.ver"
-
-    def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.productos.diplomados.crear')
-        return super(DiplomadosListView, self).get_context_data(**kwargs)
+    template_name = 'evidencias/general/lista_diplomados.html'
+    permission_required = "permisos_sican.evidencias.general.ver"

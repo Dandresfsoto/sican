@@ -21,9 +21,19 @@ block breadcrum
 block scroll_header_panel_content
     div(class="container-fluid container-index")
         | {% if nuevo_permiso %}
-        a(href="nuevo",class="link_button")
-            paper-button(class="submit") Nuevo
+        div(class="block-right")
+            a(href="nuevo",class="link_button")
+                paper-button(class="submit") Nuevo
         | {% endif %}
+
+        | {% if informes %}
+        div(style="margin-bottom:20px;")
+            select(class="selectpicker",id="select_accion")
+                option(value="") ---------
+                option(value="10") Base de datos radicados
+            button(class="btn",id="accion") Generar reporte
+        | {% endif %}
+
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
