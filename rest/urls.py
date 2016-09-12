@@ -11,6 +11,7 @@ from rest.views import FormadoresCronogramasList, FormadoresCronogramasFilterLis
 from rest.views import SemanasList, LideresRh, LideresRhSoportes
 from rest.views import SemanasFormacionList, FormadoresFinancieraCronogramasList
 from rest.views import ResultadosPercepcionInicialList, RadicadosRetomaList, RetomaList
+from rest.views import MatricesDiplomadosList, AutocompleteRadicados, GruposChainedList
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -45,6 +46,7 @@ urlpatterns = [
     url(r'chained/municipios/$', MunicipiosChainedList.as_view()),
     url(r'chained/radicados/$', RadicadosChainedList.as_view()),
     url(r'chained/secretarias/$', SecretariasChainedList.as_view()),
+    url(r'chained/grupos/$', GruposChainedList.as_view()),
 
     url(r'financiera/transportes/$', SolicitudesTransporteList.as_view()),
     url(r'financiera/transportes/(?P<id_formador>\w+)/$', SolicitudesTransporteFormadorFinancieraList.as_view()),
@@ -76,4 +78,7 @@ urlpatterns = [
     url(r'acceso/radicadosretoma/$', RadicadosRetomaList.as_view()),
 
     url(r'acceso/retoma/$', RetomaList.as_view()),
+
+    url(r'matrices/diplomados/(?P<diplomado>\w+)/$', MatricesDiplomadosList.as_view()),
+    url(r'autocomplete/radicados/$', AutocompleteRadicados.as_view()),
 ]

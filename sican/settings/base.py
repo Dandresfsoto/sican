@@ -28,6 +28,11 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(),
         'args': (),
     },
+    'Nueva-semana-cronograma': {
+        'task': 'informes.tasks.nueva_semana',
+        'schedule': crontab(minute=0,hour=0, day_of_week=1),
+        'args': (),
+    },
 }
 
 
@@ -96,7 +101,9 @@ LOCAL_APPS = [
     'messenger',
     'lideres',
     'acceso',
-    'contratos'
+    'contratos',
+    'matrices',
+    'evidencias'
 ]
 
 THIRD_PARTY_APPS = [

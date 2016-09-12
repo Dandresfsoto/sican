@@ -46,7 +46,7 @@ class Formador(models.Model):
         ordering = ['nombres']
 
     def __unicode__(self):
-        return self.nombres
+        return self.nombres + " " + self.apellidos
 
     def get_region_string(self):
         value = ''
@@ -154,3 +154,6 @@ class Grupos(models.Model):
 
     def __unicode__(self):
         return self.formador.codigo_ruta + "-" + self.nombre
+
+    def get_full_name(self):
+        return self.formador.codigo_ruta + '-' + self.nombre

@@ -21,14 +21,12 @@ from lideres.models import Soporte as SoporteLider
 from departamentos.models import Departamento
 from municipios.models import Municipio
 from secretarias.models import Secretaria
-from radicados.models import Radicado
 from rest_framework.permissions import AllowAny
 from formadores.models import SolicitudTransporte
 from informes.models import InformesExcel
 from django.http import HttpResponse
 from informes.tasks import formadores, formadores_soportes, preinscritos, transportes, cronograma_general, cronograma_lider
 from informes.tasks import lideres, lideres_soportes, encuesta_percepcion_inicial
-from preinscripcion.models import DocentesPreinscritos
 from encuestas.models import PercepcionInicial
 from productos.models import Diplomado, Nivel, Sesion, Entregable
 from formacion.models import EntradaCronograma
@@ -39,6 +37,9 @@ from lideres.models import Lideres
 from preinscripcion.models import DocentesPreinscritos
 from radicados.models import RadicadoRetoma
 from acceso.models import Retoma
+from matrices.models import Beneficiario
+from radicados.models import Radicado
+from formacion.models import Grupos
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -246,6 +247,28 @@ class RadicadosChainedList(APIView):
 
         return Response(response)
 
+class GruposChainedList(APIView):
+    """
+
+    """
+    permission_classes = (AllowAny,)
+    def get(self, request, format=None):
+        try:
+            id_formador = request._request.GET['formador']
+        except:
+            id_formador = 0
+
+        if id_formador == '':
+            id_formador = 0
+        grupos = Grupos.objects.filter(formador__id=id_formador)
+
+        response = {}
+
+        for grupo in grupos:
+            response[grupo.id] = unicode(grupo.formador.codigo_ruta) + "-" + grupo.nombre
+
+        return Response(response)
+
 class SecretariasChainedList(APIView):
     """
 
@@ -271,6 +294,23 @@ class SecretariasChainedList(APIView):
             response[secretaria[0]] = secretaria[1]
 
         return Response(response)
+
+class AutocompleteRadicados(APIView):
+
+    permission_classes = (AllowAny,)
+
+    def get(self, request, format=None):
+
+        query = request.query_params['query']
+        response = []
+        q = Q(numero__startswith=query) | Q(municipio__departamento__nombre__icontains=query) |\
+            Q(municipio__nombre__icontains=query) | Q(nombre_sede__icontains=query)
+
+        for radicado in Radicado.objects.filter(q):
+            response.append({'value':str(radicado.numero)+ ' - ' + radicado.municipio.nombre + ', ' +
+                                     radicado.municipio.departamento.nombre + ' - ' + radicado.nombre_sede,'data':str(radicado.numero)})
+
+        return Response({'suggestions':response})
 
 class UserList(APIView):
     """
@@ -344,9 +384,31 @@ class UserPermissionList(APIView):
                   'id':'acceso',
                   'links':[]
             },
+            'matrices':{'name':'Matrices',
+                  'icon':'icons:timeline',
+                  'id':'matrices',
+                  'links':[]
+            },
+            'evidencias':{'name':'Evidencias',
+                  'icon':'icons:view-quilt',
+                  'id':'evidencias',
+                  'links':[]
+            },
         }
 
         links = {
+            'general':{
+                'ver':{'name':'Carga general','link':'/evidencias/general/'}
+            },
+            'codigos':{
+                'ver':{'name':'Codigos de soporte','link':'/evidencias/codigos/'}
+            },
+            'matricesdiplomados':{
+                'ver_innovatic':{'name':'Matriz InnovaTIC','link':'/matrices/innovatic/'},
+                'ver_tecnotic':{'name':'Matriz TecnoTIC','link':'/matrices/tecnotic/'},
+                'ver_directic':{'name':'Matriz DirecTIC','link':'/matrices/directic/'},
+                'ver_escuelatic':{'name':'Matriz EscuelaTIC','link':'/matrices/escuelatic/'},
+            },
             'contratos':{
                 'ver':{'name':'Contratos','link':'/financiera/contratos/'}
             },
@@ -2115,6 +2177,82 @@ class RetomaList(BaseDatatableView):
                 item.radicado.sede,
                 item.radicado.nombre_completo,
                 item.radicado.dane,
+                self.request.user.has_perm('permisos_sican.acceso.retoma.editar'),
+                self.request.user.has_perm('permisos_sican.acceso.retoma.eliminar'),
+            ])
+        return json_data
+
+class MatricesDiplomadosList(BaseDatatableView):
+    """
+    0.id
+    1.region
+    2.radicado
+    3.formador
+    4.grupo
+    5.apellidos
+    6.nombres
+    7.cedula
+    8.correo
+    9.telefono fijo
+    10.telefono celular
+    11.area
+    12.grado
+    13.genero
+    14.estado
+    15.permiso para editar
+    16.permiso para eliminar
+    """
+    model = Beneficiario
+    columns = ['region','radicado','formador','grupo','apellidos','nombres','cedula','correo']
+
+    order_columns = ['region','radicado','formador','grupo','apellidos','nombres','cedula','correo']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(region__nombre__icontains=search) | Q(radicado__numero__icontains=search) |\
+                Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) |\
+                Q(apellidos__icontains=search) | Q(nombres__icontains=search) |\
+                Q(cedula__icontains=search)
+
+            qs = qs.filter(q)
+        return qs
+
+    def get_initial_queryset(self):
+        diplomado = self.kwargs['diplomado']
+        if diplomado == 'INNOVATIC':
+            numero = 1
+        elif diplomado == 'TECNOTIC':
+            numero = 2
+        elif diplomado == 'DIRECTIC':
+            numero = 3
+        elif diplomado == 'ESCUELATIC':
+            numero = 4
+        else:
+            numero = 0
+        return Beneficiario.objects.filter(diplomado__numero = numero)
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.region.nombre,
+                item.radicado.numero if item.radicado != None else 'N/A',
+                item.formador.get_full_name(),
+                item.grupo.get_full_name(),
+                item.apellidos,
+                item.nombres,
+                item.cedula,
+                item.correo,
+                item.telefono_fijo,
+                item.telefono_celular,
+                item.area.nombre if item.area != None else 'N/A',
+                item.grado.nombre if item.grado != None else 'N/A',
+                item.genero,
+                item.estado,
                 self.request.user.has_perm('permisos_sican.acceso.retoma.editar'),
                 self.request.user.has_perm('permisos_sican.acceso.retoma.eliminar'),
             ])

@@ -44,6 +44,8 @@ urlpatterns = [
     url(r'^lideres/', include('lideres.urls', namespace='lideres')),
     url(r'^estrategia/', include('productos.urls', namespace='productos')),
     url(r'^acceso/', include('acceso.urls', namespace='acceso')),
+    url(r'^matrices/', include('matrices.urls', namespace='matrices')),
+    url(r'^evidencias/', include('evidencias.urls', namespace='evidencias')),
 ]
 
 if settings.DEBUG:

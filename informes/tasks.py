@@ -18,6 +18,10 @@ from formacion.models import Semana
 from lideres.models import Lideres, Soporte
 from encuestas.models import PercepcionInicial
 
+@app.task
+def nueva_semana():
+    x, created = Semana.objects.get_or_create(numero = datetime.datetime.now().isocalendar()[1]+1)
+    return "Semana actualizada"
 
 @app.task
 def formadores(email):
