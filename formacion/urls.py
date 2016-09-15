@@ -6,6 +6,7 @@ from formacion.views import TransporteFormView, TransporteFormUpdateView
 from formacion.views import ListaTransportesConsignadasView, ListaTransportesAprobadasLideresView
 from formacion.views import ListaCronogramasView, CronogramaFormadorView, CronogramaFormadorNuevoView, CronogramaFormadorUpdateView
 from formacion.views import CronogramaFormadorDeleteView, ListaCronogramasSemanaView
+from formacion.views import ListadoFormadoresGruposView, FormadoresGruposLista, NuevoGrupoFormador, EditarGrupoFormador, EliminarGrupoFormador
 
 urlpatterns = [
     url(r'^preinscritos/$', ListaPreinscritosView.as_view()),
@@ -35,8 +36,9 @@ urlpatterns = [
     url(r'^cronograma/semana/(?P<semana_id>[0-9]+)/editar/(?P<id>[0-9]+)/entrada/(?P<id_entrada>[0-9]+)/$', CronogramaFormadorUpdateView.as_view()),
     url(r'^cronograma/semana/(?P<semana_id>[0-9]+)/editar/(?P<id>[0-9]+)/eliminar/(?P<id_entrada>[0-9]+)/$', CronogramaFormadorDeleteView.as_view()),
 
-    #url(r'^cronograma/editar/(?P<id>[0-9]+)/$', CronogramaFormadorView.as_view()),
-    #url(r'^cronograma/editar/(?P<id>[0-9]+)/nuevo/$', CronogramaFormadorNuevoView.as_view()),
-    #url(r'^cronograma/editar/(?P<id>[0-9]+)/entrada/(?P<id_entrada>[0-9]+)/$', CronogramaFormadorUpdateView.as_view()),
-    #url(r'^cronograma/editar/(?P<id>[0-9]+)/eliminar/(?P<id_entrada>[0-9]+)/$', CronogramaFormadorDeleteView.as_view()),
+    url(r'^grupos/$', ListadoFormadoresGruposView.as_view()),
+    url(r'^grupos/formador/(?P<id_formador>\w+)/$', FormadoresGruposLista.as_view()),
+    url(r'^grupos/formador/(?P<id_formador>\w+)/nuevo$', NuevoGrupoFormador.as_view()),
+    url(r'^grupos/formador/(?P<id_formador>\w+)/editar/(?P<id_grupo>\w+)/', EditarGrupoFormador.as_view()),
+    url(r'^grupos/formador/(?P<id_formador>\w+)/eliminar/(?P<id_grupo>\w+)/', EliminarGrupoFormador.as_view()),
 ]

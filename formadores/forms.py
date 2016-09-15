@@ -14,6 +14,7 @@ from formadores.models import Soporte
 from departamentos.models import Departamento
 from municipios.models import Municipio
 from formadores.models import SolicitudTransporte
+from formadores.models import Grupos
 import locale
 
 class FormadorForm(forms.ModelForm):
@@ -1999,3 +2000,41 @@ class SeguridadSocialForm(forms.Form):
                     """),
             )
         )
+
+class GruposForm(forms.ModelForm):
+
+    def clean(self):
+        cleaned_data = super(GruposForm, self).clean()
+        nombre = cleaned_data.get('nombre')
+        formador = cleaned_data.get('formador')
+
+        if Grupos.objects.filter(formador = formador,nombre=nombre,oculto=False).count() > 0:
+            self.add_error('nombre','Hay un grupo con el mismo nombre')
+
+
+
+
+    def __init__(self, *args, **kwargs):
+        super(GruposForm, self).__init__(*args, **kwargs)
+        self.fields['formador'].initial = Formador.objects.get(id = kwargs['initial']['formador_id'])
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Nombre',
+                Div(
+                    Div('nombre',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('formador',css_class='col-sm-12'),
+                    css_class = 'hidden'
+                ),
+            )
+        )
+
+    class Meta:
+        model = Grupos
+        fields = '__all__'
+        widgets = {
+            'nombre': forms.NumberInput(),
+        }

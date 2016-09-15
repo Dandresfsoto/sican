@@ -12,6 +12,7 @@ from rest.views import SemanasList, LideresRh, LideresRhSoportes
 from rest.views import SemanasFormacionList, FormadoresFinancieraCronogramasList
 from rest.views import ResultadosPercepcionInicialList, RadicadosRetomaList, RetomaList
 from rest.views import MatricesDiplomadosList, AutocompleteRadicados, GruposChainedList
+from rest.views import FormadoresGrupos, FormadoresGruposLista
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -81,4 +82,8 @@ urlpatterns = [
 
     url(r'matrices/diplomados/(?P<diplomado>\w+)/$', MatricesDiplomadosList.as_view()),
     url(r'autocomplete/radicados/$', AutocompleteRadicados.as_view()),
+
+
+    url(r'formacion/grupos/$', FormadoresGrupos.as_view()),
+    url(r'formacion/grupos/(?P<id_formador>\w+)/$', FormadoresGruposLista.as_view()),
 ]

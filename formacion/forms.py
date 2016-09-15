@@ -82,8 +82,10 @@ class EntradaCronogramaform(forms.ModelForm):
         self.fields['departamento'].initial = ''
 
 
-        self.fields['grupo'].widget.choices = Grupos.objects.filter(formador=formador).values_list('id','nombre')
-
+        grupos_choices = []
+        for grupo in Grupos.objects.filter(formador=formador,oculto=False):
+            grupos_choices.append((grupo.id,grupo.formador.codigo_ruta+'-'+grupo.nombre))
+        self.fields['grupo'].widget.choices = grupos_choices
 
         tipo = 0
         if formador.cargo.nombre == "Formador Tipo 1":
@@ -257,8 +259,10 @@ class EntradaCronogramaUpdateform(forms.ModelForm):
         self.fields['departamento'].widget.choices = departamentos
         self.fields['departamento'].initial = ''
 
-
-        self.fields['grupo'].widget.choices = Grupos.objects.filter(formador=formador).values_list('id','nombre')
+        grupos_choices = []
+        for grupo in Grupos.objects.filter(formador=formador,oculto=False):
+            grupos_choices.append((grupo.id,grupo.formador.codigo_ruta+'-'+grupo.nombre))
+        self.fields['grupo'].widget.choices = grupos_choices
 
 
         tipo = 0

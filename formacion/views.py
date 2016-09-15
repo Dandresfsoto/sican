@@ -24,6 +24,8 @@ from isoweek import Week
 from formacion.models import EntradaCronograma
 from formacion.forms import EntradaCronogramaform, EntradaCronogramaUpdateform
 from productos.models import Nivel, Actividades
+from formacion.models import Grupos
+from formadores.forms import GruposForm
 
 
 class ListaPreinscritosView(LoginRequiredMixin,
@@ -608,3 +610,79 @@ class CronogramaFormadorDeleteView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'formacion/cronograma/eliminar.html'
     permission_required = "permisos_sican.formacion.cronograma.eliminar"
+
+
+class ListadoFormadoresGruposView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/grupos/lista_formadores.html'
+    permission_required = "permisos_sican.formacion.gruposformacion.ver"
+
+
+class FormadoresGruposLista(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/grupos/lista_grupos.html'
+    permission_required = "permisos_sican.formacion.gruposformacion.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador_id'] = self.kwargs['id_formador']
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.formacion.gruposformacion.crear')
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador']).get_full_name()
+        return super(FormadoresGruposLista,self).get_context_data(**kwargs)
+
+
+class NuevoGrupoFormador(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = Grupos
+    form_class = GruposForm
+    success_url = './'
+    template_name = 'formacion/grupos/nuevo.html'
+    permission_required = "permisos_sican.formacion.gruposformacion.crear"
+
+    def get_initial(self):
+        return {'formador_id':self.kwargs['id_formador']}
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador']).get_full_name()
+        return super(NuevoGrupoFormador,self).get_context_data(**kwargs)
+
+
+class EditarGrupoFormador(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              UpdateView):
+    model = Grupos
+    form_class = GruposForm
+    success_url = '../../'
+    pk_url_kwarg = 'id_grupo'
+    template_name = 'formacion/grupos/editar.html'
+    permission_required = "permisos_sican.formacion.gruposformacion.editar"
+
+    def get_initial(self):
+        return {'formador_id':self.kwargs['id_formador']}
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador']).get_full_name()
+        return super(EditarGrupoFormador,self).get_context_data(**kwargs)
+
+
+class EliminarGrupoFormador(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               DeleteView):
+    model = Grupos
+    pk_url_kwarg = 'id_grupo'
+    success_url = '../../'
+    template_name = 'formacion/grupos/eliminar.html'
+    permission_required = "permisos_sican.formacion.gruposformacion.eliminar"
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador']).get_full_name()
+        return super(EliminarGrupoFormador,self).get_context_data(**kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.oculto = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)

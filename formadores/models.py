@@ -20,7 +20,7 @@ class Formador(models.Model):
     #---------- DATOS PERSONALES----------------------
     nombres = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
-    cedula = models.BigIntegerField()
+    cedula = models.BigIntegerField(unique=True)
     correo_personal = models.EmailField(max_length=100,blank=True)
     celular_personal = models.CharField(max_length=100,blank=True)
 
@@ -148,6 +148,7 @@ class SolicitudTransporte(models.Model):
 class Grupos(models.Model):
     formador = models.ForeignKey(Formador,related_name="formador_grupos")
     nombre = models.CharField(max_length=100)
+    oculto = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['nombre']

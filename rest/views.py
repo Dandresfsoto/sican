@@ -399,6 +399,12 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'gruposformacion':{
+                'ver':{'name':'Grupos de formación','link':'/formacion/grupos/'}
+            },
+            'matricesmasivo':{
+                'ver':{'name':'Carga masiva','link':'/matrices/cargamasiva/'}
+            },
             'general':{
                 'ver':{'name':'Carga general','link':'/evidencias/general/'}
             },
@@ -406,10 +412,10 @@ class UserPermissionList(APIView):
                 'ver':{'name':'Codigos de soporte','link':'/evidencias/codigos/'}
             },
             'matricesdiplomados':{
-                'ver_innovatic':{'name':'Matriz InnovaTIC','link':'/matrices/innovatic/'},
-                'ver_tecnotic':{'name':'Matriz TecnoTIC','link':'/matrices/tecnotic/'},
-                'ver_directic':{'name':'Matriz DirecTIC','link':'/matrices/directic/'},
-                'ver_escuelatic':{'name':'Matriz EscuelaTIC','link':'/matrices/escuelatic/'},
+                'ver_innovatic':{'name':'Matriz InnovaTIC','link':'/matrices/diplomados/innovatic/'},
+                'ver_tecnotic':{'name':'Matriz TecnoTIC','link':'/matrices/diplomados/tecnotic/'},
+                'ver_directic':{'name':'Matriz DirecTIC','link':'/matrices/diplomados/directic/'},
+                'ver_escuelatic':{'name':'Matriz EscuelaTIC','link':'/matrices/diplomados/escuelatic/'},
             },
             'contratos':{
                 'ver':{'name':'Contratos','link':'/financiera/contratos/'}
@@ -2257,5 +2263,89 @@ class MatricesDiplomadosList(BaseDatatableView):
                 item.estado,
                 self.request.user.has_perm('permisos_sican.acceso.retoma.editar'),
                 self.request.user.has_perm('permisos_sican.acceso.retoma.eliminar'),
+            ])
+        return json_data
+
+class FormadoresGrupos(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cargo
+    3.region
+    4.cedula
+    5.ruta
+    6.permiso para editar
+    """
+    model = Formador
+    columns = ['id','nombres','cargo','region','cedula']
+
+    order_columns = ['','nombres','cargo','']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Formador.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+                Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+            grupos = Grupos.objects.filter(formador = item,oculto = False)
+            json_data.append([
+                item.id,
+                item.get_full_name(),
+                item.cargo.nombre,
+                item.get_region_string(),
+                item.cedula,
+                item.codigo_ruta,
+                grupos.count(),
+                self.request.user.has_perm('permisos_sican.formacion.gruposformacion.editar'),
+            ])
+        return json_data
+
+class FormadoresGruposLista(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cargo
+    3.region
+    4.cedula
+    5.ruta
+    6.permiso para editar
+    """
+    model = Grupos
+    columns = ['id','nombre']
+
+    order_columns = ['id','nombre']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Grupos.objects.filter(formador__id=self.kwargs['id_formador'],oculto=False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.get_full_name(),
+                self.request.user.has_perm('permisos_sican.formacion.gruposformacion.editar'),
+                self.request.user.has_perm('permisos_sican.formacion.gruposformacion.eliminar'),
             ])
         return json_data
