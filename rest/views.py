@@ -2280,7 +2280,7 @@ class FormadoresGrupos(BaseDatatableView):
     model = Formador
     columns = ['id','nombres','cargo','region','cedula']
 
-    order_columns = ['','nombres','cargo','']
+    order_columns = ['nombres','cargo','']
     max_display_length = 100
 
     def get_initial_queryset(self):
