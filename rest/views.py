@@ -2274,7 +2274,8 @@ class FormadoresGrupos(BaseDatatableView):
     3.region
     4.cedula
     5.ruta
-    6.permiso para editar
+    6.cantiad de grupos
+    7.permiso para editar
     """
     model = Formador
     columns = ['id','nombres','cargo','region','cedula']

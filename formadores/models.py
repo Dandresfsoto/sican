@@ -24,6 +24,7 @@ class Formador(models.Model):
     correo_personal = models.EmailField(max_length=100,blank=True)
     celular_personal = models.CharField(max_length=100,blank=True)
 
+
     #---------- INFORMACION PROFESIONAL ----------------------
     cargo = models.ForeignKey(Cargo)
     profesion = models.CharField(max_length=100,blank=True)
