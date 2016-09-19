@@ -6,6 +6,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, HTML
 from rh.models import TipoSoporte
 from productos.models import Diplomado, Nivel, Sesion, Entregable
+from productos.models import Contratos
 
 class DiplomadoForm(forms.ModelForm):
 
@@ -241,4 +242,31 @@ class UpdateEntregableForm(forms.ModelForm):
 
         widgets = {
             'tipo':forms.Select(choices=(('Virtual','Virtual',),('Presencial','Presencial')))
+        }
+
+class ContratosForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ContratosForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Contrato',
+                Div(
+                    Div('nombre',css_class='col-sm-6'),
+                    Div('cargo',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('descripcion',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+            ),
+        )
+
+    class Meta:
+        model = Contratos
+        fields = '__all__'
+        widgets = {
+            'descripcion': forms.Textarea(),
         }

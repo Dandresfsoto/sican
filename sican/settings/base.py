@@ -103,7 +103,8 @@ LOCAL_APPS = [
     'acceso',
     'contratos',
     'matrices',
-    'evidencias'
+    'evidencias',
+    #'negociadores'
 ]
 
 THIRD_PARTY_APPS = [

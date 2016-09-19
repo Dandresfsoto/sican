@@ -53,4 +53,15 @@ urlpatterns = [
     url(r'^lideres/soportes/(?P<pk>[0-9]+)/editar/(?P<id_soporte>[0-9]+)/$', UpdateSoporteLiderView.as_view()),
     url(r'^lideres/soportes/(?P<pk>[0-9]+)/eliminar/(?P<id_soporte>[0-9]+)/$', DeleteSoporteLiderView.as_view()),
 
+
+    #url(r'^negociadores/$', LideresView.as_view()),
+    #url(r'^negociadores/nuevo/$', NuevoLiderView.as_view()),
+    #url(r'^negociadores/editar/(?P<pk>[0-9]+)/$', UpdateLiderView.as_view()),
+    #url(r'^negociadores/eliminar/(?P<pk>[0-9]+)/$', DeleteLiderView.as_view()),
+
+    #url(r'^negociadores/soportes/(?P<pk>[0-9]+)/$', SoporteLiderView.as_view()),
+    #url(r'^negociadores/soportes/(?P<pk>[0-9]+)/nuevo/$', NuevoSoporteLiderView.as_view()),
+    #url(r'^negociadores/soportes/(?P<pk>[0-9]+)/editar/(?P<id_soporte>[0-9]+)/$', UpdateSoporteLiderView.as_view()),
+    #url(r'^negociadores/soportes/(?P<pk>[0-9]+)/eliminar/(?P<id_soporte>[0-9]+)/$', DeleteSoporteLiderView.as_view()),
+
 ]

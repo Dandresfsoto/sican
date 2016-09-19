@@ -40,6 +40,8 @@ from acceso.models import Retoma
 from matrices.models import Beneficiario
 from radicados.models import Radicado
 from formacion.models import Grupos
+from productos.models import Contratos, ValorEntregable
+from django.db.models import Sum
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -428,6 +430,9 @@ class UserPermissionList(APIView):
             },
             'lideres':{
                 'ver':{'name':'Lideres Acceso','link':'/rh/lideres/'}
+            },
+            'negociadores':{
+                'ver':{'name':'Negociadores Acceso','link':'/rh/negociadores/'}
             },
             'cronogramafinanciera':{
                 'ver':{'name':'Cronograma de formación','link':'/financiera/cronograma/'}
@@ -2348,5 +2353,77 @@ class FormadoresGruposLista(BaseDatatableView):
                 item.get_full_name(),
                 self.request.user.has_perm('permisos_sican.formacion.gruposformacion.editar'),
                 self.request.user.has_perm('permisos_sican.formacion.gruposformacion.eliminar'),
+            ])
+        return json_data
+
+class ContratosValorList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.cargo
+    3.descripcion
+    4.permiso para editar
+    """
+    model = Contratos
+    columns = ['id','nombre','cargo','descripcion']
+
+    order_columns = ['id','nombre','cargo','descripcion']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+            valor_total = ValorEntregable.objects.filter(contrato = item).aggregate(Sum('valor'))
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.cargo.nombre,
+                item.descripcion,
+                valor_total.get('valor__sum'),
+            ])
+        return json_data
+
+class EntregablesValorList(BaseDatatableView):
+    """
+    0.id
+    1.entregable
+    2.valor
+    """
+    model = ValorEntregable
+    columns = ['id']
+
+    order_columns = ['id']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return ValorEntregable.objects.filter(contrato__id=self.kwargs['id_contrato'])
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(entregable__nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.entregable.nombre,
+                item.entregable.sesion.nivel.diplomado.nombre,
+                item.entregable.sesion.nivel.nombre,
+                item.entregable.sesion.nombre,
+                item.entregable.tipo,
+                item.valor,
             ])
         return json_data

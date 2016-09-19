@@ -9,6 +9,7 @@ from departamentos.models import Departamento
 from municipios.models import Municipio
 import os
 from usuarios.models import User
+from productos.models import Contratos
 
 class Formador(models.Model):
     lider = models.ForeignKey(User,blank=True,null=True)
@@ -41,6 +42,7 @@ class Formador(models.Model):
     pension = models.CharField(max_length=100,blank=True)
     arl = models.CharField(max_length=100,blank=True)
 
+    primera_capacitacion = models.BooleanField(default=False)
     oculto = models.BooleanField(default=False)
 
     class Meta:

@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 import os
+from cargos.models import Cargo
 
 # Create your models here.
 class Diplomado(models.Model):
@@ -59,3 +60,20 @@ class Actividades(models.Model):
 
     def __unicode__(self):
         return unicode(self.sesion.nombre + " - " + self.nombre)
+
+class Contratos(models.Model):
+    cargo = models.ForeignKey(Cargo)
+    nombre = models.CharField(max_length=100)
+    descripcion = models.CharField(max_length=200)
+
+
+    def __unicode__(self):
+        return self.nombre + ' - ' + self.cargo.nombre
+
+class ValorEntregable(models.Model):
+    contrato = models.ForeignKey(Contratos,related_name='contrato_valor')
+    entregable = models.ForeignKey(Entregable,related_name='entregable_valor')
+    valor = models.FloatField()
+
+    def __unicode__(self):
+        return self.entregable.nombre

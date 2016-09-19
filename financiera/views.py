@@ -24,6 +24,8 @@ from formacion.models import EntradaCronograma
 from formacion.forms import EntradaCronogramaform, EntradaCronogramaUpdateform
 from productos.models import Nivel, Actividades
 from django.http import HttpResponseRedirect
+from productos.models import Contratos
+from productos.forms import ContratosForm
 
 # Create your views here.
 class TransportesView(LoginRequiredMixin,
@@ -750,3 +752,38 @@ class ContratosListView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.financiera.contratos.crear')
         return super(ContratosListView, self).get_context_data(**kwargs)
+
+class ContratosCreateView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = Contratos
+    form_class = ContratosForm
+    success_url = '/financiera/contratos/'
+    template_name = 'financiera/contratos/nuevo.html'
+    permission_required = "permisos_sican.financiera.contratos.crear"
+
+class ContratosUpdateView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = Contratos
+    form_class = ContratosForm
+    pk_url_kwarg = 'id_contrato'
+    success_url = '/financiera/contratos/'
+    template_name = 'financiera/contratos/editar.html'
+    permission_required = "permisos_sican.financiera.contratos.editar"
+
+
+
+
+
+class EntregablesListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/contratos/entregables/lista.html'
+    permission_required = "permisos_sican.financiera.contratos.ver"
+
+    def get_context_data(self, **kwargs):
+        contrato = Contratos.objects.get(id=self.kwargs['id_contrato'])
+        kwargs['contrato_nombre'] = contrato.cargo.nombre + ' - ' + contrato.nombre
+        kwargs['id_contrato'] = self.kwargs['id_contrato']
+        return super(EntregablesListView, self).get_context_data(**kwargs)
