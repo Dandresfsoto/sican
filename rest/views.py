@@ -42,6 +42,7 @@ from radicados.models import Radicado
 from formacion.models import Grupos
 from productos.models import Contratos, ValorEntregable
 from django.db.models import Sum
+from formadores.models import Revision
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -2436,7 +2437,8 @@ class FormadoresRevision(BaseDatatableView):
     2.cargo
     3.region
     4.capacitación
-    5.permiso para editar
+    5.valor
+    6.permiso para editar
     """
     model = Formador
     columns = ['id','nombres','cargo','region','primera_capacitacion']
@@ -2471,12 +2473,63 @@ class FormadoresRevision(BaseDatatableView):
 
 
         for item in qs:
+            valor = 0
+            for revision in Revision.objects.filter(formador_revision = item):
+                for producto in revision.productos.all():
+                    valor += producto.cantidad * producto.valor_entregable.valor
             json_data.append([
                 item.id,
                 item.nombres + " " + item.apellidos,
                 item.cargo.nombre,
                 item.get_region_string(),
                 'Primera' if item.primera_capacitacion else 'Segunda',
+                valor,
                 self.request.user.has_perm('permisos_sican.formacion.revision.editar')
+            ])
+        return json_data
+
+class FormadoresRevisionFormador(BaseDatatableView):
+    """
+    0.id
+    1.fecha
+    2.descripcion
+    3.valor
+    4.permiso para editar
+    5.permiso para eliminar
+    """
+    model = Revision
+    columns = ['id','fecha','descripcion']
+
+    order_columns = ['fecha','descripcion']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Revision.objects.filter(formador_revision__id=self.kwargs['id_formador'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            #q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+            #    Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            #qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+            valor = 0
+            for producto in item.productos.all():
+                valor += producto.cantidad * producto.valor_entregable.valor
+            json_data.append([
+                item.id,
+                item.fecha,
+                item.descripcion,
+                valor,
+                self.request.user.has_perm('permisos_sican.formacion.revision.editar'),
+                self.request.user.has_perm('permisos_sican.formacion.revision.eliminar')
             ])
         return json_data

@@ -10,6 +10,7 @@ from municipios.models import Municipio
 import os
 from usuarios.models import User
 from productos.models import Contratos
+from productos.models import ValorEntregable
 
 class Formador(models.Model):
     lider = models.ForeignKey(User,blank=True,null=True)
@@ -42,6 +43,7 @@ class Formador(models.Model):
     pension = models.CharField(max_length=100,blank=True)
     arl = models.CharField(max_length=100,blank=True)
 
+    cantidad_docentes = models.IntegerField(default=150)
     primera_capacitacion = models.BooleanField(default=False)
     oculto = models.BooleanField(default=False)
 
@@ -161,3 +163,14 @@ class Grupos(models.Model):
 
     def get_full_name(self):
         return self.formador.codigo_ruta + '-' + self.nombre
+
+
+class Producto(models.Model):
+    valor_entregable = models.ForeignKey(ValorEntregable)
+    cantidad = models.IntegerField(null=True)
+
+class Revision(models.Model):
+    formador_revision = models.ForeignKey(Formador)
+    fecha = models.DateTimeField(auto_now=True)
+    descripcion = models.TextField(max_length=500,blank=True)
+    productos = models.ManyToManyField(Producto,blank=True)

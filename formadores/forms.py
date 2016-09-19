@@ -16,6 +16,8 @@ from municipios.models import Municipio
 from formadores.models import SolicitudTransporte
 from formadores.models import Grupos
 import locale
+from formadores.models import Revision
+from productos.models import Contratos, ValorEntregable
 
 class FormadorForm(forms.ModelForm):
 
@@ -90,7 +92,8 @@ class FormadorForm(forms.ModelForm):
             Fieldset(
                 'Ruta',
                 Div(
-                    Div('codigo_ruta',css_class='col-sm-12'),
+                    Div('codigo_ruta',css_class='col-sm-6'),
+                    Div('cantidad_docentes',css_class='col-sm-6'),
                     css_class = 'row'
                 )
             ),
@@ -2038,3 +2041,283 @@ class GruposForm(forms.ModelForm):
         widgets = {
             'nombre': forms.NumberInput(),
         }
+
+class RevisionForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RevisionForm, self).__init__(*args, **kwargs)
+
+        formador = Formador.objects.get(id = kwargs['initial']['formador_id'])
+        self.fields['formador_revision'].initial = formador
+
+        contrato = Contratos.objects.filter(cargo = formador.cargo).get(nombre = 'Capacitación 1') if formador.primera_capacitacion else Contratos.objects.filter(cargo = formador.cargo).get(nombre = 'Capacitación 2')
+        entregables = ValorEntregable.objects.filter(contrato = contrato)
+        revisiones = Revision.objects.filter(formador_revision = formador)
+
+        maximos = {}
+
+        for revision in revisiones:
+            for producto in revision.productos.all():
+                id = producto.valor_entregable.entregable.id
+                if 'field_' + str(id) in maximos.keys():
+                    maximos['field_' + str(id)] += producto.cantidad
+                else:
+                    maximos['field_' + str(id)] = producto.cantidad
+
+
+        self.helper = FormHelper(self)
+
+        dict = {
+            'Nivel 0':{
+                'Presencial':[],
+                'Virtual':[]
+            },
+            'Nivel 1':{
+                'Presencial':[],
+                'Virtual':[]
+            },
+            'Nivel 2':{
+                'Presencial':[],
+                'Virtual':[]
+            },
+            'Nivel 3':{
+                'Presencial':[],
+                'Virtual':[]
+            },
+            'Socializacion':{
+                'Presencial':[],
+                'Virtual':[]
+            },
+        }
+
+
+
+        for entregable in entregables:
+            field = 'field_' + str(entregable.entregable.id)
+            self.fields[field] = forms.IntegerField()
+            self.fields[field].required = False
+            self.fields[field].initial = 0
+            if field not in maximos.keys():
+                max = 0
+            else:
+                max = maximos[field]
+
+            self.fields[field].label = 'Max: ' + str(formador.cantidad_docentes - max) + ' - ' + entregable.entregable.tipo + ' - ' + entregable.entregable.sesion.nombre + ' - ' + entregable.entregable.nombre
+
+            if entregable.entregable.sesion.nivel.nombre == "Nivel 0":
+                if entregable.entregable.tipo == "Presencial":
+                    dict['Nivel 0']['Presencial'].append('field_' + str(entregable.entregable.id))
+                if entregable.entregable.tipo == "Virtual":
+                    dict['Nivel 0']['Virtual'].append('field_' + str(entregable.entregable.id))
+
+            elif entregable.entregable.sesion.nivel.nombre == "Nivel 1":
+                if entregable.entregable.tipo == "Presencial":
+                    dict['Nivel 1']['Presencial'].append('field_' + str(entregable.entregable.id))
+                if entregable.entregable.tipo == "Virtual":
+                    dict['Nivel 1']['Virtual'].append('field_' + str(entregable.entregable.id))
+
+            elif entregable.entregable.sesion.nivel.nombre == "Nivel 2":
+                if entregable.entregable.tipo == "Presencial":
+                    dict['Nivel 2']['Presencial'].append('field_' + str(entregable.entregable.id))
+                if entregable.entregable.tipo == "Virtual":
+                    dict['Nivel 2']['Virtual'].append('field_' + str(entregable.entregable.id))
+
+            elif entregable.entregable.sesion.nivel.nombre == "Nivel 3":
+                if entregable.entregable.tipo == "Presencial":
+                    dict['Nivel 3']['Presencial'].append('field_' + str(entregable.entregable.id))
+                if entregable.entregable.tipo == "Virtual":
+                    dict['Nivel 3']['Virtual'].append('field_' + str(entregable.entregable.id))
+
+            elif entregable.entregable.sesion.nivel.nombre == "Socializacion":
+                if entregable.entregable.tipo == "Presencial":
+                    dict['Socializacion']['Presencial'].append('field_' + str(entregable.entregable.id))
+                if entregable.entregable.tipo == "Virtual":
+                    dict['Socializacion']['Virtual'].append('field_' + str(entregable.entregable.id))
+
+
+        for nivel in ['Nivel 0','Nivel 1','Nivel 2','Nivel 3','Socializacion']:
+            if len(dict[nivel]['Presencial']) > 0 or len(dict[nivel]['Virtual']) > 0:
+                self.helper.layout.fields.append(
+                    Fieldset(
+                        nivel,
+                        css_id = nivel
+                    )
+                )
+
+                self.helper.layout.fields[-1].fields = dict[nivel]['Presencial'] + dict[nivel]['Virtual']
+
+
+        self.fields['formador_revision'].widget = forms.HiddenInput()
+
+    def clean(self):
+        cleaned_data = super(RevisionForm, self).clean()
+        formador = cleaned_data.get('formador_revision')
+
+        contrato = Contratos.objects.filter(cargo = formador.cargo).get(nombre = 'Capacitación 1') if formador.primera_capacitacion else Contratos.objects.filter(cargo = formador.cargo).get(nombre = 'Capacitación 2')
+        entregables = ValorEntregable.objects.filter(contrato = contrato)
+        revisiones = Revision.objects.filter(formador_revision = formador)
+
+        maximos = {}
+
+        for revision in revisiones:
+            for producto in revision.productos.all():
+                id = producto.valor_entregable.entregable.id
+                if 'field_' + str(id) in maximos.keys():
+                    maximos['field_' + str(id)] += producto.cantidad
+                else:
+                    maximos['field_' + str(id)] = producto.cantidad
+
+
+        for entregable in entregables:
+            field = 'field_' + str(entregable.entregable.id)
+            if field not in maximos.keys():
+                max = 0
+            else:
+                max = maximos[field]
+            if formador.cantidad_docentes - max - cleaned_data.get(field) < 0:
+                self.add_error(field,'En este producto se pueden añadir hasta ' + str(formador.cantidad_docentes - max) + ' beneficiarios.')
+
+
+    class Meta:
+        model = Revision
+        fields = ['formador_revision','descripcion']
+
+class RevisionUpdateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RevisionUpdateForm, self).__init__(*args, **kwargs)
+
+        revision_object = Revision.objects.get(id = kwargs['initial']['id'])
+        formador = revision_object.formador_revision
+
+        revisiones = Revision.objects.filter(formador_revision = formador).exclude(id = revision_object.id)
+
+        maximos = {}
+
+        for revision in revisiones:
+            for producto in revision.productos.all():
+                id = producto.valor_entregable.entregable.id
+                if 'field_' + str(id) in maximos.keys():
+                    maximos['field_' + str(id)] += producto.cantidad
+                else:
+                    maximos['field_' + str(id)] = producto.cantidad
+
+
+        self.helper = FormHelper(self)
+
+        dict = {
+            'Nivel 0':{
+                'Presencial':[],
+                'Virtual':[]
+            },
+            'Nivel 1':{
+                'Presencial':[],
+                'Virtual':[]
+            },
+            'Nivel 2':{
+                'Presencial':[],
+                'Virtual':[]
+            },
+            'Nivel 3':{
+                'Presencial':[],
+                'Virtual':[]
+            },
+            'Socializacion':{
+                'Presencial':[],
+                'Virtual':[]
+            },
+        }
+
+
+
+        for producto in revision_object.productos.all():
+            entregable = producto.valor_entregable
+            field = 'field_' + str(entregable.entregable.id)
+            self.fields[field] = forms.IntegerField()
+            self.fields[field].required = False
+            self.fields[field].initial = producto.cantidad
+            if field not in maximos.keys():
+                max = 0
+            else:
+                max = maximos[field]
+
+            self.fields[field].label = 'Max: ' + str(formador.cantidad_docentes - max) + ' - ' + entregable.entregable.tipo + ' - ' + entregable.entregable.sesion.nombre + ' - ' + entregable.entregable.nombre
+
+            if entregable.entregable.sesion.nivel.nombre == "Nivel 0":
+                if entregable.entregable.tipo == "Presencial":
+                    dict['Nivel 0']['Presencial'].append('field_' + str(entregable.entregable.id))
+                if entregable.entregable.tipo == "Virtual":
+                    dict['Nivel 0']['Virtual'].append('field_' + str(entregable.entregable.id))
+
+            elif entregable.entregable.sesion.nivel.nombre == "Nivel 1":
+                if entregable.entregable.tipo == "Presencial":
+                    dict['Nivel 1']['Presencial'].append('field_' + str(entregable.entregable.id))
+                if entregable.entregable.tipo == "Virtual":
+                    dict['Nivel 1']['Virtual'].append('field_' + str(entregable.entregable.id))
+
+            elif entregable.entregable.sesion.nivel.nombre == "Nivel 2":
+                if entregable.entregable.tipo == "Presencial":
+                    dict['Nivel 2']['Presencial'].append('field_' + str(entregable.entregable.id))
+                if entregable.entregable.tipo == "Virtual":
+                    dict['Nivel 2']['Virtual'].append('field_' + str(entregable.entregable.id))
+
+            elif entregable.entregable.sesion.nivel.nombre == "Nivel 3":
+                if entregable.entregable.tipo == "Presencial":
+                    dict['Nivel 3']['Presencial'].append('field_' + str(entregable.entregable.id))
+                if entregable.entregable.tipo == "Virtual":
+                    dict['Nivel 3']['Virtual'].append('field_' + str(entregable.entregable.id))
+
+            elif entregable.entregable.sesion.nivel.nombre == "Socializacion":
+                if entregable.entregable.tipo == "Presencial":
+                    dict['Socializacion']['Presencial'].append('field_' + str(entregable.entregable.id))
+                if entregable.entregable.tipo == "Virtual":
+                    dict['Socializacion']['Virtual'].append('field_' + str(entregable.entregable.id))
+
+
+        for nivel in ['Nivel 0','Nivel 1','Nivel 2','Nivel 3','Socializacion']:
+            if len(dict[nivel]['Presencial']) > 0 or len(dict[nivel]['Virtual']) > 0:
+                self.helper.layout.fields.append(
+                    Fieldset(
+                        nivel,
+                        css_id = nivel
+                    )
+                )
+
+                self.helper.layout.fields[-1].fields = dict[nivel]['Presencial'] + dict[nivel]['Virtual']
+
+
+        self.fields['formador_revision'].widget = forms.HiddenInput()
+
+    def clean(self,**kwargs):
+        cleaned_data = super(RevisionUpdateForm, self).clean()
+
+        revision_object = Revision.objects.get(id = self.initial['id'])
+        formador = revision_object.formador_revision
+
+        revisiones = Revision.objects.filter(formador_revision = formador).exclude(id=revision_object.id)
+
+        maximos = {}
+
+        for revision in revisiones:
+            for producto in revision.productos.all():
+                id = producto.valor_entregable.entregable.id
+                if 'field_' + str(id) in maximos.keys():
+                    maximos['field_' + str(id)] += producto.cantidad
+                else:
+                    maximos['field_' + str(id)] = producto.cantidad
+
+
+        for producto in revision_object.productos.all():
+            entregable = producto.valor_entregable
+            field = 'field_' + str(entregable.entregable.id)
+            if field not in maximos.keys():
+                max = 0
+            else:
+                max = maximos[field]
+            if formador.cantidad_docentes - max - cleaned_data.get(field) < 0:
+                self.add_error(field,'En este producto se pueden añadir hasta ' + str(formador.cantidad_docentes - max) + ' beneficiarios.')
+
+
+    class Meta:
+        model = Revision
+        fields = ['formador_revision','descripcion']

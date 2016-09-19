@@ -13,6 +13,7 @@ from rest.views import SemanasFormacionList, FormadoresFinancieraCronogramasList
 from rest.views import ResultadosPercepcionInicialList, RadicadosRetomaList, RetomaList
 from rest.views import MatricesDiplomadosList, AutocompleteRadicados, GruposChainedList
 from rest.views import FormadoresGrupos, FormadoresGruposLista, ContratosValorList, EntregablesValorList, FormadoresRevision
+from rest.views import FormadoresRevisionFormador
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -91,4 +92,5 @@ urlpatterns = [
     url(r'financiera/entregablesvalor/(?P<id_contrato>\w+)/$', EntregablesValorList.as_view()),
 
     url(r'formadores/revision/$', FormadoresRevision.as_view()),
+    url(r'formadores/revision/(?P<id_formador>\w+)/$', FormadoresRevisionFormador.as_view()),
 ]

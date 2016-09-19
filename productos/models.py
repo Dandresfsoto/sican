@@ -4,6 +4,7 @@ from django.db import models
 import os
 from cargos.models import Cargo
 
+
 # Create your models here.
 class Diplomado(models.Model):
     nombre = models.CharField(max_length=100)
