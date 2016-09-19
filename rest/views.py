@@ -1719,7 +1719,7 @@ class FormadoresCronogramasList(BaseDatatableView):
     max_display_length = 100
 
     def get_initial_queryset(self):
-        return Formador.objects.filter(lider = self.request.user)
+        return Formador.objects.filter(lider = self.request.user,oculto = False)
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
@@ -2425,5 +2425,58 @@ class EntregablesValorList(BaseDatatableView):
                 item.entregable.sesion.nombre,
                 item.entregable.tipo,
                 item.valor,
+            ])
+        return json_data
+
+
+class FormadoresRevision(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cargo
+    3.region
+    4.capacitación
+    5.permiso para editar
+    """
+    model = Formador
+    columns = ['id','nombres','cargo','region','primera_capacitacion']
+
+    order_columns = ['nombres','cargo']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        if self.request.user.has_perm('permisos_sican.formacion.revision.r1') and self.request.user.has_perm('permisos_sican.formacion.revision.r2'):
+            return Formador.objects.filter(oculto = False)
+        elif self.request.user.has_perm('permisos_sican.formacion.revision.r1'):
+            return Formador.objects.filter(oculto = False,region__id=1)
+
+        elif self.request.user.has_perm('permisos_sican.formacion.revision.r2'):
+            return Formador.objects.filter(oculto = False,region__id=2)
+
+        else:
+            return Formador.objects.filter(oculto = False)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+                Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombres + " " + item.apellidos,
+                item.cargo.nombre,
+                item.get_region_string(),
+                'Primera' if item.primera_capacitacion else 'Segunda',
+                self.request.user.has_perm('permisos_sican.formacion.revision.editar')
             ])
         return json_data

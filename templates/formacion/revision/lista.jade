@@ -1,6 +1,6 @@
 extends ../../inicio
 block scroll_header_panel_title
-    span(class="title") FORMADORES
+    span(class="title") REVISIÓN DOCUMENTAL
 block help_content
     p(class="title-help") Descripción:
     p.
@@ -26,33 +26,20 @@ block breadcrum
 
 block scroll_header_panel_content
     div(class="container-fluid container-index")
-        div(class="header-buttons")
-            | {% if nuevo_permiso %}
-            div(class="block-right")
-                a(href="nuevo",class="link_button")
-                    paper-button(class="submit") Nuevo
-            | {% endif %}
-            | {% if masivo_permiso %}
-
-            div
-                select(class="selectpicker",id="select_accion")
-                    option(value="") ---------
-                button(class="btn",id="accion") Generar reporte
-            | {% endif %}
 
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
-                    th
                     th Formador
                     th Cargo
                     th Región
+                    th Capacitación
             tbody
                 tr
-                    td
                     td Formador
                     td Cargo
                     td Región
+                    td Capacitación
 
 block body_script_content
     script.
@@ -85,22 +72,16 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/formadores/rh/",
+                "ajax": "/rest/formadores/revision/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
                 "order": [[1, "asc"]],
                 "columns": [
                     {
-                        "className": 'details-control',
-                        "orderable": false,
-                        "data": null,
-                        "defaultContent": ''
-                    },
-                    {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[16]) {
+                            if (row[5]) {
                                 return '<a href="' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
@@ -117,51 +98,12 @@ block body_script_content
                         "data": 3,
                         "orderable": false,
                         "className": 'text-center',
+                    },
+                    {
+                        "data": 4,
+                        "orderable": false,
+                        "className": 'text-center',
                     }
                 ]
             });
-            // Add event listener for opening and closing details
-            $('#table tbody').on('click', 'td.details-control', function () {
-                var tr = $(this).closest('tr');
-                var row = table.row(tr);
-                if (row.child.isShown()) {
-                    // This row is already open - close it
-                    row.child.hide();
-                    tr.removeClass('shown');
-                }
-                else {
-                    // Open this row
-                    row.child(format(row.data())).show();
-                    tr.addClass('shown');
-                }
-            });
         });
-        function format(d) {
-            // `d` is the original data object for the row
-            return '<table class="table table-striped">' +
-                    '<tr>' +
-                    '<td><p class="bold-p">Cédula:</p>' + d[4] + '</td>' +
-                    '<td><p class="bold-p">Correo personal:</p>' + d[5] + '</td>' +
-                    '<td><p class="bold-p">Celular personal:</p>' + d[6] + '</td>' +
-                    '<td><p class="bold-p">Profesión:</p>' + d[7] + '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td><p class="bold-p">Fecha de contratación:</p>' + d[8] + '</td>' +
-                    '<td><p class="bold-p">Fecha de terminación:</p>' + d[9] + '</td>' +
-                    '<td><p class="bold-p"></p></td>' +
-                    '<td><p class="bold-p"></p></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td><p class="bold-p">Banco:</p>' + d[10] + '</td>' +
-                    '<td><p class="bold-p">Tipo de cuenta:</p>' + d[11] + '</td>' +
-                    '<td><p class="bold-p">Número de cuenta:</p>' + d[12] + '</td>' +
-                    '<td><p class="bold-p"></p></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td><p class="bold-p">Eps:</p>' + d[13] + '</td>' +
-                    '<td><p class="bold-p">Pensión:</p>' + d[14] + '</td>' +
-                    '<td><p class="bold-p">Arl:</p>' + d[15] + '</td>' +
-                    '<td><p class="bold-p"></p></td>' +
-                    '</tr>' +
-                    '</table>';
-        }
