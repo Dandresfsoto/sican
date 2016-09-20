@@ -18,6 +18,8 @@ from formacion.models import Semana
 from lideres.models import Lideres, Soporte
 from encuestas.models import PercepcionInicial
 from radicados.models import Radicado
+from formadores.models import Cortes
+from formadores.models import Revision
 
 @app.task
 def nueva_semana():
@@ -464,6 +466,76 @@ def radicados(email):
             radicado.tipo,
             radicado.ubicacion
         ])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def pagos_mensual(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Reporte mensual de pago a formadores"
+    proceso = "COR-INF02"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+    cortes = Cortes.objects.all()
+    fechas = []
+
+    for corte in cortes:
+        fecha_corte = '01/' + str(corte.mes) + '/' + str(corte.year)
+        fecha_corte = datetime.datetime.strptime(fecha_corte,"%d/%m/%Y").date()
+        fechas.append(fecha_corte)
+
+    fechas = list(set(fechas))
+
+
+    titulos = ['ID','Nombres','Apellidos','Cedula','Región',
+               'Correo','Celular','Cargo','Banco','Tipo cuenta','Numero cuenta']
+
+
+    formatos = ['General','General','General','General','General',
+               'General','General','General','General','General','General']
+
+
+    ancho_columnas =  [30,20,20,15,15,
+                       40,20,20,20,20,20]
+
+
+    for fecha_corte in fechas:
+        titulos.append(fecha_corte.strftime("%B de %Y"))
+        formatos.append('"$"#,##0_);("$"#,##0)')
+        ancho_columnas.append(30)
+
+    contenidos = []
+
+
+
+    for formador in Formador.objects.all():
+        row =[
+                'FOR-'+unicode(formador.id),
+                formador.nombres,
+                formador.apellidos,
+                formador.cedula,
+                formador.get_region_string(),
+                formador.correo_personal,
+                formador.celular_personal,
+                formador.cargo.nombre if formador.cargo != None else '',
+                formador.banco.nombre if formador.banco != None else '',
+                formador.tipo_cuenta,
+                formador.numero_cuenta,
+            ]
+        for fecha_corte in fechas:
+            valor = 0
+            for corte in Cortes.objects.filter(mes = str(fecha_corte.month).zfill(2), year = fecha_corte.year):
+                revisiones = Revision.objects.filter(corte = corte, formador_revision = formador)
+                for revision in revisiones:
+                    for producto in revision.productos.all():
+                        valor += producto.cantidad * producto.valor_entregable.valor
+
+            row.append(valor)
+
+        contenidos.append(row)
 
     output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
     filename = unicode(informe.creacion) + '.xlsx'

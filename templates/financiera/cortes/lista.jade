@@ -20,10 +20,20 @@ block breadcrum
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
     div(class="container-fluid container-index")
-        | {% if nuevo_permiso %}
-        a(href="nuevo",class="link_button")
-            paper-button(class="submit") Nuevo corte
-        | {% endif %}
+        div(class="header-buttons")
+            | {% if nuevo_permiso %}
+            div(class="block-right")
+                a(href="nuevo",class="link_button")
+                    paper-button(class="submit") Nuevo corte
+            | {% endif %}
+
+            | {% if informes %}
+            div
+                select(class="selectpicker",id="select_accion")
+                    option(value="") ---------
+                    option(value="11") Reporte mensual de pagos
+                button(class="btn",id="accion") Generar reporte
+            | {% endif %}
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
@@ -39,6 +49,21 @@ block scroll_header_panel_content
                    td Archivo
 
 block body_script_content
+    script.
+        $("#accion").on("click",function(){
+            var action = $("#select_accion").val();
+            if(action != ''){
+                $.ajax({
+                    type: "GET",
+                    url: '/rest/reportes/?action=' + action,
+                    success: function(data){
+                        $('#myModal').modal('show');
+                        $("#select_accion").val('');
+                        $("#select_accion").selectpicker('refresh');
+                    }
+                });
+            }
+        });
     script.
         $(document).ready(function () {
             var table = $('#table').DataTable({

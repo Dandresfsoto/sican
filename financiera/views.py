@@ -803,6 +803,7 @@ class CortesListView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.financiera.cortes.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.financiera.cortes.informes')
         return super(CortesListView, self).get_context_data(**kwargs)
 
 class NuevoCorteView(LoginRequiredMixin,
