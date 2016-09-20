@@ -173,6 +173,8 @@ class Cortes(models.Model):
     descripcion = models.TextField(max_length=500)
     fecha = models.DateTimeField(auto_now=True)
     archivo = models.FileField(upload_to='Cortes',blank=True,null=True)
+    year = models.IntegerField(blank=True,null=True)
+    mes = models.CharField(max_length=100,blank=True,null=True)
 
     def get_archivo_url(self):
         try:

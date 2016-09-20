@@ -2329,9 +2329,16 @@ class CortesForm(forms.ModelForm):
 
         super(CortesForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+
+        self.fields['fecha'] = forms.CharField(max_length=100)
+
         self.helper.layout = Layout(
             Fieldset(
                 'Corte de pago',
+                Div(
+                    Div('fecha',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
                 Div(
                     Div('descripcion',css_class='col-sm-12'),
                     css_class = 'row'

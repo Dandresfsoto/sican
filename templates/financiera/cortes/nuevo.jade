@@ -35,3 +35,8 @@ block body_script_content
         $('#submit_form').on('click', function () {
             $('#form-formador').submit();
         });
+        $('#id_fecha').datetimepicker({
+            locale: 'es',
+            viewMode: 'years',
+            format: 'MM/YYYY'
+        });

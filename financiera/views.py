@@ -820,6 +820,10 @@ class NuevoCorteView(LoginRequiredMixin,
 
     def form_valid(self, form):
         self.object = form.save()
+        mes, year = form.cleaned_data.get('fecha').split('/')
+        self.object.mes = mes
+        self.object.year = year
+        self.object.save()
         revisiones = Revision.objects.filter(corte = None)
         for revision in revisiones:
             revision.corte = self.object
