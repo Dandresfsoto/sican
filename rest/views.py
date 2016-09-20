@@ -2429,7 +2429,6 @@ class EntregablesValorList(BaseDatatableView):
             ])
         return json_data
 
-
 class FormadoresRevision(BaseDatatableView):
     """
     0.id

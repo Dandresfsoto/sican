@@ -169,8 +169,13 @@ class Producto(models.Model):
     valor_entregable = models.ForeignKey(ValorEntregable)
     cantidad = models.IntegerField(null=True)
 
+class Cortes(models.Model):
+    descripcion = models.TextField(max_length=500)
+    fecha = models.DateTimeField(auto_now=True)
+
 class Revision(models.Model):
     formador_revision = models.ForeignKey(Formador)
     fecha = models.DateTimeField(auto_now=True)
     descripcion = models.TextField(max_length=500,blank=True)
     productos = models.ManyToManyField(Producto,blank=True)
+    corte = models.ForeignKey(Cortes,blank=True,null=True)
