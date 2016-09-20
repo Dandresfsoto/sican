@@ -13,7 +13,7 @@ from rest.views import SemanasFormacionList, FormadoresFinancieraCronogramasList
 from rest.views import ResultadosPercepcionInicialList, RadicadosRetomaList, RetomaList
 from rest.views import MatricesDiplomadosList, AutocompleteRadicados, GruposChainedList
 from rest.views import FormadoresGrupos, FormadoresGruposLista, ContratosValorList, EntregablesValorList, FormadoresRevision
-from rest.views import FormadoresRevisionFormador, CortesList
+from rest.views import FormadoresRevisionFormador, CortesList, NegociadoresRh
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -39,6 +39,8 @@ urlpatterns = [
 
     url(r'lideres/rh/$', LideresRh.as_view()),
     url(r'lideres/rh/soportes/(?P<id_lider>\w+)/$', LideresRhSoportes.as_view()),
+
+    url(r'negociadores/rh/$', NegociadoresRh.as_view()),
 
 
     url(r'bases/departamentos/$', DepartamentosList.as_view()),

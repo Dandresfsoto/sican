@@ -14,6 +14,8 @@ from formadores.models import Soporte as SoporteFormador
 from lideres.models import Soporte as SoporteLider
 from lideres.models import Lideres
 from lideres.forms import LideresForm, NuevoSoporteLiderForm
+from negociadores.models import Negociador
+from negociadores.forms import NegociadorForm
 
 
 class AdministrativoView(LoginRequiredMixin,
@@ -62,7 +64,6 @@ class UpdateAdministrativoView(LoginRequiredMixin,
     permission_required = "permisos_sican.rh.administrativos.editar"
 
 
-
 class SoporteAdministrativoView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
@@ -74,7 +75,6 @@ class SoporteAdministrativoView(LoginRequiredMixin,
         kwargs['id_administrativo'] = kwargs['pk']
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.administrativos_soportes.crear')
         return super(SoporteAdministrativoView, self).get_context_data(**kwargs)
-
 
 
 class NuevoSoporteAdministrativoView(LoginRequiredMixin,
@@ -132,7 +132,6 @@ class DeleteSoporteAdministrativoView(LoginRequiredMixin,
         return HttpResponseRedirect(success_url)
 
 
-
 class CargosView(LoginRequiredMixin,
                  PermissionRequiredMixin,
                  TemplateView):
@@ -187,9 +186,6 @@ class UpdateCargoView(LoginRequiredMixin,
         kwargs['manual_filename'] = self.object.manual_filename
         return super(UpdateCargoView, self).get_context_data(**kwargs)
 
-
-
-
 class TipoSoporteAdministrativoView(LoginRequiredMixin,
                  PermissionRequiredMixin,
                  TemplateView):
@@ -199,7 +195,6 @@ class TipoSoporteAdministrativoView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.rh_tipo_soporte.crear')
         return super(TipoSoporteAdministrativoView, self).get_context_data(**kwargs)
-
 
 class NuevoTipoSoporteAdministrativoView(LoginRequiredMixin,
                      PermissionRequiredMixin,
@@ -235,12 +230,6 @@ class UpdateTipoSoporteAdministrativoView(LoginRequiredMixin,
     success_url = '/rh/tipo_soporte/'
     template_name = 'rh/tipo_soporte/editar.html'
     permission_required = "permisos_sican.rh.rh_tipo_soporte.editar"
-
-
-
-
-
-
 
 class FormadoresView(LoginRequiredMixin,
                          PermissionRequiredMixin,
@@ -287,11 +276,6 @@ class DeleteFormadorView(LoginRequiredMixin,
         self.object.oculto = True
         self.object.save()
         return HttpResponseRedirect(success_url)
-
-
-
-
-
 
 class SoporteFormadorView(LoginRequiredMixin,
                          PermissionRequiredMixin,
@@ -360,10 +344,6 @@ class DeleteSoporteFormadorView(LoginRequiredMixin,
         self.object.save()
         return HttpResponseRedirect(success_url)
 
-
-
-
-
 class LideresView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
@@ -409,8 +389,6 @@ class DeleteLiderView(LoginRequiredMixin,
         self.object.oculto = True
         self.object.save()
         return HttpResponseRedirect(success_url)
-
-
 
 class SoporteLiderView(LoginRequiredMixin,
                          PermissionRequiredMixin,
@@ -471,6 +449,53 @@ class DeleteSoporteLiderView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['nombre_lider'] = Lideres.objects.get(id=self.kwargs['pk']).get_full_name
         return super(DeleteSoporteLiderView, self).get_context_data(**kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.oculto = True
+        self.object.save()
+        return HttpResponseRedirect(success_url)
+
+
+class NegociadoresView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'rh/negociadores/lista.html'
+    permission_required = "permisos_sican.rh.negociadores.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.negociadores.crear')
+        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.rh.negociadores.masivo')
+        return super(NegociadoresView, self).get_context_data(**kwargs)
+
+class NuevoNegociadorView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = Negociador
+    form_class = NegociadorForm
+    success_url = '/rh/negociadores/'
+    template_name = 'rh/negociadores/nuevo.html'
+    permission_required = "permisos_sican.rh.negociadores.crear"
+
+class UpdateNegociadorView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               UpdateView):
+    model = Negociador
+    form_class = NegociadorForm
+    pk_url_kwarg = 'pk'
+    success_url = '/rh/negociadores/'
+    template_name = 'rh/negociadores/editar.html'
+    permission_required = "permisos_sican.rh.negociadores.editar"
+
+class DeleteNegociadorView(LoginRequiredMixin,
+                               PermissionRequiredMixin,
+                               DeleteView):
+    model = Negociador
+    pk_url_kwarg = 'pk'
+    success_url = '/rh/negociadores/'
+    template_name = 'rh/negociadores/eliminar.html'
+    permission_required = "permisos_sican.rh.negociadores.eliminar"
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()

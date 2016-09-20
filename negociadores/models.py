@@ -74,13 +74,13 @@ class Soporte(models.Model):
     negociador = models.ForeignKey(Negociador)
     creacion = models.DateField(auto_now=True)
     fecha = models.DateField()
-    tipo = models.ForeignKey(TipoSoporte,related_name='soporte_lider')
+    tipo = models.ForeignKey(TipoSoporte,related_name='soporte_negociador')
     descripcion = models.TextField(max_length=1000,blank=True)
     oculto = models.BooleanField(default=False)
     archivo = models.FileField(upload_to='Negociadores/Soportes/',blank=True)
 
     class Meta:
-        ordering = ['lider']
+        ordering = ['negociador']
 
     def __unicode__(self):
         return str(self.lider.cedula)

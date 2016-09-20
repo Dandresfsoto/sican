@@ -44,6 +44,7 @@ from productos.models import Contratos, ValorEntregable
 from django.db.models import Sum
 from formadores.models import Revision
 from formadores.models import Cortes
+from negociadores.models import Negociador
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -1974,6 +1975,82 @@ class LideresRhSoportes(BaseDatatableView):
                 item.creacion,
                 self.request.user.has_perm('permisos_sican.rh.lideres_soportes.editar'),
                 self.request.user.has_perm('permisos_sican.rh.lideres_soportes.eliminar'),
+            ])
+        return json_data
+
+class NegociadoresRh(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cargo
+    3.region
+    4.cedula
+    5.correo_personal
+    6.celular_personal
+    7.profesion
+    8.fecha_contratacion
+    9.fecha_terminacion
+    10.banco
+    11.tipo_cuenta
+    12.numero_cuenta
+    13.eps
+    14.pension
+    15.arl
+    16.permiso para editar
+    17.permiso para eliminar
+    18.permiso para ver soportes
+    """
+    model = Negociador
+    columns = ['id','nombres','cargo','region','cedula','correo_personal','celular_personal','profesion',
+               'fecha_contratacion','fecha_terminacion','banco','tipo_cuenta','numero_cuenta','eps',
+               'pension','arl']
+
+    order_columns = ['','nombres','cargo','']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Negociador.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+                Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+
+            if item.banco != None:
+                banco = item.banco.nombre
+            else:
+                banco = ''
+
+            json_data.append([
+                item.id,
+                item.nombres + " " + item.apellidos,
+                item.cargo.nombre,
+                item.region.nombre,
+                item.cedula,
+                item.correo_personal,
+                item.celular_personal,
+                item.profesion,
+                item.fecha_contratacion,
+                item.fecha_terminacion,
+                banco,
+                item.tipo_cuenta,
+                item.numero_cuenta,
+                item.eps,
+                item.pension,
+                item.arl,
+                self.request.user.has_perm('permisos_sican.rh.lideres.editar'),
+                self.request.user.has_perm('permisos_sican.rh.lideres.eliminar'),
+                self.request.user.has_perm('permisos_sican.rh.lideres.ver'),
             ])
         return json_data
 
