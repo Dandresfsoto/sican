@@ -2436,8 +2436,9 @@ class FormadoresRevision(BaseDatatableView):
     2.cargo
     3.region
     4.capacitación
-    5.valor
-    6.permiso para editar
+    5.ruta
+    6.valor
+    7.permiso para editar
     """
     model = Formador
     columns = ['id','nombres','cargo','region','primera_capacitacion']
@@ -2463,7 +2464,7 @@ class FormadoresRevision(BaseDatatableView):
         if search:
             search = unicode(search).capitalize()
             q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
-                Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+                Q(region__numero__icontains=search) | Q(cedula__icontains=search) | Q(codigo_ruta__icontains=search)
             qs = qs.filter(q)
         return qs
 
@@ -2482,6 +2483,7 @@ class FormadoresRevision(BaseDatatableView):
                 item.cargo.nombre,
                 item.get_region_string(),
                 'Primera' if item.primera_capacitacion else 'Segunda',
+                item.codigo_ruta,
                 valor,
                 self.request.user.has_perm('permisos_sican.formacion.revision.editar')
             ])

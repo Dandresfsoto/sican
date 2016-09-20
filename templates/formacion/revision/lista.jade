@@ -34,6 +34,7 @@ block scroll_header_panel_content
                     th Cargo
                     th Región
                     th Capacitación
+                    th Ruta
                     th Valor
             tbody
                 tr
@@ -41,6 +42,7 @@ block scroll_header_panel_content
                     td Cargo
                     td Región
                     td Capacitación
+                    td Ruta
                     td Valor
 
 block body_script_content
@@ -78,12 +80,12 @@ block body_script_content
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
-                "order": [[1, "asc"]],
+                "order": [[0, "asc"]],
                 "columns": [
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[6]) {
+                            if (row[7]) {
                                 return '<a href="' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
@@ -108,6 +110,11 @@ block body_script_content
                     },
                     {
                         "data": 5,
+                        "orderable": false,
+                        "className": 'text-center',
+                    },
+                    {
+                        "data": 6,
                         "orderable": false,
                         "render": function (data, type, row, meta) {
                             return accounting.formatMoney(data);
