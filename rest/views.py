@@ -2528,7 +2528,7 @@ class FormadoresRevisionFormador(BaseDatatableView):
                 item.fecha,
                 item.descripcion,
                 valor,
-                self.request.user.has_perm('permisos_sican.formacion.revision.editar'),
+                self.request.user.has_perm('permisos_sican.formacion.revision.editar') if item.corte == None else False,
                 self.request.user.has_perm('permisos_sican.formacion.revision.eliminar')
             ])
         return json_data
