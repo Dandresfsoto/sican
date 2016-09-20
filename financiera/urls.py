@@ -7,6 +7,7 @@ from financiera.views import SemanasListView, FormadoresCronogramaListView, Cron
 from financiera.views import CronogramaFormadorNuevoView, CronogramaFormadorUpdateView, CronogramaFormadorDeleteView
 from financiera.views import ContratosListView, ContratosCreateView, ContratosUpdateView
 from financiera.views import EntregablesListView
+from financiera.views import CortesListView, NuevoCorteView
 
 urlpatterns = [
     url(r'^transportes/$', TransportesView.as_view()),
@@ -61,4 +62,10 @@ urlpatterns = [
     url(r'^contratos/editar/(?P<id_contrato>[0-9]+)/$', ContratosUpdateView.as_view()),
 
     url(r'^contratos/entregables/(?P<id_contrato>[0-9]+)/$', EntregablesListView.as_view()),
+
+
+
+
+    url(r'^cortes/$', CortesListView.as_view()),
+    url(r'^cortes/nuevo/$', NuevoCorteView.as_view()),
 ]

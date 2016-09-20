@@ -11,7 +11,11 @@ from StringIO import StringIO
 from django.core.files import File
 from openpyxl.drawing.image import Image
 from datetime import datetime
-
+from usuarios.models import User
+from formadores.models import Cortes
+from formadores.models import Revision
+from formadores.models import Formador
+from informes.functions import construir_reporte
 
 @app.task
 def construir_pdf(id_solicitud):
@@ -72,3 +76,52 @@ def verificar_archivos():
     for solicitud in solicitudes:
         construir_pdf.delay(solicitud.id)
     return "Completo"
+
+@app.task
+def cortes(email,id):
+    usuario = User.objects.get(email=email)
+    nombre = "Corte de pago"
+    proceso = "COR-INF01"
+    corte = Cortes.objects.get(id = id)
+
+    titulos = ['ID','Nombres','Apellidos','Cedula','Región','Correo',
+               'Celular','Cargo','Banco','Tipo cuenta','Numero cuenta','Valor a pagar']
+
+    formatos = ['General','General','General','0','General','General',
+                'General','General','General','General','General','"$"#,##0_);("$"#,##0)']
+
+
+    ancho_columnas =  [30,20,20,20,20,60,
+                       20,20,20,20,20,20]
+
+    revisiones = Revision.objects.filter(corte = corte)
+    cedulas_formadores = revisiones.values_list('formador_revision__cedula',flat=True).distinct()
+
+    contenidos = []
+
+    for formador in Formador.objects.filter(cedula__in = cedulas_formadores):
+        valor = 0
+        for revision in revisiones.filter(formador_revision = formador):
+            for producto in revision.productos.all():
+                valor += producto.cantidad * producto.valor_entregable.valor
+
+        contenidos.append([
+            'FOR-'+unicode(formador.id),
+            formador.nombres,
+            formador.apellidos,
+            formador.cedula,
+            formador.get_region_string(),
+            formador.correo_personal,
+            formador.celular_personal,
+            formador.cargo.nombre if formador.cargo != None else '',
+
+            formador.banco.nombre if formador.banco != None else '',
+            formador.tipo_cuenta,
+            formador.numero_cuenta,
+            valor
+        ])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,corte.fecha,usuario,proceso)
+    filename = unicode(corte.fecha) + '.xlsx'
+    corte.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"

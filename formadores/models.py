@@ -172,6 +172,14 @@ class Producto(models.Model):
 class Cortes(models.Model):
     descripcion = models.TextField(max_length=500)
     fecha = models.DateTimeField(auto_now=True)
+    archivo = models.FileField(upload_to='Cortes',blank=True,null=True)
+
+    def get_archivo_url(self):
+        try:
+            url = self.archivo.url
+        except:
+            url = ""
+        return url
 
 class Revision(models.Model):
     formador_revision = models.ForeignKey(Formador)

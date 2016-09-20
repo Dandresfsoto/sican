@@ -18,6 +18,7 @@ from formadores.models import Grupos
 import locale
 from formadores.models import Revision
 from productos.models import Contratos, ValorEntregable
+from formadores.models import Cortes
 
 class FormadorForm(forms.ModelForm):
 
@@ -2321,3 +2322,28 @@ class RevisionUpdateForm(forms.ModelForm):
     class Meta:
         model = Revision
         fields = ['formador_revision','descripcion']
+
+class CortesForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+
+        super(CortesForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Corte de pago',
+                Div(
+                    Div('descripcion',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                HTML(
+                    """
+                    <h4>Se va a hacer el corte para {{cantidad}} formador(es).</h4>
+                    """
+                ),
+            )
+        )
+
+    class Meta:
+        model = Cortes
+        fields = ['descripcion']

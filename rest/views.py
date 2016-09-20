@@ -43,6 +43,7 @@ from formacion.models import Grupos
 from productos.models import Contratos, ValorEntregable
 from django.db.models import Sum
 from formadores.models import Revision
+from formadores.models import Cortes
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -402,6 +403,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'cortes':{
+                'ver':{'name':'Cortes de pago','link':'/financiera/cortes/'}
+            },
             'gruposformacion':{
                 'ver':{'name':'Grupos de formación','link':'/formacion/grupos/'}
             },
@@ -2532,5 +2536,43 @@ class FormadoresRevisionFormador(BaseDatatableView):
                 valor,
                 self.request.user.has_perm('permisos_sican.formacion.revision.editar') if item.corte == None else False,
                 self.request.user.has_perm('permisos_sican.formacion.revision.eliminar')
+            ])
+        return json_data
+
+class CortesList(BaseDatatableView):
+    """
+    0.id
+    1.fecha
+    2.descripcion
+    3.valor
+    4.permiso para editar
+    5.permiso para eliminar
+    """
+    model = Cortes
+    columns = ['id','fecha','descripcion']
+
+    order_columns = ['fecha']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            #q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+            #    Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            #qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.fecha,
+                item.descripcion,
+                item.get_archivo_url()
             ])
         return json_data

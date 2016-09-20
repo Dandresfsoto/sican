@@ -26,6 +26,10 @@ from productos.models import Nivel, Actividades
 from django.http import HttpResponseRedirect
 from productos.models import Contratos
 from productos.forms import ContratosForm
+from formadores.models import Cortes
+from formadores.forms import CortesForm
+from formadores.models import Revision
+from financiera.tasks import cortes
 
 # Create your views here.
 class TransportesView(LoginRequiredMixin,
@@ -787,3 +791,38 @@ class EntregablesListView(LoginRequiredMixin,
         kwargs['contrato_nombre'] = contrato.cargo.nombre + ' - ' + contrato.nombre
         kwargs['id_contrato'] = self.kwargs['id_contrato']
         return super(EntregablesListView, self).get_context_data(**kwargs)
+
+
+
+
+class CortesListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'financiera/cortes/lista.html'
+    permission_required = "permisos_sican.financiera.cortes.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.financiera.cortes.crear')
+        return super(CortesListView, self).get_context_data(**kwargs)
+
+class NuevoCorteView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = Cortes
+    form_class = CortesForm
+    success_url = '/financiera/cortes/'
+    template_name = 'financiera/cortes/nuevo.html'
+    permission_required = "permisos_sican.financiera.cortes.crear"
+
+    def get_context_data(self, **kwargs):
+        kwargs['cantidad'] = len(Revision.objects.filter(corte = None).values_list('formador_revision',flat=True).distinct())
+        return super(NuevoCorteView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save()
+        revisiones = Revision.objects.filter(corte = None)
+        for revision in revisiones:
+            revision.corte = self.object
+            revision.save()
+        cortes.delay(self.request.user.email,self.object.id)
+        return super(NuevoCorteView, self).form_valid(form)
