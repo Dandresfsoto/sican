@@ -2761,10 +2761,6 @@ class RequerimientosContratacionRespuesta(BaseDatatableView):
     order_columns = ['id','encargado','codigo_ruta','departamento']
     max_display_length = 100
 
-    def get_initial_queryset(self):
-        q = Q(solicitante = self.request.user) | Q(encargado = self.request.user)
-        return RequerimientoPersonal.objects.filter(q)
-
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
