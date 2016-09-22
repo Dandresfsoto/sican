@@ -8,6 +8,7 @@ from formacion.views import ListaCronogramasView, CronogramaFormadorView, Cronog
 from formacion.views import CronogramaFormadorDeleteView, ListaCronogramasSemanaView
 from formacion.views import ListadoFormadoresGruposView, FormadoresGruposLista, NuevoGrupoFormador, EditarGrupoFormador, EliminarGrupoFormador
 from formacion.views import ListaRevisionFormadorView,NuevaRevisionFormadorView, EditarRevisionFormadorView
+from formacion.views import ListaRequerimientosContratacionView, NuevoRequerimientoContratacionView, UpdateRequerimientoContratacionView
 
 urlpatterns = [
     url(r'^preinscritos/$', ListaPreinscritosView.as_view()),
@@ -45,4 +46,8 @@ urlpatterns = [
     url(r'^revision/(?P<id_formador>\w+)/$', ListaRevisionFormadorView.as_view()),
     url(r'^revision/(?P<id_formador>\w+)/nuevo/$', NuevaRevisionFormadorView.as_view()),
     url(r'^revision/(?P<id_formador>\w+)/editar/(?P<id_revision>\w+)/$', EditarRevisionFormadorView.as_view()),
+
+    url(r'^requerimientoscontratacion/$', ListaRequerimientosContratacionView.as_view()),
+    url(r'^requerimientoscontratacion/nuevo/$', NuevoRequerimientoContratacionView.as_view()),
+    url(r'^requerimientoscontratacion/(?P<pk>[0-9]+)/$', UpdateRequerimientoContratacionView.as_view()),
 ]

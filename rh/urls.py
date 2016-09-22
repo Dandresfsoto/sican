@@ -8,6 +8,7 @@ from rh.views import SoporteFormadorView, NuevoSoporteFormadorView, UpdateSoport
 from rh.views import LideresView, NuevoLiderView, UpdateLiderView, DeleteLiderView
 from rh.views import SoporteLiderView, NuevoSoporteLiderView, UpdateSoporteLiderView, DeleteSoporteLiderView
 from rh.views import NegociadoresView,NuevoNegociadorView, UpdateNegociadorView, DeleteNegociadorView
+from rh.views import ListaRequerimientosContratacionView, NuevoRequerimientoContratacionView
 
 urlpatterns = [
     url(r'^administrativos/$', AdministrativoView.as_view()),
@@ -65,4 +66,6 @@ urlpatterns = [
     #url(r'^negociadores/soportes/(?P<pk>[0-9]+)/editar/(?P<id_soporte>[0-9]+)/$', UpdateSoporteLiderView.as_view()),
     #url(r'^negociadores/soportes/(?P<pk>[0-9]+)/eliminar/(?P<id_soporte>[0-9]+)/$', DeleteSoporteLiderView.as_view()),
 
+    url(r'^requerimientoscontratacion/$', ListaRequerimientosContratacionView.as_view()),
+    url(r'^requerimientoscontratacion/(?P<pk>[0-9]+)/$', NuevoRequerimientoContratacionView.as_view()),
 ]

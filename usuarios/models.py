@@ -98,6 +98,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     def photo_filename(self):
         return os.path.basename(self.photo.name)
 
+    def __unicode__(self):
+        return self.first_name + ' ' + self.last_name
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:

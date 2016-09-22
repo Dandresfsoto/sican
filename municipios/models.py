@@ -15,4 +15,4 @@ class Municipio(models.Model):
         ordering = ['nombre']
 
     def __unicode__(self):
-        return self.nombre
+        return self.nombre + ', ' + self.departamento.nombre

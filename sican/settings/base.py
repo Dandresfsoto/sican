@@ -42,6 +42,7 @@ EMAIL_HOST_USER = os.getenv('SICAN_EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('SICAN_EMAIL_HOST_PASSWORD')
 EMAIL_PORT = os.getenv('SICAN_EMAIL_PORT')
 DEFAULT_FROM_EMAIL = os.getenv('SICAN_DEFAULT_FROM_EMAIL')
+RECURSO_HUMANO_EMAIL = 'recursohumano@asoandes.org'
 EMAIL_USE_TLS = True
 
 LOGIN_URL = '/'
@@ -138,7 +139,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'UNICODE_JSON': True
 }
 
 

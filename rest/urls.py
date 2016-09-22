@@ -14,6 +14,7 @@ from rest.views import ResultadosPercepcionInicialList, RadicadosRetomaList, Ret
 from rest.views import MatricesDiplomadosList, AutocompleteRadicados, GruposChainedList
 from rest.views import FormadoresGrupos, FormadoresGruposLista, ContratosValorList, EntregablesValorList, FormadoresRevision
 from rest.views import FormadoresRevisionFormador, CortesList, NegociadoresRh
+from rest.views import RequerimientosContratacion, AutocompleteMunicipios, RequerimientosContratacionRespuesta
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -85,6 +86,7 @@ urlpatterns = [
 
     url(r'matrices/diplomados/(?P<diplomado>\w+)/$', MatricesDiplomadosList.as_view()),
     url(r'autocomplete/radicados/$', AutocompleteRadicados.as_view()),
+    url(r'autocomplete/municipios/$', AutocompleteMunicipios.as_view()),
 
 
     url(r'formacion/grupos/$', FormadoresGrupos.as_view()),
@@ -97,4 +99,7 @@ urlpatterns = [
     url(r'formadores/revision/(?P<id_formador>\w+)/$', FormadoresRevisionFormador.as_view()),
 
     url(r'financiera/cortes/$', CortesList.as_view()),
+
+    url(r'formacion/requerimientoscontratacion/$', RequerimientosContratacion.as_view()),
+    url(r'formacion/requerimientoscontratacionrespuesta/$', RequerimientosContratacionRespuesta.as_view()),
 ]

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from usuarios.models import User
 from rest.serializers import UserSerializer, MensajeSerializer
 from rest_framework.views import APIView
@@ -45,6 +46,8 @@ from django.db.models import Sum
 from formadores.models import Revision
 from formadores.models import Cortes
 from negociadores.models import Negociador
+from rh.models import RequerimientoPersonal
+from rest_framework.renderers import JSONRenderer
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -321,6 +324,22 @@ class AutocompleteRadicados(APIView):
 
         return Response({'suggestions':response})
 
+class AutocompleteMunicipios(APIView):
+
+    permission_classes = (AllowAny,)
+    renderer_classes = (JSONRenderer, )
+
+    def get(self, request, format=None):
+
+        query = request.query_params['query']
+        response = []
+        q = Q(nombre__istartswith=query)
+
+        for municipio in Municipio.objects.filter(q):
+            response.append({ 'value': municipio.nombre + ', ' + municipio.departamento.nombre })
+
+        return Response({'suggestions':response})
+
 class UserList(APIView):
     """
     Retorna la informacion de los usuarios excluyendo al que realiza el request.
@@ -406,6 +425,12 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'requerimientosrhrespuesta':{
+                'ver':{'name':'Requerimientos de contratación','link':'/rh/requerimientoscontratacion/'}
+            },
+            'requerimientosrh':{
+                'ver':{'name':'Requerimientos de contratación','link':'/formacion/requerimientoscontratacion/'}
+            },
             'cortes':{
                 'ver':{'name':'Cortes de pago','link':'/financiera/cortes/'}
             },
@@ -2653,5 +2678,133 @@ class CortesList(BaseDatatableView):
                 item.fecha,
                 item.descripcion,
                 item.get_archivo_url()
+            ])
+        return json_data
+
+class RequerimientosContratacion(BaseDatatableView):
+    """
+    0.id
+    1.encargado
+    2.codigo_ruta
+    3.departamento
+    4.municipios
+    5.estado
+    6.permiso para editar
+    """
+    model = RequerimientoPersonal
+    columns = ['id','encargado','codigo_ruta','departamento']
+
+    order_columns = ['id','encargado','codigo_ruta','departamento']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        q = Q(solicitante = self.request.user) | Q(encargado = self.request.user)
+        return RequerimientoPersonal.objects.filter(q)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            #q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+            #    Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            #qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+
+            if item.remitido_respuesta == False and item.remitido_contratacion == False and item.contratar == False and item.desierto == False:
+                estado = 'Remitido a RH'
+                editar = False
+
+            elif item.remitido_respuesta == True and item.remitido_contratacion == False and item.contratar == False and item.desierto == False:
+                estado = 'Listo para capacitar'
+                editar = True
+
+            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == True and item.desierto == False:
+                estado = 'Proceder a contrato'
+                editar = False
+
+            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == False and item.desierto == True:
+                estado = 'Aspirante deserta'
+                editar = False
+
+
+            json_data.append([
+                item.id,
+                item.encargado.first_name + ' ' + item.encargado.last_name,
+                item.codigo_ruta,
+                item.departamento.nombre,
+                item.get_municipios_string(),
+                estado,
+                editar
+            ])
+        return json_data
+
+class RequerimientosContratacionRespuesta(BaseDatatableView):
+    """
+    0.id
+    1.encargado
+    2.codigo_ruta
+    3.departamento
+    4.municipios
+    5.estado
+    6.permiso para editar
+    """
+    model = RequerimientoPersonal
+    columns = ['id','encargado','codigo_ruta','departamento']
+
+    order_columns = ['id','encargado','codigo_ruta','departamento']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        q = Q(solicitante = self.request.user) | Q(encargado = self.request.user)
+        return RequerimientoPersonal.objects.filter(q)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            #q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+            #    Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            #qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+
+            if item.remitido_respuesta == False and item.remitido_contratacion == False and item.contratar == False and item.desierto == False:
+                estado = 'Remitido a RH'
+                editar = False
+
+            elif item.remitido_respuesta == True and item.remitido_contratacion == False and item.contratar == False and item.desierto == False:
+                estado = 'Listo para capacitar'
+                editar = True
+
+            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == True and item.desierto == False:
+                estado = 'Proceder a contrato'
+                editar = False
+
+            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == False and item.desierto == True:
+                estado = 'Aspirante deserta'
+                editar = False
+
+
+            json_data.append([
+                item.id,
+                item.encargado.first_name + ' ' + item.encargado.last_name,
+                item.codigo_ruta,
+                item.departamento.nombre,
+                item.get_municipios_string(),
+                estado,
+                editar
             ])
         return json_data

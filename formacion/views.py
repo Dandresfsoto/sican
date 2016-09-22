@@ -16,7 +16,7 @@ from departamentos.models import Departamento
 from formadores.models import SolicitudTransporte, Desplazamiento
 from django.views.generic.edit import ModelFormMixin
 from usuarios.tasks import send_mail_templated
-from sican.settings.base import DEFAULT_FROM_EMAIL
+from sican.settings.base import DEFAULT_FROM_EMAIL,RECURSO_HUMANO_EMAIL
 import locale
 from formacion.models import Semana
 import datetime
@@ -29,6 +29,9 @@ from formadores.forms import GruposForm, RevisionForm, RevisionUpdateForm
 from formadores.models import Revision
 from productos.models import Contratos, ValorEntregable
 from formadores.models import Producto, Revision
+from rh.models import RequerimientoPersonal
+from rh.forms import RequerimientoPersonalForm, RequerimientoPersonalRhCapacitado
+
 
 
 class ListaPreinscritosView(LoginRequiredMixin,
@@ -766,3 +769,52 @@ class EditarRevisionFormadorView(LoginRequiredMixin,
             producto.save()
 
         return super(EditarRevisionFormadorView,self).form_valid(form)
+
+
+class ListaRequerimientosContratacionView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/requerimientosrh/lista.html'
+    permission_required = "permisos_sican.formacion.requerimientosrh.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.formacion.requerimientosrh.crear')
+        return super(ListaRequerimientosContratacionView, self).get_context_data(**kwargs)
+
+
+
+
+class NuevoRequerimientoContratacionView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = RequerimientoPersonal
+    form_class = RequerimientoPersonalForm
+    success_url = '../'
+    template_name = 'formacion/requerimientosrh/nuevo.html'
+    permission_required = "permisos_sican.formacion.requerimientosrh.crear"
+
+    def get_initial(self):
+        return {'user_id':self.request.user.id}
+
+
+
+class UpdateRequerimientoContratacionView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              UpdateView):
+    model = RequerimientoPersonal
+    form_class = RequerimientoPersonalRhCapacitado
+    pk_url_kwarg = 'pk'
+    success_url = '/formacion/requerimientoscontratacion/'
+    template_name = 'formacion/requerimientosrh/editar.html'
+    permission_required = "permisos_sican.formacion.requerimientosrh.editar"
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.remitido_contratacion = True
+        self.object.fecha_solicitud_contratacion = datetime.datetime.now()
+        if form.cleaned_data['contratar'] == 'contratar':
+            self.object.contratar = True
+        elif form.cleaned_data['contratar'] == 'desierto':
+            self.object.desierto = True
+        self.object.save()
+        return super(UpdateRequerimientoContratacionView, self).form_valid(form)
