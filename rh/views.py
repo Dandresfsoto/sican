@@ -513,7 +513,7 @@ class ListaRequerimientosContratacionView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
     template_name = 'rh/requerimientosrh/lista.html'
-    permission_required = "permisos_sican.formacion.requerimientosrhrespuesta.ver"
+    permission_required = "permisos_sican.rh.requerimientosrhrespuesta.ver"
 
 class NuevoRequerimientoContratacionView(LoginRequiredMixin,
                                PermissionRequiredMixin,
