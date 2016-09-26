@@ -48,6 +48,7 @@ from formadores.models import Cortes
 from negociadores.models import Negociador
 from rh.models import RequerimientoPersonal
 from rest_framework.renderers import JSONRenderer
+from matrices.models import CargaMasiva
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -2802,5 +2803,42 @@ class RequerimientosContratacionRespuesta(BaseDatatableView):
                 item.get_municipios_string(),
                 estado,
                 editar
+            ])
+        return json_data
+
+class CargaMasivaMatrices(BaseDatatableView):
+    """
+    0.id
+    1.fecha
+    2.archivo
+    3.resultado
+    4.estado
+    """
+    model = CargaMasiva
+    columns = ['id','fecha','archivo','resultado','estado']
+
+    order_columns = ['id','fecha','archivo','resultado','estado']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return CargaMasiva.objects.filter(usuario = self.request.user)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        search = unicode(search).capitalize()
+        if search:
+            q = Q(id__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.fecha,
+                item.get_archivo_url(),
+                item.get_resultado_url(),
+                item.estado
             ])
         return json_data

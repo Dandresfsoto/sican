@@ -536,6 +536,7 @@ class NuevoRequerimientoContratacionView(LoginRequiredMixin,
         self.object.fecha_respuesta = datetime.datetime.now()
         self.object.save()
         destinatarios = [self.object.solicitante,self.object.encargado]
+        
         url_base = self.request.META['HTTP_ORIGIN']
         for destinatario in list(set(destinatarios)):
             send_mail_templated.delay('email/requerimiento_contratacion_rh.tpl', {'id_requerimiento':self.object.id,

@@ -4,6 +4,7 @@ from region.models import Region
 from django.db import models
 from radicados.models import Radicado
 from formacion.models import Formador, Grupos
+from usuarios.models import User
 
 # Create your models here.
 class Area(models.Model):
@@ -30,13 +31,13 @@ class Beneficiario(models.Model):
     apellidos = models.CharField(max_length=100)
     nombres = models.CharField(max_length=100)
     cedula = models.BigIntegerField(unique=True)
-    correo = models.EmailField(max_length=100,blank=True)
-    telefono_fijo = models.CharField(max_length=100,blank=True)
-    telefono_celular = models.CharField(max_length=100,blank=True)
+    correo = models.EmailField(max_length=100,blank=True,null=True)
+    telefono_fijo = models.CharField(max_length=100,blank=True,null=True)
+    telefono_celular = models.CharField(max_length=100,blank=True,null=True)
     area = models.ForeignKey(Area,related_name='area_beneficiario',blank=True,null=True)
     grado = models.ForeignKey(Grado,related_name='grado_beneficiario',blank=True,null=True)
-    genero = models.CharField(max_length=100)
-    estado = models.CharField(max_length=100)
+    genero = models.CharField(max_length=100,blank=True,null=True)
+    estado = models.CharField(max_length=100,blank=True,null=True)
 
     def __unicode__(self):
         return str(self.cedula)
@@ -47,3 +48,24 @@ class BeneficiarioPendiente(models.Model):
 
     def __unicode__(self):
         return str(self.cedula)
+
+class CargaMasiva(models.Model):
+    usuario = models.ForeignKey(User)
+    fecha = models.DateTimeField(auto_now_add=True)
+    archivo = models.FileField(upload_to='Carga Masiva/Archivo')
+    resultado = models.FileField(upload_to='Carga Masiva/Resultado',blank=True,null=True)
+    estado = models.CharField(max_length=100,default='Procesando...')
+
+    def get_archivo_url(self):
+        try:
+            url = self.archivo.url
+        except:
+            url = ""
+        return url
+
+    def get_resultado_url(self):
+        try:
+            url = self.resultado.url
+        except:
+            url = ""
+        return url

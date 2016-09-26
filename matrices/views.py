@@ -6,6 +6,9 @@ from braces.views import LoginRequiredMixin, PermissionRequiredMixin, MultiplePe
 from matrices.models import Beneficiario
 from matrices.forms import BeneficiarioForm, BeneficiarioUpdateForm
 from radicados.models import Radicado
+from matrices.models import CargaMasiva
+from matrices.forms import CargaMasivaForm
+from matrices.tasks import carga_masiva_matrices
 
 
 # Create your views here.
@@ -85,3 +88,35 @@ class DeleteBeneficiarioView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['diplomado'] = self.kwargs['diplomado'].upper()
         return super(DeleteBeneficiarioView, self).get_context_data(**kwargs)
+
+
+
+
+
+class ListadoCargasMasivasView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'matrices/cargamasiva/lista.html'
+    permission_required = "permisos_sican.matrices.cargamasiva.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.matrices.cargamasiva.crear')
+        return super(ListadoCargasMasivasView, self).get_context_data(**kwargs)
+
+
+class NuevaCargaMasiva(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = CargaMasiva
+    form_class = CargaMasivaForm
+    success_url = '../'
+    template_name = 'matrices/cargamasiva/nuevo.html'
+    permission_required = "permisos_sican.matrices.cargamasiva.crear"
+
+    def get_initial(self):
+        return {'id_usuario':self.request.user.id}
+
+    def form_valid(self, form):
+        self.object = form.save()
+        carga_masiva_matrices.delay(self.object.id,self.request.user.email)
+        return super(NuevaCargaMasiva,self).form_valid(form)

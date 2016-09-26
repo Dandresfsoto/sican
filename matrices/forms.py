@@ -3,12 +3,14 @@
 from __future__ import unicode_literals
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Fieldset
+from crispy_forms.layout import Layout, Div, Fieldset, HTML
 from matrices.models import Beneficiario
 from region.models import Region
 from productos.models import Diplomado
 from radicados.models import Radicado
 from formadores.models import Grupos, Formador
+from matrices.models import CargaMasiva
+from usuarios.models import User
 
 class BeneficiarioForm(forms.ModelForm):
 
@@ -257,3 +259,39 @@ class BeneficiarioUpdateForm(forms.ModelForm):
             'area':'Area*',
             'grado':'Grado*'
         }
+
+class CargaMasivaForm(forms.ModelForm):
+
+    def clean(self):
+        cleaned_data = super(CargaMasivaForm, self).clean()
+        archivo = cleaned_data.get('archivo')
+        if archivo.content_type != u'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+            self.add_error('archivo','Se debe seleccionar un archivo excel.')
+
+
+    def __init__(self, *args, **kwargs):
+        super(CargaMasivaForm, self).__init__(*args, **kwargs)
+
+        self.fields['usuario'].initial = User.objects.get(id = kwargs['initial']['id_usuario'])
+        self.fields['usuario'].widget = forms.HiddenInput()
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Carga masiva de matrices',
+                Div(
+                    HTML("""
+                            <file-upload-sican style="margin-left:14px;" name="archivo">Archivo</file-upload-sican>
+                        """),
+                    css_class = 'row'
+                ),
+                Div(
+                    'archivo',
+                    css_class = 'hidden'
+                )
+            ),
+        )
+
+    class Meta:
+        model = CargaMasiva
+        fields = ['usuario','archivo']
