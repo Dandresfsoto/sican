@@ -126,73 +126,78 @@ def carga_masiva_matrices(id,email):
 
                         if Formador.objects.filter(cedula = fila[12].value if fila[12].value != None else '').count() == 1:
                             formador = Formador.objects.get(cedula = fila[12].value)
-                            grupo_list = fila[10].value.split('-') if fila[10].value != None else ''
+                            grupo_list = fila[10].value.split('-') if fila[10].value != None else ['']
 
-                            if len(grupo_list) > 0:
-                                grupo, grupo_creado = Grupos.objects.get_or_create(formador=formador,nombre__icontains = int(grupo_list[-1]))
+                            if len(grupo_list) > 1:
+                                try:
+                                    grupo_numero = int(grupo_list[-1])
+                                except:
+                                    resultado = 'No se puede identificar el grupo'
+                                else:
+                                    grupo, grupo_creado = Grupos.objects.get_or_create(formador=formador,nombre__icontains = grupo_numero)
 
-                                if grupo_creado:
-                                    resultado += 'Grupo creado, '
+                                    if grupo_creado:
+                                        resultado += 'Grupo creado, '
 
-                                if fila[13].value != '':
+                                    if fila[13].value != '':
 
-                                    if fila[14].value != '':
+                                        if fila[14].value != '':
 
-                                        try:
-                                            radicado_numero = int(fila[3].value)
-                                        except:
-                                            radicado_numero = -1
+                                            try:
+                                                radicado_numero = int(fila[3].value)
+                                            except:
+                                                radicado_numero = -1
 
-                                        if Radicado.objects.filter(numero = radicado_numero).count() == 1:
-                                            radicado = Radicado.objects.get(numero = radicado_numero)
+                                            if Radicado.objects.filter(numero = radicado_numero).count() == 1:
+                                                radicado = Radicado.objects.get(numero = radicado_numero)
+                                            else:
+                                                radicado = None
+
+
+                                            if Area.objects.filter(numero__icontains = fila[19].value.split('.')[0] if fila[19].value != None else '') == 1:
+                                                area = Area.objects.get(numero__icontains = fila[19].value.split('.')[0])
+                                            else:
+                                                area = None
+
+                                            if Grado.objects.filter(numero__icontains = fila[20].value if fila[20].value != None else '') == 1:
+                                                grado = Grado.objects.get(numero__icontains = fila[20].value)
+                                            else:
+                                                grado = None
+
+
+                                            if Beneficiario.objects.filter(cedula = fila[15].value if fila[15].value != None else '').count() == 1:
+                                                beneficiario = Beneficiario.objects.get(cedula = fila[15].value)
+                                                beneficiario.region = region
+                                                beneficiario.radicado = radicado
+                                                beneficiario.formador = formador
+                                                beneficiario.grupo = grupo
+                                                beneficiario.apellidos =fila[13].value
+                                                beneficiario.nombres = fila[14].value
+                                                beneficiario.cedula=fila[15].value
+                                                beneficiario.correo=fila[16].value
+                                                beneficiario.telefono_fijo=fila[17].value
+                                                beneficiario.telefono_celular=fila[18].value
+                                                beneficiario.area = area
+                                                beneficiario.grado = grado
+                                                beneficiario.genero=fila[22].value
+                                                beneficiario.estado=fila[23].value
+                                                beneficiario.save()
+
+                                                resultado += 'Docente actualizado'
+
+                                            else:
+                                                Beneficiario.objects.create(diplomado = diplomado,region=region,radicado=radicado,
+                                                                            formador=formador,grupo=grupo,apellidos=fila[13].value,
+                                                                            nombres=fila[14].value,cedula=fila[15].value,correo=fila[16].value,
+                                                                            telefono_fijo=fila[17].value,telefono_celular=fila[18].value,
+                                                                            area=area,grado=grado,genero=fila[22].value,estado=fila[23].value)
+                                                resultado += 'Docente creado'
+
                                         else:
-                                            radicado = None
-
-
-                                        if Area.objects.filter(numero__icontains = fila[19].value.split('.')[0] if fila[19].value != None else '') == 1:
-                                            area = Area.objects.get(numero__icontains = fila[19].value.split('.')[0])
-                                        else:
-                                            area = None
-
-                                        if Grado.objects.filter(numero__icontains = fila[20].value if fila[20].value != None else '') == 1:
-                                            grado = Grado.objects.get(numero__icontains = fila[20].value)
-                                        else:
-                                            grado = None
-
-
-                                        if Beneficiario.objects.filter(cedula = fila[15].value if fila[15].value != None else '').count() == 1:
-                                            beneficiario = Beneficiario.objects.get(cedula = fila[15].value)
-                                            beneficiario.region = region
-                                            beneficiario.radicado = radicado
-                                            beneficiario.formador = formador
-                                            beneficiario.grupo = grupo
-                                            beneficiario.apellidos =fila[13].value
-                                            beneficiario.nombres = fila[14].value
-                                            beneficiario.cedula=fila[15].value
-                                            beneficiario.correo=fila[16].value
-                                            beneficiario.telefono_fijo=fila[17].value
-                                            beneficiario.telefono_celular=fila[18].value
-                                            beneficiario.area = area
-                                            beneficiario.grado = grado
-                                            beneficiario.genero=fila[22].value
-                                            beneficiario.estado=fila[23].value
-                                            beneficiario.save()
-
-                                            resultado += 'Docente actualizado'
-
-                                        else:
-                                            Beneficiario.objects.create(diplomado = diplomado,region=region,radicado=radicado,
-                                                                        formador=formador,grupo=grupo,apellidos=fila[13].value,
-                                                                        nombres=fila[14].value,cedula=fila[15].value,correo=fila[16].value,
-                                                                        telefono_fijo=fila[17].value,telefono_celular=fila[18].value,
-                                                                        area=area,grado=grado,genero=fila[22].value,estado=fila[23].value)
-                                            resultado += 'Docente creado'
+                                            resultado += 'No hay nombres del docente'
 
                                     else:
-                                        resultado += 'No hay nombres del docente'
-
-                                else:
-                                    resultado += 'No hay apellidos del docente'
+                                        resultado += 'No hay apellidos del docente'
 
                             else:
                                 resultado = 'No se puede identificar el grupo'
