@@ -438,7 +438,7 @@ class UserPermissionList(APIView):
             'gruposformacion':{
                 'ver':{'name':'Grupos de formación','link':'/formacion/grupos/'}
             },
-            'matricesmasivo':{
+            'cargamasiva':{
                 'ver':{'name':'Carga masiva','link':'/matrices/cargamasiva/'}
             },
             'general':{
