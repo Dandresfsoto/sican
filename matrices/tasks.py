@@ -134,14 +134,14 @@ def carga_masiva_matrices(id,email):
                                 except:
                                     resultado = 'No se puede identificar el grupo'
                                 else:
-                                    grupo, grupo_creado = Grupos.objects.get_or_create(formador=formador,nombre__icontains = grupo_numero)
+                                    grupo, grupo_creado = Grupos.objects.get_or_create(formador=formador,nombre = grupo_numero)
 
                                     if grupo_creado:
                                         resultado += 'Grupo creado, '
 
-                                    if fila[13].value != '':
+                                    if fila[13].value != None:
 
-                                        if fila[14].value != '':
+                                        if fila[14].value != None:
 
                                             try:
                                                 radicado_numero = int(fila[3].value)
