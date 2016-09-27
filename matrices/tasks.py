@@ -154,13 +154,13 @@ def carga_masiva_matrices(id,email):
                                                 radicado = None
 
 
-                                            if Area.objects.filter(numero__icontains = fila[19].value.split('.')[0] if fila[19].value != None else '') == 1:
-                                                area = Area.objects.get(numero__icontains = fila[19].value.split('.')[0])
+                                            if Area.objects.filter(numero__icontains = str(fila[19].value).split('.')[0] if fila[19].value != None else '').count() == 1:
+                                                area = Area.objects.get(numero__icontains = str(fila[19].value).split('.')[0])
                                             else:
                                                 area = None
 
-                                            if Grado.objects.filter(numero__icontains = fila[20].value if fila[20].value != None else '') == 1:
-                                                grado = Grado.objects.get(numero__icontains = fila[20].value)
+                                            if Grado.objects.filter(numero__icontains = str(fila[20].value).split('.')[0] if fila[20].value != None else '').count() == 1:
+                                                grado = Grado.objects.get(numero__icontains = str(fila[20].value).split('.')[0])
                                             else:
                                                 grado = None
 
