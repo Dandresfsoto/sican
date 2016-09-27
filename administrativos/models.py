@@ -37,6 +37,8 @@ class Administrativo(models.Model):
     pension = models.CharField(max_length=100,blank=True)
     arl = models.CharField(max_length=100,blank=True)
 
+    usuario_colombia_aprende = models.CharField(max_length=100,blank=True)
+
     oculto = models.BooleanField(default=False)
 
     class Meta:

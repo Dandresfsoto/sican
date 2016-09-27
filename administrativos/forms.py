@@ -19,6 +19,7 @@ class NuevoForm(forms.ModelForm):
                 'Región',
                 Div(
                     Div('region',css_class='col-sm-6'),
+                    Div('usuario_colombia_aprende',css_class='col-sm-6'),
                     css_class = 'row'
                 ),
             ),

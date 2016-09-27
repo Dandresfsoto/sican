@@ -45,6 +45,8 @@ class Formador(models.Model):
 
     cantidad_docentes = models.IntegerField(default=150)
     primera_capacitacion = models.BooleanField(default=False)
+
+    usuario_colombia_aprende = models.CharField(max_length=100,blank=True)
     oculto = models.BooleanField(default=False)
 
     class Meta:

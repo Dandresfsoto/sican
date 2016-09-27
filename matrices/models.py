@@ -38,6 +38,7 @@ class Beneficiario(models.Model):
     grado = models.ForeignKey(Grado,related_name='grado_beneficiario',blank=True,null=True)
     genero = models.CharField(max_length=100,blank=True,null=True)
     estado = models.CharField(max_length=100,blank=True,null=True)
+    usuario_colombia_aprende = models.CharField(max_length=100,blank=True)
 
     def __unicode__(self):
         return str(self.cedula)
