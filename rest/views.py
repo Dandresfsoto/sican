@@ -2705,11 +2705,21 @@ class RequerimientosContratacion(BaseDatatableView):
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
-        if search:
-            search = unicode(search).capitalize()
-            #q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
-            #    Q(region__numero__icontains=search) | Q(cedula__icontains=search)
-            #qs = qs.filter(q)
+        if search == 'Remitido a RH':
+            q = Q(remitido_respuesta = False) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False)
+            qs = qs.filter(q)
+        elif search == 'Listo para capacitar':
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False)
+            qs = qs.filter(q)
+        elif search == 'Proceder a contrato':
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = True) & Q(desierto = False)
+            qs = qs.filter(q)
+        elif search == 'Aspirante deserta':
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = False) & Q(desierto = True)
+            qs = qs.filter(q)
+        else:
+            q = Q(solicitante__first_name__icontains = search) | Q(encargado__first_name__icontains = search)
+            qs = qs.filter(q)
         return qs
 
     def prepare_results(self, qs):
@@ -2765,11 +2775,21 @@ class RequerimientosContratacionRespuesta(BaseDatatableView):
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
-        if search:
-            search = unicode(search).capitalize()
-            #q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
-            #    Q(region__numero__icontains=search) | Q(cedula__icontains=search)
-            #qs = qs.filter(q)
+        if search == 'Remitido a RH':
+            q = Q(remitido_respuesta = False) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False)
+            qs = qs.filter(q)
+        elif search == 'Listo para capacitar':
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False)
+            qs = qs.filter(q)
+        elif search == 'Proceder a contrato':
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = True) & Q(desierto = False)
+            qs = qs.filter(q)
+        elif search == 'Aspirante deserta':
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = False) & Q(desierto = True)
+            qs = qs.filter(q)
+        else:
+            q = Q(solicitante__first_name__icontains = search) | Q(encargado__first_name__icontains = search)
+            qs = qs.filter(q)
         return qs
 
     def prepare_results(self, qs):
