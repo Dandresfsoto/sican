@@ -122,10 +122,10 @@ def carga_masiva_matrices(id,email):
                     diplomado = Diplomado.objects.get(nombre__icontains = name)
 
                     if Region.objects.filter(numero = fila[0].value if fila[0].value != None else '').count() == 1:
-                        region = Region.objects.get(numero = fila[0].value)
+                        region = Region.objects.get(numero = fila[0].value if fila[0].value != None else 0)
 
-                        if Formador.objects.filter(cedula = fila[12].value if fila[12].value != None else '').count() == 1:
-                            formador = Formador.objects.get(cedula = fila[12].value)
+                        if Formador.objects.filter(cedula = fila[12].value if fila[12].value != None else 0).count() == 1:
+                            formador = Formador.objects.get(cedula = fila[12].value if fila[12].value != None else 0)
                             grupo_list = fila[10].value.split('-') if fila[10].value != None else ['']
 
                             if len(grupo_list) > 1:
