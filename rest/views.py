@@ -2699,8 +2699,12 @@ class RequerimientosContratacion(BaseDatatableView):
     max_display_length = 100
 
     def get_initial_queryset(self):
-        q = Q(solicitante = self.request.user) | Q(encargado = self.request.user)
-        return RequerimientoPersonal.objects.filter(q)
+        grupos = self.request.user.groups.values_list('name',flat=True)
+        if 'Coordinadores operativos' in grupos:
+            return RequerimientoPersonal.objects.all()
+        else:
+            q = Q(solicitante = self.request.user) | Q(encargado = self.request.user)
+            return RequerimientoPersonal.objects.filter(q)
 
 
     def filter_queryset(self, qs):
@@ -2862,3 +2866,147 @@ class CargaMasivaMatrices(BaseDatatableView):
                 item.estado
             ])
         return json_data
+
+class FormadoresListEvidencias(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cargo
+    3.region
+    4.cedula
+    5.correo_personal
+    6.celular_personal
+    7.profesion
+    8.fecha_contratacion
+    9.fecha_terminacion
+    10.banco
+    11.tipo_cuenta
+    12.numero_cuenta
+    13.eps
+    14.pension
+    15.arl
+    """
+    model = Formador
+    columns = ['id','nombres','cargo','region','cedula','correo_personal','celular_personal','profesion',
+               'fecha_contratacion','fecha_terminacion','banco','tipo_cuenta','numero_cuenta','eps',
+               'pension','arl']
+
+    order_columns = ['','nombres','cargo','']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Formador.objects.filter(cargo__nombre = 'Formador Tipo ' + self.kwargs['id_diplomado'])
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+                Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+
+            region_str = ''
+            for region in item.region.values_list('numero',flat=True):
+                region_str = region_str + str(region) + ','
+            region_str = region_str[:-1]
+
+            if item.banco != None:
+                banco = item.banco.nombre
+            else:
+                banco = ''
+
+            json_data.append([
+                item.id,
+                item.nombres + " " + item.apellidos,
+                item.cargo.nombre,
+                region_str,
+                item.cedula,
+                item.correo_personal,
+                item.celular_personal,
+                item.profesion,
+                item.fecha_contratacion,
+                item.fecha_terminacion,
+                banco,
+                item.tipo_cuenta,
+                item.numero_cuenta,
+                item.eps,
+                item.pension,
+                item.arl,
+            ])
+        return json_data
+
+class NivelesListEvidencias(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    """
+    model = Nivel
+    columns = ['id','nombre']
+
+    order_columns = ['nombre']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Nivel.objects.filter(diplomado__id = self.kwargs['id_diplomado']).exclude(nombre = 'Nivel 0')
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+class SesionesListEvidencias(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    """
+    model = Sesion
+    columns = ['id','nombre']
+
+    order_columns = ['nombre']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Sesion.objects.filter(nivel__id = self.kwargs['id_nivel'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+class EntregablesListEvidencias(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    """
+    model = Entregable
+    columns = ['id','nombre']
+
+    order_columns = ['nombre']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Entregable.objects.filter(sesion__id = self.kwargs['id_sesion'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search.capitalize())
+            qs = qs.filter(q)
+        return qs

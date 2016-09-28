@@ -16,7 +16,19 @@ block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
-    paper-icon-item(class="breadcrum_active",disabled) Lista de diplomados
+    a(href="/evidencias/general/",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Lista de diplomados
+            iron-icon(icon="check",item-icon)
+    a(href="../../../../../../",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Formadores {{nombre_diplomado}}
+            iron-icon(icon="check",item-icon)
+    a(href="../../../../",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") {{nombre_formador}}
+            iron-icon(icon="check",item-icon)
+    a(href="../../",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") {{nombre_nivel}}
+            iron-icon(icon="check",item-icon)
+    paper-icon-item(class="breadcrum_active",disabled) {{nombre_sesion}}
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
     div(class="container-fluid container-index")
@@ -28,12 +40,9 @@ block scroll_header_panel_content
             thead
                 tr
                     th Nombre
-                    th Encargado
             tbody
                 tr
                     td Nombre
-                    td Encargado
-
 block body_script_content
     script.
         $(document).ready(function () {
@@ -43,7 +52,7 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/financiera/diplomados/",
+                "ajax": "/rest/evidencias/entregables/{{id_sesion}}/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
@@ -52,20 +61,7 @@ block body_script_content
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[3]) {
-                                return '<a href="diplomado/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
-                            }
-                            else {
-                                return data;
-                            }
-                        },
-                        "orderable": true,
-                    },
-                    {
-                        "data": 2,
-                        "className": 'text-center',
-                        "render": function (data, type, row, meta) {
-                            return 'Formador Tipo ' + data;
+                            return '<a href="sesion/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                         },
                         "orderable": true,
                     },
