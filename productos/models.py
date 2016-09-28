@@ -34,6 +34,7 @@ class Entregable(models.Model):
     nombre = models.CharField(max_length=100)
     numero = models.IntegerField()
     tipo = models.CharField(max_length=100)
+    escencial = models.CharField(max_length=20,default='No')
     formato = models.FileField(upload_to="Entregables/Formatos",blank=True,null=True)
 
     def get_archivo_url(self):

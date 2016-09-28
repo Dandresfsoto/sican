@@ -183,7 +183,8 @@ class EntregableForm(forms.ModelForm):
                     css_class = 'row'
                 ),
                 Div(
-                    Div('tipo',css_class='col-sm-12'),
+                    Div('tipo',css_class='col-sm-6'),
+                    Div('escencial',css_class='col-sm-6'),
                     css_class = 'row'
                 ),
                 Div(
@@ -199,7 +200,8 @@ class EntregableForm(forms.ModelForm):
         model = Entregable
         fields = '__all__'
         widgets = {
-            'tipo':forms.Select(choices=(('Virtual','Virtual',),('Presencial','Presencial')))
+            'tipo':forms.Select(choices=(('Virtual','Virtual',),('Presencial','Presencial'))),
+            'escencial':forms.Select(choices=(('No','No',),('Si','Si')))
         }
 
 class UpdateEntregableForm(forms.ModelForm):
@@ -223,7 +225,8 @@ class UpdateEntregableForm(forms.ModelForm):
                     css_class = 'row'
                 ),
                 Div(
-                    Div('tipo',css_class='col-sm-12'),
+                    Div('tipo',css_class='col-sm-6'),
+                    Div('escencial',css_class='col-sm-6'),
                     css_class = 'row'
                 ),
                 Div(
@@ -241,7 +244,8 @@ class UpdateEntregableForm(forms.ModelForm):
         fields = '__all__'
 
         widgets = {
-            'tipo':forms.Select(choices=(('Virtual','Virtual',),('Presencial','Presencial')))
+            'tipo':forms.Select(choices=(('Virtual','Virtual',),('Presencial','Presencial'))),
+            'escencial':forms.Select(choices=(('No','No',),('Si','Si')))
         }
 
 class ContratosForm(forms.ModelForm):
