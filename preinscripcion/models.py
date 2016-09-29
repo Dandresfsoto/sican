@@ -21,6 +21,7 @@ class DocentesPreinscritos(models.Model):
     radicado = models.ForeignKey(Radicado)
     verificado = models.BooleanField(default=False)
     fecha = models.DateField(auto_now=True)
+    masivo = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['primer_apellido']

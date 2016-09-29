@@ -39,10 +39,16 @@ block scroll_header_panel_content
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
+                    th Código
                     th Nombre
+                    th Tipo
+                    th Escencial
             tbody
                 tr
+                    td Código
                     td Nombre
+                    td Tipo
+                    td Escencial
 block body_script_content
     script.
         $(document).ready(function () {
@@ -59,10 +65,22 @@ block body_script_content
                 "order": [[0, "asc"]],
                 "columns": [
                     {
-                        "data": 1,
+                        "data": 0,
                         "render": function (data, type, row, meta) {
                             return '<a href="sesion/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                         },
+                        "orderable": true,
+                    },
+                    {
+                        "data": 1,
+                        "orderable": true,
+                    },
+                    {
+                        "data": 2,
+                        "orderable": true,
+                    },
+                    {
+                        "data": 3,
                         "orderable": true,
                     },
                 ]

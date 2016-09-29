@@ -2992,11 +2992,13 @@ class EntregablesListEvidencias(BaseDatatableView):
     """
     0.id
     1.nombre
+    2.tipo
+    3.escencial
     """
     model = Entregable
-    columns = ['id','nombre']
+    columns = ['id','nombre','tipo','escencial']
 
-    order_columns = ['nombre']
+    order_columns = ['id','nombre','tipo','escencial']
     max_display_length = 100
 
     def get_initial_queryset(self):
