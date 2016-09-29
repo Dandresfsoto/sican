@@ -17,7 +17,7 @@ from lideres.forms import LideresForm, NuevoSoporteLiderForm
 from negociadores.models import Negociador
 from negociadores.forms import NegociadorForm
 from rh.models import RequerimientoPersonal
-from rh.forms import RequerimientoPersonalRh
+from rh.forms import RequerimientoPersonalRh,RequerimientoPersonalRhEspera, RequerimientoPersonalRhContratar,RequerimientoPersonalRhDeserta
 import datetime
 from usuarios.tasks import send_mail_templated
 from sican.settings.base import DEFAULT_FROM_EMAIL,RECURSO_HUMANO_EMAIL
@@ -520,10 +520,27 @@ class NuevoRequerimientoContratacionView(LoginRequiredMixin,
                                UpdateView):
     model = RequerimientoPersonal
     form_class = RequerimientoPersonalRh
+    form_class_2 = RequerimientoPersonalRhEspera
+    form_class_3 = RequerimientoPersonalRhContratar
+    form_class_4 = RequerimientoPersonalRhDeserta
     pk_url_kwarg = 'pk'
     success_url = '/rh/requerimientoscontratacion/'
     template_name = 'rh/requerimientosrh/editar.html'
     permission_required = "permisos_sican.rh.requerimientosrhrespuesta.editar"
+
+    def get_form_class(self):
+        obj = RequerimientoPersonal.objects.get(id = self.kwargs['pk'])
+
+        if obj.remitido_respuesta == True and obj.remitido_contratacion == False and obj.contratar == False and obj.desierto == False and obj.contratado == False:
+            return self.form_class_2
+        elif obj.remitido_respuesta == True and obj.remitido_contratacion == True and obj.contratar == True and obj.desierto == False and obj.contratado == False:
+            return self.form_class_3
+        elif obj.remitido_respuesta == True and obj.remitido_contratacion == True and obj.contratar == False and obj.desierto == True and obj.contratado == False:
+            return self.form_class_4
+        elif obj.contratado == True:
+            return self.form_class_3
+        else:
+            return self.form_class
 
     def get_context_data(self, **kwargs):
         kwargs['link_old_file'] = self.object.get_archivo_url()
@@ -532,17 +549,28 @@ class NuevoRequerimientoContratacionView(LoginRequiredMixin,
 
     def form_valid(self, form):
         self.object = form.save()
-        self.object.remitido_respuesta = True
-        self.object.fecha_respuesta = datetime.datetime.now()
-        self.object.save()
-        destinatarios = [self.object.solicitante,self.object.encargado]
-        
-        url_base = self.request.META['HTTP_ORIGIN']
-        for destinatario in list(set(destinatarios)):
-            send_mail_templated.delay('email/requerimiento_contratacion_rh.tpl', {'id_requerimiento':self.object.id,
-                                                                              'first_name': destinatario.first_name,
-                                                                              'last_name': destinatario.last_name,
-                                                                              'url_base': url_base,
-                                                                }, DEFAULT_FROM_EMAIL, [destinatario.email])
+        obj = self.object
+
+        if obj.remitido_respuesta == True and obj.remitido_contratacion == False and obj.contratar == False and obj.desierto == False and obj.contratado == False:
+            pass
+        elif obj.remitido_respuesta == True and obj.remitido_contratacion == True and obj.contratar == True and obj.desierto == False and obj.contratado == False:
+            pass
+        elif obj.remitido_respuesta == True and obj.remitido_contratacion == True and obj.contratar == False and obj.desierto == True and obj.contratado == False:
+            pass
+        elif obj.contratado == True:
+            pass
+        else:
+            self.object.remitido_respuesta = True
+            self.object.fecha_respuesta = datetime.datetime.now()
+            self.object.save()
+            destinatarios = [self.object.solicitante,self.object.encargado]
+
+            url_base = self.request.META['HTTP_ORIGIN']
+            for destinatario in list(set(destinatarios)):
+                send_mail_templated.delay('email/requerimiento_contratacion_rh.tpl', {'id_requerimiento':self.object.id,
+                                                                                  'first_name': destinatario.first_name,
+                                                                                  'last_name': destinatario.last_name,
+                                                                                  'url_base': url_base,
+                                                                    }, DEFAULT_FROM_EMAIL, [destinatario.email])
 
         return super(NuevoRequerimientoContratacionView, self).form_valid(form)

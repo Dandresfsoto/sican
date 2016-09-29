@@ -224,3 +224,183 @@ class RequerimientoPersonalRhCapacitado(forms.ModelForm):
     class Meta:
         model = RequerimientoPersonal
         fields = ['observacion_final']
+
+class RequerimientoPersonalRhEspera(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RequerimientoPersonalRhEspera, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'REQUERIMIENTO DE CONTRATACIÓN',
+
+                Div(
+                    HTML("""
+                            <p class="inline bold-p">Requerimiento: <p class="inline">REQ - {{object.id}}</p></p>
+                            <p class="inline bold-p">Fecha: <p class="inline">{{object.fecha_solicitud}}</p></p>
+                            <p class="inline bold-p">Encargado: <p class="inline">{{object.encargado.first_name}} {{object.encargado.last_name}}</p></p>
+                            <p class="inline bold-p">Departamento: <p class="inline">{{object.departamento.nombre}}</p></p>
+                            <p class="inline bold-p">Municipios: <p class="inline">{{object.get_municipios_string}}</p></p>
+                            <p class="inline bold-p">Código ruta: <p class="inline">{{object.codigo_ruta}}</p></p>
+                            <p class="inline bold-p">Observación solicitante: <p class="inline">{{object.observacion_solicitante}}</p></p>
+                        """),
+                    css_class = ''
+                ),
+            ),
+            Fieldset(
+                'RESPUESTA RH',
+
+                Div(
+                    HTML("""
+                            <p class="inline bold-p">Requerimiento: <p class="inline">REQ - {{object.id}}</p></p>
+                            <p class="inline bold-p">Fecha: <p class="inline">{{object.fecha_respuesta}}</p></p>
+                            <p class="inline bold-p">Cedula: <p class="inline">{{object.nombre}}</p></p>
+                            <p class="inline bold-p">Celular: <p class="inline">{{object.celular}}</p></p>
+                            <p class="inline bold-p">Email: <p class="inline">{{object.email}}</p></p>
+                            <p class="inline bold-p">Hoja de vida: <a href={{object.get_archivo_url}}><p class="inline">{{object.archivo_filename}}</p></a></p>
+                            <p class="inline bold-p">Observación: <p class="inline">{{object.observacion_respuesta}}</p></p>
+                        """),
+                    css_class = ''
+                ),
+            ),
+            Fieldset(
+                'CAPACITACIÓN',
+
+                Div(
+                    HTML("""
+                            <p class="inline bold-p">Requerimiento: <p class="inline">REQ - {{object.id}}</p></p>
+                            <p class="inline bold-p">Fecha: <p class="inline">Pendiente</p></p>
+                            <p class="inline bold-p">Observación: <p class="inline">Pendiente</p></p>
+                            <p class="inline bold-p">Estado: <p class="inline">Esperando solicitud de contratación por parte del encargado</p></p>
+                        """),
+                    css_class = ''
+                ),
+            ),
+        )
+
+    class Meta:
+        model = RequerimientoPersonal
+        fields = []
+
+class RequerimientoPersonalRhDeserta(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RequerimientoPersonalRhDeserta, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'REQUERIMIENTO DE CONTRATACIÓN',
+
+                Div(
+                    HTML("""
+                            <p class="inline bold-p">Requerimiento: <p class="inline">REQ - {{object.id}}</p></p>
+                            <p class="inline bold-p">Fecha: <p class="inline">{{object.fecha_solicitud}}</p></p>
+                            <p class="inline bold-p">Encargado: <p class="inline">{{object.encargado.first_name}} {{object.encargado.last_name}}</p></p>
+                            <p class="inline bold-p">Departamento: <p class="inline">{{object.departamento.nombre}}</p></p>
+                            <p class="inline bold-p">Municipios: <p class="inline">{{object.get_municipios_string}}</p></p>
+                            <p class="inline bold-p">Código ruta: <p class="inline">{{object.codigo_ruta}}</p></p>
+                            <p class="inline bold-p">Observación solicitante: <p class="inline">{{object.observacion_solicitante}}</p></p>
+                        """),
+                    css_class = ''
+                ),
+            ),
+            Fieldset(
+                'RESPUESTA RH',
+
+                Div(
+                    HTML("""
+                            <p class="inline bold-p">Requerimiento: <p class="inline">REQ - {{object.id}}</p></p>
+                            <p class="inline bold-p">Fecha: <p class="inline">{{object.fecha_respuesta}}</p></p>
+                            <p class="inline bold-p">Cedula: <p class="inline">{{object.nombre}}</p></p>
+                            <p class="inline bold-p">Celular: <p class="inline">{{object.celular}}</p></p>
+                            <p class="inline bold-p">Email: <p class="inline">{{object.email}}</p></p>
+                            <p class="inline bold-p">Hoja de vida: <a href={{object.get_archivo_url}}><p class="inline">{{object.archivo_filename}}</p></a></p>
+                            <p class="inline bold-p">Observación: <p class="inline">{{object.observacion_respuesta}}</p></p>
+                        """),
+                    css_class = ''
+                ),
+            ),
+            Fieldset(
+                'CAPACITACIÓN',
+
+                Div(
+                    HTML("""
+                            <p class="inline bold-p">Requerimiento: <p class="inline">REQ - {{object.id}}</p></p>
+                            <p class="inline bold-p">Fecha: <p class="inline">{{object.fecha_solicitud_contratacion}}</p></p>
+                            <p class="inline bold-p">Observación: <p class="inline">{{object.observacion_final}}</p></p>
+                            <p class="inline bold-p">Estado: <p class="inline">El aspirante no continua con el proceso</p></p>
+                        """),
+                    css_class = ''
+                ),
+            ),
+        )
+
+    class Meta:
+        model = RequerimientoPersonal
+        fields = []
+
+class RequerimientoPersonalRhContratar(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RequerimientoPersonalRhContratar, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'REQUERIMIENTO DE CONTRATACIÓN',
+
+                Div(
+                    HTML("""
+                            <p class="inline bold-p">Requerimiento: <p class="inline">REQ - {{object.id}}</p></p>
+                            <p class="inline bold-p">Fecha: <p class="inline">{{object.fecha_solicitud}}</p></p>
+                            <p class="inline bold-p">Encargado: <p class="inline">{{object.encargado.first_name}} {{object.encargado.last_name}}</p></p>
+                            <p class="inline bold-p">Departamento: <p class="inline">{{object.departamento.nombre}}</p></p>
+                            <p class="inline bold-p">Municipios: <p class="inline">{{object.get_municipios_string}}</p></p>
+                            <p class="inline bold-p">Código ruta: <p class="inline">{{object.codigo_ruta}}</p></p>
+                            <p class="inline bold-p">Observación solicitante: <p class="inline">{{object.observacion_solicitante}}</p></p>
+                        """),
+                    css_class = ''
+                ),
+            ),
+            Fieldset(
+                'RESPUESTA RH',
+
+                Div(
+                    HTML("""
+                            <p class="inline bold-p">Requerimiento: <p class="inline">REQ - {{object.id}}</p></p>
+                            <p class="inline bold-p">Fecha: <p class="inline">{{object.fecha_respuesta}}</p></p>
+                            <p class="inline bold-p">Cedula: <p class="inline">{{object.nombre}}</p></p>
+                            <p class="inline bold-p">Celular: <p class="inline">{{object.celular}}</p></p>
+                            <p class="inline bold-p">Email: <p class="inline">{{object.email}}</p></p>
+                            <p class="inline bold-p">Hoja de vida: <a href={{object.get_archivo_url}}><p class="inline">{{object.archivo_filename}}</p></a></p>
+                            <p class="inline bold-p">Observación: <p class="inline">{{object.observacion_respuesta}}</p></p>
+                        """),
+                    css_class = ''
+                ),
+            ),
+            Fieldset(
+                'CAPACITACIÓN',
+
+                Div(
+                    HTML("""
+                            <p class="inline bold-p">Requerimiento: <p class="inline">REQ - {{object.id}}</p></p>
+                            <p class="inline bold-p">Fecha: <p class="inline">{{object.fecha_solicitud_contratacion}}</p></p>
+                            <p class="inline bold-p">Observación: <p class="inline">{{object.observacion_final}}</p></p>
+                        """),
+                    css_class = ''
+                ),
+            ),
+            Fieldset(
+                'CONTRATO',
+
+                Div(
+                    Div('contratado',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+            ),
+        )
+    class Meta:
+        model = RequerimientoPersonal
+        fields = ['contratado']

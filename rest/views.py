@@ -2710,16 +2710,19 @@ class RequerimientosContratacion(BaseDatatableView):
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         if search == 'Remitido a RH':
-            q = Q(remitido_respuesta = False) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False)
+            q = Q(remitido_respuesta = False) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False) & Q(contratado = False)
             qs = qs.filter(q)
         elif search == 'Listo para capacitar':
-            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False)
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False) & Q(contratado = False)
             qs = qs.filter(q)
         elif search == 'Proceder a contrato':
-            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = True) & Q(desierto = False)
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = True) & Q(desierto = False) & Q(contratado = False)
             qs = qs.filter(q)
         elif search == 'Aspirante deserta':
-            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = False) & Q(desierto = True)
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = False) & Q(desierto = True) & Q(contratado = False)
+            qs = qs.filter(q)
+        elif search == 'Contratado':
+            q = Q(contratado = True)
             qs = qs.filter(q)
         else:
             q = Q(solicitante__first_name__icontains = search) | Q(encargado__first_name__icontains = search)
@@ -2732,20 +2735,24 @@ class RequerimientosContratacion(BaseDatatableView):
 
         for item in qs:
 
-            if item.remitido_respuesta == False and item.remitido_contratacion == False and item.contratar == False and item.desierto == False:
+            if item.remitido_respuesta == False and item.remitido_contratacion == False and item.contratar == False and item.desierto == False and item.contratado == False:
                 estado = 'Remitido a RH'
                 editar = False
 
-            elif item.remitido_respuesta == True and item.remitido_contratacion == False and item.contratar == False and item.desierto == False:
+            elif item.remitido_respuesta == True and item.remitido_contratacion == False and item.contratar == False and item.desierto == False and item.contratado == False:
                 estado = 'Listo para capacitar'
                 editar = True
 
-            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == True and item.desierto == False:
+            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == True and item.desierto == False and item.contratado == False:
                 estado = 'Proceder a contrato'
                 editar = False
 
-            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == False and item.desierto == True:
+            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == False and item.desierto == True and item.contratado == False:
                 estado = 'Aspirante deserta'
+                editar = False
+
+            elif item.contratado == True:
+                estado = 'Contratado'
                 editar = False
 
 
@@ -2780,16 +2787,19 @@ class RequerimientosContratacionRespuesta(BaseDatatableView):
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         if search == 'Remitido a RH':
-            q = Q(remitido_respuesta = False) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False)
+            q = Q(remitido_respuesta = False) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False) & Q(contratado = False)
             qs = qs.filter(q)
         elif search == 'Listo para capacitar':
-            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False)
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = False) & Q(contratar = False) & Q(desierto = False) & Q(contratado = False)
             qs = qs.filter(q)
         elif search == 'Proceder a contrato':
-            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = True) & Q(desierto = False)
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = True) & Q(desierto = False) & Q(contratado = False)
             qs = qs.filter(q)
         elif search == 'Aspirante deserta':
-            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = False) & Q(desierto = True)
+            q = Q(remitido_respuesta = True) & Q(remitido_contratacion = True) & Q(contratar = False) & Q(desierto = True) & Q(contratado = False)
+            qs = qs.filter(q)
+        elif search == 'Contratado':
+            q = Q(contratado = True)
             qs = qs.filter(q)
         else:
             q = Q(solicitante__first_name__icontains = search) | Q(encargado__first_name__icontains = search)
@@ -2802,21 +2812,25 @@ class RequerimientosContratacionRespuesta(BaseDatatableView):
 
         for item in qs:
 
-            if item.remitido_respuesta == False and item.remitido_contratacion == False and item.contratar == False and item.desierto == False:
+            if item.remitido_respuesta == False and item.remitido_contratacion == False and item.contratar == False and item.desierto == False and item.contratado == False:
                 estado = 'Remitido a RH'
-                editar = False
+                editar = True
 
-            elif item.remitido_respuesta == True and item.remitido_contratacion == False and item.contratar == False and item.desierto == False:
+            elif item.remitido_respuesta == True and item.remitido_contratacion == False and item.contratar == False and item.desierto == False and item.contratado == False:
                 estado = 'Listo para capacitar'
                 editar = True
 
-            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == True and item.desierto == False:
+            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == True and item.desierto == False and item.contratado == False:
                 estado = 'Proceder a contrato'
-                editar = False
+                editar = True
 
-            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == False and item.desierto == True:
+            elif item.remitido_respuesta == True and item.remitido_contratacion == True and item.contratar == False and item.desierto == True and item.contratado == False:
                 estado = 'Aspirante deserta'
-                editar = False
+                editar = True
+
+            elif item.contratado == True:
+                estado = 'Contratado'
+                editar = True
 
 
             json_data.append([
