@@ -8,7 +8,8 @@ from informes.functions import construir_reporte, cronograma_interventoria
 from informes.models import InformesExcel
 from django.core.files import File
 from usuarios.models import User
-from formadores.models import Formador, Soporte, SolicitudTransporte
+from formadores.models import Formador, SolicitudTransporte
+from formadores.models import Soporte as SoporteFormadores
 from rh.models import TipoSoporte
 from preinscripcion.models import DocentesPreinscritos
 from formacion.models import EntradaCronograma
@@ -106,7 +107,7 @@ def formadores_soportes(email):
             ]
         for tipo_soporte in tipos_soportes:
             try:
-                soporte = Soporte.objects.filter(formador=formador).get(tipo__id=tipo_soporte[0])
+                soporte = SoporteFormadores.objects.filter(formador=formador).get(tipo__id=tipo_soporte[0])
             except:
                 row.append('No')
             else:
