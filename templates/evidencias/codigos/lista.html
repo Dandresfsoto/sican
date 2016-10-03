@@ -200,7 +200,7 @@ $(document).ready(function () {
                 "data": null,
                 "render": function (data, type, row, meta) {
                     if (row[4] != '') {
-                        return '<a href="' + row[4] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
+                        return '<a target="_blank" href="' + row[4] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
                     }
                     else {
                         return '';
