@@ -41,7 +41,7 @@ class Beneficiario(models.Model):
     usuario_colombia_aprende = models.CharField(max_length=100,blank=True)
 
     def __unicode__(self):
-        return str(self.cedula)
+        return str(self.cedula) + ' - ' + self.nombres + ' ' + self.apellidos
 
 class BeneficiarioPendiente(models.Model):
     diplomado = models.ForeignKey(Diplomado,related_name='diplomado_beneficiariopendiente')

@@ -120,7 +120,7 @@ class SolicitudTransporte(models.Model):
     formador = models.ForeignKey(Formador,related_name="formador_solicitud_transporte")
     nombre = models.CharField(max_length=100)
     creacion = models.DateTimeField(auto_now=True)
-    desplazamientos = models.ManyToManyField(Desplazamiento,blank=True,null=True)
+    desplazamientos = models.ManyToManyField(Desplazamiento,blank=True)
     estado = models.CharField(max_length=100,default="revision")
     observacion = models.TextField(max_length=1000,blank=True,null=True)
     valor = models.BigIntegerField()

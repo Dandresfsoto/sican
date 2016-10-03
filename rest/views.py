@@ -49,6 +49,9 @@ from negociadores.models import Negociador
 from rh.models import RequerimientoPersonal
 from rest_framework.renderers import JSONRenderer
 from matrices.models import CargaMasiva
+from evidencias.models import Evidencia
+from requerimientos.models import Requerimiento
+
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -260,6 +263,27 @@ class RadicadosChainedList(APIView):
 
         return Response(response)
 
+class Cedulas2BeneficiariosId(APIView):
+    """
+
+    """
+    permission_classes = (AllowAny,)
+    def get(self, request, format=None):
+        cedulas = request.query_params['cedulas'].split(',')
+        ids = []
+        for cedula in cedulas:
+            try:
+                beneficiario = Beneficiario.objects.get(cedula = cedula)
+            except:
+                pass
+            else:
+                ids.append(str(beneficiario.id))
+
+        response = {'cedulas':ids}
+
+
+        return Response(response)
+
 class GruposChainedList(APIView):
     """
 
@@ -423,9 +447,17 @@ class UserPermissionList(APIView):
                   'id':'evidencias',
                   'links':[]
             },
+            'requerimientos':{'name':'Requerimientos',
+                  'icon':'icons:gavel',
+                  'id':'requerimientos',
+                  'links':[]
+            },
         }
 
         links = {
+            'proyecto':{
+                'ver':{'name':'Delegación de requerimientos','link':'/requerimientos/delegacion/'}
+            },
             'requerimientosrhrespuesta':{
                 'ver':{'name':'Requerimientos de contratación','link':'/rh/requerimientoscontratacion/'}
             },
@@ -2968,7 +3000,7 @@ class NivelesListEvidencias(BaseDatatableView):
     max_display_length = 100
 
     def get_initial_queryset(self):
-        return Nivel.objects.filter(diplomado__id = self.kwargs['id_diplomado']).exclude(nombre = 'Nivel 0')
+        return Nivel.objects.filter(diplomado__id = self.kwargs['id_diplomado'])
 
 
     def filter_queryset(self, qs):
@@ -3026,3 +3058,90 @@ class EntregablesListEvidencias(BaseDatatableView):
             q = Q(nombre__icontains=search.capitalize())
             qs = qs.filter(q)
         return qs
+
+class SoportesListEvidencias(BaseDatatableView):
+    """
+    0.id
+    1.beneficiarios
+    2.aprobados
+    3.archivo
+    4.editar
+    5.eliminar
+    """
+    model = Evidencia
+    columns = ['id']
+
+    order_columns = ['id']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Evidencia.objects.filter(formador__id = self.kwargs['id_formador'],entregable__id = self.kwargs['id_entregable'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+
+            json_data.append([
+                item.id,
+                item.get_beneficiarios_cantidad(),
+                item.get_validados_cantidad(),
+                item.get_archivo_url(),
+                self.request.user.has_perm('permisos_sican.evidencias.general.editar'),
+                self.request.user.has_perm('permisos_sican.evidencias.general.eliminar')
+            ])
+        return json_data
+
+class DelegacionRequerimientos(BaseDatatableView):
+    """
+    0.Id
+    1.Nombre
+    2.Fecha solicitud
+    3.Entidad remitente
+    4.Funcionario remitente
+    5.Dias respuesta
+    6.Región
+    7.Estado
+    8.permiso para editar
+    9.permiso para eliminar
+    """
+    model = Requerimiento
+    columns = ['id','nombre','recepcion_solicitud','entidad_remitente','funcionario_remitente','tiempo_respuesta']
+
+    order_columns = ['id','nombre','recepcion_solicitud','entidad_remitente','funcionario_remitente','tiempo_respuesta']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.recepcion_solicitud,
+                item.entidad_remitente,
+                item.funcionario_remitente,
+                item.tiempo_respuesta,
+                item.get_region_string(),
+                item.estado,
+                self.request.user.has_perm('permisos_sican.requerimientos.interventoria.editar'),
+                self.request.user.has_perm('permisos_sican.requerimientos.interventoria.eliminar')
+            ])
+        return json_data
