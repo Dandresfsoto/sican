@@ -109,7 +109,7 @@ class NuevoSoporteView(LoginRequiredMixin,
     form_class = EvidenciaForm
     success_url = '../'
     template_name = 'evidencias/general/nuevo.html'
-    permission_required = "permisos_sican.evidencias.general.ver"
+    permission_required = "permisos_sican.evidencias.general.crear"
 
     def get_initial(self):
         return {'id_formador':self.kwargs['id_formador'],'id_entregable':self.kwargs['id_entregable'],'id_usuario':self.request.user.id}
@@ -150,7 +150,7 @@ class UpdateSoporteView(LoginRequiredMixin,
     success_url = '../../'
     pk_url_kwarg = 'id_soporte'
     template_name = 'evidencias/general/nuevo.html'
-    permission_required = "permisos_sican.evidencias.general.ver"
+    permission_required = "permisos_sican.evidencias.general.editar"
 
     def get_initial(self):
         return {'id_formador':self.kwargs['id_formador'],'id_entregable':self.kwargs['id_entregable'],'id_usuario':self.request.user.id}
