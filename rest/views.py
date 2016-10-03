@@ -51,6 +51,8 @@ from rest_framework.renderers import JSONRenderer
 from matrices.models import CargaMasiva
 from evidencias.models import Evidencia
 from requerimientos.models import Requerimiento
+from evidencias.models import Red
+from django.utils.timezone import localtime
 
 
 # Create your views here.
@@ -3143,5 +3145,61 @@ class DelegacionRequerimientos(BaseDatatableView):
                 item.estado,
                 self.request.user.has_perm('permisos_sican.requerimientos.interventoria.editar'),
                 self.request.user.has_perm('permisos_sican.requerimientos.interventoria.eliminar')
+            ])
+        return json_data
+
+class EvidenciasCodigos(BaseDatatableView):
+    """
+    0.id
+    1.red
+    2.fecha
+    3.actualizacion
+    4.usuario
+    5.archivo
+    6.entregable
+    7.beneficiarios cargados
+    8.beneficiarios validados
+    9.formador
+    """
+    model = Evidencia
+    columns = ['id']
+
+    order_columns = ['id','id','id','id']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(id__exact = search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+
+            try:
+                red = 'RED-' + str(Red.objects.get(evidencias__id = item.id).id)
+            except:
+                red = None
+
+            json_data.append([
+                item.id,
+                red,
+                item.get_beneficiarios_cantidad(),
+                item.get_validados_cantidad(),
+                item.get_archivo_url(),
+                item.entregable.sesion.nivel.diplomado.nombre,
+                item.entregable.sesion.nivel.nombre,
+                item.entregable.sesion.nombre,
+                item.entregable.id,
+
+                localtime(item.fecha).strftime('%d/%m/%Y %I:%M:%S %p'),
+                localtime(item.updated).strftime('%d/%m/%Y %I:%M:%S %p'),
+                item.usuario.get_full_name(),
+                item.entregable.nombre,
+                item.formador.get_full_name()
             ])
         return json_data

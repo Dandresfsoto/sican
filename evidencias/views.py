@@ -204,3 +204,11 @@ class DeleteSoporteView(LoginRequiredMixin,
         kwargs['id_entregable'] = self.kwargs['id_entregable']
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.evidencias.general.crear')
         return super(DeleteSoporteView,self).get_context_data(**kwargs)
+
+
+
+class EvidenciasListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/codigos/lista.html'
+    permission_required = "permisos_sican.evidencias.codigos.ver"

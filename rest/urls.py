@@ -17,7 +17,7 @@ from rest.views import FormadoresRevisionFormador, CortesList, NegociadoresRh
 from rest.views import RequerimientosContratacion, AutocompleteMunicipios, RequerimientosContratacionRespuesta
 from rest.views import CargaMasivaMatrices, FormadoresListEvidencias, NivelesListEvidencias, SesionesListEvidencias, EntregablesListEvidencias
 from rest.views import SoportesListEvidencias,Cedulas2BeneficiariosId
-from rest.views import DelegacionRequerimientos
+from rest.views import DelegacionRequerimientos, EvidenciasCodigos
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -116,4 +116,6 @@ urlpatterns = [
     url(r'cedulas/id/',Cedulas2BeneficiariosId.as_view()),
 
     url(r'requerimientos/delegacion/$', DelegacionRequerimientos.as_view()),
+
+    url(r'evidencias/codigos/',EvidenciasCodigos.as_view()),
 ]
