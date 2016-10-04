@@ -83,15 +83,15 @@ def build_red(id_red):
         evidencias = red.evidencias.filter(beneficiarios_cargados__id = beneficiario_id)
 
         ws.cell('A'+str(i)).value = i - inicia + 1
-        ws.cell('B'+str(i)).value = beneficiario.region.nombre
-        ws.cell('C'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre if beneficiario.radicado != None else ''
-        ws.cell('D'+str(i)).value = beneficiario.radicado.municipio.nombre if beneficiario.radicado != None else ''
-        ws.cell('E'+str(i)).value = beneficiario.grupo.formador.codigo_ruta + '-' + beneficiario.grupo.nombre
-        ws.cell('F'+str(i)).value = beneficiario.formador.get_full_name()
+        ws.cell('B'+str(i)).value = beneficiario.region.nombre.upper()
+        ws.cell('C'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('D'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('E'+str(i)).value = beneficiario.grupo.formador.codigo_ruta.upper() + '-' + beneficiario.grupo.nombre
+        ws.cell('F'+str(i)).value = beneficiario.formador.get_full_name().upper()
         ws.cell('G'+str(i)).value = beneficiario.formador.cedula
         ws.cell('G'+str(i)).number_format = '0'
-        ws.cell('H'+str(i)).value = beneficiario.nombres
-        ws.cell('I'+str(i)).value = beneficiario.apellidos
+        ws.cell('H'+str(i)).value = beneficiario.nombres.upper()
+        ws.cell('I'+str(i)).value = beneficiario.apellidos.upper()
         ws.cell('J'+str(i)).value = beneficiario.cedula
         ws.cell('J'+str(i)).number_format = '0'
         ws.cell('K'+str(i)).value = 'SICAN'
