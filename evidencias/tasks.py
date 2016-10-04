@@ -74,7 +74,7 @@ def build_red(id_red):
         inicia = 2
 
 
-    beneficiarios_id = red.evidencias.values_list('beneficiarios_cargados__id',flat=True)
+    beneficiarios_id = red.evidencias.values_list('beneficiarios_cargados__id',flat=True).distinct()
 
 
     i = 0 + inicia
