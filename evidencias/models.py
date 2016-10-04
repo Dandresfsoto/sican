@@ -38,7 +38,14 @@ class Evidencia(models.Model):
 class Red(models.Model):
     diplomado = models.ForeignKey(Diplomado)
     region = models.ForeignKey(Region)
-    fecha = models.DateTimeField(auto_now=True)
-    descripcion = models.TextField(max_length=1000,blank=True)
-    evidencias = models.ManyToManyField(Evidencia,related_name='evidencia_red')
+    fecha = models.DateTimeField(auto_now_add=True)
+    evidencias = models.ManyToManyField(Evidencia,related_name='evidencia_red',blank=True)
     retroalimentacion = models.BooleanField(default=False)
+    archivo = models.FileField(upload_to='Formatos Red/',blank=True,null=True)
+
+    def get_archivo_url(self):
+        try:
+            url = self.archivo.url
+        except:
+            url = ""
+        return url

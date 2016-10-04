@@ -481,6 +481,9 @@ class UserPermissionList(APIView):
             'codigos':{
                 'ver':{'name':'Codigos de soporte','link':'/evidencias/codigos/'}
             },
+            'red':{
+                'ver':{'name':'Formatos RED','link':'/evidencias/reds/'}
+            },
             'matricesdiplomados':{
                 'ver_innovatic':{'name':'Matriz InnovaTIC','link':'/matrices/diplomados/innovatic/'},
                 'ver_tecnotic':{'name':'Matriz TecnoTIC','link':'/matrices/diplomados/tecnotic/'},
@@ -3201,5 +3204,37 @@ class EvidenciasCodigos(BaseDatatableView):
                 item.usuario.get_full_name(),
                 item.entregable.nombre,
                 item.formador.get_full_name()
+            ])
+        return json_data
+
+class RedList(BaseDatatableView):
+    """
+    """
+    model = Red
+    columns = ['id','diplomado','region','fecha']
+
+    order_columns = ['id','diplomado','region','fecha']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(id__exact = search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.diplomado.nombre,
+                item.region.nombre,
+                localtime(item.fecha).strftime('%d/%m/%Y %I:%M:%S %p'),
+                item.evidencias.all().count(),
+                'Si' if item.retroalimentacion else 'No',
+                item.get_archivo_url()
             ])
         return json_data
