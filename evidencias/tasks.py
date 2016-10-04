@@ -74,7 +74,7 @@ def build_red(id_red):
         inicia = 2
 
 
-    beneficiarios_id = red.evidencias.exclude(beneficiarios_cargados__radicado = None).values_list('beneficiarios_cargados__id',flat=True)
+    beneficiarios_id = red.evidencias.values_list('beneficiarios_cargados__id',flat=True)
 
 
     i = 0 + inicia
@@ -84,8 +84,8 @@ def build_red(id_red):
 
         ws.cell('A'+str(i)).value = i - inicia + 1
         ws.cell('B'+str(i)).value = beneficiario.region.nombre
-        ws.cell('C'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre
-        ws.cell('D'+str(i)).value = beneficiario.radicado.municipio.nombre
+        ws.cell('C'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre if beneficiario.radicado != None else ''
+        ws.cell('D'+str(i)).value = beneficiario.radicado.municipio.nombre if beneficiario.radicado != None else ''
         ws.cell('E'+str(i)).value = beneficiario.grupo.formador.codigo_ruta + '-' + beneficiario.grupo.nombre
         ws.cell('F'+str(i)).value = beneficiario.formador.get_full_name()
         ws.cell('G'+str(i)).value = beneficiario.formador.cedula
