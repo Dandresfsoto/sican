@@ -10,6 +10,13 @@ from sican.settings import base as settings
 from StringIO import StringIO
 from django.core.files import File
 from matrices.models import Beneficiario
+from evidencias.models import CargaMasiva
+from productos.models import Entregable
+from zipfile import ZipFile
+from evidencias.models import Evidencia
+from usuarios.models import User
+import os
+import shutil
 
 @app.task
 def build_red(id_red):
@@ -58,23 +65,88 @@ def build_red(id_red):
         ws = wb.get_sheet_by_name('RED InnovaTIC')
         inicia = 6
     elif red.diplomado.numero == 2:
-        ids = [72,73,75,74,76,77,84,85,78,89,97,98,93,92,99,94,100,95,104,112,106,109,108,110,119,124,118,120,121]
+        ids = [{'id':72,'letter':'M'},
+               {'id':73,'letter':'N'},
+               {'id':75,'letter':'O'},
+               {'id':74,'letter':'P'},
+               {'id':76,'letter':'Q'},
+               {'id':77,'letter':'R'},
+               {'id':84,'letter':'S'},
+               {'id':85,'letter':'T'},
+               {'id':78,'letter':'U'},
+               {'id':89,'letter':'V'},
+               {'id':97,'letter':'W'},
+               {'id':98,'letter':'X'},
+               {'id':93,'letter':'Y'},
+               {'id':92,'letter':'Z'},
+               {'id':99,'letter':'AA'},
+               {'id':94,'letter':'AB'},
+               {'id':100,'letter':'AC'},
+               {'id':95,'letter':'AD'},
+               {'id':104,'letter':'AE'},
+               {'id':112,'letter':'AF'},
+               {'id':106,'letter':'AG'},
+               {'id':109,'letter':'AH'},
+               {'id':108,'letter':'AI'},
+               {'id':110,'letter':'AJ'},
+               {'id':119,'letter':'AK'},
+               {'id':124,'letter':'AL'},
+               {'id':118,'letter':'AM'},
+               {'id':120,'letter':'AN'},
+               {'id':121,'letter':'AO'}]
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED TECNOTIC.xlsx')
         ws = wb.get_sheet_by_name('RED TecnoTIC')
         inicia = 6
     elif red.diplomado.numero == 3:
-        ids = [127,128,131,132,134,133,142,143,135,144,137,140,139,147,146,152,148,149,151,150,156,155,157,164,165,159,162,161,166,167,171,171,172]
+        ids = [{'id':127,'letter':'M'},
+               {'id':128,'letter':'N'},
+               {'id':131,'letter':'O'},
+               {'id':132,'letter':'P'},
+               {'id':134,'letter':'Q'},
+               {'id':133,'letter':'R'},
+               {'id':142,'letter':'S'},
+               {'id':143,'letter':'T'},
+               {'id':135,'letter':'U'},
+               {'id':144,'letter':'V'},
+               {'id':137,'letter':'W'},
+               {'id':140,'letter':'X'},
+               {'id':139,'letter':'Y'},
+               {'id':147,'letter':'Z'},
+               {'id':146,'letter':'AA'},
+               {'id':152,'letter':'AB'},
+               {'id':148,'letter':'AC'},
+               {'id':149,'letter':'AD'},
+               {'id':151,'letter':'AE'},
+               {'id':150,'letter':'AF'},
+               {'id':156,'letter':'AG'},
+               {'id':155,'letter':'AH'},
+               {'id':157,'letter':'AI'},
+               {'id':164,'letter':'AJ'},
+               {'id':165,'letter':'AK'},
+               {'id':159,'letter':'AL'},
+               {'id':162,'letter':'AM'},
+               {'id':161,'letter':'AN'},
+               {'id':166,'letter':'AO'},
+               {'id':167,'letter':'AP'},
+               {'id':171,'letter':'AQ'},
+               {'id':171,'letter':'AR'},
+               {'id':172,'letter':'AS'}]
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED DIRECTIC.xlsx')
         ws = wb.get_sheet_by_name('RED DirecTIC')
         inicia = 6
     elif red.diplomado.numero == 4:
-        ids = [221,221,221,224,228]
+        ids = [{'id':221,'letter':'M'},
+               {'id':221,'letter':'N'},
+               {'id':221,'letter':'O'},
+               {'id':224,'letter':'P'},
+               {'id':228,'letter':'Q'}]
+
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED FAMILIA.xlsx')
         ws = wb.get_sheet_by_name('RED Familia')
         inicia = 2
 
 
-    beneficiarios_id = red.evidencias.values_list('beneficiarios_cargados__id',flat=True).distinct()
+    beneficiarios_id = red.evidencias.exclude(beneficiarios_cargados = None).values_list('beneficiarios_cargados__id',flat=True).distinct()
 
 
     i = 0 + inicia
@@ -93,6 +165,7 @@ def build_red(id_red):
         ws.cell('H'+str(i)).value = beneficiario.nombres.upper()
         ws.cell('I'+str(i)).value = beneficiario.apellidos.upper()
         ws.cell('J'+str(i)).value = beneficiario.cedula
+
         ws.cell('J'+str(i)).number_format = '0'
         ws.cell('K'+str(i)).value = 'SICAN'
         ws.cell('L'+str(i)).value = 'I'
@@ -111,3 +184,111 @@ def build_red(id_red):
     red.archivo.save(filename,File(output))
 
     return "Generado RED-" + str(id_red)
+
+
+@app.task
+def carga_masiva_evidencias(id_carga_masiva,id_usuario):
+
+    carga_masiva = CargaMasiva.objects.get(id = id_carga_masiva)
+    output = StringIO()
+
+    wb_out = openpyxl.Workbook()
+    ws_out = wb_out.active
+
+    wb = openpyxl.load_workbook(carga_masiva.excel.path)
+    ws = wb.active
+
+    zip = ZipFile(carga_masiva.zip.path,'r')
+
+    i = 1
+
+    evidencias_dict = {}
+
+    for fila in ws.rows:
+        resultado = ''
+
+        try:
+            beneficiario = Beneficiario.objects.get(cedula = fila[0].value)
+        except:
+            resultado = 'No existe el numero de cedula'
+        else:
+
+            try:
+                entregable = Entregable.objects.get(id = fila[1].value)
+            except:
+                resultado = 'No existe la evidencia'
+            else:
+
+                try:
+                    file_object = zip.getinfo(fila[2].value)
+                except:
+                    resultado = 'No existe el archivo'
+                else:
+
+                    evidencias = Evidencia.objects.filter(formador = beneficiario.formador,entregable = entregable)
+                    reds = Red.objects.filter(evidencias__id__in = evidencias.values_list('id',flat=True))
+                    exclude_validados = list(evidencias.exclude(beneficiarios_validados = None).values_list('beneficiarios_validados__id',flat=True))
+                    exclude_enviados = []
+
+                    for evidencia in evidencias.filter(id__in = reds.filter(retroalimentacion = False).values_list('evidencias__id',flat=True)):
+                        for cargado in evidencia.beneficiarios_cargados.all():
+                            exclude_enviados.append(cargado.id)
+
+                    if beneficiario.id not in exclude_validados:
+
+                        if beneficiario.id not in exclude_enviados:
+
+
+                            source = zip.open(fila[2].value)
+
+                            try:
+                                filename = os.path.basename(fila[2].value)
+                            except:
+                                resultado = 'Error inesperado'
+
+                            else:
+                                resultado = 'Cargado correctamente'
+
+                                target = file(os.path.join(r"C:\Temp",filename),"wb")
+
+                                with source, target:
+                                    shutil.copyfileobj(source,target)
+
+
+                                if fila[2].value not in evidencias_dict.keys():
+                                    evidencia_object = Evidencia.objects.create(usuario = User.objects.get(id = id_usuario),
+                                                                                entregable = entregable, formador = beneficiario.formador)
+                                    evidencia_object.archivo = File(open("C://Temp//" + filename, 'rb'))
+                                    evidencia_object.save()
+                                    evidencias_dict[fila[2].value] = evidencia_object
+                                else:
+                                    evidencia_object = evidencias_dict[fila[2].value]
+
+                                os.remove("C://Temp//" + filename)
+
+                                for evidencia in evidencias:
+                                    if beneficiario in evidencia.beneficiarios_cargados.all():
+                                        evidencia.beneficiarios_cargados.remove(beneficiario)
+
+                                evidencia_object.beneficiarios_cargados.add(beneficiario)
+
+                        else:
+                            resultado = 'Se envio el entregable'
+                    else:
+                        resultado = 'El beneficiario ya tiene validado el entregable'
+
+
+
+
+        ws_out['A'+str(i)] = fila[0].value
+        ws_out['B'+str(i)] = fila[1].value
+        ws_out['C'+str(i)] = fila[2].value
+        ws_out['D'+str(i)] = resultado
+        i += 1
+
+
+    wb_out.save(output)
+    filename = 'MASIVA-' + unicode(carga_masiva.id) + '.xlsx'
+    carga_masiva.resultado.save(filename,File(output))
+
+    return "Generada MASIVA-" + str(id_carga_masiva)

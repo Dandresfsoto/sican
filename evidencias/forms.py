@@ -9,8 +9,9 @@ from formadores.models import Formador
 from productos.models import Entregable
 from usuarios.models import User
 from matrices.models import Beneficiario
-from evidencias.models import Red
+from evidencias.models import Red, CargaMasiva
 from region.models import Region
+from datetime import datetime
 
 class EvidenciaForm(forms.ModelForm):
 
@@ -173,3 +174,37 @@ class RedForm(forms.ModelForm):
     class Meta:
         model = Red
         fields = '__all__'
+
+class CargaMasivaForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CargaMasivaForm, self).__init__(*args, **kwargs)
+
+        self.fields['usuario'].initial = User.objects.get(id = kwargs['initial']['id_usuario'])
+        self.fields['excel'].widget.attrs.update({
+            'accept' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        })
+
+        self.fields['zip'].widget.attrs.update({
+            'accept' : '.zip'
+        })
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'RED',
+                Div(
+                    Div('excel',css_class='col-sm-6'),
+                    Div('zip',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('usuario',css_class='col-sm-6'),
+                    css_class = 'hidden'
+                )
+            ),
+        )
+
+    class Meta:
+        model = CargaMasiva
+        fields = ['excel','zip','usuario']

@@ -18,7 +18,7 @@ from rest.views import RequerimientosContratacion, AutocompleteMunicipios, Reque
 from rest.views import CargaMasivaMatrices, FormadoresListEvidencias, NivelesListEvidencias, SesionesListEvidencias, EntregablesListEvidencias
 from rest.views import SoportesListEvidencias,Cedulas2BeneficiariosId
 from rest.views import DelegacionRequerimientos, EvidenciasCodigos
-from rest.views import RedList
+from rest.views import RedList, CargaMasivaEvidenciasList
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -120,4 +120,6 @@ urlpatterns = [
 
     url(r'evidencias/codigos/',EvidenciasCodigos.as_view()),
     url(r'reds/lista/',RedList.as_view()),
+
+    url(r'cargamasivaevidencias/lista/',CargaMasivaEvidenciasList.as_view()),
 ]

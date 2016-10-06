@@ -12,8 +12,9 @@ from evidencias.models import Red
 from evidencias.forms import RedForm
 from region.models import Region
 from django.shortcuts import HttpResponseRedirect
-from evidencias.tasks import build_red
-
+from evidencias.tasks import build_red, carga_masiva_evidencias
+from evidencias.models import CargaMasiva
+from evidencias.forms import CargaMasivaForm
 
 # Create your views here.
 
@@ -350,3 +351,32 @@ class NuevoRedView(LoginRequiredMixin,
         red.save()
         build_red.delay(red.id)
         return HttpResponseRedirect(self.get_success_url())
+
+
+class CargaMasivaListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/cargamasiva/lista.html'
+    permission_required = "permisos_sican.evidencias.cargamasivaevidencias.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.evidencias.cargamasivaevidencias.crear')
+        return super(CargaMasivaListView,self).get_context_data(**kwargs)
+
+
+class NuevoCargaMasivaView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = CargaMasiva
+    form_class = CargaMasivaForm
+    success_url = '../'
+    template_name = 'evidencias/cargamasiva/nuevo.html'
+    permission_required = "permisos_sican.evidencias.cargamasivaevidencias.crear"
+
+    def get_initial(self):
+        return {'id_usuario':self.request.user.id}
+
+    def form_valid(self, form):
+        self.object = form.save()
+        carga_masiva_evidencias.delay(self.object.id,self.request.user.id)
+        return super(NuevoCargaMasivaView,self).form_valid(form)

@@ -51,7 +51,7 @@ from rest_framework.renderers import JSONRenderer
 from matrices.models import CargaMasiva
 from evidencias.models import Evidencia
 from requerimientos.models import Requerimiento
-from evidencias.models import Red
+from evidencias.models import Red, CargaMasiva as CargaMasivaEvidencias
 from django.utils.timezone import localtime
 
 
@@ -483,6 +483,9 @@ class UserPermissionList(APIView):
             },
             'red':{
                 'ver':{'name':'Formatos RED','link':'/evidencias/reds/'}
+            },
+            'cargamasivaevidencias':{
+                'ver':{'name':'Carga masiva de evidencias','link':'/evidencias/cargamasiva/'}
             },
             'matricesdiplomados':{
                 'ver_innovatic':{'name':'Matriz InnovaTIC','link':'/matrices/diplomados/innovatic/'},
@@ -3236,5 +3239,35 @@ class RedList(BaseDatatableView):
                 item.evidencias.all().count(),
                 'Si' if item.retroalimentacion else 'No',
                 item.get_archivo_url()
+            ])
+        return json_data
+
+class CargaMasivaEvidenciasList(BaseDatatableView):
+    """
+    """
+    model = CargaMasivaEvidencias
+    columns = ['id','fecha','usuario','excel','zip','resultado']
+
+    order_columns = ['id','fecha','usuario','excel','zip','resultado']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(id__exact = search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+            json_data.append([
+                'MASE-' + str(item.id),
+                localtime(item.fecha).strftime('%d/%m/%Y %I:%M:%S %p'),
+                item.usuario.get_full_name_string(),
+                item.get_excel_url(),
+                item.get_zip_url(),
+                item.get_resultado_url()
             ])
         return json_data

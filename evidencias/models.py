@@ -49,3 +49,34 @@ class Red(models.Model):
         except:
             url = ""
         return url
+
+class CargaMasiva(models.Model):
+    fecha = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey(User,related_name='usuario_cargamasiva')
+    excel = models.FileField(upload_to = 'Evidencias/Carga Masiva/Excel')
+    zip = models.FileField(upload_to = 'Evidencias/Carga Masiva/Zip')
+    resultado = models.FileField(upload_to = 'Evidencias/Carga Masiva/Resultado',blank=True,null=True)
+
+    def __unicode__(self):
+        return str(self.id)
+
+    def get_excel_url(self):
+        try:
+            url = self.excel.url
+        except:
+            url = ""
+        return url
+
+    def get_zip_url(self):
+        try:
+            url = self.zip.url
+        except:
+            url = ""
+        return url
+
+    def get_resultado_url(self):
+        try:
+            url = self.resultado.url
+        except:
+            url = ""
+        return url
