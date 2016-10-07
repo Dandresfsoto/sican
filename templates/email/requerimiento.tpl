@@ -54,11 +54,6 @@
         <td class="innerpadding borderbottom" style="padding: 30px 30px 30px 30px;border-bottom: 1px solid #f2eeed;">
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
-              <td class="h2" style="color: #153643; font-family: sans-serif;padding: 0 0 15px 0; font-size: 24px; line-height: 28px; font-weight: bold;">
-                Hola {{ first_name }} {{ last_name }}:
-              </td>
-            </tr>
-            <tr>
               <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
                 Se añadio el requerimiento <b>{{ nombre_requerimiento }}</b> al sistema de información SICAN a continuación
                   encuentras los detalles:

@@ -33,6 +33,11 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute=0,hour=0, day_of_week=1),
         'args': (),
     },
+    'Recordatorio-Cronograma': {
+        'task': 'requerimientos.tasks.recordatorio_requerimiento',
+        'schedule': crontab(minute=0, hour=8),
+        'args': (),
+    },
 }
 
 

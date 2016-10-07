@@ -1,3 +1,11 @@
+{% extends "mail_templated/base.tpl" %}
+
+{% block subject %}
+{{ nombre_requerimiento }}
+{% endblock %}
+
+{% block html %}
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -47,7 +55,7 @@
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
-                Se añadio el requerimiento <b>{{ nombre_requerimiento }}</b> al sistema de información SICAN a continuación
+                El requerimiento <b>{{ nombre_requerimiento }}</b> {{ estado }} a continuación
                   encuentras los detalles:
 
                   <div style="padding: 10px 0;"></div>
@@ -97,3 +105,5 @@
 <script src="http://tutsplus.github.io/github-analytics/ga-tracking.min.js"></script>
 </body>
 </html>
+
+{% endblock %}

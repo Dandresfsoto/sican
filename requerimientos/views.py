@@ -32,10 +32,7 @@ class NuevoRequerimientoView(LoginRequiredMixin,
     def form_valid(self, form):
         self.object = form.save()
         url_base = self.request.META['HTTP_ORIGIN']
-        user = self.request.user
         send_mail_templated_requerimiento.delay('email/requerimiento.tpl', {'url_base':url_base,
-                                                                            'first_name':user.first_name,
-                                                                            'last_name':user.last_name,
                                                                             'nombre_requerimiento':self.object.nombre,
                                                                             'fecha_solicitud':self.object.recepcion_solicitud.strftime('%d/%m/%Y'),
                                                                             'entidad_remitente':self.object.entidad_remitente,
