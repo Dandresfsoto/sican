@@ -13,7 +13,7 @@ class Requerimiento(models.Model):
     recepcion_solicitud = models.DateField()
     region = models.ManyToManyField(Region,related_name='region_requerimiento')
     entidad_remitente = models.CharField(max_length=100)
-    funcionario_remitente = models.CharField(max_length=100)
+    funcionario_remitente = models.CharField(max_length=100,blank=True,null=True)
     nombre = models.CharField(max_length=100)
     archivo_solicitud = models.FileField(upload_to='Requerimientos/Interventoria',blank=True,null=True)
     descripcion = models.TextField(max_length=5000,blank=True,null=True)
