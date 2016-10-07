@@ -15,7 +15,7 @@ class RequerimientoForm(forms.ModelForm):
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
-                'Información del requerimiento',
+                'Requerimiento',
                 Div(
                     Div('recepcion_solicitud',css_class='col-sm-6'),
                     Div('region',css_class='col-sm-6'),
@@ -27,15 +27,8 @@ class RequerimientoForm(forms.ModelForm):
                     css_class = 'row'
                 ),
                 Div(
-                    Div('nombre',css_class='col-sm-4'),
-                    Div(
-                    HTML(
-                        """
-                        <file-upload-sican style="margin-left:14px;" name="archivo_solicitud" old_file="{{old_file}}"
-                        link_old_file="{{link_old_file}}">Archivo</file-upload-sican>
-                        """),
-                        css_class = 'col-sm-8'
-                    ),
+                    Div('nombre',css_class='col-sm-6'),
+                    Div('archivo_solicitud',css_class='col-sm-6'),
                     css_class = 'row'
                 ),
                 Div(
@@ -46,8 +39,25 @@ class RequerimientoForm(forms.ModelForm):
             Fieldset(
                 'Delegación',
                 Div(
-                    Div('tiempo_respuesta',css_class='col-sm-4'),
-                    Div('encargados',css_class='col-sm-8'),
+                    Div('tiempo_respuesta',css_class='col-sm-6'),
+                    Div('medio_entrega',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('encargados',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+            ),
+            Fieldset(
+                'Respuesta',
+                Div(
+                    Div('estado',css_class='col-sm-3'),
+                    Div('fecha_respuesta',css_class='col-sm-3'),
+                    Div('archivo_respuesta',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('observaciones',css_class='col-sm-12'),
                     css_class = 'row'
                 ),
             ),
@@ -58,7 +68,9 @@ class RequerimientoForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'entidad_remitente': forms.Select(choices = ( ('','----------'),('Andes','Andes'),('Interventoria','Interventoria')) ),
-            'funcionario_remitente': forms.Select(choices= ( ('','----------'),('Formación','Formación') ))
+            'funcionario_remitente': forms.Select(choices= ( ('','----------'),('Formación','Formación') )),
+            'estado': forms.Select(choices= ( ('Abierto','Abierto'),('Cerrado','Cerrado') )),
+            'medio_entrega': forms.Select(choices= ( ('','----------'),('Archivo en fisico','Archivo en fisico'),('Correo electrónico','Correo electrónico') )),
         }
         labels = {
             'recepcion_solicitud': 'Fecha de solicitud',

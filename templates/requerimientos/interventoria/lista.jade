@@ -1,6 +1,6 @@
 extends ../../inicio
 block scroll_header_panel_title
-    span(class="title") REQUERIMIENTOS INTERVENTORIA
+    span(class="title") REQUERIMIENTOS
 
 block help_content
     p(class="title-help") Descripción:
@@ -35,9 +35,7 @@ block scroll_header_panel_content
                     th
                     th Solicitud
                     th Fecha
-                    th Entidad
-                    th Remitente
-                    th Dias respuesta
+                    th Dias en mora
                     th Región
                     th Estado
                     th Eliminar
@@ -46,9 +44,7 @@ block scroll_header_panel_content
                     td
                     td Solicitud
                     td Fecha
-                    td Entidad
-                    td Remitente
-                    td Dias respuesta
+                    td Dias en mora
                     td Región
                     td Estado
                     td Eliminar
@@ -77,7 +73,7 @@ block body_script_content
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[8]) {
+                            if (row[16]) {
                                 return '<a href="editar/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
@@ -102,16 +98,6 @@ block body_script_content
                     },
                     {
                         "data": 5,
-                        "orderable": false,
-                        "className": 'text-center',
-                    },
-                    {
-                        "data": 6,
-                        "orderable": false,
-                        "className": 'text-center',
-                    },
-                    {
-                        "data": 7,
                         "orderable": false,
                         "className": 'text-center',
                     },
@@ -149,30 +135,67 @@ block body_script_content
         });
         function format(d) {
             // `d` is the original data object for the row
+
+            var archivo_solicitud = '';
+            var archivo_respuesta = '';
+
+            if(d[8] != ''){
+                archivo_solicitud = '<td><p class="bold-p">Archivo de solicitud:</p><a href="' + d[8] + '"><img src="/static/img/file.png" height="24"></a></td>'
+            }
+            else{
+                archivo_solicitud = '<td><p class="bold-p">Archivo de solicitud:</p>No disponible</td>'
+            }
+
+
+            if(d[15] != ''){
+                archivo_respuesta = '<td><p class="bold-p">Archivo de respuesta:</p><a href="' + d[15] + '"><img src="/static/img/file.png" height="24"></a></td>'
+            }
+            else{
+                archivo_respuesta = '<td><p class="bold-p">Archivo de respuesta:</p>No disponible</td>'
+            }
+
+
             return '<table class="table table-striped">' +
                     '<tr>' +
-                    '<td><p class="bold-p">Cédula:</p>' + d[4] + '</td>' +
-                    '<td><p class="bold-p">Correo personal:</p>' + d[5] + '</td>' +
-                    '<td><p class="bold-p">Celular personal:</p>' + d[6] + '</td>' +
-                    '<td><p class="bold-p">Profesión:</p>' + d[7] + '</td>' +
+                        '<td colspan="8"><p class="bold-p text-center">REQUERIMIENTO</p></td>' +
                     '</tr>' +
+
                     '<tr>' +
-                    '<td><p class="bold-p">Fecha de contratación:</p>' + d[8] + '</td>' +
-                    '<td><p class="bold-p">Fecha de terminación:</p>' + d[9] + '</td>' +
-                    '<td><p class="bold-p"></p></td>' +
+                    '<td><p class="bold-p">Entidad remitente:</p>' + d[6] + '</td>' +
+                    '<td><p class="bold-p">Funcionario:</p>' + d[7] + '</td>' +
+                    archivo_solicitud +
                     '<td><p class="bold-p"></p></td>' +
                     '</tr>' +
+
                     '<tr>' +
-                    '<td><p class="bold-p">Banco:</p>' + d[10] + '</td>' +
-                    '<td><p class="bold-p">Tipo de cuenta:</p>' + d[11] + '</td>' +
-                    '<td><p class="bold-p">Número de cuenta:</p>' + d[12] + '</td>' +
-                    '<td><p class="bold-p"></p></td>' +
+                        '<td colspan="8"><p class="bold-p">Descripción</p>'+ d[9] +'</td>' +
                     '</tr>' +
+
                     '<tr>' +
-                    '<td><p class="bold-p">Eps:</p>' + d[13] + '</td>' +
-                    '<td><p class="bold-p">Pensión:</p>' + d[14] + '</td>' +
-                    '<td><p class="bold-p">Arl:</p>' + d[15] + '</td>' +
+                        '<td colspan="8"><p class="bold-p text-center">DELEGACIÓN</p></td>' +
+                    '</tr>' +
+
+                    '<tr>' +
+                    '<td><p class="bold-p">Tiempo de respuesta:</p>' + d[10] + ' Dias</td>' +
+                    '<td><p class="bold-p">Encargados:</p>' + d[11] + '</td>' +
+                    '<td><p class="bold-p">Medio de entrega:</p>' + d[12] + '</td>' +
                     '<td><p class="bold-p"></p></td>' +
                     '</tr>' +
+
+                    '<tr>' +
+                        '<td colspan="8"><p class="bold-p text-center">RESPUESTA</p></td>' +
+                    '</tr>' +
+
+                    '<tr>' +
+                    '<td><p class="bold-p">Fecha respuesta:</p>' + d[13] + '</td>' +
+                    archivo_respuesta +
+                    '<td><p class="bold-p"></p></td>' +
+                    '<td><p class="bold-p"></p></td>' +
+                    '</tr>' +
+
+                    '<tr>' +
+                        '<td colspan="8"><p class="bold-p">Observaciones</p>'+ d[14] +'</td>' +
+                    '</tr>' +
+
                     '</table>';
         }

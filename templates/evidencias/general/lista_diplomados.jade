@@ -29,10 +29,12 @@ block scroll_header_panel_content
                 tr
                     th Nombre
                     th Encargado
+                    th Cantidad de formadores
             tbody
                 tr
                     td Nombre
                     td Encargado
+                    td Cantidad de formadores
 
 block body_script_content
     script.
@@ -43,16 +45,16 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/financiera/diplomados/",
+                "ajax": "/rest/evidencias/diplomados/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
-                "order": [[0, "asc"]],
+                "order": [[1, "asc"]],
                 "columns": [
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[3]) {
+                            if (row[4]) {
                                 return '<a href="diplomado/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
@@ -68,6 +70,11 @@ block body_script_content
                             return 'Formador Tipo ' + data;
                         },
                         "orderable": true,
+                    },
+                    {
+                        "data": 3,
+                        "className": 'text-center',
+                        "orderable": false,
                     },
                 ]
             });

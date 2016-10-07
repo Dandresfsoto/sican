@@ -33,10 +33,16 @@ block scroll_header_panel_content
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
-                    th Nombre
+                    th Nivel
+                    th Cantidad de sesiones
+                    th Cantidad de entregables
+                    th Productos escenciales
             tbody
                 tr
-                    td Nombre
+                    td Nivel
+                    td Cantidad de sesiones
+                    td Cantidad de entregables
+                    td Productos escenciales
 
 block body_script_content
     script.
@@ -59,6 +65,21 @@ block body_script_content
                            return '<a href="nivel/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                         },
                         "orderable": true,
+                    },
+                    {
+                        "data": 2,
+                        "orderable": true,
+                        "className": 'text-center',
+                    },
+                    {
+                        "data": 3,
+                        "orderable": true,
+                        "className": 'text-center',
+                    },
+                    {
+                        "data": 4,
+                        "orderable": true,
+                        "className": 'text-center',
                     },
                 ]
             });

@@ -2939,6 +2939,8 @@ class FormadoresListEvidencias(BaseDatatableView):
     13.eps
     14.pension
     15.arl
+    16.grupos
+    17.beneficiarios
     """
     model = Formador
     columns = ['id','nombres','cargo','region','cedula','correo_personal','celular_personal','profesion',
@@ -2976,6 +2978,9 @@ class FormadoresListEvidencias(BaseDatatableView):
             else:
                 banco = ''
 
+            grupos = Grupos.objects.filter(formador = item).count()
+            beneficiarios = Beneficiario.objects.filter(formador = item).count()
+
             json_data.append([
                 item.id,
                 item.nombres + " " + item.apellidos,
@@ -2993,6 +2998,48 @@ class FormadoresListEvidencias(BaseDatatableView):
                 item.eps,
                 item.pension,
                 item.arl,
+                grupos,
+                beneficiarios
+            ])
+        return json_data
+
+class DiplomadosEvidenciasList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.numero
+    3.cantidad formadores
+    4.permiso para editar
+    5.permiso para eliminar
+    """
+    model = Diplomado
+    columns = ['id','nombre','numero']
+
+    order_columns = ['nombre','numero']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = search.upper()
+            q = Q(nombre__icontains=search) | Q(numero__icontains=search)
+
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            cantidad = Formador.objects.filter(cargo__nombre = 'Formador Tipo ' + str(item.id)).count()
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.numero,
+                cantidad,
+                self.request.user.has_perm('permisos_sican.productos.diplomados.editar'),
+                self.request.user.has_perm('permisos_sican.productos.diplomados.eliminar'),
             ])
         return json_data
 
@@ -3000,6 +3047,9 @@ class NivelesListEvidencias(BaseDatatableView):
     """
     0.id
     1.nombre
+    2.sesiones
+    3.entregables
+    4.escenciales
     """
     model = Nivel
     columns = ['id','nombre']
@@ -3018,6 +3068,21 @@ class NivelesListEvidencias(BaseDatatableView):
             q = Q(nombre__icontains=search.capitalize())
             qs = qs.filter(q)
         return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            sesiones = Sesion.objects.filter(nivel = item).count()
+            entregables = Entregable.objects.filter(sesion__nivel=item).count()
+            escenciales = Entregable.objects.filter(sesion__nivel=item).filter(escencial = 'Si').count()
+            json_data.append([
+                item.id,
+                item.nombre,
+                sesiones,
+                entregables,
+                escenciales
+            ])
+        return json_data
 
 class SesionesListEvidencias(BaseDatatableView):
     """
@@ -3111,16 +3176,7 @@ class SoportesListEvidencias(BaseDatatableView):
 
 class DelegacionRequerimientos(BaseDatatableView):
     """
-    0.Id
-    1.Nombre
-    2.Fecha solicitud
-    3.Entidad remitente
-    4.Funcionario remitente
-    5.Dias respuesta
-    6.Región
-    7.Estado
-    8.permiso para editar
-    9.permiso para eliminar
+
     """
     model = Requerimiento
     columns = ['id','nombre','recepcion_solicitud','entidad_remitente','funcionario_remitente','tiempo_respuesta']
@@ -3144,11 +3200,23 @@ class DelegacionRequerimientos(BaseDatatableView):
                 item.id,
                 item.nombre,
                 item.recepcion_solicitud,
-                item.entidad_remitente,
-                item.funcionario_remitente,
-                item.tiempo_respuesta,
+                item.get_dias_mora(),
                 item.get_region_string(),
                 item.estado,
+
+                item.entidad_remitente,
+                item.funcionario_remitente,
+                item.get_archivo_solicitud_url(),
+                item.descripcion,
+
+                item.tiempo_respuesta,
+                item.get_encargados_string(),
+                item.medio_entrega,
+
+                item.fecha_respuesta,
+                item.observaciones,
+                item.get_archivo_respuesta_url(),
+
                 self.request.user.has_perm('permisos_sican.requerimientos.interventoria.editar'),
                 self.request.user.has_perm('permisos_sican.requerimientos.interventoria.eliminar')
             ])

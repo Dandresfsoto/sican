@@ -18,7 +18,7 @@ from rest.views import RequerimientosContratacion, AutocompleteMunicipios, Reque
 from rest.views import CargaMasivaMatrices, FormadoresListEvidencias, NivelesListEvidencias, SesionesListEvidencias, EntregablesListEvidencias
 from rest.views import SoportesListEvidencias,Cedulas2BeneficiariosId
 from rest.views import DelegacionRequerimientos, EvidenciasCodigos
-from rest.views import RedList, CargaMasivaEvidenciasList
+from rest.views import RedList, CargaMasivaEvidenciasList, DiplomadosEvidenciasList
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -109,6 +109,7 @@ urlpatterns = [
 
     url(r'cargamasiva/matrices/$', CargaMasivaMatrices.as_view()),
 
+    url(r'evidencias/diplomados/$', DiplomadosEvidenciasList.as_view()),
     url(r'evidencias/formadores/(?P<id_diplomado>\w+)/$', FormadoresListEvidencias.as_view()),
     url(r'evidencias/niveles/(?P<id_diplomado>\w+)/$', NivelesListEvidencias.as_view()),
     url(r'evidencias/sesiones/(?P<id_nivel>\w+)/$', SesionesListEvidencias.as_view()),

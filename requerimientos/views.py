@@ -23,6 +23,25 @@ class NuevoRequerimientoView(LoginRequiredMixin,
                               CreateView):
     model = Requerimiento
     form_class = RequerimientoForm
-    success_url = '/requerimientps/delegacion/'
+    success_url = '/requerimientos/delegacion/'
     template_name = 'requerimientos/interventoria/nuevo.html'
     permission_required = "permisos_sican.requerimientos.interventoria.crear"
+
+
+class UpdateRequerimientoView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              UpdateView):
+    model = Requerimiento
+    form_class = RequerimientoForm
+    success_url = '/requerimientos/delegacion/'
+    template_name = 'requerimientos/interventoria/editar.html'
+    permission_required = "permisos_sican.requerimientos.interventoria.editar"
+
+
+class DeleteRequerimientoView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              DeleteView):
+    model = Requerimiento
+    success_url = '/requerimientos/delegacion/'
+    template_name = 'requerimientos/interventoria/eliminar.html'
+    permission_required = "permisos_sican.requerimientos.interventoria.editar"
