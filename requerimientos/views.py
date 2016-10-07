@@ -11,10 +11,10 @@ class RequerimientosListView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
     template_name = 'requerimientos/interventoria/lista.html'
-    permission_required = "permisos_sican.requerimientos.interventoria.ver"
+    permission_required = "permisos_sican.requerimientos.proyecto.ver"
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.requerimientos.interventoria.crear')
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.requerimientos.proyecto.crear')
         return super(RequerimientosListView, self).get_context_data(**kwargs)
 
 
@@ -25,7 +25,7 @@ class NuevoRequerimientoView(LoginRequiredMixin,
     form_class = RequerimientoForm
     success_url = '/requerimientos/delegacion/'
     template_name = 'requerimientos/interventoria/nuevo.html'
-    permission_required = "permisos_sican.requerimientos.interventoria.crear"
+    permission_required = "permisos_sican.requerimientos.proyecto.crear"
 
 
 class UpdateRequerimientoView(LoginRequiredMixin,
@@ -35,7 +35,7 @@ class UpdateRequerimientoView(LoginRequiredMixin,
     form_class = RequerimientoForm
     success_url = '/requerimientos/delegacion/'
     template_name = 'requerimientos/interventoria/editar.html'
-    permission_required = "permisos_sican.requerimientos.interventoria.editar"
+    permission_required = "permisos_sican.requerimientos.proyecto.editar"
 
 
 class DeleteRequerimientoView(LoginRequiredMixin,
@@ -44,4 +44,4 @@ class DeleteRequerimientoView(LoginRequiredMixin,
     model = Requerimiento
     success_url = '/requerimientos/delegacion/'
     template_name = 'requerimientos/interventoria/eliminar.html'
-    permission_required = "permisos_sican.requerimientos.interventoria.editar"
+    permission_required = "permisos_sican.requerimientos.proyecto.editar"

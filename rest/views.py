@@ -3217,8 +3217,8 @@ class DelegacionRequerimientos(BaseDatatableView):
                 item.observaciones,
                 item.get_archivo_respuesta_url(),
 
-                self.request.user.has_perm('permisos_sican.requerimientos.interventoria.editar'),
-                self.request.user.has_perm('permisos_sican.requerimientos.interventoria.eliminar')
+                self.request.user.has_perm('permisos_sican.requerimientos.proyecto.editar'),
+                self.request.user.has_perm('permisos_sican.requerimientos.proyecto.eliminar')
             ])
         return json_data
 
