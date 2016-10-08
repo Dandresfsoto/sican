@@ -19,9 +19,9 @@ def recordatorio_requerimiento():
     for requerimiento in Requerimiento.objects.all():
         if requerimiento.estado == 'Abierto':
             if requerimiento.get_dias_mora() > 0:
-                estado = 'tiene ' + str(requerimiento.get_dias_mora()) + ' dias en mora'
+                estado = 'tiene ' + str(requerimiento.get_dias_mora()) + ' dia(s) en mora'
             else:
-                estado = 'tiene un plazo de ' + str(abs(requerimiento.get_dias_mora())) + ' para ser respondido,'
+                estado = 'tiene un plazo de ' + str(abs(requerimiento.get_dias_mora())) + ' dia(s) para ser respondido,'
 
             url_base = 'https://sican.asoandes.org'
 
