@@ -24,19 +24,14 @@ class BeneficiarioForm(forms.ModelForm):
         if diplomado.nombre != 'ESCUELA TIC FAMILIA':
             if radicado_text == '':
                 self.add_error('radicado_text','Este campo es requerido.')
-            if area == None:
-                self.add_error('area','Este campo es requerido.')
-            if grado == None:
-                self.add_error('grado','Este campo es requerido.')
 
-            else:
-                try:
-                    radicado = Radicado.objects.get(numero = radicado_text)
-                except:
-                    radicado = ''
+            try:
+                radicado = Radicado.objects.get(numero = radicado_text)
+            except:
+                radicado = ''
 
-                if radicado == '':
-                    self.add_error('radicado_text','No existe este numero de radicado')
+            if radicado == '':
+                self.add_error('radicado_text','No existe este numero de radicado')
 
         else:
             pass
@@ -129,8 +124,8 @@ class BeneficiarioForm(forms.ModelForm):
         }
         labels = {
             'radicado_text': 'Radicado*',
-            'area':'Area*',
-            'grado':'Grado*'
+            'area':'Area',
+            'grado':'Grado'
         }
 
 class BeneficiarioUpdateForm(forms.ModelForm):
@@ -145,19 +140,14 @@ class BeneficiarioUpdateForm(forms.ModelForm):
         if diplomado.nombre != 'ESCUELA TIC FAMILIA':
             if radicado_text == '':
                 self.add_error('radicado_text','Este campo es requerido.')
-            if area == None:
-                self.add_error('area','Este campo es requerido.')
-            if grado == None:
-                self.add_error('grado','Este campo es requerido.')
 
-            else:
-                try:
-                    radicado = Radicado.objects.get(numero = radicado_text)
-                except:
-                    radicado = ''
+            try:
+                radicado = Radicado.objects.get(numero = radicado_text)
+            except:
+                radicado = ''
 
-                if radicado == '':
-                    self.add_error('radicado_text','No existe este numero de radicado')
+            if radicado == '':
+                self.add_error('radicado_text','No existe este numero de radicado')
 
         else:
             pass
@@ -256,8 +246,8 @@ class BeneficiarioUpdateForm(forms.ModelForm):
         }
         labels = {
             'radicado_text': 'Radicado*',
-            'area':'Area*',
-            'grado':'Grado*'
+            'area':'Area',
+            'grado':'Grado'
         }
 
 class CargaMasivaForm(forms.ModelForm):

@@ -62,7 +62,7 @@ class UpdateBeneficiarioView(LoginRequiredMixin,
     permission_required = "permisos_sican.matrices.matricesdiplomados.editar"
 
     def get_initial(self):
-        return {'diplomado_nombre':self.kwargs['diplomado'].upper(),'formador_id':self.object.formador.id}
+        return {'diplomado_nombre':self.kwargs['diplomado'].upper(),'formador_id':self.object.formador.id,'beneficiario_id':self.object.id}
 
     def get_context_data(self, **kwargs):
         kwargs['diplomado'] = self.kwargs['diplomado'].upper()
