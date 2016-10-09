@@ -164,12 +164,14 @@ def carga_masiva_matrices(id,email):
                                             else:
                                                 grado = None
 
+                                            radicado_text = str(radicado.numero) if radicado != None else ''
+
 
                                             if Beneficiario.objects.filter(cedula = fila[15].value if fila[15].value != None else '').count() == 1:
                                                 beneficiario = Beneficiario.objects.get(cedula = fila[15].value)
                                                 beneficiario.region = region
                                                 beneficiario.radicado = radicado
-                                                beneficiario.radicado_text = str(radicado.numero)
+                                                beneficiario.radicado_text = radicado_text
                                                 beneficiario.formador = formador
                                                 beneficiario.grupo = grupo
                                                 beneficiario.apellidos =fila[13].value
@@ -187,7 +189,7 @@ def carga_masiva_matrices(id,email):
                                                 resultado += 'Docente actualizado'
 
                                             else:
-                                                Beneficiario.objects.create(diplomado = diplomado,region=region,radicado=radicado,radicado_text=str(radicado.numero),
+                                                Beneficiario.objects.create(diplomado = diplomado,region=region,radicado=radicado,radicado_text=radicado_text,
                                                                             formador=formador,grupo=grupo,apellidos=fila[13].value,
                                                                             nombres=fila[14].value,cedula=fila[15].value,correo=fila[16].value,
                                                                             telefono_fijo=fila[17].value,telefono_celular=fila[18].value,
