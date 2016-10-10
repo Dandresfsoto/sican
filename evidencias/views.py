@@ -9,10 +9,10 @@ from evidencias.models import Evidencia
 from evidencias.forms import EvidenciaForm
 from productos.models import Entregable
 from evidencias.models import Red
-from evidencias.forms import RedForm
+from evidencias.forms import RedForm, RedRetroalimentacionForm
 from region.models import Region
 from django.shortcuts import HttpResponseRedirect
-from evidencias.tasks import build_red, carga_masiva_evidencias
+from evidencias.tasks import build_red, carga_masiva_evidencias, retroalimentacion_red
 from evidencias.models import CargaMasiva
 from evidencias.forms import CargaMasivaForm
 
@@ -350,6 +350,22 @@ class NuevoRedView(LoginRequiredMixin,
             pass
         red.save()
         build_red.delay(red.id)
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class UpdateRedView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              UpdateView):
+    model = Red
+    form_class = RedRetroalimentacionForm
+    success_url = '../../'
+    template_name = 'evidencias/red/editar.html'
+    permission_required = "permisos_sican.evidencias.red.editar"
+
+
+    def form_valid(self, form):
+        self.object = form.save()
+        retroalimentacion_red.delay(self.object.id)
         return HttpResponseRedirect(self.get_success_url())
 
 

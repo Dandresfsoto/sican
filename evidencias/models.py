@@ -42,6 +42,7 @@ class Red(models.Model):
     evidencias = models.ManyToManyField(Evidencia,related_name='evidencia_red',blank=True)
     retroalimentacion = models.BooleanField(default=False)
     archivo = models.FileField(upload_to='Formatos Red/',blank=True,null=True)
+    archivo_retroalimentacion = models.FileField(upload_to='Formatos Red/Retroalimentacion/',blank=True,null=True)
 
     def get_archivo_url(self):
         try:

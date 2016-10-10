@@ -3306,7 +3306,8 @@ class RedList(BaseDatatableView):
                 localtime(item.fecha).strftime('%d/%m/%Y %I:%M:%S %p'),
                 item.evidencias.all().count(),
                 'Si' if item.retroalimentacion else 'No',
-                item.get_archivo_url()
+                item.get_archivo_url(),
+                self.request.user.has_perm('permisos_sican.evidencias.red.editar'),
             ])
         return json_data
 

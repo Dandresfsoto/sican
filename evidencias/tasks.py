@@ -292,3 +292,148 @@ def carga_masiva_evidencias(id_carga_masiva,id_usuario):
     carga_masiva.resultado.save(filename,File(output))
 
     return "Generada MASIVA-" + str(id_carga_masiva)
+
+
+@app.task
+def retroalimentacion_red(id_red):
+
+    red = Red.objects.get(id = id_red)
+
+    wb = openpyxl.load_workbook(red.archivo_retroalimentacion.file)
+    ws = wb.get_active_sheet()
+    ids = []
+    inicia = 0
+
+    if red.diplomado.numero == 1:
+        ids = [{'id':8,'letter':'M'},
+               {'id':9,'letter':'N'},
+               {'id':20,'letter':'O'},
+               {'id':12,'letter':'P'},
+               {'id':21,'letter':'Q'},
+               {'id':22,'letter':'R'},
+               {'id':14,'letter':'S'},
+               {'id':15,'letter':'T'},
+               {'id':16,'letter':'U'},
+               {'id':23,'letter':'V'},
+               {'id':17,'letter':'W'},
+               {'id':27,'letter':'X'},
+               {'id':28,'letter':'Y'},
+               {'id':40,'letter':'Z'},
+               {'id':30,'letter':'AA'},
+               {'id':31,'letter':'AB'},
+               {'id':33,'letter':'AC'},
+               {'id':34,'letter':'AD'},
+               {'id':35,'letter':'AE'},
+               {'id':36,'letter':'AF'},
+               {'id':46,'letter':'AG'},
+               {'id':58,'letter':'AH'},
+               {'id':49,'letter':'AI'},
+               {'id':59,'letter':'AJ'},
+               {'id':52,'letter':'AK'},
+               {'id':60,'letter':'AL'},
+               {'id':55,'letter':'AM'},
+               {'id':63,'letter':'AN'},
+               {'id':64,'letter':'AO'},
+               {'id':66,'letter':'AP'},
+               {'id':67,'letter':'AQ'}]
+
+        inicia = 6
+    elif red.diplomado.numero == 2:
+        ids = [{'id':72,'letter':'M'},
+               {'id':73,'letter':'N'},
+               {'id':75,'letter':'O'},
+               {'id':74,'letter':'P'},
+               {'id':76,'letter':'Q'},
+               {'id':77,'letter':'R'},
+               {'id':84,'letter':'S'},
+               {'id':85,'letter':'T'},
+               {'id':78,'letter':'U'},
+               {'id':89,'letter':'V'},
+               {'id':97,'letter':'W'},
+               {'id':98,'letter':'X'},
+               {'id':93,'letter':'Y'},
+               {'id':92,'letter':'Z'},
+               {'id':99,'letter':'AA'},
+               {'id':94,'letter':'AB'},
+               {'id':100,'letter':'AC'},
+               {'id':95,'letter':'AD'},
+               {'id':104,'letter':'AE'},
+               {'id':112,'letter':'AF'},
+               {'id':106,'letter':'AG'},
+               {'id':109,'letter':'AH'},
+               {'id':108,'letter':'AI'},
+               {'id':110,'letter':'AJ'},
+               {'id':119,'letter':'AK'},
+               {'id':124,'letter':'AL'},
+               {'id':118,'letter':'AM'},
+               {'id':120,'letter':'AN'},
+               {'id':121,'letter':'AO'}]
+        inicia = 6
+    elif red.diplomado.numero == 3:
+        ids = [{'id':127,'letter':'M'},
+               {'id':128,'letter':'N'},
+               {'id':131,'letter':'O'},
+               {'id':132,'letter':'P'},
+               {'id':134,'letter':'Q'},
+               {'id':133,'letter':'R'},
+               {'id':142,'letter':'S'},
+               {'id':143,'letter':'T'},
+               {'id':135,'letter':'U'},
+               {'id':144,'letter':'V'},
+               {'id':137,'letter':'W'},
+               {'id':140,'letter':'X'},
+               {'id':139,'letter':'Y'},
+               {'id':147,'letter':'Z'},
+               {'id':146,'letter':'AA'},
+               {'id':152,'letter':'AB'},
+               {'id':148,'letter':'AC'},
+               {'id':149,'letter':'AD'},
+               {'id':151,'letter':'AE'},
+               {'id':150,'letter':'AF'},
+               {'id':156,'letter':'AG'},
+               {'id':155,'letter':'AH'},
+               {'id':157,'letter':'AI'},
+               {'id':164,'letter':'AJ'},
+               {'id':165,'letter':'AK'},
+               {'id':159,'letter':'AL'},
+               {'id':162,'letter':'AM'},
+               {'id':161,'letter':'AN'},
+               {'id':166,'letter':'AO'},
+               {'id':167,'letter':'AP'},
+               {'id':171,'letter':'AQ'},
+               {'id':171,'letter':'AR'},
+               {'id':172,'letter':'AS'}]
+        inicia = 6
+    elif red.diplomado.numero == 4:
+        ids = [{'id':221,'letter':'M'},
+               {'id':221,'letter':'N'},
+               {'id':221,'letter':'O'},
+               {'id':224,'letter':'P'},
+               {'id':228,'letter':'Q'}]
+
+        inicia = 2
+
+
+    for row in ws.iter_rows(row_offset=inicia-1):
+        beneficiario = {}
+        for cell in row:
+            beneficiario[cell.column] = cell.value
+
+        try:
+            beneficiario_object = Beneficiario.objects.get(cedula = beneficiario['J'])
+
+        except:
+            pass
+
+        else:
+            for id in ids:
+                if beneficiario[id['letter']] == 'OK' or beneficiario[id['letter']] == 'Ok' or beneficiario[id['letter']] == 'oK' or beneficiario[id['letter']] == 'ok':
+                    entregable = Entregable.objects.get(id = id['id'])
+                    evidencia = Evidencia.objects.get(entregable = entregable, formador = beneficiario_object.formador, beneficiarios_cargados = beneficiario_object)
+                    if beneficiario_object in evidencia.beneficiarios_cargados.all():
+                        evidencia.beneficiarios_validados.add(beneficiario_object)
+
+    red.retroalimentacion = True
+    red.save()
+
+    return "Retroalimentado RED-" + str(id_red)
