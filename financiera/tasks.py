@@ -85,14 +85,14 @@ def cortes(email,id):
     corte = Cortes.objects.get(id = id)
 
     titulos = ['ID','Nombres','Apellidos','Cedula','Región','Correo',
-               'Celular','Cargo','Banco','Tipo cuenta','Numero cuenta','Valor a pagar']
+               'Celular','Cargo','Banco','Tipo cuenta','Numero cuenta','Valor a pagar','Descripción']
 
     formatos = ['General','General','General','0','General','General',
-                'General','General','General','General','General','"$"#,##0_);("$"#,##0)']
+                'General','General','General','General','General','"$"#,##0_);("$"#,##0)','General']
 
 
     ancho_columnas =  [30,20,20,20,20,60,
-                       20,20,20,20,20,20]
+                       20,20,20,20,20,20,60]
 
     revisiones = Revision.objects.filter(corte = corte)
     cedulas_formadores = revisiones.values_list('formador_revision__cedula',flat=True).distinct()
@@ -101,7 +101,9 @@ def cortes(email,id):
 
     for formador in Formador.objects.filter(cedula__in = cedulas_formadores):
         valor = 0
+        observacion = ''
         for revision in revisiones.filter(formador_revision = formador):
+            observacion += revision.descripcion + ', '
             for producto in revision.productos.all():
                 valor += producto.cantidad * producto.valor_entregable.valor
 
@@ -118,7 +120,8 @@ def cortes(email,id):
             formador.banco.nombre if formador.banco != None else '',
             formador.tipo_cuenta,
             formador.numero_cuenta,
-            valor
+            valor,
+            observacion[:-2]
         ])
 
     output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,corte.fecha,usuario,proceso)
