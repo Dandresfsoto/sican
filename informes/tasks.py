@@ -22,7 +22,7 @@ from radicados.models import Radicado
 from formadores.models import Cortes
 from formadores.models import Revision
 import zipfile
-from StringIO import StringIO
+import shutil
 import os
 
 @app.task
@@ -565,6 +565,9 @@ def zip_hv(email):
     zip.close()
     informe.archivo = File(open('C:\\Temp\\hv.zip'))
     informe.save()
+
+    shutil.copy('C:\\Temp\\hv.zip',informe.archivo.path)
+
     return "Zip creado HV"
 
 @app.task
@@ -588,4 +591,7 @@ def zip_contrato(email):
     zip.close()
     informe.archivo = File(open('C:\\Temp\\contratos.zip'))
     informe.save()
+
+    shutil.copy('C:\\Temp\\hv.zip',informe.archivo.path)
+
     return "Zip creado Contrato"
