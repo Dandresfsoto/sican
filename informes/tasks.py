@@ -557,9 +557,10 @@ def zip_hv(email):
 
     zip = zipfile.ZipFile('C:\\Temp\\hv.zip',"w",allowZip64=True)
 
-    for soporte in SoporteFormadores.objects.filter(tipo__id = 3).exclude(archivo__isnull=True):
-        if os.path.exists(soporte.archivo.path):
-            zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+os.path.basename(soporte.archivo.path))
+    for soporte in SoporteFormadores.objects.filter(tipo__id = 3).exclude(oculto = True):
+        if str(soporte.archivo) != '':
+            if os.path.exists(soporte.archivo.path):
+                zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+os.path.basename(soporte.archivo.path))
 
 
     informe.archivo = File(open('C:\\Temp\\hv.zip'))
@@ -579,9 +580,10 @@ def zip_contrato(email):
 
     zip = zipfile.ZipFile('C:\\Temp\\contratos.zip',"w",allowZip64=True)
 
-    for soporte in SoporteFormadores.objects.filter(tipo__id = 10).exclude(archivo__isnull=True):
-        if os.path.exists(soporte.archivo.path):
-            zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+os.path.basename(soporte.archivo.path))
+    for soporte in SoporteFormadores.objects.filter(tipo__id = 10).exclude(oculto = True):
+        if str(soporte.archivo) != '':
+            if os.path.exists(soporte.archivo.path):
+                zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+os.path.basename(soporte.archivo.path))
 
 
     informe.archivo = File(open('C:\\Temp\\contratos.zip'))

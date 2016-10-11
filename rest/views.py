@@ -1093,12 +1093,12 @@ class FormadoresConsolidadoRh(BaseDatatableView):
                 banco = ''
 
             try:
-                hv = SoporteFormador.objects.get(formador = item,tipo__id = 3).get_archivo_url()
+                hv = SoporteFormador.objects.exclude(oculto = True).get(formador = item,tipo__id = 3).get_archivo_url()
             except:
                 hv = ''
 
             try:
-                contrato = SoporteFormador.objects.get(formador = item,tipo__id = 10).get_archivo_url()
+                contrato = SoporteFormador.objects.exclude(oculto = True).get(formador = item,tipo__id = 10).get_archivo_url()
             except:
                 contrato = ''
 
