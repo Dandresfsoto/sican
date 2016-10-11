@@ -592,6 +592,6 @@ def zip_contrato(email):
     informe.archivo = File(open('C:\\Temp\\contratos.zip'))
     informe.save()
 
-    shutil.copy('C:\\Temp\\hv.zip',informe.archivo.path)
+    shutil.copy('C:\\Temp\\contratos.zip',informe.archivo.path)
 
     return "Zip creado Contrato"
