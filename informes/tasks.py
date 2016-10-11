@@ -23,7 +23,6 @@ from formadores.models import Cortes
 from formadores.models import Revision
 import zipfile
 from StringIO import StringIO
-from io import BytesIO
 
 @app.task
 def nueva_semana():
@@ -548,12 +547,12 @@ def pagos_mensual(email):
 @app.task
 def zip_hv(email):
     usuario = User.objects.get(email=email)
-    nombre = "Zip: Contratos"
+    nombre = "Zip: Hojas de vida"
     informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
 
     output = StringIO()
 
-    zip = zipfile.ZipFile(output,"w")
+    zip = zipfile.ZipFile(output,"w",allowZip64=True)
 
     for soporte in SoporteFormadores.objects.filter(tipo__id = 3).exclude(archivo = None):
         zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+soporte.archivo.path)
@@ -571,7 +570,7 @@ def zip_contrato(email):
 
     output = StringIO()
 
-    zip = zipfile.ZipFile(output,"w")
+    zip = zipfile.ZipFile(output,"w",allowZip64=True)
 
     for soporte in SoporteFormadores.objects.filter(tipo__id = 10).exclude(archivo = None):
         zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+soporte.archivo.path)
