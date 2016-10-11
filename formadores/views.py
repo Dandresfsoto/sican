@@ -402,7 +402,7 @@ class PagosView(TemplateView):
             valor = 0
             for producto in revision.productos.all():
                 valor += producto.cantidad * producto.valor_entregable.valor
-            if valor > 0:
+            if valor > 0 and revision.corte != None:
                 revisiones.append(revision.corte.id)
 
         kwargs['table'] = CortesTable(Cortes.objects.filter(id__in = revisiones),id_formador = formador.id)
