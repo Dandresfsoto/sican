@@ -562,7 +562,7 @@ def zip_hv(email):
             if os.path.exists(soporte.archivo.path):
                 zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+os.path.basename(soporte.archivo.path))
 
-
+    zip.close()
     informe.archivo = File(open('C:\\Temp\\hv.zip'))
     informe.save()
     return "Zip creado HV"
@@ -585,7 +585,7 @@ def zip_contrato(email):
             if os.path.exists(soporte.archivo.path):
                 zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+os.path.basename(soporte.archivo.path))
 
-
+    zip.close()
     informe.archivo = File(open('C:\\Temp\\contratos.zip'))
     informe.save()
     return "Zip creado Contrato"
