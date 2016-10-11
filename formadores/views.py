@@ -5,7 +5,7 @@ from django.shortcuts import HttpResponseRedirect
 from formadores.models import TipoSoporte
 from formadores.models import Formador, Soporte
 from django.shortcuts import HttpResponseRedirect
-from formadores.tables import SolicitudTable, EntregablesTable
+from formadores.tables import SolicitudTable, EntregablesTable, CortesTable, RevisionTable, PagoTable
 from formadores.models import SolicitudTransporte, Desplazamiento
 from formadores.forms import NuevaSolicitudTransportes, SubirSoporteForm, SeguridadSocialForm
 from departamentos.models import Departamento
@@ -13,6 +13,7 @@ from municipios.models import Municipio
 import datetime
 from formadores.forms import OtroSiForm
 from productos.models import Entregable
+from formadores.models import Cortes, Revision
 
 # Create your views here.
 class InicioView(FormView):
@@ -375,6 +376,92 @@ class EntregablesView(TemplateView):
         query = Entregable.objects.all().filter(sesion__nivel__diplomado__numero = numero_diplomado).order_by('numero')
         kwargs['table'] = EntregablesTable(query)
         return super(EntregablesView,self).get_context_data(**kwargs)
+
+class PagosView(TemplateView):
+    template_name = 'formadores/pagos/cortes.html'
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=self.kwargs['cedula'])
+        kwargs['formador'] = formador.get_full_name()
+        kwargs['tipo'] = formador.cargo.nombre
+
+        if formador.cargo.nombre == "Formador Tipo 1":
+            numero_diplomado = 1
+        elif formador.cargo.nombre == "Formador Tipo 2":
+            numero_diplomado = 2
+        elif formador.cargo.nombre == "Formador Tipo 3":
+            numero_diplomado = 3
+        elif formador.cargo.nombre == "Formador Tipo 4":
+            numero_diplomado = 4
+        else:
+            numero_diplomado = 0
+
+        revisiones = []
+
+        for revision in Revision.objects.filter(formador_revision = formador):
+            valor = 0
+            for producto in revision.productos.all():
+                valor += producto.cantidad * producto.valor_entregable.valor
+            if valor > 0:
+                revisiones.append(revision.corte.id)
+
+        kwargs['table'] = CortesTable(Cortes.objects.filter(id__in = revisiones),id_formador = formador.id)
+        return super(PagosView,self).get_context_data(**kwargs)
+
+class PagosCorteView(TemplateView):
+    template_name = 'formadores/pagos/pagos_corte.html'
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=self.kwargs['cedula'])
+        kwargs['formador'] = formador.get_full_name()
+        kwargs['tipo'] = formador.cargo.nombre
+
+        if formador.cargo.nombre == "Formador Tipo 1":
+            numero_diplomado = 1
+        elif formador.cargo.nombre == "Formador Tipo 2":
+            numero_diplomado = 2
+        elif formador.cargo.nombre == "Formador Tipo 3":
+            numero_diplomado = 3
+        elif formador.cargo.nombre == "Formador Tipo 4":
+            numero_diplomado = 4
+        else:
+            numero_diplomado = 0
+
+        corte = Cortes.objects.get(id = self.kwargs['id_corte'])
+        revisiones = []
+
+        for revision in Revision.objects.filter(formador_revision = formador,corte = corte):
+            valor = 0
+            for producto in revision.productos.all():
+                valor += producto.cantidad * producto.valor_entregable.valor
+            if valor > 0:
+                revisiones.append(revision.id)
+
+        kwargs['table'] = RevisionTable(Revision.objects.filter(id__in = revisiones))
+        return super(PagosCorteView,self).get_context_data(**kwargs)
+
+class PagosCorteEntregableView(TemplateView):
+    template_name = 'formadores/pagos/pagos_corte.html'
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=self.kwargs['cedula'])
+        kwargs['formador'] = formador.get_full_name()
+        kwargs['tipo'] = formador.cargo.nombre
+
+        if formador.cargo.nombre == "Formador Tipo 1":
+            numero_diplomado = 1
+        elif formador.cargo.nombre == "Formador Tipo 2":
+            numero_diplomado = 2
+        elif formador.cargo.nombre == "Formador Tipo 3":
+            numero_diplomado = 3
+        elif formador.cargo.nombre == "Formador Tipo 4":
+            numero_diplomado = 4
+        else:
+            numero_diplomado = 0
+
+        revision = Revision.objects.get(id = self.kwargs['id_pago'])
+        kwargs['table'] = PagoTable(revision.productos.exclude(cantidad = 0))
+        return super(PagosCorteEntregableView,self).get_context_data(**kwargs)
 
 class SeguridadSocialView(FormView):
     template_name = "formadores/seguridadsocial/seguridadform.html"

@@ -171,6 +171,9 @@ class Producto(models.Model):
     valor_entregable = models.ForeignKey(ValorEntregable)
     cantidad = models.IntegerField(null=True)
 
+    def total(self):
+        return self.valor_entregable * self.cantidad
+
 class Cortes(models.Model):
     descripcion = models.TextField(max_length=500)
     fecha = models.DateTimeField(auto_now=True)

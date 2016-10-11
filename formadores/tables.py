@@ -6,6 +6,8 @@ from formadores.models import SolicitudTransporte
 from django.utils.safestring import mark_safe
 import locale
 from productos.models import Entregable
+from formadores.models import Cortes
+from formadores.models import Formador, Revision, Producto
 
 class SolicitudTable(tables.Table):
     nombre = tables.Column('Nombre')
@@ -99,3 +101,84 @@ class EntregablesTable(tables.Table):
     class Meta:
         model = Entregable
         fields = ['sesion','nombre','numero','tipo','formato']
+
+
+class CortesTable(tables.Table):
+    id_formador = None
+    id = tables.Column('Corte')
+    year = tables.Column('Año')
+    descripcion = tables.Column('Valor reportado')
+
+    def __init__(self, *args, **kwargs):
+        temp = kwargs.pop("id_formador")
+        super(CortesTable, self).__init__(*args, **kwargs)
+        self.id_formador = temp
+
+    def render_id(self,value,record):
+        return mark_safe('<a href="'+ str(value) +'">COR-' + str(value) + '</a>')
+
+
+    def render_descripcion(self,value,record):
+        formador = Formador.objects.get(id=self.id_formador)
+        corte = Cortes.objects.get(id = record.id)
+        valor = 0
+        for revision in Revision.objects.filter(formador_revision = formador, corte = corte):
+            for producto in revision.productos.all():
+                valor += producto.cantidad * producto.valor_entregable.valor
+        return locale.currency( valor, grouping=True ).replace('+','')
+
+
+    class Meta:
+        model = Cortes
+        fields = ['id','year','descripcion']
+
+
+class RevisionTable(tables.Table):
+    id = tables.Column('Código de pago')
+    productos = tables.Column('Valor reportado')
+
+
+    def render_id(self,value,record):
+        return mark_safe('<a href="'+ str(value) +'">PAG-' + str(value) + '</a>')
+
+
+    def render_productos(self,value,record):
+        revision = Revision.objects.get(id = record.id)
+        valor = 0
+        for producto in revision.productos.all():
+            valor += producto.cantidad * producto.valor_entregable.valor
+        return locale.currency( valor, grouping=True ).replace('+','')
+
+
+    class Meta:
+        model = Revision
+        fields = ['id','productos']
+
+
+class PagoTable(tables.Table):
+    nivel = tables.Column('Nivel', accessor= 'id', orderable=False)
+    sesion = tables.Column('Sesion', accessor= 'id', orderable=False)
+    id = tables.Column('Entregable')
+    cantidad = tables.Column('Cantidad')
+    valor_entregable = tables.Column('Valor individual')
+    total = tables.Column('Valor total', accessor= 'id', orderable=False)
+
+    def render_id(self,value,record):
+        return record.valor_entregable.entregable.nombre
+
+
+    def render_valor_entregable(self,value,record):
+        return locale.currency( record.valor_entregable.valor, grouping=True ).replace('+','')
+
+    def render_nivel(self,value,record):
+        return record.valor_entregable.entregable.sesion.nivel.nombre
+
+    def render_sesion(self,value,record):
+        return record.valor_entregable.entregable.sesion.nombre
+
+    def render_total(self,value,record):
+        return locale.currency( record.valor_entregable.valor * record.cantidad, grouping=True ).replace('+','')
+
+    class Meta:
+        model = Producto
+        fields = ['nivel','sesion','id','cantidad','valor_entregable','total']

@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from formadores.views import InicioView, VinculosView, LegalizacionView, LegalizacionCompletaView, TransportesView
 from formadores.views import NuevaSolicitudTransportesView, SubirSoporteTransportesView, OtroSiView, OtroSiCompletoView
-from formadores.views import EntregablesView, SeguridadSocialView, SeguridadSocialCompletaView
+from formadores.views import EntregablesView, SeguridadSocialView, SeguridadSocialCompletaView,PagosView, PagosCorteView, PagosCorteEntregableView
 
 urlpatterns = [
     url(r'^$', InicioView.as_view()),
@@ -17,4 +17,8 @@ urlpatterns = [
     url(r'^(?P<cedula>[0-9]+)/entregables/$', EntregablesView.as_view()),
     url(r'^(?P<cedula>[0-9]+)/seguridadsocial/$', SeguridadSocialView.as_view()),
     url(r'^(?P<cedula>[0-9]+)/seguridadsocial/completo/$', SeguridadSocialCompletaView.as_view()),
+
+    url(r'^(?P<cedula>[0-9]+)/pagos/$', PagosView.as_view()),
+    url(r'^(?P<cedula>[0-9]+)/pagos/(?P<id_corte>[0-9]+)/$', PagosCorteView.as_view()),
+    url(r'^(?P<cedula>[0-9]+)/pagos/(?P<id_corte>[0-9]+)/(?P<id_pago>[0-9]+)/$', PagosCorteEntregableView.as_view()),
 ]
