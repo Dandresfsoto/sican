@@ -23,6 +23,7 @@ from formadores.models import Cortes
 from formadores.models import Revision
 import zipfile
 from StringIO import StringIO
+import os
 
 @app.task
 def nueva_semana():
@@ -546,36 +547,41 @@ def pagos_mensual(email):
 
 @app.task
 def zip_hv(email):
+
+    if os.path.exists("C:\\Temp\\hv.zip"):
+        os.remove("C:\\Temp\\hv.zip")
+
     usuario = User.objects.get(email=email)
     nombre = "Zip: Hojas de vida"
     informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
 
-    output = StringIO()
-
-    zip = zipfile.ZipFile(output,"w",allowZip64=True)
+    zip = zipfile.ZipFile('C:\\Temp\\hv.zip',"w",allowZip64=True)
 
     for soporte in SoporteFormadores.objects.filter(tipo__id = 3).exclude(archivo = None):
         zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+soporte.archivo.path)
 
 
-    filename = unicode(informe.creacion) + '.zip'
-    informe.archivo.save(filename,File(output))
+    informe.archivo = File(open('C:\\Temp\\hv.zip'))
+    informe.save()
     return "Zip creado HV"
 
 @app.task
 def zip_contrato(email):
+
+    if os.path.exists("C:\\Temp\\contratos.zip"):
+        os.remove("C:\\Temp\\contratos.zip")
+
     usuario = User.objects.get(email=email)
     nombre = "Zip: Contratos"
     informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
 
-    output = StringIO()
 
-    zip = zipfile.ZipFile(output,"w",allowZip64=True)
+    zip = zipfile.ZipFile('C:\\Temp\\contratos.zip',"w",allowZip64=True)
 
     for soporte in SoporteFormadores.objects.filter(tipo__id = 10).exclude(archivo = None):
         zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+soporte.archivo.path)
 
 
-    filename = unicode(informe.creacion) + '.zip'
-    informe.archivo.save(filename,File(output))
+    informe.archivo = File(open('C:\\Temp\\contratos.zip'))
+    informe.save()
     return "Zip creado Contrato"
