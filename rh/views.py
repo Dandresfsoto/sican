@@ -574,3 +574,15 @@ class NuevoRequerimientoContratacionView(LoginRequiredMixin,
                                                                     }, DEFAULT_FROM_EMAIL, [destinatario.email])
 
         return super(NuevoRequerimientoContratacionView, self).form_valid(form)
+
+
+class FormadoresConsolidadoView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'rh/interventoria_formadores/lista.html'
+    permission_required = "permisos_sican.rh.interventoria_formadores.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores.crear')
+        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores.masivo')
+        return super(FormadoresConsolidadoView, self).get_context_data(**kwargs)

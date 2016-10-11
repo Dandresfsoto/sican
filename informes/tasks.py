@@ -21,6 +21,9 @@ from encuestas.models import PercepcionInicial
 from radicados.models import Radicado
 from formadores.models import Cortes
 from formadores.models import Revision
+import zipfile
+from StringIO import StringIO
+from io import BytesIO
 
 @app.task
 def nueva_semana():
@@ -266,7 +269,6 @@ def cronograma_lider(email,semana_id):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
-
 
 @app.task
 def lideres(email):
@@ -542,3 +544,39 @@ def pagos_mensual(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
+
+@app.task
+def zip_hv(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Zip: Contratos"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+
+    output = StringIO()
+
+    zip = zipfile.ZipFile(output,"w")
+
+    for soporte in SoporteFormadores.objects.filter(tipo__id = 3).exclude(archivo = None):
+        zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+soporte.archivo.path)
+
+
+    filename = unicode(informe.creacion) + '.zip'
+    informe.archivo.save(filename,File(output))
+    return "Zip creado HV"
+
+@app.task
+def zip_contrato(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Zip: Contratos"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+
+    output = StringIO()
+
+    zip = zipfile.ZipFile(output,"w")
+
+    for soporte in SoporteFormadores.objects.filter(tipo__id = 10).exclude(archivo = None):
+        zip.write(soporte.archivo.path,soporte.formador.get_full_name()+'/'+soporte.archivo.path)
+
+
+    filename = unicode(informe.creacion) + '.zip'
+    informe.archivo.save(filename,File(output))
+    return "Zip creado Contrato"

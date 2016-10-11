@@ -8,7 +8,7 @@ from rh.views import SoporteFormadorView, NuevoSoporteFormadorView, UpdateSoport
 from rh.views import LideresView, NuevoLiderView, UpdateLiderView, DeleteLiderView
 from rh.views import SoporteLiderView, NuevoSoporteLiderView, UpdateSoporteLiderView, DeleteSoporteLiderView
 from rh.views import NegociadoresView,NuevoNegociadorView, UpdateNegociadorView, DeleteNegociadorView
-from rh.views import ListaRequerimientosContratacionView, NuevoRequerimientoContratacionView
+from rh.views import ListaRequerimientosContratacionView, NuevoRequerimientoContratacionView, FormadoresConsolidadoView
 
 urlpatterns = [
     url(r'^administrativos/$', AdministrativoView.as_view()),
@@ -68,4 +68,6 @@ urlpatterns = [
 
     url(r'^requerimientoscontratacion/$', ListaRequerimientosContratacionView.as_view()),
     url(r'^requerimientoscontratacion/(?P<pk>[0-9]+)/$', NuevoRequerimientoContratacionView.as_view()),
+
+    url(r'^consolidadoformadores/$', FormadoresConsolidadoView.as_view()),
 ]

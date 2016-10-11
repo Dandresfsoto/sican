@@ -53,6 +53,7 @@ from evidencias.models import Evidencia
 from requerimientos.models import Requerimiento
 from evidencias.models import Red, CargaMasiva as CargaMasivaEvidencias
 from django.utils.timezone import localtime
+from informes.tasks import zip_hv, zip_contrato
 
 
 # Create your views here.
@@ -201,6 +202,11 @@ class ReportesView(APIView):
             x = radicados.delay(request.user.email)
         if id_accion == '11':
             x = pagos_mensual.delay(request.user.email)
+
+        if id_accion == '12':
+            x = zip_hv.delay(request.user.email)
+        if id_accion == '13':
+            x = zip_contrato.delay(request.user.email)
 
 
         return HttpResponse(status=200)
@@ -558,6 +564,9 @@ class UserPermissionList(APIView):
             },
             'formadores':{
                 'ver':{'name':'Formadores','link':'/rh/formadores/'}
+            },
+            'interventoria_formadores':{
+                'ver':{'name':'Consolidado Hv y Contratos','link':'/rh/consolidadoformadores/'}
             },
             'departamentos':{
                 'ver':{'name':'Departamentos','link':'/bases/departamentos/'}
@@ -1025,6 +1034,93 @@ class FormadoresRh(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.rh.formadores.editar'),
                 self.request.user.has_perm('permisos_sican.rh.formadores.eliminar'),
                 self.request.user.has_perm('permisos_sican.rh.formadores_soportes.ver'),
+            ])
+        return json_data
+
+class FormadoresConsolidadoRh(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cargo
+    3.region
+    4.cedula
+    5.correo_personal
+    6.celular_personal
+    7.profesion
+    8.fecha_contratacion
+    9.fecha_terminacion
+    10.banco
+    11.tipo_cuenta
+    12.numero_cuenta
+    13.eps
+    14.pension
+    15.arl
+    """
+    model = Formador
+    columns = ['id','nombres','cargo','region','cedula','correo_personal','celular_personal','profesion',
+               'fecha_contratacion','fecha_terminacion','banco','tipo_cuenta','numero_cuenta','eps',
+               'pension','arl']
+
+    order_columns = ['','nombres','cargo','']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Formador.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+                Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+
+            region_str = ''
+            for region in item.region.values_list('numero',flat=True):
+                region_str = region_str + str(region) + ','
+            region_str = region_str[:-1]
+
+            if item.banco != None:
+                banco = item.banco.nombre
+            else:
+                banco = ''
+
+            try:
+                hv = SoporteFormador.objects.get(formador = item,tipo__id = 3).get_archivo_url()
+            except:
+                hv = ''
+
+            try:
+                contrato = SoporteFormador.objects.get(formador = item,tipo__id = 10).get_archivo_url()
+            except:
+                contrato = ''
+
+            json_data.append([
+                item.id,
+                item.nombres + " " + item.apellidos,
+                item.cargo.nombre,
+                region_str,
+                item.cedula,
+                item.correo_personal,
+                item.celular_personal,
+                item.profesion,
+                item.fecha_contratacion,
+                item.fecha_terminacion,
+                banco,
+                item.tipo_cuenta,
+                item.numero_cuenta,
+                item.eps,
+                item.pension,
+                item.arl,
+                hv,
+                contrato
             ])
         return json_data
 
