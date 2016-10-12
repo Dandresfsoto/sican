@@ -24,6 +24,7 @@ from formadores.models import Revision
 import zipfile
 import shutil
 import os
+from rh.models import RequerimientoPersonal
 
 @app.task
 def nueva_semana():
@@ -75,6 +76,77 @@ def formadores(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
+
+
+@app.task
+def reporte_requerimientos_contratacion(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Requerimientos de contratacion"
+    proceso = "RH-INF05"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Fecha Solicitud','Solicitante','Departamento','Municipios','Codigo Ruta','Encargado','Observación Solicitante',
+               'Fecha Respuesta','Nombre','Cedula','Celular','Email','Hoja de vida','Observación respuesta','Fecha solicitud de contratación',
+               'Observacion final','Estado']
+
+    formatos = ['General','d/m/yy','General','General','General','General','General','General',
+                'd/m/yy','General','0','General','General','General','General','d/m/yy',
+                'General','General']
+
+
+    ancho_columnas =  [30,15,20,15,30,15,20,30,
+                       15,20,15,15,20,20,30,20,
+                       30,30]
+
+    contenidos = []
+
+    for requerimiento in RequerimientoPersonal.objects.all():
+
+        estado = ''
+
+        if requerimiento.remitido_respuesta == False and requerimiento.remitido_contratacion == False and requerimiento.contratar == False and requerimiento.desierto == False and requerimiento.contratado == False:
+            estado = 'Remitido a RH'
+
+        elif requerimiento.remitido_respuesta == True and requerimiento.remitido_contratacion == False and requerimiento.contratar == False and requerimiento.desierto == False and requerimiento.contratado == False:
+            estado = 'Listo para capacitar'
+
+        elif requerimiento.remitido_respuesta == True and requerimiento.remitido_contratacion == True and requerimiento.contratar == True and requerimiento.desierto == False and requerimiento.contratado == False:
+            estado = 'Proceder a contrato'
+
+        elif requerimiento.remitido_respuesta == True and requerimiento.remitido_contratacion == True and requerimiento.contratar == False and requerimiento.desierto == True and requerimiento.contratado == False:
+            estado = 'Aspirante deserta'
+
+        elif requerimiento.contratado == True:
+            estado = 'Contratado'
+
+
+        contenidos.append([
+            'REQ-'+unicode(requerimiento.id),
+            requerimiento.fecha_solicitud,
+            requerimiento.solicitante.get_full_name_string(),
+            requerimiento.departamento.nombre,
+            requerimiento.get_municipios_string(),
+            requerimiento.codigo_ruta,
+            requerimiento.encargado.get_full_name_string(),
+            requerimiento.observacion_solicitante,
+            requerimiento.fecha_respuesta,
+            requerimiento.nombre,
+            requerimiento.cedula,
+            requerimiento.celular,
+            requerimiento.email,
+            'Si' if str(requerimiento.hv) != '' else 'No',
+            requerimiento.observacion_respuesta,
+            requerimiento.fecha_solicitud_contratacion,
+            requerimiento.observacion_final,
+            estado
+        ])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
 
 @app.task
 def formadores_soportes(email):

@@ -20,6 +20,16 @@ block breadcrum
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
     div(class="container-fluid container-index")
+        div(class="header-buttons")
+
+            | {% if masivo_permiso %}
+            div
+                select(class="selectpicker",id="select_accion")
+                    option(value="") ---------
+                    option(value="14") Reporte de requerimientos de contratación
+                button(class="btn",id="accion") Generar reporte
+            | {% endif %}
+
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
@@ -37,6 +47,7 @@ block scroll_header_panel_content
                     td Departamento
                     td Municipios
                     td Estado
+
 block body_script_content
     script.
         $("#accion").on("click", function () {

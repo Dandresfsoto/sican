@@ -399,6 +399,7 @@ class PagosView(TemplateView):
         revisiones = []
 
         for revision in Revision.objects.filter(formador_revision = formador):
+            
             valor = 0
             for producto in revision.productos.all():
                 valor += producto.cantidad * producto.valor_entregable.valor

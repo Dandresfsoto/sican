@@ -27,7 +27,7 @@ from formadores.models import SolicitudTransporte
 from informes.models import InformesExcel
 from django.http import HttpResponse
 from informes.tasks import formadores, formadores_soportes, preinscritos, transportes, cronograma_general, cronograma_lider
-from informes.tasks import lideres, lideres_soportes, encuesta_percepcion_inicial, radicados, pagos_mensual
+from informes.tasks import lideres, lideres_soportes, encuesta_percepcion_inicial, radicados, pagos_mensual, reporte_requerimientos_contratacion
 from encuestas.models import PercepcionInicial
 from productos.models import Diplomado, Nivel, Sesion, Entregable
 from formacion.models import EntradaCronograma
@@ -207,6 +207,9 @@ class ReportesView(APIView):
             x = zip_hv.delay(request.user.email)
         if id_accion == '13':
             x = zip_contrato.delay(request.user.email)
+
+        if id_accion == '14':
+            x = reporte_requerimientos_contratacion.delay(request.user.email)
 
 
         return HttpResponse(status=200)

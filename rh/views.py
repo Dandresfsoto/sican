@@ -515,6 +515,10 @@ class ListaRequerimientosContratacionView(LoginRequiredMixin,
     template_name = 'rh/requerimientosrh/lista.html'
     permission_required = "permisos_sican.rh.requerimientosrhrespuesta.ver"
 
+    def get_context_data(self, **kwargs):
+        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.rh.requerimientosrhrespuesta.reportes')
+        return super(ListaRequerimientosContratacionView, self).get_context_data(**kwargs)
+
 class NuevoRequerimientoContratacionView(LoginRequiredMixin,
                                PermissionRequiredMixin,
                                UpdateView):
