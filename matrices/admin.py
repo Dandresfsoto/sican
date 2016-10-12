@@ -50,8 +50,6 @@ def grupos_colombia_aprende(modeladmin, request, queryset):
 
 
         wb.save('C:\\Temp\\Colombia\\'+grupo.formador.codigo_ruta + '-' + grupo.nombre + '.xlsx')
-
-
 grupos_colombia_aprende.short_description = 'Usuarios colombia aprende'
 
 class BeneficiarioAdmin(admin.ModelAdmin):
