@@ -44,6 +44,7 @@ class RequerimientoPersonal(models.Model):
     remitido_contratacion = models.BooleanField(default=False)
     contratar = models.BooleanField(default=False)
     desierto = models.BooleanField(default=False)
+    contrato_enviado = models.BooleanField(default=False)
     contratado = models.BooleanField(default=False)
 
 

@@ -105,20 +105,24 @@ def reporte_requerimientos_contratacion(email):
 
         estado = ''
 
-        if requerimiento.remitido_respuesta == False and requerimiento.remitido_contratacion == False and requerimiento.contratar == False and requerimiento.desierto == False and requerimiento.contratado == False:
+        if requerimiento.remitido_respuesta == False and requerimiento.remitido_contratacion == False and requerimiento.contratar == False and requerimiento.desierto == False and requerimiento.contratado == False and requerimiento.contrato_enviado == False:
             estado = 'Remitido a RH'
 
-        elif requerimiento.remitido_respuesta == True and requerimiento.remitido_contratacion == False and requerimiento.contratar == False and requerimiento.desierto == False and requerimiento.contratado == False:
+        elif requerimiento.remitido_respuesta == True and requerimiento.remitido_contratacion == False and requerimiento.contratar == False and requerimiento.desierto == False and requerimiento.contratado == False and requerimiento.contrato_enviado == False:
             estado = 'Listo para capacitar'
 
-        elif requerimiento.remitido_respuesta == True and requerimiento.remitido_contratacion == True and requerimiento.contratar == True and requerimiento.desierto == False and requerimiento.contratado == False:
+        elif requerimiento.remitido_respuesta == True and requerimiento.remitido_contratacion == True and requerimiento.contratar == True and requerimiento.desierto == False and requerimiento.contratado == False and requerimiento.contrato_enviado == False:
             estado = 'Proceder a contrato'
 
-        elif requerimiento.remitido_respuesta == True and requerimiento.remitido_contratacion == True and requerimiento.contratar == False and requerimiento.desierto == True and requerimiento.contratado == False:
+        elif requerimiento.remitido_respuesta == True and requerimiento.remitido_contratacion == True and requerimiento.contratar == False and requerimiento.desierto == True and requerimiento.contratado == False and requerimiento.contrato_enviado == False:
             estado = 'Aspirante deserta'
+
+        elif requerimiento.contratado == False and requerimiento.contrato_enviado == True:
+            estado = 'Contrato enviado'
 
         elif requerimiento.contratado == True:
             estado = 'Contratado'
+
 
 
         contenidos.append([
@@ -152,6 +156,7 @@ def reporte_requerimientos_contratacion(email):
 def formadores_soportes(email):
     usuario = User.objects.get(email=email)
     nombre = "Soportes cargados por formador"
+
     proceso = "RH-INF02"
     informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
     fecha = informe.creacion

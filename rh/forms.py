@@ -396,11 +396,12 @@ class RequerimientoPersonalRhContratar(forms.ModelForm):
                 'CONTRATO',
 
                 Div(
-                    Div('contratado',css_class='col-sm-12'),
+                    Div('contratado',css_class='col-sm-6'),
+                    Div('contrato_enviado',css_class='col-sm-6'),
                     css_class = 'row'
                 ),
             ),
         )
     class Meta:
         model = RequerimientoPersonal
-        fields = ['contratado']
+        fields = ['contratado','contrato_enviado']
