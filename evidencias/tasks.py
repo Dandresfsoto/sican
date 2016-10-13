@@ -429,9 +429,13 @@ def retroalimentacion_red(id_red):
             for id in ids:
                 if beneficiario[id['letter']] == 'OK' or beneficiario[id['letter']] == 'Ok' or beneficiario[id['letter']] == 'oK' or beneficiario[id['letter']] == 'ok':
                     entregable = Entregable.objects.get(id = id['id'])
-                    evidencia = Evidencia.objects.get(entregable = entregable, formador = beneficiario_object.formador, beneficiarios_cargados = beneficiario_object)
-                    if beneficiario_object in evidencia.beneficiarios_cargados.all():
-                        evidencia.beneficiarios_validados.add(beneficiario_object)
+                    try:
+                        evidencia = Evidencia.objects.get(entregable = entregable, formador = beneficiario_object.formador, beneficiarios_cargados = beneficiario_object)
+                    except:
+                        pass
+                    else:
+                        if beneficiario_object in evidencia.beneficiarios_cargados.all():
+                            evidencia.beneficiarios_validados.add(beneficiario_object)
 
     red.retroalimentacion = True
     red.save()
