@@ -42,6 +42,7 @@ block scroll_header_panel_content
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
+                    th
                     th Id
                     th Beneficiarios
                     th Aprobados
@@ -50,6 +51,7 @@ block scroll_header_panel_content
 
             tbody
                 tr
+                    th
                     td Id
                     td Beneficiarios
                     td Aprobados
@@ -71,6 +73,12 @@ block body_script_content
                 },
                 "order": [[0, "asc"]],
                 "columns": [
+                    {
+                        "className":'details-control',
+                        "orderable":false,
+                        "data":null,
+                        "defaultContent": ''
+                    },
                     {
                         "data": 0,
                         "render": function (data, type, row, meta) {
@@ -120,4 +128,111 @@ block body_script_content
                     },
                 ]
             });
+
+            // Add event listener for opening and closing details
+            $('#table tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row( tr );
+
+                if ( row.child.isShown() ) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    // Open this row
+                    row.child( format(row.data()) ).show();
+                    tr.addClass('shown');
+                }
+            });
+
         });
+
+
+        function format(d) {
+            // `d` is the original data object for the row
+            var cargados = '';
+            var aprobados = '';
+            var rechazados = '';
+
+            for(i = 0;i < d[6].length;i++){
+                cargados += '<tr>' +
+                            '<td colspan=2><p>' + d[6][i][0] + '</p></td>' +
+                            '<td><p>' + d[6][i][1] + '</p></td>' +
+                            '<td><p>' + d[6][i][2] + '</p></td>' +
+                        '</tr>'
+            }
+
+            for(i = 0;i < d[7].length;i++){
+                aprobados += '<tr>' +
+                            '<td colspan=2><p>' + d[7][i][0] + '</p></td>' +
+                            '<td><p>' + d[7][i][1] + '</p></td>' +
+                            '<td><p>' + d[7][i][2] + '</p></td>' +
+                        '</tr>'
+            }
+
+            for(i = 0;i < d[8].length;i++){
+                rechazados += '<tr>' +
+                            '<td colspan=2><p>' + d[8][i][0] + '</p></td>' +
+                            '<td><p>' + d[8][i][1] + '</p></td>' +
+                            '<td><p>' + d[8][i][2] + '</p></td>' +
+                        '</tr>'
+            }
+
+            if (cargados == ''){
+                cargados += '<tr>' +
+                            '<td colspan=8><p>No hay registros</p></td>' +
+                        '</tr>'
+            }
+
+            if (aprobados == ''){
+                aprobados += '<tr>' +
+                            '<td colspan=8><p>No hay registros</p></td>' +
+                        '</tr>'
+            }
+
+            if (rechazados == ''){
+                rechazados += '<tr>' +
+                            '<td colspan=8><p>No hay registros</p></td>' +
+                        '</tr>'
+            }
+
+            return '<table class="table table-striped">' +
+                        '<tr style="background:#1488ca;color:white;">' +
+                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS CARGADOS</p></td>' +
+                        '</tr>' +
+
+                        '<tr>' +
+                            '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
+                            '<td><p class="bold-p">Cedula:</p></td>' +
+                            '<td><p class="bold-p">Grupo:</p></td>' +
+                        '</tr>' +
+
+                        cargados +
+
+                        '<tr style="background:#76b82a;color:white;">' +
+                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS APROBADOS</p></td>' +
+                        '</tr>' +
+
+                        '<tr>' +
+                            '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
+                            '<td><p class="bold-p">Cedula:</p></td>' +
+                            '<td><p class="bold-p">Grupo:</p></td>' +
+                        '</tr>' +
+
+                        aprobados +
+
+                        '<tr style="background:#f29b00;color:white;">' +
+                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS PENDIENTES</p></td>' +
+                        '</tr>'+
+
+                            '<tr>' +
+                            '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
+                            '<td><p class="bold-p">Cedula:</p></td>' +
+                            '<td><p class="bold-p">Grupo:</p></td>' +
+                        '</tr>' +
+
+                        rechazados +
+
+                    '</table>';
+        }

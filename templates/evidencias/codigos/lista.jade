@@ -138,7 +138,47 @@ block body_script_content
             });
         });
         function format(d) {
-            // `d` is the original data object for the row
+
+            var cargados = '';
+            var aprobados = '';
+            var rechazados = '';
+            for (i = 0; i < d[14].length; i++) {
+                cargados += '<tr>' +
+                        '<td colspan=2><p>' + d[14][i][0] + '</p></td>' +
+                        '<td><p>' + d[14][i][1] + '</p></td>' +
+                        '<td><p>' + d[14][i][2] + '</p></td>' +
+                        '</tr>'
+            }
+            for (i = 0; i < d[15].length; i++) {
+                aprobados += '<tr>' +
+                        '<td colspan=2><p>' + d[15][i][0] + '</p></td>' +
+                        '<td><p>' + d[15][i][1] + '</p></td>' +
+                        '<td><p>' + d[15][i][2] + '</p></td>' +
+                        '</tr>'
+            }
+            for (i = 0; i < d[16].length; i++) {
+                rechazados += '<tr>' +
+                        '<td colspan=2><p>' + d[16][i][0] + '</p></td>' +
+                        '<td><p>' + d[16][i][1] + '</p></td>' +
+                        '<td><p>' + d[16][i][2] + '</p></td>' +
+                        '</tr>'
+            }
+            if (cargados == '') {
+                cargados += '<tr>' +
+                        '<td colspan=8><p>No hay registros</p></td>' +
+                        '</tr>'
+            }
+            if (aprobados == '') {
+                aprobados += '<tr>' +
+                        '<td colspan=8><p>No hay registros</p></td>' +
+                        '</tr>'
+            }
+            if (rechazados == '') {
+                rechazados += '<tr>' +
+                        '<td colspan=8><p>No hay registros</p></td>' +
+                        '</tr>'
+            }
+
             return '<table class="table table-striped">' +
                     '<tr>' +
                     '<td><p class="bold-p">Fecha creación:</p>' + d[9] + '</td>' +
@@ -152,5 +192,42 @@ block body_script_content
                     '<td><p class="bold-p"></p></td>' +
                     '<td><p class="bold-p"></p></td>' +
                     '</tr>' +
+
+                        '<tr style="background:#1488ca;color:white;">' +
+                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS CARGADOS</p></td>' +
+                        '</tr>' +
+
+                        '<tr>' +
+                            '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
+                            '<td><p class="bold-p">Cedula:</p></td>' +
+                            '<td><p class="bold-p">Grupo:</p></td>' +
+                        '</tr>' +
+
+                        cargados +
+
+                        '<tr style="background:#76b82a;color:white;">' +
+                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS APROBADOS</p></td>' +
+                        '</tr>' +
+
+                        '<tr>' +
+                            '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
+                            '<td><p class="bold-p">Cedula:</p></td>' +
+                            '<td><p class="bold-p">Grupo:</p></td>' +
+                        '</tr>' +
+
+                        aprobados +
+
+                        '<tr style="background:#f29b00;color:white;">' +
+                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS PENDIENTES</p></td>' +
+                        '</tr>'+
+
+                            '<tr>' +
+                            '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
+                            '<td><p class="bold-p">Cedula:</p></td>' +
+                            '<td><p class="bold-p">Grupo:</p></td>' +
+                        '</tr>' +
+
+                        rechazados +
+
                     '</table>';
         }

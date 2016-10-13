@@ -3276,14 +3276,34 @@ class SoportesListEvidencias(BaseDatatableView):
         json_data = []
 
         for item in qs:
+            red = Red.objects.filter(evidencias__id = item.id).count()
+            baneficiarios_cargados = []
+            baneficiarios_validados = []
+            baneficiarios_rechazados = []
+
+            for beneficiario in item.beneficiarios_cargados.all():
+                if beneficiario != None:
+                    baneficiarios_cargados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
+
+            for beneficiario in item.beneficiarios_validados.all():
+                if beneficiario != None:
+                    baneficiarios_validados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
+
+            for beneficiario in item.beneficiarios_cargados.exclude(id__in = item.beneficiarios_validados.all().values_list('id',flat=True)):
+                if beneficiario != None:
+                    baneficiarios_rechazados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
+
 
             json_data.append([
                 item.id,
                 item.get_beneficiarios_cantidad(),
                 item.get_validados_cantidad(),
                 item.get_archivo_url(),
-                self.request.user.has_perm('permisos_sican.evidencias.general.editar'),
-                self.request.user.has_perm('permisos_sican.evidencias.general.eliminar')
+                self.request.user.has_perm('permisos_sican.evidencias.general.editar') if red == 0 else False,
+                self.request.user.has_perm('permisos_sican.evidencias.general.eliminar') if red == 0 else False,
+                baneficiarios_cargados,
+                baneficiarios_validados,
+                baneficiarios_rechazados
             ])
         return json_data
 
@@ -3372,6 +3392,24 @@ class EvidenciasCodigos(BaseDatatableView):
             except:
                 red = None
 
+
+            baneficiarios_cargados = []
+            baneficiarios_validados = []
+            baneficiarios_rechazados = []
+
+            for beneficiario in item.beneficiarios_cargados.all():
+                if beneficiario != None:
+                    baneficiarios_cargados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
+
+            for beneficiario in item.beneficiarios_validados.all():
+                if beneficiario != None:
+                    baneficiarios_validados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
+
+            for beneficiario in item.beneficiarios_cargados.exclude(id__in = item.beneficiarios_validados.all().values_list('id',flat=True)):
+                if beneficiario != None:
+                    baneficiarios_rechazados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
+
+
             json_data.append([
                 item.id,
                 red,
@@ -3387,7 +3425,10 @@ class EvidenciasCodigos(BaseDatatableView):
                 localtime(item.updated).strftime('%d/%m/%Y %I:%M:%S %p'),
                 item.usuario.get_full_name(),
                 item.entregable.nombre,
-                item.formador.get_full_name()
+                item.formador.get_full_name(),
+                baneficiarios_cargados,
+                baneficiarios_validados,
+                baneficiarios_rechazados
             ])
         return json_data
 

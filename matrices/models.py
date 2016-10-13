@@ -43,6 +43,12 @@ class Beneficiario(models.Model):
     def __unicode__(self):
         return str(self.cedula) + ' - ' + self.nombres + ' ' + self.apellidos
 
+    def get_full_name(self):
+        return self.nombres + ' ' + self.apellidos
+
+    def get_grupo(self):
+        return self.formador.codigo_ruta + '-' + self.grupo.nombre
+
 class BeneficiarioPendiente(models.Model):
     diplomado = models.ForeignKey(Diplomado,related_name='diplomado_beneficiariopendiente')
     cedula = models.BigIntegerField(unique=True)

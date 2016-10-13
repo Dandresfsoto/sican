@@ -35,6 +35,7 @@ class Evidencia(models.Model):
     def get_validados_cantidad(self):
         return self.beneficiarios_validados.all().count()
 
+
 class Red(models.Model):
     diplomado = models.ForeignKey(Diplomado)
     region = models.ForeignKey(Region)
