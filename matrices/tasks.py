@@ -402,24 +402,28 @@ def carga_masiva_matrices(id,email):
 
                                             if Beneficiario.objects.filter(cedula = fila[15].value if fila[15].value != None else '').count() == 1:
                                                 beneficiario = Beneficiario.objects.get(cedula = fila[15].value)
-                                                beneficiario.region = region
-                                                beneficiario.radicado = radicado
-                                                beneficiario.radicado_text = radicado_text
-                                                beneficiario.formador = formador
-                                                beneficiario.grupo = grupo
-                                                beneficiario.apellidos =fila[13].value
-                                                beneficiario.nombres = fila[14].value
-                                                beneficiario.cedula=fila[15].value
-                                                beneficiario.correo=fila[16].value
-                                                beneficiario.telefono_fijo=fila[17].value
-                                                beneficiario.telefono_celular=fila[18].value
-                                                beneficiario.area = area
-                                                beneficiario.grado = grado
-                                                beneficiario.genero=fila[22].value
-                                                beneficiario.estado=fila[23].value
-                                                beneficiario.save()
+                                                if beneficiario.diplomado.id == 4:
+                                                    beneficiario.region = region
+                                                    beneficiario.radicado = radicado
+                                                    beneficiario.radicado_text = radicado_text
+                                                    beneficiario.formador = formador
+                                                    beneficiario.grupo = grupo
+                                                    beneficiario.apellidos =fila[13].value
+                                                    beneficiario.nombres = fila[14].value
+                                                    beneficiario.cedula=fila[15].value
+                                                    beneficiario.correo=fila[16].value
+                                                    beneficiario.telefono_fijo=fila[17].value
+                                                    beneficiario.telefono_celular=fila[18].value
+                                                    beneficiario.area = area
+                                                    beneficiario.grado = grado
+                                                    beneficiario.genero=fila[22].value
+                                                    beneficiario.estado=fila[23].value
+                                                    beneficiario.save()
 
-                                                resultado += 'Participante actualizado'
+                                                    resultado += 'Participante actualizado'
+
+                                                else:
+                                                    resultado += 'El participante se encuentra registrado como docente'
 
                                             else:
                                                 Beneficiario.objects.create(diplomado = diplomado,region=region,radicado=radicado,radicado_text=radicado_text,
