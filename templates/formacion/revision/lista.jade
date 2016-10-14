@@ -26,7 +26,18 @@ block breadcrum
 
 block scroll_header_panel_content
     div(class="container-fluid container-index")
+        div(class="header-buttons")
 
+            | {% if masivo_permiso %}
+            div
+                select(class="selectpicker",id="select_accion")
+                    option(value="") ---------
+                    option(value="15") Reporte acumulado formadores tipo 1
+                    option(value="16") Reporte acumulado formadores tipo 2
+                    option(value="17") Reporte acumulado formadores tipo 3
+                    option(value="18") Reporte acumulado formadores tipo 4
+                button(class="btn",id="accion") Generar reporte
+            | {% endif %}
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr

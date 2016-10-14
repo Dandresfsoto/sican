@@ -25,6 +25,7 @@ import zipfile
 import shutil
 import os
 from rh.models import RequerimientoPersonal
+from productos.models import Contratos, ValorEntregable
 
 @app.task
 def nueva_semana():
@@ -76,7 +77,6 @@ def formadores(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
-
 
 @app.task
 def reporte_requerimientos_contratacion(email):
@@ -150,7 +150,6 @@ def reporte_requerimientos_contratacion(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
-
 
 @app.task
 def formadores_soportes(email):
@@ -672,3 +671,347 @@ def zip_contrato(email):
     shutil.copy('C:\\Temp\\contratos.zip',informe.archivo.path)
 
     return "Zip creado Contrato"
+
+@app.task
+def acumulado_tipo_1(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Acumulado formadores tipo 1"
+    proceso = "REV-INF01"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    contrato_1 = Contratos.objects.filter(cargo__nombre="Formador Tipo 1").get(nombre = 'Capacitación 1')
+    entregables_1 = ValorEntregable.objects.filter(contrato = contrato_1)
+
+    contrato_2 = Contratos.objects.filter(cargo__nombre="Formador Tipo 1").get(nombre = 'Capacitación 2')
+    entregables_2 = ValorEntregable.objects.filter(contrato = contrato_2)
+
+
+    titulos = ['ID','Nombres','Apellidos','Cedula','Región','Correo','Celular','Cargo','Profesión','Inicio contrato',
+               'Fin contrato','Banco','Tipo cuenta','Numero cuenta','Eps','Pensión','Arl']
+
+
+
+    formatos = ['General','General','General','General','General','General','General','General','General','d/m/yy',
+               'd/m/yy','General','General','General','General','General','General']
+
+
+    ancho_columnas =  [30,20,20,15,15,50,25,20,20,10,
+                       10,20,20,20,20,20,20]
+
+
+    if list(entregables_1.values_list('entregable__id',flat=True)) == list(entregables_2.values_list('entregable__id',flat=True)):
+        for entregable in entregables_1:
+            titulos.append(entregable.entregable.sesion.nivel.nombre + ' - ' +
+                           entregable.entregable.sesion.nombre + ' - ID:' +
+                           str(entregable.entregable.id))
+            formatos.append('General')
+            ancho_columnas.append(30)
+    else:
+        raise ValueError('Los contratos no tienen los mismos entregables')
+
+
+    titulos.append('Valor pagado')
+    formatos.append('"$"#,##0_);("$"#,##0)')
+    ancho_columnas.append(30)
+
+
+    contenidos = []
+
+    for formador in Formador.objects.filter(cargo__nombre="Formador Tipo 1").exclude(oculto=True):
+
+        cantidad_list = []
+        valor = 0
+        for entregable in entregables_1:
+            productos = Revision.objects.filter(formador_revision = formador).filter(productos__valor_entregable__entregable__id = entregable.entregable.id)
+            cantidad = productos.values_list('productos__cantidad',flat=True)
+            cantidad_list.append(sum(cantidad))
+            valor_entregable = 0
+
+            for x in productos.values_list('productos__cantidad','productos__valor_entregable__valor'):
+                valor_entregable += x[0]*x[1]
+
+            valor += valor_entregable
+
+        contenidos.append([
+            'FOR-'+unicode(formador.id),
+            formador.nombres,
+            formador.apellidos,
+            formador.cedula,
+            formador.get_region_string(),
+            formador.correo_personal,
+            formador.celular_personal,
+            formador.cargo.nombre if formador.cargo != None else '',
+            formador.profesion,
+            formador.fecha_contratacion,
+            formador.fecha_terminacion,
+            formador.banco.nombre if formador.banco != None else '',
+            formador.tipo_cuenta,
+            formador.numero_cuenta,
+            formador.eps,
+            formador.pension,
+            formador.arl
+        ] + cantidad_list + [valor])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def acumulado_tipo_2(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Acumulado formadores tipo 2"
+    proceso = "REV-INF02"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    contrato_1 = Contratos.objects.filter(cargo__nombre="Formador Tipo 2").get(nombre = 'Capacitación 1')
+    entregables_1 = ValorEntregable.objects.filter(contrato = contrato_1)
+
+    contrato_2 = Contratos.objects.filter(cargo__nombre="Formador Tipo 2").get(nombre = 'Capacitación 2')
+    entregables_2 = ValorEntregable.objects.filter(contrato = contrato_2)
+
+
+    titulos = ['ID','Nombres','Apellidos','Cedula','Región','Correo','Celular','Cargo','Profesión','Inicio contrato',
+               'Fin contrato','Banco','Tipo cuenta','Numero cuenta','Eps','Pensión','Arl']
+
+
+
+    formatos = ['General','General','General','General','General','General','General','General','General','d/m/yy',
+               'd/m/yy','General','General','General','General','General','General']
+
+
+    ancho_columnas =  [30,20,20,15,15,50,25,20,20,10,
+                       10,20,20,20,20,20,20]
+
+
+    if list(entregables_1.values_list('entregable__id',flat=True)) == list(entregables_2.values_list('entregable__id',flat=True)):
+        for entregable in entregables_1:
+            titulos.append(entregable.entregable.sesion.nivel.nombre + ' - ' +
+                           entregable.entregable.sesion.nombre + ' - ID:' +
+                           str(entregable.entregable.id))
+            formatos.append('General')
+            ancho_columnas.append(30)
+    else:
+        raise ValueError('Los contratos no tienen los mismos entregables')
+
+
+    titulos.append('Valor pagado')
+    formatos.append('"$"#,##0_);("$"#,##0)')
+    ancho_columnas.append(30)
+
+
+    contenidos = []
+
+    for formador in Formador.objects.filter(cargo__nombre="Formador Tipo 2").exclude(oculto=True):
+
+        cantidad_list = []
+        valor = 0
+        for entregable in entregables_1:
+            productos = Revision.objects.filter(formador_revision = formador).filter(productos__valor_entregable__entregable__id = entregable.entregable.id)
+            cantidad = productos.values_list('productos__cantidad',flat=True)
+            cantidad_list.append(sum(cantidad))
+            valor_entregable = 0
+
+            for x in productos.values_list('productos__cantidad','productos__valor_entregable__valor'):
+                valor_entregable += x[0]*x[1]
+
+            valor += valor_entregable
+
+        contenidos.append([
+            'FOR-'+unicode(formador.id),
+            formador.nombres,
+            formador.apellidos,
+            formador.cedula,
+            formador.get_region_string(),
+            formador.correo_personal,
+            formador.celular_personal,
+            formador.cargo.nombre if formador.cargo != None else '',
+            formador.profesion,
+            formador.fecha_contratacion,
+            formador.fecha_terminacion,
+            formador.banco.nombre if formador.banco != None else '',
+            formador.tipo_cuenta,
+            formador.numero_cuenta,
+            formador.eps,
+            formador.pension,
+            formador.arl
+        ] + cantidad_list + [valor])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def acumulado_tipo_3(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Acumulado formadores tipo 3"
+    proceso = "REV-INF03"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    contrato_1 = Contratos.objects.filter(cargo__nombre="Formador Tipo 3").get(nombre = 'Capacitación 1')
+    entregables_1 = ValorEntregable.objects.filter(contrato = contrato_1)
+
+    contrato_2 = Contratos.objects.filter(cargo__nombre="Formador Tipo 3").get(nombre = 'Capacitación 2')
+    entregables_2 = ValorEntregable.objects.filter(contrato = contrato_2)
+
+
+    titulos = ['ID','Nombres','Apellidos','Cedula','Región','Correo','Celular','Cargo','Profesión','Inicio contrato',
+               'Fin contrato','Banco','Tipo cuenta','Numero cuenta','Eps','Pensión','Arl']
+
+
+
+    formatos = ['General','General','General','General','General','General','General','General','General','d/m/yy',
+               'd/m/yy','General','General','General','General','General','General']
+
+
+    ancho_columnas =  [30,20,20,15,15,50,25,20,20,10,
+                       10,20,20,20,20,20,20]
+
+
+    if list(entregables_1.values_list('entregable__id',flat=True)) == list(entregables_2.values_list('entregable__id',flat=True)):
+        for entregable in entregables_1:
+            titulos.append(entregable.entregable.sesion.nivel.nombre + ' - ' +
+                           entregable.entregable.sesion.nombre + ' - ID:' +
+                           str(entregable.entregable.id))
+            formatos.append('General')
+            ancho_columnas.append(30)
+    else:
+        raise ValueError('Los contratos no tienen los mismos entregables')
+
+
+    titulos.append('Valor pagado')
+    formatos.append('"$"#,##0_);("$"#,##0)')
+    ancho_columnas.append(30)
+
+
+    contenidos = []
+
+    for formador in Formador.objects.filter(cargo__nombre="Formador Tipo 3").exclude(oculto=True):
+
+        cantidad_list = []
+        valor = 0
+        for entregable in entregables_1:
+            productos = Revision.objects.filter(formador_revision = formador).filter(productos__valor_entregable__entregable__id = entregable.entregable.id)
+            cantidad = productos.values_list('productos__cantidad',flat=True)
+            cantidad_list.append(sum(cantidad))
+            valor_entregable = 0
+
+            for x in productos.values_list('productos__cantidad','productos__valor_entregable__valor'):
+                valor_entregable += x[0]*x[1]
+
+            valor += valor_entregable
+
+        contenidos.append([
+            'FOR-'+unicode(formador.id),
+            formador.nombres,
+            formador.apellidos,
+            formador.cedula,
+            formador.get_region_string(),
+            formador.correo_personal,
+            formador.celular_personal,
+            formador.cargo.nombre if formador.cargo != None else '',
+            formador.profesion,
+            formador.fecha_contratacion,
+            formador.fecha_terminacion,
+            formador.banco.nombre if formador.banco != None else '',
+            formador.tipo_cuenta,
+            formador.numero_cuenta,
+            formador.eps,
+            formador.pension,
+            formador.arl
+        ] + cantidad_list + [valor])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def acumulado_tipo_4(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Acumulado formadores tipo 4"
+    proceso = "REV-INF04"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    contrato_1 = Contratos.objects.filter(cargo__nombre="Formador Tipo 4").get(nombre = 'Capacitación 1')
+    entregables_1 = ValorEntregable.objects.filter(contrato = contrato_1)
+
+    contrato_2 = Contratos.objects.filter(cargo__nombre="Formador Tipo 4").get(nombre = 'Capacitación 2')
+    entregables_2 = ValorEntregable.objects.filter(contrato = contrato_2)
+
+
+    titulos = ['ID','Nombres','Apellidos','Cedula','Región','Correo','Celular','Cargo','Profesión','Inicio contrato',
+               'Fin contrato','Banco','Tipo cuenta','Numero cuenta','Eps','Pensión','Arl']
+
+
+
+    formatos = ['General','General','General','General','General','General','General','General','General','d/m/yy',
+               'd/m/yy','General','General','General','General','General','General']
+
+
+    ancho_columnas =  [30,20,20,15,15,50,25,20,20,10,
+                       10,20,20,20,20,20,20]
+
+
+    if list(entregables_1.values_list('entregable__id',flat=True)) == list(entregables_2.values_list('entregable__id',flat=True)):
+        for entregable in entregables_1:
+            titulos.append(entregable.entregable.sesion.nivel.nombre + ' - ' +
+                           entregable.entregable.sesion.nombre + ' - ID:' +
+                           str(entregable.entregable.id))
+            formatos.append('General')
+            ancho_columnas.append(30)
+    else:
+        raise ValueError('Los contratos no tienen los mismos entregables')
+
+
+    titulos.append('Valor pagado')
+    formatos.append('"$"#,##0_);("$"#,##0)')
+    ancho_columnas.append(30)
+
+
+    contenidos = []
+
+    for formador in Formador.objects.filter(cargo__nombre="Formador Tipo 4").exclude(oculto=True):
+
+        cantidad_list = []
+        valor = 0
+        for entregable in entregables_1:
+            productos = Revision.objects.filter(formador_revision = formador).filter(productos__valor_entregable__entregable__id = entregable.entregable.id)
+            cantidad = productos.values_list('productos__cantidad',flat=True)
+            cantidad_list.append(sum(cantidad))
+            valor_entregable = 0
+
+            for x in productos.values_list('productos__cantidad','productos__valor_entregable__valor'):
+                valor_entregable += x[0]*x[1]
+
+            valor += valor_entregable
+
+        contenidos.append([
+            'FOR-'+unicode(formador.id),
+            formador.nombres,
+            formador.apellidos,
+            formador.cedula,
+            formador.get_region_string(),
+            formador.correo_personal,
+            formador.celular_personal,
+            formador.cargo.nombre if formador.cargo != None else '',
+            formador.profesion,
+            formador.fecha_contratacion,
+            formador.fecha_terminacion,
+            formador.banco.nombre if formador.banco != None else '',
+            formador.tipo_cuenta,
+            formador.numero_cuenta,
+            formador.eps,
+            formador.pension,
+            formador.arl
+        ] + cantidad_list + [valor])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"

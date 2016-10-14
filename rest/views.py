@@ -28,6 +28,7 @@ from informes.models import InformesExcel
 from django.http import HttpResponse
 from informes.tasks import formadores, formadores_soportes, preinscritos, transportes, cronograma_general, cronograma_lider
 from informes.tasks import lideres, lideres_soportes, encuesta_percepcion_inicial, radicados, pagos_mensual, reporte_requerimientos_contratacion
+from informes.tasks import acumulado_tipo_1,acumulado_tipo_2,acumulado_tipo_3,acumulado_tipo_4
 from encuestas.models import PercepcionInicial
 from productos.models import Diplomado, Nivel, Sesion, Entregable
 from formacion.models import EntradaCronograma
@@ -210,6 +211,15 @@ class ReportesView(APIView):
 
         if id_accion == '14':
             x = reporte_requerimientos_contratacion.delay(request.user.email)
+
+        if id_accion == '15':
+            x = acumulado_tipo_1.delay(request.user.email)
+        if id_accion == '16':
+            x = acumulado_tipo_2.delay(request.user.email)
+        if id_accion == '17':
+            x = acumulado_tipo_3.delay(request.user.email)
+        if id_accion == '18':
+            x = acumulado_tipo_4.delay(request.user.email)
 
 
         return HttpResponse(status=200)

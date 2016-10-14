@@ -694,6 +694,10 @@ class ListaRevisionView(LoginRequiredMixin,
     template_name = 'formacion/revision/lista.html'
     permission_required = "permisos_sican.formacion.revision.ver"
 
+    def get_context_data(self, **kwargs):
+        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.formacion.revision.informes')
+        return super(ListaRevisionView, self).get_context_data(**kwargs)
+
 
 
 class ListaRevisionFormadorView(LoginRequiredMixin,
