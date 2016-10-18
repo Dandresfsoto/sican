@@ -11,6 +11,7 @@ import os
 from usuarios.models import User
 from productos.models import Contratos
 from productos.models import ValorEntregable
+from django.utils import timezone
 
 class Formador(models.Model):
     lider = models.ForeignKey(User,blank=True,null=True)
@@ -119,7 +120,9 @@ class Desplazamiento(models.Model):
 class SolicitudTransporte(models.Model):
     formador = models.ForeignKey(Formador,related_name="formador_solicitud_transporte")
     nombre = models.CharField(max_length=100)
-    creacion = models.DateTimeField(auto_now=True)
+    creacion = models.DateTimeField(auto_now_add=True)
+    creacion_date = models.DateTimeField(blank=True,null=True)
+    aprobacion_lider = models.DateTimeField(blank=True,null=True)
     desplazamientos = models.ManyToManyField(Desplazamiento,blank=True)
     estado = models.CharField(max_length=100,default="revision")
     observacion = models.TextField(max_length=1000,blank=True,null=True)

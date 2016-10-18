@@ -8,10 +8,11 @@ import locale
 from productos.models import Entregable
 from formadores.models import Cortes
 from formadores.models import Formador, Revision, Producto
+import pytz
 
 class SolicitudTable(tables.Table):
     nombre = tables.Column('Nombre')
-    creacion = tables.Column('Fecha')
+    creacion_date = tables.Column('Fecha')
     valor = tables.Column('Valor solicitado')
     estado = tables.Column('Estado')
     terminada = tables.Column('Soporte')
@@ -79,7 +80,7 @@ class SolicitudTable(tables.Table):
 
     class Meta:
         model = SolicitudTransporte
-        fields = ['nombre','creacion','valor','estado','desplazamientos','terminada','observacion','valor_aprobado']
+        fields = ['nombre','creacion_date','valor','estado','desplazamientos','terminada','observacion','valor_aprobado']
 
 
 class EntregablesTable(tables.Table):

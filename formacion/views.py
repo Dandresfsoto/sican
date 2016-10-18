@@ -31,7 +31,7 @@ from productos.models import Contratos, ValorEntregable
 from formadores.models import Producto, Revision
 from rh.models import RequerimientoPersonal
 from rh.forms import RequerimientoPersonalForm, RequerimientoPersonalRhCapacitado
-
+from django.utils import timezone
 
 
 class ListaPreinscritosView(LoginRequiredMixin,
@@ -178,6 +178,7 @@ class TransporteFormView(LoginRequiredMixin,
     permission_required = "permisos_sican.formacion.transportesformacion.estado"
 
     def form_valid(self, form):
+        self.object.aprobacion_lider = timezone.localtime(timezone.now())
         self.object = form.save()
         valores = self.object.desplazamientos.all().values_list('valor',flat=True)
         valor_aprobado = 0
@@ -213,6 +214,7 @@ class TransporteFormView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         kwargs['formador'] = self.object.formador.get_full_name()
+        kwargs['valor'] = locale.currency( self.object.valor, grouping=True ).replace('+','')
         return super(TransporteFormView,self).get_context_data(**kwargs)
 
 

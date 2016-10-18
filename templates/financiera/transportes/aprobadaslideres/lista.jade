@@ -29,7 +29,8 @@ block scroll_header_panel_content
                 tr
                     th
                     th Formador
-                    th Fecha
+                    th Fecha solicitud
+                    th Aprobacion lider
                     th Valor solicitado
                     th Valor aprobado lider
                     th Valor aprobado financiera
@@ -40,7 +41,8 @@ block scroll_header_panel_content
                 tr
                     td
                     td Formador
-                    td Fecha
+                    td Fecha solicitud
+                    th Aprobacion lider
                     td Valor solicitado
                     td Valor aprobado lider
                     td Valor aprobado financiera
@@ -90,6 +92,11 @@ block body_script_content
                         "orderable": true,
                     },
                     {
+                        "data": 13,
+                        "className": 'text-center',
+                        "orderable": true,
+                    },
+                    {
                         "data": 3,
                         "className": 'text-center',
                         "render": function (data, type, row, meta) {
@@ -117,47 +124,46 @@ block body_script_content
                         "data": 7,
                         "className": 'text-center',
                         "render": function (data, type, row, meta) {
-                           if(row[12]) {
-                              if (data == "aprobado_lider") {
-                                 return '<a href="estado/'+ row[0] +'" style="color:#004c99;">Aprobada lider</a>';
-                              }
-                              if (data == "aprobado") {
-                                 return '<a href="estado/'+ row[0] +'" style="color:#004c99;">Aprobada financiera</a>';
-                              }
-                              if (data == "revision") {
-                                 return '<a href="estado/'+ row[0] +'" style="color:#004c99;">En revisión</a>';
-                              }
-                              if (data == "rechazado") {
-                                 return '<a href="estado/'+ row[0] +'" style="color:#004c99;">Rechazado</a>';
-                              }
-                              if (data == "consignado") {
-                                 return '<a href="estado/'+ row[0] +'" style="color:#004c99;">Consignado</a>';
-                              }
-                              else {
-                                 return data;
-                              }
-                           }
-                           else {
-                              if (data == "aprobado_lider") {
-                                 return 'Aprobada lider';
-                              }
-                              if (data == "aprobado") {
-                                 return 'Aprobada financiera';
-                              }
-                              if (data == "revision") {
-                                 return 'En revisión';
-                              }
-                              if (data == "rechazado") {
-                                 return 'Rechazado';
-                              }
-                              if (data == "consignado") {
-                                 return 'Consignado';
-                              }
-                              else {
-                                 return data;
-                              }
-                           }
-
+                            if (row[12]) {
+                                if (data == "aprobado_lider") {
+                                    return '<a href="estado/' + row[0] + '" style="color:#004c99;">Aprobada lider</a>';
+                                }
+                                if (data == "aprobado") {
+                                    return '<a href="estado/' + row[0] + '" style="color:#004c99;">Aprobada financiera</a>';
+                                }
+                                if (data == "revision") {
+                                    return '<a href="estado/' + row[0] + '" style="color:#004c99;">En revisión</a>';
+                                }
+                                if (data == "rechazado") {
+                                    return '<a href="estado/' + row[0] + '" style="color:#004c99;">Rechazado</a>';
+                                }
+                                if (data == "consignado") {
+                                    return '<a href="estado/' + row[0] + '" style="color:#004c99;">Consignado</a>';
+                                }
+                                else {
+                                    return data;
+                                }
+                            }
+                            else {
+                                if (data == "aprobado_lider") {
+                                    return 'Aprobada lider';
+                                }
+                                if (data == "aprobado") {
+                                    return 'Aprobada financiera';
+                                }
+                                if (data == "revision") {
+                                    return 'En revisión';
+                                }
+                                if (data == "rechazado") {
+                                    return 'Rechazado';
+                                }
+                                if (data == "consignado") {
+                                    return 'Consignado';
+                                }
+                                else {
+                                    return data;
+                                }
+                            }
                         },
                         "orderable": true,
                     },

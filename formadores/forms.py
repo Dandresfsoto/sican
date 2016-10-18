@@ -19,6 +19,7 @@ import locale
 from formadores.models import Revision
 from productos.models import Contratos, ValorEntregable
 from formadores.models import Cortes
+import datetime
 
 class FormadorForm(forms.ModelForm):
 
@@ -1890,6 +1891,7 @@ class SolicitudTransporteLiderForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SolicitudTransporteLiderForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+        self.fields['aprobacion_lider'].initial = datetime.datetime.now()
         self.helper.layout = Layout(
             Fieldset(
                 'Solicitud de transporte:',
@@ -1897,8 +1899,8 @@ class SolicitudTransporteLiderForm(forms.ModelForm):
                     HTML("""
                     <p>Formador: {{object.formador.nombres}} {{object.formador.apellidos}}</p>
                     <p>Solicitud: {{object.nombre}}</p>
-                    <p>Valor solicitado: {{valor_solicitado}}</p>
-                    <p>Archivo: <a href="{{archivo_url}}">{{archivo_nombre}}</a></p>
+                    <p>Valor solicitado: {{valor}}</p>
+                    <p>Archivo: <a href="{{object.get_archivo_url}}">{{object.archivo_filename}}</a></p>
                     """)
                 ),
                 Div(
@@ -1908,16 +1910,19 @@ class SolicitudTransporteLiderForm(forms.ModelForm):
                 Div(
                     Div('observacion',css_class='col-sm-12'),
                     css_class = 'row'
+                ),
+                Div(
+                    Div('aprobacion_lider',css_class='col-sm-12'),
+                    css_class = 'hidden'
                 )
-
             ),
         )
 
     class Meta:
         model = SolicitudTransporte
-        fields = ['estado','observacion']
+        fields = ['estado','observacion','aprobacion_lider']
         widgets = {
-            'estado' : forms.Select(choices=(('aprobado_lider','Aprobado'),('revision','En revisión'),('rechazado','Rechazado')))
+            'estado' : forms.Select(choices=(('aprobado_lider','Aprobado'),('revision','En revisión'),('rechazado','Rechazado'))),
         }
 
 class OtroSiForm(forms.ModelForm):

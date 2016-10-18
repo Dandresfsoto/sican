@@ -119,7 +119,6 @@ class TransportesEstadoView(LoginRequiredMixin,
     def form_valid(self, form):
         self.object = form.save()
 
-
         self.object.terminada = False
         self.object.valor_aprobado = 0
 

@@ -1800,7 +1800,7 @@ class SolicitudesTransporteFormadorList(BaseDatatableView):
             json_data.append([
                 item.id,
                 formador,
-                item.creacion,
+                item.creacion_date,
                 item.valor,
                 item.valor_aprobado_lider,
                 item.valor_aprobado,
@@ -1871,7 +1871,7 @@ class SolicitudesTransporteFormadorFinancieraList(BaseDatatableView):
             json_data.append([
                 item.id,
                 formador,
-                item.creacion,
+                item.creacion_date,
                 item.valor,
                 item.valor_aprobado_lider,
                 item.valor_aprobado,
@@ -1882,6 +1882,7 @@ class SolicitudesTransporteFormadorFinancieraList(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.financiera.transportes.editar'),
                 self.request.user.has_perm('permisos_sican.financiera.transportes.eliminar'),
                 self.request.user.has_perm('permisos_sican.financiera.transportes.estado'),
+                localtime(item.aprobacion_lider).strftime('%d/%m/%Y %H:%M:%S') if item.aprobacion_lider != None else ''
             ])
         return json_data
 

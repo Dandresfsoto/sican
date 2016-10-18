@@ -49,8 +49,6 @@ block scroll_header_panel_content
                     th Región
                     th Soportes
                     th Eliminar
-                    th
-                        input(type="checkbox",id="check_all")
             tbody
                 tr
                     td
@@ -59,7 +57,6 @@ block scroll_header_panel_content
                     td Región
                     td Soportes
                     td Eliminar
-                    td Seleccion
 
 block body_script_content
     script.
@@ -77,13 +74,7 @@ block body_script_content
                 });
             }
         });
-    script.
-        $("#check_all").on("change",function(){
-            var checks = $(".check_seleccion");
-            for(i=0;i<checks.length;i++){
-                checks[i].checked = this.checked;
-            }
-        });
+
     script.
         $(document).ready(function () {
             var table = $('#table').DataTable({
@@ -152,16 +143,7 @@ block body_script_content
                             }
                         },
                         "defaultContent": ''
-                    },
-                    {
-                        "data": 0,
-                        "className": 'text-center',
-                        "orderable": false,
-                        "render": function (data, type, row, meta) {
-                            return '<input type="checkbox" class="check_seleccion" id="'+data+'">';
-                        }
-
-                    },
+                    }
                 ]
             });
             // Add event listener for opening and closing details

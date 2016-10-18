@@ -14,6 +14,7 @@ import datetime
 from formadores.forms import OtroSiForm
 from productos.models import Entregable
 from formadores.models import Cortes, Revision
+from django.utils import timezone
 
 # Create your views here.
 class InicioView(FormView):
@@ -298,6 +299,7 @@ class NuevaSolicitudTransportesView(FormView):
                                         ))
 
         solicitud = SolicitudTransporte.objects.create(
+            creacion_date = timezone.now(),
             formador = Formador.objects.get(cedula=self.kwargs['cedula']),
             nombre = form.cleaned_data['nombre'],
             valor = valor
