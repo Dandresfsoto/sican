@@ -6,8 +6,13 @@ from matrices.models import Beneficiario
 from region.models import Region
 from formadores.models import Formador
 from usuarios.models import User
-
 # Create your models here.
+
+class Rechazo(models.Model):
+    beneficiario_rechazo = models.ForeignKey(Beneficiario)
+    observacion = models.TextField(max_length=1000,blank=True)
+    red_id = models.IntegerField()
+    evidencia_id = models.IntegerField()
 
 class Evidencia(models.Model):
     fecha = models.DateTimeField(auto_now_add= True)
@@ -17,6 +22,7 @@ class Evidencia(models.Model):
     entregable = models.ForeignKey(Entregable,related_name='entregable_diplomado')
     beneficiarios_cargados = models.ManyToManyField(Beneficiario,related_name='beneficiarios_cargados')
     beneficiarios_validados = models.ManyToManyField(Beneficiario,related_name='beneficiarios_validados',blank=True)
+    beneficiarios_rechazados = models.ManyToManyField(Rechazo,related_name='beneficiarios_rechazados',blank=True)
     formador = models.ForeignKey(Formador)
 
     def __unicode__(self):
@@ -51,6 +57,7 @@ class Red(models.Model):
         except:
             url = ""
         return url
+
 
 class CargaMasiva(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)

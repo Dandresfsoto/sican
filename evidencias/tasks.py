@@ -17,6 +17,7 @@ from evidencias.models import Evidencia
 from usuarios.models import User
 import os
 import shutil
+from evidencias.models import Rechazo
 
 @app.task
 def build_red(id_red):
@@ -185,7 +186,6 @@ def build_red(id_red):
 
     return "Generado RED-" + str(id_red)
 
-
 @app.task
 def carga_masiva_evidencias(id_carga_masiva,id_usuario):
 
@@ -293,11 +293,11 @@ def carga_masiva_evidencias(id_carga_masiva,id_usuario):
 
     return "Generada MASIVA-" + str(id_carga_masiva)
 
-
 @app.task
 def retroalimentacion_red(id_red):
 
     red = Red.objects.get(id = id_red)
+    evidencias_red = red.evidencias.values_list('id',flat=True)
 
     wb = openpyxl.load_workbook(red.archivo_retroalimentacion.file)
     ws = wb.get_active_sheet()
@@ -427,15 +427,27 @@ def retroalimentacion_red(id_red):
 
         else:
             for id in ids:
-                if beneficiario[id['letter']] == 'OK' or beneficiario[id['letter']] == 'Ok' or beneficiario[id['letter']] == 'oK' or beneficiario[id['letter']] == 'ok':
-                    entregable = Entregable.objects.get(id = id['id'])
-                    try:
-                        evidencia = Evidencia.objects.get(entregable = entregable, formador = beneficiario_object.formador, beneficiarios_cargados = beneficiario_object)
-                    except:
-                        pass
-                    else:
+                entregable = Entregable.objects.get(id = id['id'])
+
+                try:
+                    evidencia = Evidencia.objects.filter(id__in = evidencias_red).get(entregable = entregable, formador = beneficiario_object.formador, beneficiarios_cargados = beneficiario_object)
+                except:
+                    pass
+                else:
+
+                    if beneficiario[id['letter']] == 'OK' or beneficiario[id['letter']] == 'Ok' or beneficiario[id['letter']] == 'oK' or beneficiario[id['letter']] == 'ok':
                         if beneficiario_object in evidencia.beneficiarios_cargados.all():
                             evidencia.beneficiarios_validados.add(beneficiario_object)
+
+                    elif beneficiario[id['letter']] != '' and beneficiario[id['letter']] != None:
+                        if beneficiario_object in evidencia.beneficiarios_cargados.all():
+                            rechazo_object,created = Rechazo.objects.get_or_create(beneficiario_rechazo = beneficiario_object,
+                                                                                   observacion = unicode(beneficiario[id['letter']]),
+                                                                                   red_id = red.id,
+                                                                                   evidencia_id=evidencia.id)
+                            if created:
+                                evidencia.beneficiarios_rechazados.add(rechazo_object)
+
 
     red.retroalimentacion = True
     red.save()

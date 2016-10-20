@@ -8,6 +8,8 @@ from secretarias.models import Secretaria
 from productos.models import Nivel, Actividades
 import datetime
 from isoweek import Week
+from evidencias.models import Red
+from matrices.models import Beneficiario
 
 # Create your models here.
 
@@ -43,3 +45,5 @@ class EntradaCronograma(models.Model):
     hora_finalizacion = models.TimeField(blank=True,null=True)
     ubicacion = models.CharField(max_length=100)
     observaciones = models.TextField(max_length=1000,blank=True)
+
+

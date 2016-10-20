@@ -28,7 +28,7 @@ from informes.models import InformesExcel
 from django.http import HttpResponse
 from informes.tasks import formadores, formadores_soportes, preinscritos, transportes, cronograma_general, cronograma_lider
 from informes.tasks import lideres, lideres_soportes, encuesta_percepcion_inicial, radicados, pagos_mensual, reporte_requerimientos_contratacion
-from informes.tasks import acumulado_tipo_1,acumulado_tipo_2,acumulado_tipo_3,acumulado_tipo_4
+from informes.tasks import acumulado_tipo_1,acumulado_tipo_2,acumulado_tipo_3,acumulado_tipo_4,matriz_chequeo, matriz_chequeo_formador
 from encuestas.models import PercepcionInicial
 from productos.models import Diplomado, Nivel, Sesion, Entregable
 from formacion.models import EntradaCronograma
@@ -220,6 +220,12 @@ class ReportesView(APIView):
             x = acumulado_tipo_3.delay(request.user.email)
         if id_accion == '18':
             x = acumulado_tipo_4.delay(request.user.email)
+        if id_accion == '19':
+            id_diplomado = request._request.GET['id_diplomado']
+            x = matriz_chequeo.delay(request.user.email,id_diplomado)
+        if id_accion == '20':
+            id_formador = request._request.GET['id_formador']
+            x = matriz_chequeo_formador.delay(request.user.email,id_formador)
 
 
         return HttpResponse(status=200)
@@ -3300,9 +3306,9 @@ class SoportesListEvidencias(BaseDatatableView):
                 if beneficiario != None:
                     baneficiarios_validados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
 
-            for beneficiario in item.beneficiarios_cargados.exclude(id__in = item.beneficiarios_validados.all().values_list('id',flat=True)):
+            for beneficiario in item.beneficiarios_rechazados.all():
                 if beneficiario != None:
-                    baneficiarios_rechazados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
+                    baneficiarios_rechazados.append([beneficiario.beneficiario_rechazo.get_full_name(),beneficiario.beneficiario_rechazo.cedula,beneficiario.beneficiario_rechazo.get_grupo(),beneficiario.observacion])
 
 
             json_data.append([
@@ -3416,9 +3422,9 @@ class EvidenciasCodigos(BaseDatatableView):
                 if beneficiario != None:
                     baneficiarios_validados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
 
-            for beneficiario in item.beneficiarios_cargados.exclude(id__in = item.beneficiarios_validados.all().values_list('id',flat=True)):
+            for beneficiario in item.beneficiarios_rechazados.all():
                 if beneficiario != None:
-                    baneficiarios_rechazados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
+                    baneficiarios_rechazados.append([beneficiario.beneficiario_rechazo.get_full_name(),beneficiario.beneficiario_rechazo.cedula,beneficiario.beneficiario_rechazo.get_grupo(),beneficiario.observacion])
 
 
             json_data.append([

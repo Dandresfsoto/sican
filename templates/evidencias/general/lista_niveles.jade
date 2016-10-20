@@ -26,10 +26,16 @@ block breadcrum
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
     div(class="container-fluid container-index")
-        | {% if nuevo_permiso %}
-        a(href="nuevo",class="link_button")
-            paper-button(class="submit") Nuevo
-        | {% endif %}
+
+        div(class="header-buttons")
+            | {% if informes %}
+            div
+                select(class="selectpicker",id="select_accion")
+                    option(value="") ---------
+                    option(value="20") Matriz lista de chequeo de productos
+                button(class="btn",id="accion") Generar reporte
+            | {% endif %}
+        input(class="hidden",id="id_formador",value="{{id_formador}}")
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
@@ -45,6 +51,23 @@ block scroll_header_panel_content
                     td Productos escenciales
 
 block body_script_content
+    script.
+        $("#accion").on("click",function(){
+            var action = $("#select_accion").val();
+            var id_formador = $("#id_formador").val();
+            if(action != ''){
+                $.ajax({
+                    type: "GET",
+                    url: '/rest/reportes/?action=' + action + '&id_formador=' + id_formador,
+                    success: function(data){
+                        $('#myModal').modal('show');
+                        $("#select_accion").val('');
+                        $("#select_accion").selectpicker('refresh');
+                    }
+                });
+            }
+        });
+
     script.
         $(document).ready(function () {
             var table = $('#table').DataTable({

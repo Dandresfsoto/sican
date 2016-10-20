@@ -1,5 +1,5 @@
 from django.contrib import admin
-from evidencias.models import Evidencia, Red, CargaMasiva
+from evidencias.models import Evidencia, Red, CargaMasiva, Rechazo
 from evidencias.tasks import carga_masiva_evidencias
 # Register your models here.
 
@@ -17,3 +17,4 @@ class CargaMasivaAdmin(admin.ModelAdmin):
     actions = [masivo]
 
 admin.site.register(CargaMasiva,CargaMasivaAdmin)
+admin.site.register(Rechazo)

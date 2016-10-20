@@ -26,6 +26,17 @@ import shutil
 import os
 from rh.models import RequerimientoPersonal
 from productos.models import Contratos, ValorEntregable
+from StringIO import StringIO
+import openpyxl
+from sican.settings import base as settings
+from productos.models import Diplomado
+from evidencias.models import Beneficiario
+from openpyxl.styles import Style, PatternFill, Border, Side, Alignment, Protection, Font
+from evidencias.models import Evidencia
+from productos.models import Entregable
+from evidencias.models import Red
+from openpyxl.comments import Comment
+from django.db.models import Q
 
 @app.task
 def nueva_semana():
@@ -1012,6 +1023,604 @@ def acumulado_tipo_4(email):
         ] + cantidad_list + [valor])
 
     output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def matriz_chequeo(email,id_diplomado):
+    usuario = User.objects.get(email=email)
+
+    if id_diplomado == '1':
+        nombre = "Matriz lista de chequeo de productos InnovaTIC"
+    elif id_diplomado == '2':
+        nombre = "Matriz lista de chequeo de productos TecnoTIC"
+    elif id_diplomado == '3':
+        nombre = "Matriz lista de chequeo de productos DirecTIC"
+    else:
+        nombre = "Matriz lista de chequeo de productos EscuelaTIC"
+
+
+    proceso = "REV-INF05"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+    output = StringIO()
+    dict_productos = []
+
+    if id_diplomado == '1':
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
+        ws = wb.get_sheet_by_name('InnovaTIC')
+        diplomado = Diplomado.objects.get(id = 1)
+        i = 6
+
+        dict_productos = [{'letter':'Y','id':8},
+                          {'letter':'Z','id':9},
+                          {'letter':'AA','id':10},
+                          {'letter':'AC','id':11},
+                          {'letter':'AF','id':12},
+                          {'letter':'AG','id':13},
+                          {'letter':'AK','id':14},
+                          {'letter':'AL','id':15},
+                          {'letter':'AN','id':16},
+                          {'letter':'AR','id':17},
+                          {'letter':'AS','id':18},
+                          {'letter':'AT','id':19},
+                          {'letter':'AD','id':20},
+                          {'letter':'AI','id':21},
+                          {'letter':'AJ','id':22},
+                          {'letter':'AO','id':23},
+                          {'letter':'AQ','id':24},
+                          {'letter':'AU','id':25},
+                          {'letter':'AV','id':26},
+                          {'letter':'AW','id':27},
+                          {'letter':'AX','id':28},
+                          {'letter':'AY','id':29},
+                          {'letter':'BB','id':30},
+                          {'letter':'BC','id':31},
+                          {'letter':'BD','id':32},
+                          {'letter':'BG','id':33},
+                          {'letter':'BH','id':34},
+                          {'letter':'BJ','id':35},
+                          {'letter':'BN','id':36},
+                          {'letter':'BO','id':37},
+                          {'letter':'BP','id':38},
+                          {'letter':'AZ','id':39},
+                          {'letter':'BA','id':40},
+                          {'letter':'BF','id':41},
+                          {'letter':'BL','id':42},
+                          {'letter':'BM','id':43},
+                          {'letter':'BQ','id':44},
+                          {'letter':'BR','id':45},
+                          {'letter':'BS','id':46},
+                          {'letter':'BT','id':47},
+                          {'letter':'BU','id':48},
+                          {'letter':'BX','id':49},
+                          {'letter':'BY','id':50},
+                          {'letter':'BZ','id':51},
+                          {'letter':'CB','id':52},
+                          {'letter':'CC','id':53},
+                          {'letter':'CD','id':54},
+                          {'letter':'CG','id':55},
+                          {'letter':'CH','id':56},
+                          {'letter':'CI','id':57},
+                          {'letter':'BV','id':58},
+                          {'letter':'CA','id':59},
+                          {'letter':'CE','id':60},
+                          {'letter':'CJ','id':61},
+                          {'letter':'CK','id':62},
+                          {'letter':'CL','id':63},
+                          {'letter':'CM','id':64},
+                          {'letter':'CO','id':65},
+                          {'letter':'CR','id':66},
+                          {'letter':'CS','id':67},
+                          {'letter':'CN','id':68},
+                          {'letter':'CQ','id':69},
+                          ]
+
+    elif id_diplomado == '2':
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Tecnotic.xlsx')
+        ws = wb.get_sheet_by_name('TecnoTIC')
+        diplomado = Diplomado.objects.get(id = 2)
+        i = 6
+    elif id_diplomado == '3':
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Directic.xlsx')
+        ws = wb.get_sheet_by_name('DirecTIC')
+        diplomado = Diplomado.objects.get(id = 3)
+        i = 6
+    else:
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
+        ws = wb.get_sheet_by_name('InnovaTIC')
+        diplomado = Diplomado.objects.get(id = 4)
+        i = 6
+
+    number = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='right',vertical='center',wrap_text=False),
+                   number_format='0',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+             )
+
+    text = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='left',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+                 )
+
+
+    validado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                   fill=PatternFill(fill_type='solid',start_color='FF00B050',end_color='FF00B050')
+                 )
+
+    enviado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                   fill=PatternFill(fill_type='solid',start_color='FFFFC000',end_color='FFFFC000')
+                 )
+
+    cargado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                 )
+
+
+    rechazado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                   fill=PatternFill(fill_type='solid',start_color='FFFF0000',end_color='FFFF0000')
+                 )
+
+    for beneficiario in Beneficiario.objects.filter(diplomado = diplomado).order_by('formador'):
+        ws.cell('A'+str(i)).value = beneficiario.region.nombre.upper()
+        ws.cell('A'+str(i)).style = text
+
+        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('B'+str(i)).style = text
+
+        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('C'+str(i)).style = text
+
+        ws.cell('D'+str(i)).value = beneficiario.radicado.numero if beneficiario.radicado != None else ''
+        ws.cell('D'+str(i)).style = number
+
+        ws.cell('E'+str(i)).value = ''
+        ws.cell('E'+str(i)).style = text
+
+        ws.cell('F'+str(i)).value = ''
+        ws.cell('F'+str(i)).style = text
+
+        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else ''
+        ws.cell('G'+str(i)).style = number
+
+        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else ''
+        ws.cell('H'+str(i)).style = text
+
+        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('I'+str(i)).style = text
+
+        ws.cell('J'+str(i)).value = beneficiario.radicado.ubicacion if beneficiario.radicado != None else ''
+        ws.cell('J'+str(i)).style = text
+
+        ws.cell('K'+str(i)).value = beneficiario.get_grupo().upper()
+        ws.cell('K'+str(i)).style = text
+
+        ws.cell('L'+str(i)).value = beneficiario.formador.get_full_name().upper()
+        ws.cell('L'+str(i)).style = text
+
+        ws.cell('M'+str(i)).value = beneficiario.formador.cedula
+        ws.cell('M'+str(i)).style = number
+
+        ws.cell('N'+str(i)).value = beneficiario.apellidos.upper()
+        ws.cell('N'+str(i)).style = text
+
+        ws.cell('O'+str(i)).value = beneficiario.nombres.upper()
+        ws.cell('O'+str(i)).style = text
+
+        ws.cell('P'+str(i)).value = beneficiario.cedula
+        ws.cell('P'+str(i)).style = number
+
+        ws.cell('Q'+str(i)).value = beneficiario.correo
+        ws.cell('Q'+str(i)).style = text
+
+        ws.cell('R'+str(i)).value = beneficiario.telefono_fijo
+        ws.cell('R'+str(i)).style = text
+
+        ws.cell('S'+str(i)).value = beneficiario.telefono_celular
+        ws.cell('S'+str(i)).style = text
+
+        ws.cell('T'+str(i)).value = beneficiario.area.nombre.upper() if beneficiario.area != None else ''
+        ws.cell('T'+str(i)).style = text
+
+        ws.cell('U'+str(i)).value = beneficiario.grado.nombre.upper() if beneficiario.grado != None else ''
+        ws.cell('U'+str(i)).style = text
+
+        ws.cell('V'+str(i)).value = ''
+        ws.cell('V'+str(i)).style = text
+
+        ws.cell('W'+str(i)).value = beneficiario.genero
+        ws.cell('W'+str(i)).style = text
+
+        ws.cell('X'+str(i)).value = beneficiario.estado
+        ws.cell('X'+str(i)).style = text
+
+        ws.cell('Y'+str(i)).value = ''
+        ws.cell('Y'+str(i)).style = text
+
+        for producto in dict_productos:
+            entregable = Entregable.objects.get(id = producto['id'])
+
+            evidencias_cargado = Evidencia.objects.filter(beneficiarios_cargados = beneficiario,entregable = entregable)
+            evidencias_validado = Evidencia.objects.filter(beneficiarios_validados = beneficiario,entregable = entregable)
+
+            q = Q(evidencias__id__in = evidencias_cargado.values_list('id',flat=True)) | \
+                Q(evidencias__id__in = evidencias_validado.values_list('id',flat=True))
+
+            reds = Red.objects.filter(q)
+
+            if evidencias_validado.count() > 0:
+                red = Red.objects.get(evidencias__id = evidencias_validado[0].id)
+                ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
+                ws.cell(producto['letter']+str(i)).style = validado
+                ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url()
+                ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(evidencias_validado[0].id),'SICAN')
+
+
+            elif evidencias_validado.count() == 0 and evidencias_cargado.count() > 0:
+                ultima_evidencia_cargada = evidencias_cargado[len(evidencias_cargado)-1]
+
+                try:
+                    red = reds.get(evidencias__id = ultima_evidencia_cargada.id)
+                except:
+                    # si ningun red contiene la evidencia
+                    ws.cell(producto['letter']+str(i)).value = 'SIC-' + str(ultima_evidencia_cargada.id)
+                    ws.cell(producto['letter']+str(i)).style = cargado
+                    ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+
+                else:
+                    # si hay un red que contiene la evidencia
+                    if red.retroalimentacion:
+                        # si el red fue retroalimentado
+
+                        evidencias_rechazado = Evidencia.objects.filter(beneficiarios_rechazados__beneficiario_rechazo = beneficiario,
+                                                                        beneficiarios_rechazados__red_id = red.id,
+                                                                        beneficiarios_rechazados__evidencia_id = ultima_evidencia_cargada.id)
+
+                        if evidencias_rechazado > 0:
+                            try:
+                                causa = evidencias_rechazado[0].beneficiarios_rechazados.get(beneficiario_rechazo = beneficiario).observacion
+                            except:
+                                causa = ''
+                            ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
+                            ws.cell(producto['letter']+str(i)).style = rechazado
+                            ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+                            ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id) + ':\n' + causa,'SICAN')
+                        else:
+                            pass
+
+
+                    else:
+                        #si el red no ha sido retroalimentado
+                        ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
+                        ws.cell(producto['letter']+str(i)).style = enviado
+                        ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+                        ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id),'SICAN')
+
+
+            else:
+                ws.cell(producto['letter']+str(i)).style = text
+        i += 1
+
+    wb.save(output)
+
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def matriz_chequeo_formador(email,id_formador):
+    usuario = User.objects.get(email=email)
+
+    formador = Formador.objects.get(id = int(id_formador))
+
+    if formador.cargo.nombre == 'Formador Tipo 1':
+        id_diplomado = '1'
+    elif formador.cargo.nombre == 'Formador Tipo 2':
+        id_diplomado = '2'
+    elif formador.cargo.nombre == 'Formador Tipo 3':
+        id_diplomado = '3'
+    else:
+        id_diplomado = '4'
+
+
+    if id_diplomado == '1':
+        nombre = "Matriz lista de chequeo de productos InnovaTIC - " + formador.get_full_name()
+    elif id_diplomado == '2':
+        nombre = "Matriz lista de chequeo de productos TecnoTIC - " + formador.get_full_name()
+    elif id_diplomado == '3':
+        nombre = "Matriz lista de chequeo de productos DirecTIC - " + formador.get_full_name()
+    else:
+        nombre = "Matriz lista de chequeo de productos EscuelaTIC - " + formador.get_full_name()
+
+
+    proceso = "REV-INF06"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+    output = StringIO()
+    dict_productos = []
+
+    if id_diplomado == '1':
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
+        ws = wb.get_sheet_by_name('InnovaTIC')
+        diplomado = Diplomado.objects.get(id = 1)
+        i = 6
+
+        dict_productos = [{'letter':'Y','id':8},
+                          {'letter':'Z','id':9},
+                          {'letter':'AA','id':10},
+                          {'letter':'AC','id':11},
+                          {'letter':'AF','id':12},
+                          {'letter':'AG','id':13},
+                          {'letter':'AK','id':14},
+                          {'letter':'AL','id':15},
+                          {'letter':'AN','id':16},
+                          {'letter':'AR','id':17},
+                          {'letter':'AS','id':18},
+                          {'letter':'AT','id':19},
+                          {'letter':'AD','id':20},
+                          {'letter':'AI','id':21},
+                          {'letter':'AJ','id':22},
+                          {'letter':'AO','id':23},
+                          {'letter':'AQ','id':24},
+                          {'letter':'AU','id':25},
+                          {'letter':'AV','id':26},
+                          {'letter':'AW','id':27},
+                          {'letter':'AX','id':28},
+                          {'letter':'AY','id':29},
+                          {'letter':'BB','id':30},
+                          {'letter':'BC','id':31},
+                          {'letter':'BD','id':32},
+                          {'letter':'BG','id':33},
+                          {'letter':'BH','id':34},
+                          {'letter':'BJ','id':35},
+                          {'letter':'BN','id':36},
+                          {'letter':'BO','id':37},
+                          {'letter':'BP','id':38},
+                          {'letter':'AZ','id':39},
+                          {'letter':'BA','id':40},
+                          {'letter':'BF','id':41},
+                          {'letter':'BL','id':42},
+                          {'letter':'BM','id':43},
+                          {'letter':'BQ','id':44},
+                          {'letter':'BR','id':45},
+                          {'letter':'BS','id':46},
+                          {'letter':'BT','id':47},
+                          {'letter':'BU','id':48},
+                          {'letter':'BX','id':49},
+                          {'letter':'BY','id':50},
+                          {'letter':'BZ','id':51},
+                          {'letter':'CB','id':52},
+                          {'letter':'CC','id':53},
+                          {'letter':'CD','id':54},
+                          {'letter':'CG','id':55},
+                          {'letter':'CH','id':56},
+                          {'letter':'CI','id':57},
+                          {'letter':'BV','id':58},
+                          {'letter':'CA','id':59},
+                          {'letter':'CE','id':60},
+                          {'letter':'CJ','id':61},
+                          {'letter':'CK','id':62},
+                          {'letter':'CL','id':63},
+                          {'letter':'CM','id':64},
+                          {'letter':'CO','id':65},
+                          {'letter':'CR','id':66},
+                          {'letter':'CS','id':67},
+                          {'letter':'CN','id':68},
+                          {'letter':'CQ','id':69},
+                          ]
+
+    elif id_diplomado == '2':
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Tecnotic.xlsx')
+        ws = wb.get_sheet_by_name('TecnoTIC')
+        diplomado = Diplomado.objects.get(id = 2)
+        i = 6
+    elif id_diplomado == '3':
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Directic.xlsx')
+        ws = wb.get_sheet_by_name('DirecTIC')
+        diplomado = Diplomado.objects.get(id = 3)
+        i = 6
+    else:
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
+        ws = wb.get_sheet_by_name('InnovaTIC')
+        diplomado = Diplomado.objects.get(id = 4)
+        i = 6
+
+    number = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='right',vertical='center',wrap_text=False),
+                   number_format='0',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+             )
+
+    text = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='left',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+                 )
+
+
+    validado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                   fill=PatternFill(fill_type='solid',start_color='FF00B050',end_color='FF00B050')
+                 )
+
+    enviado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                   fill=PatternFill(fill_type='solid',start_color='FFFFC000',end_color='FFFFC000')
+                 )
+
+    cargado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                 )
+
+
+    rechazado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                   fill=PatternFill(fill_type='solid',start_color='FFFF0000',end_color='FFFF0000')
+                 )
+
+    for beneficiario in Beneficiario.objects.filter(diplomado = diplomado).order_by('formador').filter(formador__id = id_formador):
+        ws.cell('A'+str(i)).value = beneficiario.region.nombre.upper()
+        ws.cell('A'+str(i)).style = text
+
+        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('B'+str(i)).style = text
+
+        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('C'+str(i)).style = text
+
+        ws.cell('D'+str(i)).value = beneficiario.radicado.numero if beneficiario.radicado != None else ''
+        ws.cell('D'+str(i)).style = number
+
+        ws.cell('E'+str(i)).value = ''
+        ws.cell('E'+str(i)).style = text
+
+        ws.cell('F'+str(i)).value = ''
+        ws.cell('F'+str(i)).style = text
+
+        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else ''
+        ws.cell('G'+str(i)).style = number
+
+        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else ''
+        ws.cell('H'+str(i)).style = text
+
+        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('I'+str(i)).style = text
+
+        ws.cell('J'+str(i)).value = beneficiario.radicado.ubicacion if beneficiario.radicado != None else ''
+        ws.cell('J'+str(i)).style = text
+
+        ws.cell('K'+str(i)).value = beneficiario.get_grupo().upper()
+        ws.cell('K'+str(i)).style = text
+
+        ws.cell('L'+str(i)).value = beneficiario.formador.get_full_name().upper()
+        ws.cell('L'+str(i)).style = text
+
+        ws.cell('M'+str(i)).value = beneficiario.formador.cedula
+        ws.cell('M'+str(i)).style = number
+
+        ws.cell('N'+str(i)).value = beneficiario.apellidos.upper()
+        ws.cell('N'+str(i)).style = text
+
+        ws.cell('O'+str(i)).value = beneficiario.nombres.upper()
+        ws.cell('O'+str(i)).style = text
+
+        ws.cell('P'+str(i)).value = beneficiario.cedula
+        ws.cell('P'+str(i)).style = number
+
+        ws.cell('Q'+str(i)).value = beneficiario.correo
+        ws.cell('Q'+str(i)).style = text
+
+        ws.cell('R'+str(i)).value = beneficiario.telefono_fijo
+        ws.cell('R'+str(i)).style = text
+
+        ws.cell('S'+str(i)).value = beneficiario.telefono_celular
+        ws.cell('S'+str(i)).style = text
+
+        ws.cell('T'+str(i)).value = beneficiario.area.nombre.upper() if beneficiario.area != None else ''
+        ws.cell('T'+str(i)).style = text
+
+        ws.cell('U'+str(i)).value = beneficiario.grado.nombre.upper() if beneficiario.grado != None else ''
+        ws.cell('U'+str(i)).style = text
+
+        ws.cell('V'+str(i)).value = ''
+        ws.cell('V'+str(i)).style = text
+
+        ws.cell('W'+str(i)).value = beneficiario.genero
+        ws.cell('W'+str(i)).style = text
+
+        ws.cell('X'+str(i)).value = beneficiario.estado
+        ws.cell('X'+str(i)).style = text
+
+        ws.cell('Y'+str(i)).value = ''
+        ws.cell('Y'+str(i)).style = text
+
+        for producto in dict_productos:
+            entregable = Entregable.objects.get(id = producto['id'])
+
+            evidencias_cargado = Evidencia.objects.filter(beneficiarios_cargados = beneficiario,entregable = entregable)
+            evidencias_validado = Evidencia.objects.filter(beneficiarios_validados = beneficiario,entregable = entregable)
+
+            q = Q(evidencias__id__in = evidencias_cargado.values_list('id',flat=True)) | \
+                Q(evidencias__id__in = evidencias_validado.values_list('id',flat=True))
+
+            reds = Red.objects.filter(q)
+
+            if evidencias_validado.count() > 0:
+                red = Red.objects.get(evidencias__id = evidencias_validado[0].id)
+                ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
+                ws.cell(producto['letter']+str(i)).style = validado
+                ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url()
+                ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(evidencias_validado[0].id),'SICAN')
+
+
+            elif evidencias_validado.count() == 0 and evidencias_cargado.count() > 0:
+                ultima_evidencia_cargada = evidencias_cargado[len(evidencias_cargado)-1]
+
+                try:
+                    red = reds.get(evidencias__id = ultima_evidencia_cargada.id)
+                except:
+                    # si ningun red contiene la evidencia
+                    ws.cell(producto['letter']+str(i)).value = 'SIC-' + str(ultima_evidencia_cargada.id)
+                    ws.cell(producto['letter']+str(i)).style = cargado
+                    ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+
+                else:
+                    # si hay un red que contiene la evidencia
+                    if red.retroalimentacion:
+                        # si el red fue retroalimentado
+
+                        evidencias_rechazado = Evidencia.objects.filter(beneficiarios_rechazados__beneficiario_rechazo = beneficiario,
+                                                                        beneficiarios_rechazados__red_id = red.id,
+                                                                        beneficiarios_rechazados__evidencia_id = ultima_evidencia_cargada.id)
+
+                        if evidencias_rechazado > 0:
+                            try:
+                                causa = evidencias_rechazado[0].beneficiarios_rechazados.get(beneficiario_rechazo = beneficiario).observacion
+                            except:
+                                causa = ''
+                            ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
+                            ws.cell(producto['letter']+str(i)).style = rechazado
+                            ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+                            ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id) + ':\n' + causa,'SICAN')
+                        else:
+                            pass
+
+
+                    else:
+                        #si el red no ha sido retroalimentado
+                        ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
+                        ws.cell(producto['letter']+str(i)).style = enviado
+                        ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+                        ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id),'SICAN')
+
+
+            else:
+                ws.cell(producto['letter']+str(i)).style = text
+        i += 1
+
+    wb.save(output)
+
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"

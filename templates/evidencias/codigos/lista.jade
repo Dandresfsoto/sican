@@ -158,9 +158,10 @@ block body_script_content
             }
             for (i = 0; i < d[16].length; i++) {
                 rechazados += '<tr>' +
-                        '<td colspan=2><p>' + d[16][i][0] + '</p></td>' +
+                        '<td><p>' + d[16][i][0] + '</p></td>' +
                         '<td><p>' + d[16][i][1] + '</p></td>' +
                         '<td><p>' + d[16][i][2] + '</p></td>' +
+                        '<td><p>' + d[16][i][3] + '</p></td>' +
                         '</tr>'
             }
             if (cargados == '') {
@@ -217,14 +218,15 @@ block body_script_content
 
                         aprobados +
 
-                        '<tr style="background:#f29b00;color:white;">' +
-                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS PENDIENTES</p></td>' +
+                        '<tr style="background:#DF4113;color:white;">' +
+                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS RECHAZADOS</p></td>' +
                         '</tr>'+
 
                             '<tr>' +
-                            '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
+                            '<td><p class="bold-p">Nombre:</p></td>' +
                             '<td><p class="bold-p">Cedula:</p></td>' +
                             '<td><p class="bold-p">Grupo:</p></td>' +
+                            '<td><p class="bold-p">Causa:</p></td>' +
                         '</tr>' +
 
                         rechazados +

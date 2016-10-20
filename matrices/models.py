@@ -47,7 +47,12 @@ class Beneficiario(models.Model):
         return self.nombres + ' ' + self.apellidos
 
     def get_grupo(self):
-        return self.formador.codigo_ruta + '-' + self.grupo.nombre
+        if self.formador.codigo_ruta != None:
+            codigo_ruta = self.formador.codigo_ruta
+        else:
+            codigo_ruta = ''
+
+        return codigo_ruta + '-' + self.grupo.nombre
 
 class BeneficiarioPendiente(models.Model):
     diplomado = models.ForeignKey(Diplomado,related_name='diplomado_beneficiariopendiente')

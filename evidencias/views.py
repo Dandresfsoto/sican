@@ -35,6 +35,7 @@ class FormadoresListView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['id_diplomado'] = self.kwargs['id_diplomado']
         kwargs['nombre_diplomado'] = Diplomado.objects.get(id = self.kwargs['id_diplomado']).nombre
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.evidencias.general.informes')
         return super(FormadoresListView,self).get_context_data(**kwargs)
 
 
@@ -50,6 +51,7 @@ class NivelesListView(LoginRequiredMixin,
         kwargs['nombre_diplomado'] = Diplomado.objects.get(id = self.kwargs['id_diplomado']).nombre
         kwargs['id_formador'] = self.kwargs['id_formador']
         kwargs['nombre_formador'] = Formador.objects.get(id = self.kwargs['id_formador']).get_full_name()
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.evidencias.general.informes')
         return super(NivelesListView,self).get_context_data(**kwargs)
 
 
