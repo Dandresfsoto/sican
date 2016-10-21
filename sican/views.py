@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 from braces.views import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
@@ -11,6 +11,7 @@ from usuarios.models import User
 import random
 import string
 from usuarios.tasks import send_mail_templated
+from sican.forms import ConsultaBeneficiarioForm
 
 class Login(TemplateView):
     template_name = 'login.html'
@@ -121,3 +122,12 @@ class Proyectos(LoginRequiredMixin,TemplateView):
     def get_context_data(self, **kwargs):
         kwargs['inicio'] = True
         return super(Proyectos,self).get_context_data(**kwargs)
+
+class Diplomas(FormView):
+    form_class = ConsultaBeneficiarioForm
+    template_name = "diplomas/escuelatic/consulta.html"
+    success_url = "/diplomas/respuesta/"
+
+    def get_context_data(self, **kwargs):
+        kwargs['inicio'] = True
+        return super(Diplomas,self).get_context_data(**kwargs)

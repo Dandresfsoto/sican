@@ -164,7 +164,7 @@ class Grupos(models.Model):
         ordering = ['nombre']
 
     def __unicode__(self):
-        return self.formador.codigo_ruta + "-" + self.nombre
+        return str(self.formador.codigo_ruta) + "-" + self.nombre
 
     def get_full_name(self):
         return self.formador.codigo_ruta + '-' + self.nombre

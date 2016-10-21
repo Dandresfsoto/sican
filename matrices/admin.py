@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.contrib import admin
 from matrices.models import Area, Grado, Beneficiario
 from matrices.models import CargaMasiva
@@ -5,6 +8,14 @@ from formadores.models import Grupos, Formador
 import openpyxl
 from sican.settings import base as settings
 from administrativos.models import Administrativo
+from sican.settings import base as settings
+import PIL
+from PIL import ImageFont
+from PIL import Image
+from PIL import ImageDraw
+import StringIO
+from django.core.files import File
+
 # Register your models here.
 
 admin.site.register(Area)
@@ -52,10 +63,46 @@ def grupos_colombia_aprende(modeladmin, request, queryset):
         wb.save('C:\\Temp\\Colombia\\'+grupo.formador.codigo_ruta + '-' + grupo.nombre + '.xlsx')
 grupos_colombia_aprende.short_description = 'Usuarios colombia aprende'
 
+def diploma(modeladmin, request, queryset):
+    for obj in queryset:
+        nombre_beneficiario = obj.get_full_name().upper()
+        cedula = 'IDENTIFICADO(A) CON CÉDULA DE CIUDADANÍA NÚMERO ' + str(obj.cedula)
+        fecha = 'MÓNTERIA 21 DE OCTUBRE DE 2016'
+
+        fuente_primaria = ImageFont.truetype(settings.STATICFILES_DIRS[0] + '\\documentos\\DK_Lemon_Yellow_Sun.otf', 432)
+        fuente_secundaria = ImageFont.truetype(settings.STATICFILES_DIRS[0] + '\\documentos\\DK_Lemon_Yellow_Sun.otf', 100)
+        diploma = Image.open(settings.STATICFILES_DIRS[0]+'\\documentos\\Diploma.png')
+        W,H = diploma.size
+        nombre = ImageDraw.Draw(diploma)
+        w,h = nombre.textsize(nombre_beneficiario,font=fuente_primaria,fill='white')
+
+        nombre.text(((W-w)/2,1450),nombre_beneficiario,fill='white',font=fuente_primaria)
+
+        w,h = nombre.textsize(cedula,font=fuente_secundaria,fill='white')
+
+        nombre.text(((W-w)/2,1950),cedula,fill='white',font=fuente_secundaria)
+
+        w,h = nombre.textsize(fecha,font=fuente_secundaria,fill='white')
+
+        nombre.text(((W-w)/2,2970),fecha,fill='white',font=fuente_secundaria)
+
+
+        diploma.thumbnail((1600,1281),Image.ANTIALIAS)
+
+        output = StringIO.StringIO()
+
+        diploma.save(output,format = 'PNG')
+
+        obj.diploma.save(str(obj.cedula) + '.png',File(output))
+
+
+
+diploma.short_description = 'Generar Diploma'
+
 class BeneficiarioAdmin(admin.ModelAdmin):
     list_display = ['nombres','apellidos']
     ordering = ['nombres']
-    actions = [grupos_colombia_aprende]
+    actions = [grupos_colombia_aprende,diploma]
 
 admin.site.register(Beneficiario, BeneficiarioAdmin)
 admin.site.register(CargaMasiva)

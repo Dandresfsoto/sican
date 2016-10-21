@@ -1122,6 +1122,60 @@ def matriz_chequeo(email,id_diplomado):
         ws = wb.get_sheet_by_name('TecnoTIC')
         diplomado = Diplomado.objects.get(id = 2)
         i = 6
+        dict_productos = [{'letter':'Y','id':72},
+                          {'letter':'AB','id':73},
+                          {'letter':'AF','id':74},
+                          {'letter':'AE','id':75},
+                          {'letter':'AJ','id':76},
+                          {'letter':'AI','id':77},
+                          {'letter':'AP','id':78},
+                          {'letter':'AO','id':79},
+                          {'letter':'AC','id':80},
+                          {'letter':'AD','id':81},
+                          {'letter':'AG','id':82},
+                          {'letter':'AH','id':83},
+                          {'letter':'AK','id':84},
+                          {'letter':'AM','id':85},
+                          {'letter':'AQ','id':86},
+                          {'letter':'AR','id':87},
+                          {'letter':'AS','id':88},
+                          {'letter':'AV','id':89},
+                          {'letter':'AT','id':90},
+                          {'letter':'AU','id':91},
+                          {'letter':'AZ','id':92},
+                          {'letter':'AY','id':93},
+                          {'letter':'BB','id':94},
+                          {'letter':'BE','id':95},
+                          {'letter':'BD','id':96},
+                          {'letter':'AW','id':97},
+                          {'letter':'AX','id':98},
+                          {'letter':'BA','id':99},
+                          {'letter':'BC','id':100},
+                          {'letter':'BF','id':101},
+                          {'letter':'BG','id':102},
+                          {'letter':'BH','id':103},
+                          {'letter':'BJ','id':104},
+                          {'letter':'BI','id':105},
+                          {'letter':'BO','id':106},
+                          {'letter':'BM','id':107},
+                          {'letter':'BR','id':108},
+                          {'letter':'BQ','id':109},
+                          {'letter':'BV','id':110},
+                          {'letter':'BT','id':111},
+                          {'letter':'BK','id':112},
+                          {'letter':'BP','id':113},
+                          {'letter':'BS','id':114},
+                          {'letter':'BW','id':115},
+                          {'letter':'BX','id':116},
+                          {'letter':'BY','id':117},
+                          {'letter':'CB','id':118},
+                          {'letter':'BZ','id':119},
+                          {'letter':'CG','id':120},
+                          {'letter':'CI','id':121},
+                          {'letter':'CC','id':122},
+                          {'letter':'CD','id':123},
+                          {'letter':'CE','id':124}
+                          ]
     elif id_diplomado == '3':
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Directic.xlsx')
         ws = wb.get_sheet_by_name('DirecTIC')
@@ -1178,28 +1232,28 @@ def matriz_chequeo(email,id_diplomado):
         ws.cell('A'+str(i)).value = beneficiario.region.nombre.upper()
         ws.cell('A'+str(i)).style = text
 
-        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text.upper()
         ws.cell('B'+str(i)).style = text
 
-        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else beneficiario.secretaria_text.upper()
         ws.cell('C'+str(i)).style = text
 
         ws.cell('D'+str(i)).value = beneficiario.radicado.numero if beneficiario.radicado != None else ''
         ws.cell('D'+str(i)).style = number
 
-        ws.cell('E'+str(i)).value = ''
-        ws.cell('E'+str(i)).style = text
+        ws.cell('E'+str(i)).value = beneficiario.dane_ie_text.upper()
+        ws.cell('E'+str(i)).style = number
 
-        ws.cell('F'+str(i)).value = ''
+        ws.cell('F'+str(i)).value = beneficiario.ie_text.upper()
         ws.cell('F'+str(i)).style = text
 
-        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else ''
+        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else beneficiario.dane_sede_text.upper()
         ws.cell('G'+str(i)).style = number
 
-        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else ''
+        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else beneficiario.sede_text.upper()
         ws.cell('H'+str(i)).style = text
 
-        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text.upper()
         ws.cell('I'+str(i)).style = text
 
         ws.cell('J'+str(i)).value = beneficiario.radicado.ubicacion if beneficiario.radicado != None else ''
@@ -1427,6 +1481,60 @@ def matriz_chequeo_formador(email,id_formador):
         ws = wb.get_sheet_by_name('TecnoTIC')
         diplomado = Diplomado.objects.get(id = 2)
         i = 6
+        dict_productos = [{'letter':'Y','id':72},
+                          {'letter':'AB','id':73},
+                          {'letter':'AF','id':74},
+                          {'letter':'AE','id':75},
+                          {'letter':'AJ','id':76},
+                          {'letter':'AI','id':77},
+                          {'letter':'AP','id':78},
+                          {'letter':'AO','id':79},
+                          {'letter':'AC','id':80},
+                          {'letter':'AD','id':81},
+                          {'letter':'AG','id':82},
+                          {'letter':'AH','id':83},
+                          {'letter':'AK','id':84},
+                          {'letter':'AM','id':85},
+                          {'letter':'AQ','id':86},
+                          {'letter':'AR','id':87},
+                          {'letter':'AS','id':88},
+                          {'letter':'AV','id':89},
+                          {'letter':'AT','id':90},
+                          {'letter':'AU','id':91},
+                          {'letter':'AZ','id':92},
+                          {'letter':'AY','id':93},
+                          {'letter':'BB','id':94},
+                          {'letter':'BE','id':95},
+                          {'letter':'BD','id':96},
+                          {'letter':'AW','id':97},
+                          {'letter':'AX','id':98},
+                          {'letter':'BA','id':99},
+                          {'letter':'BC','id':100},
+                          {'letter':'BF','id':101},
+                          {'letter':'BG','id':102},
+                          {'letter':'BH','id':103},
+                          {'letter':'BJ','id':104},
+                          {'letter':'BI','id':105},
+                          {'letter':'BO','id':106},
+                          {'letter':'BM','id':107},
+                          {'letter':'BR','id':108},
+                          {'letter':'BQ','id':109},
+                          {'letter':'BV','id':110},
+                          {'letter':'BT','id':111},
+                          {'letter':'BK','id':112},
+                          {'letter':'BP','id':113},
+                          {'letter':'BS','id':114},
+                          {'letter':'BW','id':115},
+                          {'letter':'BX','id':116},
+                          {'letter':'BY','id':117},
+                          {'letter':'CB','id':118},
+                          {'letter':'BZ','id':119},
+                          {'letter':'CG','id':120},
+                          {'letter':'CI','id':121},
+                          {'letter':'CC','id':122},
+                          {'letter':'CD','id':123},
+                          {'letter':'CE','id':124}
+                          ]
     elif id_diplomado == '3':
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Directic.xlsx')
         ws = wb.get_sheet_by_name('DirecTIC')
@@ -1483,28 +1591,28 @@ def matriz_chequeo_formador(email,id_formador):
         ws.cell('A'+str(i)).value = beneficiario.region.nombre.upper()
         ws.cell('A'+str(i)).style = text
 
-        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text.upper()
         ws.cell('B'+str(i)).style = text
 
-        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else beneficiario.secretaria_text.upper()
         ws.cell('C'+str(i)).style = text
 
         ws.cell('D'+str(i)).value = beneficiario.radicado.numero if beneficiario.radicado != None else ''
         ws.cell('D'+str(i)).style = number
 
-        ws.cell('E'+str(i)).value = ''
-        ws.cell('E'+str(i)).style = text
+        ws.cell('E'+str(i)).value = beneficiario.dane_ie_text.upper()
+        ws.cell('E'+str(i)).style = number
 
-        ws.cell('F'+str(i)).value = ''
+        ws.cell('F'+str(i)).value = beneficiario.ie_text.upper()
         ws.cell('F'+str(i)).style = text
 
-        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else ''
+        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else beneficiario.dane_sede_text.upper()
         ws.cell('G'+str(i)).style = number
 
-        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else ''
+        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else beneficiario.sede_text.upper()
         ws.cell('H'+str(i)).style = text
 
-        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else ''
+        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text.upper()
         ws.cell('I'+str(i)).style = text
 
         ws.cell('J'+str(i)).value = beneficiario.radicado.ubicacion if beneficiario.radicado != None else ''

@@ -171,6 +171,16 @@ def carga_masiva_matrices(id,email):
                                                 beneficiario = Beneficiario.objects.get(cedula = fila[15].value)
                                                 beneficiario.region = region
                                                 beneficiario.radicado = radicado
+
+                                                beneficiario.departamento_text = fila[1].value
+                                                beneficiario.secretaria_text = fila[2].value
+                                                beneficiario.dane_ie_text = fila[4].value
+                                                beneficiario.ie_text = fila[5].value
+                                                beneficiario.dane_sede_text = fila[6].value
+                                                beneficiario.sede_text = fila[7].value
+                                                beneficiario.municipio_text = fila[8].value
+                                                beneficiario.zona_text = fila[9].value
+
                                                 beneficiario.radicado_text = radicado_text
                                                 beneficiario.formador = formador
                                                 beneficiario.grupo = grupo
@@ -190,6 +200,9 @@ def carga_masiva_matrices(id,email):
 
                                             else:
                                                 Beneficiario.objects.create(diplomado = diplomado,region=region,radicado=radicado,radicado_text=radicado_text,
+                                                                            departamento_text=fila[1].value,secretaria_text=fila[2].value,
+                                                                            dane_ie_text=fila[4].value,ie_text=fila[5].value,dane_sede_text=fila[6].value,
+                                                                            sede_text=fila[7].value,municipio_text=fila[8].value,zona_text=fila[9].value,
                                                                             formador=formador,grupo=grupo,apellidos=fila[13].value,
                                                                             nombres=fila[14].value,cedula=fila[15].value,correo=fila[16].value,
                                                                             telefono_fijo=fila[17].value,telefono_celular=fila[18].value,
@@ -406,6 +419,16 @@ def carga_masiva_matrices(id,email):
                                                     beneficiario.region = region
                                                     beneficiario.radicado = radicado
                                                     beneficiario.radicado_text = radicado_text
+
+                                                    beneficiario.departamento_text = fila[1].value
+                                                    beneficiario.secretaria_text = fila[2].value
+                                                    beneficiario.dane_ie_text = fila[4].value
+                                                    beneficiario.ie_text = fila[5].value
+                                                    beneficiario.dane_sede_text = fila[6].value
+                                                    beneficiario.sede_text = fila[7].value
+                                                    beneficiario.municipio_text = fila[8].value
+                                                    beneficiario.zona_text = fila[9].value
+
                                                     beneficiario.formador = formador
                                                     beneficiario.grupo = grupo
                                                     beneficiario.apellidos =fila[13].value
@@ -427,10 +450,13 @@ def carga_masiva_matrices(id,email):
 
                                             else:
                                                 Beneficiario.objects.create(diplomado = diplomado,region=region,radicado=radicado,radicado_text=radicado_text,
-                                                                                    formador=formador,grupo=grupo,apellidos=fila[13].value,
-                                                                                    nombres=fila[14].value,cedula=fila[15].value,correo=fila[16].value,
-                                                                                    telefono_fijo=fila[17].value,telefono_celular=fila[18].value,
-                                                                                    area=area,grado=grado,genero=fila[22].value,estado=fila[23].value)
+                                                                            departamento_text=fila[1].value,secretaria_text=fila[2].value,
+                                                                            dane_ie_text=fila[4].value,ie_text=fila[5].value,dane_sede_text=fila[6].value,
+                                                                            sede_text=fila[7].value,municipio_text=fila[8].value,zona_text=fila[9].value,
+                                                                            formador=formador,grupo=grupo,apellidos=fila[13].value,
+                                                                            nombres=fila[14].value,cedula=fila[15].value,correo=fila[16].value,
+                                                                            telefono_fijo=fila[17].value,telefono_celular=fila[18].value,
+                                                                            area=area,grado=grado,genero=fila[22].value,estado=fila[23].value)
                                                 resultado += 'Participante creado'
 
                                     else:

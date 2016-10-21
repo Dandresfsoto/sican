@@ -26,6 +26,16 @@ class Beneficiario(models.Model):
     region = models.ForeignKey(Region,related_name='region_beneficiario')
     radicado_text = models.CharField(max_length=1000,blank=True)
     radicado = models.ForeignKey(Radicado,blank=True,null=True,related_name='radicado_beneficiario')
+
+    departamento_text = models.CharField(max_length=100,blank=True,null=True)
+    secretaria_text = models.CharField(max_length=100,blank=True,null=True)
+    dane_ie_text = models.CharField(max_length=100,blank=True,null=True)
+    ie_text = models.CharField(max_length=100,blank=True,null=True)
+    dane_sede_text = models.CharField(max_length=100,blank=True,null=True)
+    sede_text = models.CharField(max_length=100,blank=True,null=True)
+    municipio_text = models.CharField(max_length=100,blank=True,null=True)
+    zona_text = models.CharField(max_length=100,blank=True,null=True)
+
     formador = models.ForeignKey(Formador,related_name='formador_beneficiario')
     grupo = models.ForeignKey(Grupos,related_name='grupo_beneficiario')
     apellidos = models.CharField(max_length=100)
@@ -39,6 +49,10 @@ class Beneficiario(models.Model):
     genero = models.CharField(max_length=100,blank=True,null=True)
     estado = models.CharField(max_length=100,blank=True,null=True)
     usuario_colombia_aprende = models.CharField(max_length=100,blank=True)
+
+    diploma = models.FileField(upload_to='Diplomas',blank=True,null=True)
+    ip_descarga = models.GenericIPAddressField(max_length=100,blank=True,null=True)
+    fecha_descarga = models.DateTimeField(blank=True,null=True)
 
     def __unicode__(self):
         return str(self.cedula) + ' - ' + self.nombres + ' ' + self.apellidos

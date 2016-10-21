@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from sican.views import Login, Logout, Recovery, Confirmation, Proyectos
+from sican.views import Login, Logout, Recovery, Confirmation, Proyectos, Diplomas
 from sican.settings import base as settings
 from sican.settings import dev as develop_settings
 from django.conf.urls.static import static
@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^matrices/', include('matrices.urls', namespace='matrices')),
     url(r'^evidencias/', include('evidencias.urls', namespace='evidencias')),
     url(r'^requerimientos/', include('requerimientos.urls', namespace='requerimientos')),
+    url(r'^diplomas/', Diplomas.as_view()),
 ]
 
 if settings.DEBUG:
