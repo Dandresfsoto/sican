@@ -21,7 +21,7 @@ from radicados.models import Radicado
 @app.task
 def carga_masiva_matrices(id,email):
     carga = CargaMasiva.objects.get(id = id)
-    wb = openpyxl.load_workbook(filename = carga.archivo.file.name)
+    wb = openpyxl.load_workbook(filename = carga.archivo.file.name,read_only=True)
     sheets = wb.get_sheet_names()
 
     if 'InnovaTIC' in sheets and 'TecnoTIC' in sheets and 'DirecTIC' in sheets:
@@ -114,7 +114,7 @@ def carga_masiva_matrices(id,email):
         for name in ['InnovaTIC','TecnoTIC','DirecTIC']:
             ws = wb.get_sheet_by_name(name)
 
-            for fila in ws.rows[5:]:
+            for fila in ws.iter_rows(row_offset=5):
 
                 resultado = ''
 
@@ -357,7 +357,7 @@ def carga_masiva_matrices(id,email):
 
         ws = wb.get_sheet_by_name('Matriz revisión documental')
 
-        for fila in ws.rows[9:]:
+        for fila in ws.iter_rows(row_offset=9):
 
             resultado = ''
 
