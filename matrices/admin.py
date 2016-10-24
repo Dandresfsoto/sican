@@ -15,6 +15,7 @@ from PIL import Image
 from PIL import ImageDraw
 import StringIO
 from django.core.files import File
+from django.utils import timezone
 
 # Register your models here.
 
@@ -67,7 +68,17 @@ def diploma(modeladmin, request, queryset):
     for obj in queryset:
         nombre_beneficiario = obj.get_full_name().upper()
         cedula = 'IDENTIFICADO(A) CON CÉDULA DE CIUDADANÍA NÚMERO ' + str(obj.cedula)
-        fecha = 'MÓNTERIA 21 DE OCTUBRE DE 2016'
+
+        municipio = ''
+
+        if obj.radicado != None:
+            municipio = obj.radicado.municipio.nombre.upper()
+        else:
+            municipio = obj.municipio_text.upper()
+
+        date = timezone.now()
+
+        fecha = municipio + ' ' + date.strftime('%d de %B de %Y').upper()
 
         fuente_primaria = ImageFont.truetype(settings.STATICFILES_DIRS[0] + '\\documentos\\DK_Lemon_Yellow_Sun.otf', 432)
         fuente_secundaria = ImageFont.truetype(settings.STATICFILES_DIRS[0] + '\\documentos\\DK_Lemon_Yellow_Sun.otf', 100)

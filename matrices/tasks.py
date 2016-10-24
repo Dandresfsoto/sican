@@ -121,8 +121,12 @@ def carga_masiva_matrices(id,email):
                 if Diplomado.objects.filter(nombre__icontains = name).count() == 1:
                     diplomado = Diplomado.objects.get(nombre__icontains = name)
 
-                    if Region.objects.filter(numero = fila[0].value if fila[0].value != None else '').count() == 1:
+                    try:
                         region = Region.objects.get(numero = fila[0].value if fila[0].value != None else 0)
+                    except:
+                        resultado = 'No existe el código de región'
+
+                    else:
 
                         if Formador.objects.filter(cedula = fila[12].value if fila[12].value != None else 0).count() == 1:
                             formador = Formador.objects.get(cedula = fila[12].value if fila[12].value != None else 0)
@@ -224,9 +228,6 @@ def carga_masiva_matrices(id,email):
                                 resultado = 'No se puede identificar el grupo'
                         else:
                             resultado = 'No hay ningun formador con el numero de cedula'
-
-                    else:
-                        resultado = 'No existe el código de región'
 
 
                 else:
@@ -368,8 +369,12 @@ def carga_masiva_matrices(id,email):
 
             diplomado = Diplomado.objects.get(id = 4)
 
-            if Region.objects.filter(numero = fila[0].value if fila[0].value != None else '').count() == 1:
+            try:
                 region = Region.objects.get(numero = fila[0].value if fila[0].value != None else 0)
+            except:
+                resultado = 'No existe el código de región'
+
+            else:
 
                 if Formador.objects.filter(cedula = fila[12].value if fila[12].value != None else 0).count() == 1:
                     formador = Formador.objects.get(cedula = fila[12].value if fila[12].value != None else 0)
@@ -474,12 +479,6 @@ def carga_masiva_matrices(id,email):
                         resultado = 'No se puede identificar el grupo'
                 else:
                     resultado = 'No hay ningun formador con el numero de cedula'
-
-            else:
-                resultado = 'No existe el código de región'
-
-
-
 
 
 
