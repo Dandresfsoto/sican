@@ -66,7 +66,7 @@ grupos_colombia_aprende.short_description = 'Usuarios colombia aprende'
 
 def diploma(modeladmin, request, queryset):
 
-    for obj in Beneficiario.objects.exclude(diploma = '').filter(diplomado__id = 4):
+    for obj in Beneficiario.objects.filter(diploma = '').filter(diplomado__id = 4):
         nombre_beneficiario = obj.get_full_name().upper()
         cedula = 'IDENTIFICADO(A) CON CÉDULA DE CIUDADANÍA NÚMERO ' + str(obj.cedula)
 
