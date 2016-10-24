@@ -1732,3 +1732,37 @@ def matriz_chequeo_formador(email,id_formador):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
+
+@app.task
+def zip_ss(email):
+
+    if os.path.exists("C:\\Temp\\ss.zip"):
+        os.remove("C:\\Temp\\ss.zip")
+
+    usuario = User.objects.get(email=email)
+    nombre = "Zip: Seguridad Social"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+
+    ids = [{'id':13,'mes':'Julio'},
+           {'id':8,'mes':'Agosto'},
+           {'id':17,'mes':'Septiembre'},
+           {'id':18,'mes':'Octubre'},
+           {'id':19,'mes':'Noviembre'},
+           {'id':20,'mes':'Diciembre'},
+    ]
+
+    zip = zipfile.ZipFile('C:\\Temp\\ss.zip',"w",allowZip64=True)
+
+    for id in ids:
+        for soporte in SoporteFormadores.objects.filter(tipo__id = id['id']).exclude(oculto = True):
+            if str(soporte.archivo) != '':
+                if os.path.exists(soporte.archivo.path):
+                    zip.write(soporte.archivo.path,id['mes']+'/'+soporte.formador.get_full_name()+'/'+os.path.basename(soporte.archivo.path))
+
+    zip.close()
+    informe.archivo = File(open('C:\\Temp\\ss.zip'))
+    informe.save()
+
+    shutil.copy('C:\\Temp\\ss.zip',informe.archivo.path)
+
+    return "Zip creado Seguridad Social"
