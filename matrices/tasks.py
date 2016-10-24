@@ -166,48 +166,53 @@ def carga_masiva_matrices(id,email):
 
                                             radicado_text = str(radicado.numero) if radicado != None else ''
 
-
-                                            if Beneficiario.objects.filter(cedula = fila[15].value if fila[15].value != None else '').count() == 1:
-                                                beneficiario = Beneficiario.objects.get(cedula = fila[15].value)
-                                                beneficiario.region = region
-                                                beneficiario.radicado = radicado
-
-                                                beneficiario.departamento_text = fila[1].value
-                                                beneficiario.secretaria_text = fila[2].value
-                                                beneficiario.dane_ie_text = fila[4].value
-                                                beneficiario.ie_text = fila[5].value
-                                                beneficiario.dane_sede_text = fila[6].value
-                                                beneficiario.sede_text = fila[7].value
-                                                beneficiario.municipio_text = fila[8].value
-                                                beneficiario.zona_text = fila[9].value
-
-                                                beneficiario.radicado_text = radicado_text
-                                                beneficiario.formador = formador
-                                                beneficiario.grupo = grupo
-                                                beneficiario.apellidos =fila[13].value
-                                                beneficiario.nombres = fila[14].value
-                                                beneficiario.cedula=fila[15].value
-                                                beneficiario.correo=fila[16].value
-                                                beneficiario.telefono_fijo=fila[17].value
-                                                beneficiario.telefono_celular=fila[18].value
-                                                beneficiario.area = area
-                                                beneficiario.grado = grado
-                                                beneficiario.genero=fila[22].value
-                                                beneficiario.estado=fila[23].value
-                                                beneficiario.save()
-
-                                                resultado += 'Docente actualizado'
-
+                                            try:
+                                                cedula = long(fila[15].value)
+                                            except:
+                                                resultado = 'Error en el numero de cedula'
                                             else:
-                                                Beneficiario.objects.create(diplomado = diplomado,region=region,radicado=radicado,radicado_text=radicado_text,
-                                                                            departamento_text=fila[1].value,secretaria_text=fila[2].value,
-                                                                            dane_ie_text=fila[4].value,ie_text=fila[5].value,dane_sede_text=fila[6].value,
-                                                                            sede_text=fila[7].value,municipio_text=fila[8].value,zona_text=fila[9].value,
-                                                                            formador=formador,grupo=grupo,apellidos=fila[13].value,
-                                                                            nombres=fila[14].value,cedula=fila[15].value,correo=fila[16].value,
-                                                                            telefono_fijo=fila[17].value,telefono_celular=fila[18].value,
-                                                                            area=area,grado=grado,genero=fila[22].value,estado=fila[23].value)
-                                                resultado += 'Docente creado'
+
+                                                if Beneficiario.objects.filter(cedula = fila[15].value if fila[15].value != None else '').count() == 1:
+                                                    beneficiario = Beneficiario.objects.get(cedula = fila[15].value)
+                                                    beneficiario.region = region
+                                                    beneficiario.radicado = radicado
+
+                                                    beneficiario.departamento_text = fila[1].value
+                                                    beneficiario.secretaria_text = fila[2].value
+                                                    beneficiario.dane_ie_text = fila[4].value
+                                                    beneficiario.ie_text = fila[5].value
+                                                    beneficiario.dane_sede_text = fila[6].value
+                                                    beneficiario.sede_text = fila[7].value
+                                                    beneficiario.municipio_text = fila[8].value
+                                                    beneficiario.zona_text = fila[9].value
+
+                                                    beneficiario.radicado_text = radicado_text
+                                                    beneficiario.formador = formador
+                                                    beneficiario.grupo = grupo
+                                                    beneficiario.apellidos =fila[13].value
+                                                    beneficiario.nombres = fila[14].value
+                                                    beneficiario.cedula=fila[15].value
+                                                    beneficiario.correo=fila[16].value
+                                                    beneficiario.telefono_fijo=fila[17].value
+                                                    beneficiario.telefono_celular=fila[18].value
+                                                    beneficiario.area = area
+                                                    beneficiario.grado = grado
+                                                    beneficiario.genero=fila[22].value
+                                                    beneficiario.estado=fila[23].value
+                                                    beneficiario.save()
+
+                                                    resultado += 'Docente actualizado'
+
+                                                else:
+                                                    Beneficiario.objects.create(diplomado = diplomado,region=region,radicado=radicado,radicado_text=radicado_text,
+                                                                                departamento_text=fila[1].value,secretaria_text=fila[2].value,
+                                                                                dane_ie_text=fila[4].value,ie_text=fila[5].value,dane_sede_text=fila[6].value,
+                                                                                sede_text=fila[7].value,municipio_text=fila[8].value,zona_text=fila[9].value,
+                                                                                formador=formador,grupo=grupo,apellidos=fila[13].value,
+                                                                                nombres=fila[14].value,cedula=fila[15].value,correo=fila[16].value,
+                                                                                telefono_fijo=fila[17].value,telefono_celular=fila[18].value,
+                                                                                area=area,grado=grado,genero=fila[22].value,estado=fila[23].value)
+                                                    resultado += 'Docente creado'
 
                                         else:
                                             resultado += 'No hay nombres del docente'
