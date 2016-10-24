@@ -17,6 +17,14 @@ from formadores.models import Formador
 from formadores.models import Grupos
 from matrices.models import Beneficiario, Area, Grado
 from radicados.models import Radicado
+from sican.settings import base as settings
+import PIL
+from PIL import ImageFont
+from PIL import Image
+from PIL import ImageDraw
+import StringIO
+from django.core.files import File
+from django.utils import timezone
 
 @app.task
 def carga_masiva_matrices(id,email):
@@ -535,3 +543,48 @@ def carga_masiva_matrices(id,email):
 
     carga.save()
     return "Carga masiva exitosa"
+
+@app.task
+def diplomas_escuela_tic():
+    for obj in Beneficiario.objects.filter(diploma = '').filter(diplomado__id = 4):
+        nombre_beneficiario = obj.get_full_name().upper()
+        cedula = 'IDENTIFICADO(A) CON CÉDULA DE CIUDADANÍA NÚMERO ' + str(obj.cedula)
+
+        municipio = ''
+
+        if obj.radicado != None:
+            municipio = obj.radicado.municipio.nombre.upper()
+        else:
+            if obj.municipio_text != None:
+                municipio = obj.municipio_text.upper()
+
+        date = timezone.now()
+
+        fecha = municipio + ' ' + date.strftime('%d de %B de %Y').upper()
+
+        fuente_primaria = ImageFont.truetype(settings.STATICFILES_DIRS[0] + '\\documentos\\DK_Lemon_Yellow_Sun.otf', 432)
+        fuente_secundaria = ImageFont.truetype(settings.STATICFILES_DIRS[0] + '\\documentos\\DK_Lemon_Yellow_Sun.otf', 100)
+        diploma = Image.open(settings.STATICFILES_DIRS[0]+'\\documentos\\Diploma.png')
+        W,H = diploma.size
+        nombre = ImageDraw.Draw(diploma)
+        w,h = nombre.textsize(nombre_beneficiario,font=fuente_primaria,fill='white')
+
+        nombre.text(((W-w)/2,1450),nombre_beneficiario,fill='white',font=fuente_primaria)
+
+        w,h = nombre.textsize(cedula,font=fuente_secundaria,fill='white')
+
+        nombre.text(((W-w)/2,1950),cedula,fill='white',font=fuente_secundaria)
+
+        w,h = nombre.textsize(fecha,font=fuente_secundaria,fill='white')
+
+        nombre.text(((W-w)/2,2970),fecha,fill='white',font=fuente_secundaria)
+
+
+        diploma.thumbnail((1600,1281),Image.ANTIALIAS)
+
+        output = StringIO.StringIO()
+
+        diploma.save(output,format = 'PNG')
+
+        obj.diploma.save(str(obj.cedula) + '.png',File(output))
+    return "Verificacion completa de diplomas"
