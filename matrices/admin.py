@@ -75,7 +75,8 @@ def diploma(modeladmin, request, queryset):
         if obj.radicado != None:
             municipio = obj.radicado.municipio.nombre.upper()
         else:
-            municipio = obj.municipio_text.upper()
+            if obj.municipio_text != None:
+                municipio = obj.municipio_text.upper()
 
         date = timezone.now()
 
