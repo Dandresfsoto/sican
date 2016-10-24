@@ -12,6 +12,10 @@ import random
 import string
 from usuarios.tasks import send_mail_templated
 from sican.forms import ConsultaBeneficiarioForm
+from django.http import HttpResponseRedirect
+from matrices.models import Beneficiario
+from ipware.ip import get_ip
+from django.utils import timezone
 
 class Login(TemplateView):
     template_name = 'login.html'
@@ -131,3 +135,17 @@ class Diplomas(FormView):
     def get_context_data(self, **kwargs):
         kwargs['inicio'] = True
         return super(Diplomas,self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        success_url = ''
+        cedula = form.cleaned_data['cedula']
+        try:
+            beneficiario = Beneficiario.objects.get(cedula=cedula)
+        except:
+            pass
+        else:
+            success_url = beneficiario.get_diploma_url()
+            beneficiario.ip_descarga = get_ip(self.request)
+            beneficiario.fecha_descarga = timezone.now()
+            beneficiario.save()
+        return HttpResponseRedirect(success_url)

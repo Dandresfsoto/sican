@@ -68,6 +68,14 @@ class Beneficiario(models.Model):
 
         return codigo_ruta + '-' + self.grupo.nombre
 
+    def get_diploma_url(self):
+        try:
+            url = self.diploma.url
+        except:
+            url = ""
+        return url
+
+
 class BeneficiarioPendiente(models.Model):
     diplomado = models.ForeignKey(Diplomado,related_name='diplomado_beneficiariopendiente')
     cedula = models.BigIntegerField(unique=True)

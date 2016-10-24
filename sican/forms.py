@@ -7,8 +7,21 @@ from crispy_forms.layout import Layout, Div, Fieldset, HTML, Submit, ButtonHolde
 from rh.models import TipoSoporte, RequerimientoPersonal
 from usuarios.models import User
 from municipios.models import Municipio
+from matrices.models import Beneficiario
 
 class ConsultaBeneficiarioForm(forms.Form):
+
+    def clean(self):
+        cleaned_data = super(ConsultaBeneficiarioForm, self).clean()
+        cedula = cleaned_data.get('cedula')
+
+        try:
+            beneficiario = Beneficiario.objects.get(cedula=cedula)
+        except:
+            self.add_error('cedula','No hay ningun beneficiario con el numero de cedula ingresado')
+        else:
+            if beneficiario.diplomado.numero != 4:
+                self.add_error('cedula','El numero de cedula no corresponde a un beneficiario de EscuelaTIC Familia.')
 
     def __init__(self, *args, **kwargs):
         super(ConsultaBeneficiarioForm, self).__init__(*args, **kwargs)
