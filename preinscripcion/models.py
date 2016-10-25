@@ -22,6 +22,9 @@ class DocentesPreinscritos(models.Model):
     verificado = models.BooleanField(default=False)
     fecha = models.DateField(auto_now=True)
     masivo = models.BooleanField(default=False)
+    area = models.CharField(max_length=100,blank=True,null=True)
+    localidad = models.CharField(max_length=100,blank=True,null=True)
+    docentes_innovadores = models.BooleanField(default=False,blank=True)
 
     class Meta:
         ordering = ['primer_apellido']
