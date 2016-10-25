@@ -133,6 +133,7 @@ class RegistroSedBogota(forms.ModelForm):
 
         self.fields['departamento'].initial = Departamento.objects.get(id=10)
         self.fields['municipio'].initial = Municipio.objects.get(id=458)
+        self.fields['docentes_innovadores'].initial = True
 
         try:
             docente = DocentesMinEducacion.objects.get(cedula=kwargs['initial']['cedula'])
@@ -198,6 +199,7 @@ class RegistroSedBogota(forms.ModelForm):
                     Div('verificado',css_class='col-sm-3 col-sm-offset-2'),
                     Div('departamento',css_class='col-sm-3 col-sm-offset-2'),
                     Div('municipio',css_class='col-sm-3 col-sm-offset-2'),
+                    Div('docentes_innovadores',css_class='col-sm-3 col-sm-offset-2'),
                     css_class = 'hidden'
                 ),
 
