@@ -1181,6 +1181,60 @@ def matriz_chequeo(email,id_diplomado):
         ws = wb.get_sheet_by_name('DirecTIC')
         diplomado = Diplomado.objects.get(id = 3)
         i = 6
+        dict_productos = [{'letter':'Y','id':72},
+                          {'letter':'AB','id':73},
+                          {'letter':'AF','id':74},
+                          {'letter':'AE','id':75},
+                          {'letter':'AJ','id':76},
+                          {'letter':'AI','id':77},
+                          {'letter':'AP','id':78},
+                          {'letter':'AO','id':79},
+                          {'letter':'AC','id':80},
+                          {'letter':'AD','id':81},
+                          {'letter':'AG','id':82},
+                          {'letter':'AH','id':83},
+                          {'letter':'AK','id':84},
+                          {'letter':'AM','id':85},
+                          {'letter':'AQ','id':86},
+                          {'letter':'AR','id':87},
+                          {'letter':'AS','id':88},
+                          {'letter':'AV','id':89},
+                          {'letter':'AT','id':90},
+                          {'letter':'AU','id':91},
+                          {'letter':'AZ','id':92},
+                          {'letter':'AY','id':93},
+                          {'letter':'BB','id':94},
+                          {'letter':'BE','id':95},
+                          {'letter':'BD','id':96},
+                          {'letter':'AW','id':97},
+                          {'letter':'AX','id':98},
+                          {'letter':'BA','id':99},
+                          {'letter':'BC','id':100},
+                          {'letter':'BF','id':101},
+                          {'letter':'BG','id':102},
+                          {'letter':'BH','id':103},
+                          {'letter':'BJ','id':104},
+                          {'letter':'BI','id':105},
+                          {'letter':'BO','id':106},
+                          {'letter':'BM','id':107},
+                          {'letter':'BR','id':108},
+                          {'letter':'BQ','id':109},
+                          {'letter':'BV','id':110},
+                          {'letter':'BT','id':111},
+                          {'letter':'BK','id':112},
+                          {'letter':'BP','id':113},
+                          {'letter':'BS','id':114},
+                          {'letter':'BW','id':115},
+                          {'letter':'BX','id':116},
+                          {'letter':'BY','id':117},
+                          {'letter':'CB','id':118},
+                          {'letter':'BZ','id':119},
+                          {'letter':'CG','id':120},
+                          {'letter':'CI','id':121},
+                          {'letter':'CC','id':122},
+                          {'letter':'CD','id':123},
+                          {'letter':'CE','id':124}
+                          ]
     else:
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
         ws = wb.get_sheet_by_name('InnovaTIC')
@@ -1766,3 +1820,39 @@ def zip_ss(email):
     shutil.copy('C:\\Temp\\ss.zip',informe.archivo.path)
 
     return "Zip creado Seguridad Social"
+
+@app.task
+def descargas_certificados_escuelatic(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Reporte descargas certificaados Escuela TIC"
+    proceso = "FOR-INF010"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Región','Departamento','Municipios','Formador','Nombres','Apellidos','Cedula','IP','Fecha Descarga']
+
+    formatos = ['General','General','General','General','General','General','General','0','General','d/m/yy']
+
+
+    ancho_columnas =  [30,20,20,20,20,20,20,20,20,20]
+
+    contenidos = []
+
+    for beneficiario in Beneficiario.objects.filter(diplomado__numero = 4).exclude(fecha_descarga = None):
+        contenidos.append([
+            'BENE-'+unicode(beneficiario.id),
+            beneficiario.region.nombre,
+            beneficiario.departamento_text,
+            beneficiario.municipio_text,
+            beneficiario.formador.get_full_name(),
+            beneficiario.nombres,
+            beneficiario.apellidos,
+            beneficiario.cedula,
+            beneficiario.ip_descarga,
+            beneficiario.fecha_descarga
+        ])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"

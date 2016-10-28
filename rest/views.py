@@ -55,6 +55,7 @@ from requerimientos.models import Requerimiento
 from evidencias.models import Red, CargaMasiva as CargaMasivaEvidencias
 from django.utils.timezone import localtime
 from informes.tasks import zip_hv, zip_contrato
+from informes.tasks import descargas_certificados_escuelatic
 
 
 # Create your views here.
@@ -228,6 +229,8 @@ class ReportesView(APIView):
             x = matriz_chequeo_formador.delay(request.user.email,id_formador)
         if id_accion == '21':
             x = zip_ss.delay(request.user.email)
+        if id_accion == '22':
+            x = descargas_certificados_escuelatic.delay(request.user.email)
 
 
         return HttpResponse(status=200)
@@ -484,6 +487,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'diplomas':{
+                'ver':{'name':'Diploma EscuelaTIC','link':'/formacion/diplomas/escuelatic/'}
+            },
             'proyecto':{
                 'ver':{'name':'Delegación de requerimientos','link':'/requerimientos/delegacion/'}
             },
@@ -2536,6 +2542,63 @@ class MatricesDiplomadosList(BaseDatatableView):
                 item.estado,
                 self.request.user.has_perm('permisos_sican.acceso.retoma.editar'),
                 self.request.user.has_perm('permisos_sican.acceso.retoma.eliminar'),
+            ])
+        return json_data
+
+class CertificadosEscuelaTic(BaseDatatableView):
+    """
+    0.id
+    1.region
+    2.radicado
+    3.formador
+    4.grupo
+    5.apellidos
+    6.nombres
+    7.cedula
+    8.correo
+    9.telefono fijo
+    10.telefono celular
+    11.area
+    12.grado
+    13.genero
+    14.estado
+    15.permiso para editar
+    16.permiso para eliminar
+    """
+    model = Beneficiario
+    columns = ['id','region','formador','apellidos','nombres','cedula']
+
+    order_columns = ['id','region','formador','apellidos','nombres','cedula']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(region__nombre__icontains=search) | Q(radicado__numero__icontains=search) |\
+                Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) |\
+                Q(apellidos__icontains=search) | Q(nombres__icontains=search) |\
+                Q(cedula__icontains=search)
+
+            qs = qs.filter(q)
+        return qs
+
+    def get_initial_queryset(self):
+        return Beneficiario.objects.filter(diplomado__numero = 4)
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.region.nombre,
+                item.formador.get_full_name(),
+                item.apellidos,
+                item.nombres,
+                item.cedula,
+                item.get_diploma_url(),
+                item.ip_descarga if item.ip_descarga != None else '',
+                item.fecha_descarga if item.fecha_descarga != None else '',
             ])
         return json_data
 

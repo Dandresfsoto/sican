@@ -9,6 +9,7 @@ from formacion.views import CronogramaFormadorDeleteView, ListaCronogramasSemana
 from formacion.views import ListadoFormadoresGruposView, FormadoresGruposLista, NuevoGrupoFormador, EditarGrupoFormador, EliminarGrupoFormador
 from formacion.views import ListaRevisionFormadorView,NuevaRevisionFormadorView, EditarRevisionFormadorView
 from formacion.views import ListaRequerimientosContratacionView, NuevoRequerimientoContratacionView, UpdateRequerimientoContratacionView
+from formacion.views import DiplomasEscuelaTic
 
 urlpatterns = [
     url(r'^preinscritos/$', ListaPreinscritosView.as_view()),
@@ -50,4 +51,6 @@ urlpatterns = [
     url(r'^requerimientoscontratacion/$', ListaRequerimientosContratacionView.as_view()),
     url(r'^requerimientoscontratacion/nuevo/$', NuevoRequerimientoContratacionView.as_view()),
     url(r'^requerimientoscontratacion/(?P<pk>[0-9]+)/$', UpdateRequerimientoContratacionView.as_view()),
+
+    url(r'^diplomas/escuelatic/$', DiplomasEscuelaTic.as_view()),
 ]

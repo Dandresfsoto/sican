@@ -155,6 +155,7 @@ def build_red(id_red):
         beneficiario = Beneficiario.objects.get(id = beneficiario_id)
         evidencias = red.evidencias.filter(beneficiarios_cargados__id = beneficiario_id)
 
+
         ws.cell('A'+str(i)).value = i - inicia + 1
         ws.cell('B'+str(i)).value = beneficiario.region.nombre.upper()
         ws.cell('C'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text.upper()

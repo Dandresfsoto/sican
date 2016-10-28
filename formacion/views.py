@@ -33,6 +33,15 @@ from rh.models import RequerimientoPersonal
 from rh.forms import RequerimientoPersonalForm, RequerimientoPersonalRhCapacitado
 from django.utils import timezone
 
+class DiplomasEscuelaTic(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/diplomas/escuelatic/lista.html'
+    permission_required = "permisos_sican.formacion.diplomas.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.formacion.diplomas.informes')
+        return super(DiplomasEscuelaTic, self).get_context_data(**kwargs)
 
 class ListaPreinscritosView(LoginRequiredMixin,
                          PermissionRequiredMixin,
