@@ -1295,7 +1295,7 @@ def matriz_chequeo(email,id_diplomado):
         ws.cell('D'+str(i)).value = beneficiario.radicado.numero if beneficiario.radicado != None else ''
         ws.cell('D'+str(i)).style = number
 
-        ws.cell('E'+str(i)).value = beneficiario.dane_ie_text.upper()
+        ws.cell('E'+str(i)).value = beneficiario.dane_ie_text
         ws.cell('E'+str(i)).style = number
 
         ws.cell('F'+str(i)).value = beneficiario.ie_text.upper()
@@ -1842,8 +1842,8 @@ def descargas_certificados_escuelatic(email):
         contenidos.append([
             'BENE-'+unicode(beneficiario.id),
             beneficiario.region.nombre,
-            beneficiario.departamento_text,
-            beneficiario.municipio_text,
+            beneficiario.departamento_text if beneficiario.radicado == None else beneficiario.radicado.municipio.departamento.nombre.upper(),
+            beneficiario.municipio_text if beneficiario.radicado == None else beneficiario.radicado.municipio.nombre.upper(),
             beneficiario.formador.get_full_name(),
             beneficiario.nombres,
             beneficiario.apellidos,
