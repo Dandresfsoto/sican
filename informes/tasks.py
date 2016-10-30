@@ -1236,7 +1236,7 @@ def matriz_chequeo(email,id_diplomado):
                           {'letter':'CD','id':123},
                           {'letter':'CE','id':124}
                           ]
-    elif id_diplomado == '4':
+    else:
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz EscuelaTIC.xlsx')
         ws = wb.get_sheet_by_name('EscuelaTIC')
         diplomado = Diplomado.objects.get(id = 4)
@@ -1446,7 +1446,7 @@ def matriz_chequeo_formador(email,id_formador):
         id_diplomado = '2'
     elif formador.cargo.nombre == 'Formador Tipo 3':
         id_diplomado = '3'
-    else:
+    elif formador.cargo.nombre == 'Formador Tipo 4':
         id_diplomado = '4'
 
 
@@ -1456,7 +1456,7 @@ def matriz_chequeo_formador(email,id_formador):
         nombre = "Matriz lista de chequeo de productos TecnoTIC - " + formador.get_full_name()
     elif id_diplomado == '3':
         nombre = "Matriz lista de chequeo de productos DirecTIC - " + formador.get_full_name()
-    else:
+    elif id_diplomado == '4':
         nombre = "Matriz lista de chequeo de productos EscuelaTIC - " + formador.get_full_name()
 
 
@@ -1600,11 +1600,70 @@ def matriz_chequeo_formador(email,id_formador):
         ws = wb.get_sheet_by_name('DirecTIC')
         diplomado = Diplomado.objects.get(id = 3)
         i = 6
+        dict_productos = [{'letter':'Y','id':72},
+                          {'letter':'AB','id':73},
+                          {'letter':'AF','id':74},
+                          {'letter':'AE','id':75},
+                          {'letter':'AJ','id':76},
+                          {'letter':'AI','id':77},
+                          {'letter':'AP','id':78},
+                          {'letter':'AO','id':79},
+                          {'letter':'AC','id':80},
+                          {'letter':'AD','id':81},
+                          {'letter':'AG','id':82},
+                          {'letter':'AH','id':83},
+                          {'letter':'AK','id':84},
+                          {'letter':'AM','id':85},
+                          {'letter':'AQ','id':86},
+                          {'letter':'AR','id':87},
+                          {'letter':'AS','id':88},
+                          {'letter':'AV','id':89},
+                          {'letter':'AT','id':90},
+                          {'letter':'AU','id':91},
+                          {'letter':'AZ','id':92},
+                          {'letter':'AY','id':93},
+                          {'letter':'BB','id':94},
+                          {'letter':'BE','id':95},
+                          {'letter':'BD','id':96},
+                          {'letter':'AW','id':97},
+                          {'letter':'AX','id':98},
+                          {'letter':'BA','id':99},
+                          {'letter':'BC','id':100},
+                          {'letter':'BF','id':101},
+                          {'letter':'BG','id':102},
+                          {'letter':'BH','id':103},
+                          {'letter':'BJ','id':104},
+                          {'letter':'BI','id':105},
+                          {'letter':'BO','id':106},
+                          {'letter':'BM','id':107},
+                          {'letter':'BR','id':108},
+                          {'letter':'BQ','id':109},
+                          {'letter':'BV','id':110},
+                          {'letter':'BT','id':111},
+                          {'letter':'BK','id':112},
+                          {'letter':'BP','id':113},
+                          {'letter':'BS','id':114},
+                          {'letter':'BW','id':115},
+                          {'letter':'BX','id':116},
+                          {'letter':'BY','id':117},
+                          {'letter':'CB','id':118},
+                          {'letter':'BZ','id':119},
+                          {'letter':'CG','id':120},
+                          {'letter':'CI','id':121},
+                          {'letter':'CC','id':122},
+                          {'letter':'CD','id':123},
+                          {'letter':'CE','id':124}
+                          ]
     else:
-        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
-        ws = wb.get_sheet_by_name('InnovaTIC')
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz EscuelaTIC.xlsx')
+        ws = wb.get_sheet_by_name('EscuelaTIC')
         diplomado = Diplomado.objects.get(id = 4)
-        i = 6
+        i = 10
+        dict_productos = [{'letter':'Z','id':221},
+                          {'letter':'AD','id':233},
+                          {'letter':'AI','id':224},
+                          {'letter':'AP','id':224},
+        ]
 
     number = Style(font=Font(name='Calibri',size=12),
                    alignment=Alignment(horizontal='right',vertical='center',wrap_text=False),
