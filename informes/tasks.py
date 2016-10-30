@@ -1439,6 +1439,8 @@ def matriz_chequeo_formador(email,id_formador):
     usuario = User.objects.get(email=email)
 
     formador = Formador.objects.get(id = int(id_formador))
+    id_diplomado = ''
+    nombre = ''
 
     if formador.cargo.nombre == 'Formador Tipo 1':
         id_diplomado = '1'
