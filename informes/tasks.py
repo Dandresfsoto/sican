@@ -1030,6 +1030,7 @@ def acumulado_tipo_4(email):
 @app.task
 def matriz_chequeo(email,id_diplomado):
     usuario = User.objects.get(email=email)
+    nombre = ''
 
     if id_diplomado == '1':
         nombre = "Matriz lista de chequeo de productos InnovaTIC"
@@ -1037,7 +1038,7 @@ def matriz_chequeo(email,id_diplomado):
         nombre = "Matriz lista de chequeo de productos TecnoTIC"
     elif id_diplomado == '3':
         nombre = "Matriz lista de chequeo de productos DirecTIC"
-    else:
+    elif id_diplomado == '4':
         nombre = "Matriz lista de chequeo de productos EscuelaTIC"
 
 
@@ -1235,7 +1236,7 @@ def matriz_chequeo(email,id_diplomado):
                           {'letter':'CD','id':123},
                           {'letter':'CE','id':124}
                           ]
-    else:
+    elif id_diplomado == '4':
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz EscuelaTIC.xlsx')
         ws = wb.get_sheet_by_name('EscuelaTIC')
         diplomado = Diplomado.objects.get(id = 4)
