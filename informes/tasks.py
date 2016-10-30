@@ -1712,46 +1712,46 @@ def matriz_chequeo_formador(email,id_formador):
         ws.cell('A'+str(i)).value = beneficiario.region.nombre.upper()
         ws.cell('A'+str(i)).style = text
 
-        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text.upper()
+        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text
         ws.cell('B'+str(i)).style = text
 
-        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else beneficiario.secretaria_text.upper()
+        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else beneficiario.secretaria_text
         ws.cell('C'+str(i)).style = text
 
         ws.cell('D'+str(i)).value = beneficiario.radicado.numero if beneficiario.radicado != None else ''
         ws.cell('D'+str(i)).style = number
 
-        ws.cell('E'+str(i)).value = beneficiario.dane_ie_text.upper()
+        ws.cell('E'+str(i)).value = beneficiario.dane_ie_text
         ws.cell('E'+str(i)).style = number
 
-        ws.cell('F'+str(i)).value = beneficiario.ie_text.upper()
+        ws.cell('F'+str(i)).value = beneficiario.ie_text
         ws.cell('F'+str(i)).style = text
 
-        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else beneficiario.dane_sede_text.upper()
+        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else beneficiario.dane_sede_text
         ws.cell('G'+str(i)).style = number
 
-        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else beneficiario.sede_text.upper()
+        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else beneficiario.sede_text
         ws.cell('H'+str(i)).style = text
 
-        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text.upper()
+        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text
         ws.cell('I'+str(i)).style = text
 
         ws.cell('J'+str(i)).value = beneficiario.radicado.ubicacion if beneficiario.radicado != None else ''
         ws.cell('J'+str(i)).style = text
 
-        ws.cell('K'+str(i)).value = beneficiario.get_grupo().upper()
+        ws.cell('K'+str(i)).value = beneficiario.get_grupo()
         ws.cell('K'+str(i)).style = text
 
-        ws.cell('L'+str(i)).value = beneficiario.formador.get_full_name().upper()
+        ws.cell('L'+str(i)).value = beneficiario.formador.get_full_name()
         ws.cell('L'+str(i)).style = text
 
         ws.cell('M'+str(i)).value = beneficiario.formador.cedula
         ws.cell('M'+str(i)).style = number
 
-        ws.cell('N'+str(i)).value = beneficiario.apellidos.upper()
+        ws.cell('N'+str(i)).value = beneficiario.apellidos
         ws.cell('N'+str(i)).style = text
 
-        ws.cell('O'+str(i)).value = beneficiario.nombres.upper()
+        ws.cell('O'+str(i)).value = beneficiario.nombres
         ws.cell('O'+str(i)).style = text
 
         ws.cell('P'+str(i)).value = beneficiario.cedula
@@ -1923,3 +1923,11 @@ def descargas_certificados_escuelatic(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
+
+@app.task
+def compilado_matriz_chequeo():
+    matriz_chequeo.delay('sistemas@asoandes.org','1')
+    matriz_chequeo.delay('sistemas@asoandes.org','2')
+    matriz_chequeo.delay('sistemas@asoandes.org','3')
+    matriz_chequeo.delay('sistemas@asoandes.org','4')
+    return "Reporte diario generado"
