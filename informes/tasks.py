@@ -1236,10 +1236,15 @@ def matriz_chequeo(email,id_diplomado):
                           {'letter':'CE','id':124}
                           ]
     else:
-        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
-        ws = wb.get_sheet_by_name('InnovaTIC')
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz EscuelaTIC.xlsx')
+        ws = wb.get_sheet_by_name('EscuelaTIC')
         diplomado = Diplomado.objects.get(id = 4)
-        i = 6
+        i = 10
+        dict_productos = [{'letter':'Z','id':221},
+                          {'letter':'AD','id':233},
+                          {'letter':'AI','id':224},
+                          {'letter':'AP','id':224},
+        ]
 
     number = Style(font=Font(name='Calibri',size=12),
                    alignment=Alignment(horizontal='right',vertical='center',wrap_text=False),
