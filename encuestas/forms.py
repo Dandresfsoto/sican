@@ -381,3 +381,220 @@ class PercepcionInicialForm(forms.Form):
                 """
             )
         )
+
+class PercepcionFinalForm(forms.Form):
+    #1
+    area = forms.CharField(label='',max_length=100,widget=forms.Select(choices=(
+        ('','------------------'),
+        ('1','Ciencias naturales y educación ambiental'),
+        ('2','Ciencias sociales, historia, geografia, constitución politica y/o democrática'),
+        ('3','Educación artística'),
+        ('4','Educación ética y en valores humanos'),
+        ('5','Educación física, recreación y deportes'),
+        ('6','Educación religiosa'),
+        ('7','Humanidades'),
+        ('8','Matemáticas'),
+        ('9','Lengua castellana'),
+        ('10','Lengua extranjera'),
+        ('11','Lengua nativa'),
+        ('12','Competencias ciudadanas'),
+        ('13','Filosofia'),
+        ('14','Todas las áreas'),
+        ('15','Otras'),
+    )))
+
+
+    #2
+    tiempo_formacion = forms.CharField(label='',max_length=100)
+    #3
+    pregunta_1 = forms.CharField(label='',max_length=100)
+    #4
+    pregunta_2 = forms.CharField(label='',max_length=100)
+    #5
+    pregunta_3 = forms.CharField(label='',max_length=100)
+    #6
+    pregunta_4 = forms.CharField(label='',max_length=100)
+    #7
+    pregunta_5 = forms.CharField(label='',max_length=100)
+
+    #8
+    pregunta_6 = forms.ChoiceField(label="",widget=forms.RadioSelect(),choices=(
+        ('1','a. Totalmente en desacuerdo'),
+        ('2','b. En desacuerdo'),
+        ('3','c. Neutral (Ni en desacuerdo ni de acuerdo)'),
+        ('4','d. De acuerdo'),
+        ('5','e. Totalmente de acuerdo'),
+    ))
+
+    pregunta_7 = forms.ChoiceField(label="",widget=forms.RadioSelect(),choices=(
+        ('1','a. Totalmente en desacuerdo'),
+        ('2','b. En desacuerdo'),
+        ('3','c. Neutral (Ni en desacuerdo ni de acuerdo)'),
+        ('4','d. De acuerdo'),
+        ('5','e. Totalmente de acuerdo'),
+    ))
+
+    pregunta_8 = forms.ChoiceField(label="",widget=forms.RadioSelect(),choices=(
+        ('1','a. Totalmente en desacuerdo'),
+        ('2','b. En desacuerdo'),
+        ('3','c. Neutral (Ni en desacuerdo ni de acuerdo)'),
+        ('4','d. De acuerdo'),
+        ('5','e. Totalmente de acuerdo'),
+    ))
+
+    pregunta_9 = forms.ChoiceField(label="",widget=forms.RadioSelect(),choices=(
+        ('1','a. Totalmente en desacuerdo'),
+        ('2','b. En desacuerdo'),
+        ('3','c. Neutral (Ni en desacuerdo ni de acuerdo)'),
+        ('4','d. De acuerdo'),
+        ('5','e. Totalmente de acuerdo'),
+    ))
+
+    pregunta_10 = forms.ChoiceField(label="",widget=forms.RadioSelect(),choices=(
+        ('1','a. Totalmente en desacuerdo'),
+        ('2','b. En desacuerdo'),
+        ('3','c. Neutral (Ni en desacuerdo ni de acuerdo)'),
+        ('4','d. De acuerdo'),
+        ('5','e. Totalmente de acuerdo'),
+    ))
+
+    pregunta_11 = forms.ChoiceField(label="",widget=forms.RadioSelect(),choices=(
+        ('1','a. Totalmente en desacuerdo'),
+        ('2','b. En desacuerdo'),
+        ('3','c. Neutral (Ni en desacuerdo ni de acuerdo)'),
+        ('4','d. De acuerdo'),
+        ('5','e. Totalmente de acuerdo'),
+    ))
+
+    pregunta_12 = forms.ChoiceField(label="",widget=forms.RadioSelect(),choices=(
+        ('1','a. Totalmente en desacuerdo'),
+        ('2','b. En desacuerdo'),
+        ('3','c. Neutral (Ni en desacuerdo ni de acuerdo)'),
+        ('4','d. De acuerdo'),
+        ('5','e. Totalmente de acuerdo'),
+    ))
+
+
+    def __init__(self,*args, **kwargs):
+        super(PercepcionFinalForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                '1. ¿En que área te desempeñas como docente?',
+                Div(
+                    Div('area',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '2. ¿Cuanto tiempo llevas en formación?',
+                Div(
+                    Div('tiempo_formacion',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '3. ¿Cuál fue el grado de terminación de contenidos respecto del contenido inicial?',
+                Div(
+                    Div('pregunta_1',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '4. ¿Cuántas horas se dedicaron en total de manera presencial al curso?',
+                Div(
+                    Div('pregunta_2',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '5. ¿Cuántas horas se dedicaron en total de manera virtual al curso?',
+                Div(
+                    Div('pregunta_3',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '6. ¿Cuál fue la dedicación del formador en horas extras al seguimiento y colaboración?',
+                Div(
+                    Div('pregunta_4',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '7. ¿Cuál fue el porcentaje de avance del proyecto pedagógico?',
+                Div(
+                    Div('pregunta_5',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '8. ¿El formador transmitió los conceptos adecuadamente?',
+                Div(
+                    Div('pregunta_6',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '9. ¿El formador cumplió con los tiempos y horarios establecidos y planeados?',
+                Div(
+                    Div('pregunta_7',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '10. ¿El formador dedicó tiempo a la guianza personalizada de las sesiones?',
+                Div(
+                    Div('pregunta_8',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '11. ¿El formador presentó los temas con la suficiencia y conocimiento requerido para hacerse entender?',
+                Div(
+                    Div('pregunta_9',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '12. ¿El formador respondió a sus preguntas y consultas oportunamente (dentro de los tres días siguientes al envío de la consulta)?',
+                Div(
+                    Div('pregunta_10',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '13. ¿Los contenidos vistos llenaron sus expectativas?',
+                Div(
+                    Div('pregunta_11',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+            Fieldset(
+                '14. ¿Los contenidos vistos han sido de utilidad en el desarrollo de la actividad de clase?',
+                Div(
+                    Div('pregunta_12',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                css_class="fieldset_class"
+            ),
+
+            HTML(
+                """
+                <button type="submit" class="btn btn-cpe">Enviar respuestas</button>
+                """
+            )
+        )
