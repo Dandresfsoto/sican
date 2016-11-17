@@ -47,7 +47,7 @@ def grupos_colombia_aprende(modeladmin, request, queryset):
             ws['N'+str(fila)] = formador.correo_personal
             ws['O'+str(fila)] = formador.celular_personal
             ws['P'+str(fila)] = formador.usuario_colombia_aprende
-            ws['Q'+str(fila)] = diplomado + '-' + i
+            ws['Q'+str(fila)] = diplomado + '-' + str(i)
             ws['R'+str(fila)] = ''
             ws['S'+str(fila)] = ''
             ws['T'+str(fila)] = ''
