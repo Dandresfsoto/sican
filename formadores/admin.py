@@ -29,30 +29,33 @@ def grupos_colombia_aprende(modeladmin, request, queryset):
         if formador.cargo.nombre == 'Formador Tipo 4':
             diplomado = 'ESCUELA TIC'
 
-        ws['A'+str(fila)] = 'ASOANDES'
-        ws['B'+str(fila)] = formador.get_region_string()
-        ws['C'+str(fila)] = ''
-        ws['D'+str(fila)] = ''
-        ws['E'+str(fila)] = Administrativo.objects.exclude(oculto=True).get(correo_corporativo = formador.lider.email).cedula
-        ws['F'+str(fila)] = Administrativo.objects.exclude(oculto=True).get(correo_corporativo = formador.lider.email).nombres
-        ws['G'+str(fila)] = Administrativo.objects.exclude(oculto=True).get(correo_corporativo = formador.lider.email).apellidos
-        ws['H'+str(fila)] = formador.lider.email
-        ws['I'+str(fila)] = Administrativo.objects.exclude(oculto=True).get(correo_corporativo = formador.lider.email).celular_personal
-        ws['J'+str(fila)] = Administrativo.objects.exclude(oculto=True).get(correo_corporativo = formador.lider.email).usuario_colombia_aprende
-        ws['K'+str(fila)] = formador.cedula
-        ws['L'+str(fila)] = formador.nombres
-        ws['M'+str(fila)] = formador.apellidos
-        ws['N'+str(fila)] = formador.correo_personal
-        ws['O'+str(fila)] = formador.celular_personal
-        ws['P'+str(fila)] = formador.usuario_colombia_aprende
-        ws['Q'+str(fila)] = diplomado
-        ws['R'+str(fila)] = ''
-        ws['S'+str(fila)] = ''
-        ws['T'+str(fila)] = ''
-        ws['U'+str(fila)] = ''
-        ws['V'+str(fila)] = ''
-        ws['W'+str(fila)] = ''
-        fila += 1
+        for i in range(1,5):
+
+            ws['A'+str(fila)] = 'ASOANDES'
+            ws['B'+str(fila)] = formador.get_region_string()
+            ws['C'+str(fila)] = ''
+            ws['D'+str(fila)] = ''
+            ws['E'+str(fila)] = Administrativo.objects.exclude(oculto=True).get(correo_corporativo = formador.lider.email).cedula
+            ws['F'+str(fila)] = Administrativo.objects.exclude(oculto=True).get(correo_corporativo = formador.lider.email).nombres
+            ws['G'+str(fila)] = Administrativo.objects.exclude(oculto=True).get(correo_corporativo = formador.lider.email).apellidos
+            ws['H'+str(fila)] = formador.lider.email
+            ws['I'+str(fila)] = Administrativo.objects.exclude(oculto=True).get(correo_corporativo = formador.lider.email).celular_personal
+            ws['J'+str(fila)] = Administrativo.objects.exclude(oculto=True).get(correo_corporativo = formador.lider.email).usuario_colombia_aprende
+            ws['K'+str(fila)] = formador.cedula
+            ws['L'+str(fila)] = formador.nombres
+            ws['M'+str(fila)] = formador.apellidos
+            ws['N'+str(fila)] = formador.correo_personal
+            ws['O'+str(fila)] = formador.celular_personal
+            ws['P'+str(fila)] = formador.usuario_colombia_aprende
+            ws['Q'+str(fila)] = diplomado + '-' + i
+            ws['R'+str(fila)] = ''
+            ws['S'+str(fila)] = ''
+            ws['T'+str(fila)] = ''
+            ws['U'+str(fila)] = ''
+            ws['V'+str(fila)] = ''
+            ws['W'+str(fila)] = ''
+            fila += 1
+
     wb.save('C:\\Temp\\Colombia\\Formadores.xlsx')
 
 grupos_colombia_aprende.short_description = 'Usuarios colombia aprende'
