@@ -29,7 +29,7 @@ def grupos_colombia_aprende(modeladmin, request, queryset):
         if formador.cargo.nombre == 'Formador Tipo 4':
             diplomado = 'ESCUELA TIC'
 
-        for i in range(1,5):
+        for i in range(1,6):
 
             ws['A'+str(fila)] = 'ASOANDES'
             ws['B'+str(fila)] = formador.get_region_string()
