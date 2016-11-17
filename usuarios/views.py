@@ -12,7 +12,6 @@ from django.contrib.auth import update_session_auth_hash
 from usuarios.forms import ChangePasswordForm
 from usuarios.tasks import send_mail_templated
 from sican.settings.base import DEFAULT_FROM_EMAIL
-from mail_templated import send_mail
 
 # Create your views here.
 class Perfil(LoginRequiredMixin,UpdateView):
@@ -64,8 +63,7 @@ class ChangePassword(LoginRequiredMixin,FormView):
         user.backend = 'django.contrib.auth.backends.ModelBackend'
         update_session_auth_hash(self.request, user)
         url_base = self.request.META['HTTP_ORIGIN']
-        #send_mail_templated.delay('email/change_password.tpl', {'url_base':url_base,'first_name':user.first_name,'last_name':user.last_name,'email':user.email,'password':form.data['new_password_1']}, DEFAULT_FROM_EMAIL, [user.email])
-        send_mail('email/change_password.tpl', {'url_base':url_base,'first_name':user.first_name,'last_name':user.last_name,'email':user.email,'password':form.data['new_password_1']}, DEFAULT_FROM_EMAIL, [user.email])
+        send_mail_templated.delay('email/change_password.tpl', {'url_base':url_base,'first_name':user.first_name,'last_name':user.last_name,'email':user.email,'password':form.data['new_password_1']}, DEFAULT_FROM_EMAIL, [user.email])
         return self.render_to_response(self.get_context_data(mensaje='Se cambio correctamente la contraseña'))
 
     def get_context_data(self, mensaje=None ,**kwargs):
