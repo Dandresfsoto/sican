@@ -37,6 +37,7 @@ from productos.models import Entregable
 from evidencias.models import Red
 from openpyxl.comments import Comment
 from django.db.models import Q
+from region.models import Region
 
 @app.task
 def nueva_semana():
@@ -1237,7 +1238,7 @@ def matriz_chequeo(email,id_diplomado):
         dict_productos = [{'letter':'Z','id':221},
                           {'letter':'AD','id':233},
                           {'letter':'AI','id':224},
-                          {'letter':'AP','id':224},
+                          {'letter':'AP','id':228},
         ]
 
     number = Style(font=Font(name='Calibri',size=12),
@@ -1650,7 +1651,7 @@ def matriz_chequeo_formador(email,id_formador):
         dict_productos = [{'letter':'Z','id':221},
                           {'letter':'AD','id':233},
                           {'letter':'AI','id':224},
-                          {'letter':'AP','id':224},
+                          {'letter':'AP','id':228},
         ]
 
     number = Style(font=Font(name='Calibri',size=12),
@@ -1917,3 +1918,107 @@ def compilado_matriz_chequeo():
     matriz_chequeo.delay('sistemas@asoandes.org','3')
     matriz_chequeo.delay('sistemas@asoandes.org','4')
     return "Reporte diario generado"
+
+@app.task
+def progreso_listados_actas(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Progreso de carga listados de asistencia y actas de compromiso"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    output = StringIO()
+    wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/PROGRESO.xlsx')
+    ws = wb.get_sheet_by_name('Hoja1')
+
+    dict_productos_t1 = [{'letter':'B','id':8},
+                          {'letter':'C','id':9},
+                          {'letter':'D','id':12},
+                          {'letter':'E','id':14},
+                          {'letter':'F','id':17},
+                          {'letter':'G','id':27},
+                          {'letter':'H','id':30},
+                          {'letter':'I','id':33},
+                          {'letter':'J','id':36},
+                          {'letter':'K','id':46},
+                          {'letter':'L','id':49},
+                          {'letter':'M','id':52},
+                          {'letter':'N','id':55},
+                          {'letter':'O','id':63},
+                          {'letter':'P','id':66},
+                          ]
+
+    dict_productos_t2 = [{'letter':'B','id':72},
+                          {'letter':'C','id':73},
+                          {'letter':'D','id':74},
+                          {'letter':'E','id':76},
+                          {'letter':'F','id':78},
+                          {'letter':'G','id':89},
+                          {'letter':'H','id':92},
+                          {'letter':'I','id':94},
+                          {'letter':'J','id':95},
+                          {'letter':'K','id':104},
+                          {'letter':'L','id':106},
+                          {'letter':'M','id':108},
+                          {'letter':'N','id':110},
+                          {'letter':'O','id':118},
+                          {'letter':'P','id':120},
+                          ]
+
+    dict_productos_t3 = [{'letter':'B','id':127},
+                          {'letter':'C','id':128},
+                          {'letter':'D','id':131},
+                          {'letter':'E','id':133},
+                          {'letter':'F','id':135},
+                          {'letter':'G','id':137},
+                          {'letter':'H','id':139},
+                          {'letter':'I','id':146},
+                          {'letter':'J','id':148},
+                          {'letter':'K','id':150},
+                          {'letter':'L','id':155},
+                          {'letter':'M','id':157},
+                          {'letter':'N','id':159},
+                          {'letter':'O','id':161},
+                          {'letter':'P','id':167},
+                          {'letter':'Q','id':169},
+                          ]
+
+    dict_productos_t4 = [ {'letter':'B','id':224},
+                          {'letter':'C','id':228},
+        ]
+
+    for producto in dict_productos_t1:
+        evidencias = Evidencia.objects.filter(entregable__id = producto['id'])
+        i = 5
+        for region in Region.objects.filter(id__in=[1,2]):
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            i += 1
+
+    for producto in dict_productos_t2:
+        evidencias = Evidencia.objects.filter(entregable__id = producto['id'])
+        i = 16
+        for region in Region.objects.filter(id__in=[1,2]):
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            i += 1
+
+    for producto in dict_productos_t3:
+        evidencias = Evidencia.objects.filter(entregable__id = producto['id'])
+        i = 27
+        for region in Region.objects.filter(id__in=[1,2]):
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            i += 1
+
+
+    for producto in dict_productos_t4:
+        evidencias = Evidencia.objects.filter(entregable__id = producto['id'])
+        i = 38
+        for region in Region.objects.filter(id__in=[1,2]):
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            i += 1
+
+    wb.save(output)
+
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"

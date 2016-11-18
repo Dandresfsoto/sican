@@ -222,6 +222,10 @@ class EvidenciasListView(LoginRequiredMixin,
     template_name = 'evidencias/codigos/lista.html'
     permission_required = "permisos_sican.evidencias.codigos.ver"
 
+    def get_context_data(self, **kwargs):
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.evidencias.codigos.informes')
+        return super(EvidenciasListView,self).get_context_data(**kwargs)
+
 
 class RedsListView(LoginRequiredMixin,
                          PermissionRequiredMixin,

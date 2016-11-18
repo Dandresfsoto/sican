@@ -55,7 +55,7 @@ from requerimientos.models import Requerimiento
 from evidencias.models import Red, CargaMasiva as CargaMasivaEvidencias
 from django.utils.timezone import localtime
 from informes.tasks import zip_hv, zip_contrato
-from informes.tasks import descargas_certificados_escuelatic
+from informes.tasks import descargas_certificados_escuelatic, progreso_listados_actas
 
 
 # Create your views here.
@@ -231,6 +231,8 @@ class ReportesView(APIView):
             x = zip_ss.delay(request.user.email)
         if id_accion == '22':
             x = descargas_certificados_escuelatic.delay(request.user.email)
+        if id_accion == '23':
+            x = progreso_listados_actas.delay(request.user.email)
 
 
         return HttpResponse(status=200)
