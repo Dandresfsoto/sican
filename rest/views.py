@@ -487,6 +487,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'auxiliares':{
+                'ver':{'name':'Rendimiento carga de evidencias','link':'/evidencias/rendimiento/'}
+            },
             'diplomas':{
                 'ver':{'name':'Diploma EscuelaTIC','link':'/formacion/diplomas/escuelatic/'}
             },
@@ -3574,5 +3577,40 @@ class CargaMasivaEvidenciasList(BaseDatatableView):
                 item.get_excel_url(),
                 item.get_zip_url(),
                 item.get_resultado_url()
+            ])
+        return json_data
+
+
+class RendimientoAuxiliaresList(BaseDatatableView):
+    """
+    """
+    model = User
+    columns = ['id','first_name','email']
+
+    order_columns = ['id','first_name','email']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return User.objects.filter(id__in = Evidencia.objects.all().values_list('usuario__id',flat=True).distinct())
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(first_name__icontains = search.capitalize()) | Q(email__icontains = search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+
+    def prepare_results(self, qs):
+        json_data = []
+        now = datetime.datetime.now()
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.get_full_name_string(),
+                item.email,
+                Evidencia.objects.filter(usuario = item).count(),
+                Evidencia.objects.filter(usuario = item,updated__year = str(now.year),updated__month = str(now.month),updated__day = str(now.day)).count()
             ])
         return json_data

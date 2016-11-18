@@ -3,6 +3,7 @@ from evidencias.views import DiplomadosListView, FormadoresListView, NivelesList
 from evidencias.views import NuevoSoporteView, UpdateSoporteView, DeleteSoporteView, EvidenciasListView
 from evidencias.views import RedsListView, NuevoRedView
 from evidencias.views import CargaMasivaListView, NuevoCargaMasivaView, UpdateRedView
+from evidencias.views import AuxiliaresListView
 
 urlpatterns = [
     url(r'^general/$', DiplomadosListView.as_view()),
@@ -24,4 +25,6 @@ urlpatterns = [
 
     url(r'^cargamasiva/$', CargaMasivaListView.as_view()),
     url(r'^cargamasiva/nuevo/$', NuevoCargaMasivaView.as_view()),
+
+    url(r'^rendimiento/$', AuxiliaresListView.as_view()),
 ]

@@ -19,6 +19,7 @@ from rest.views import CargaMasivaMatrices, FormadoresListEvidencias, NivelesLis
 from rest.views import SoportesListEvidencias,Cedulas2BeneficiariosId
 from rest.views import DelegacionRequerimientos, EvidenciasCodigos
 from rest.views import RedList, CargaMasivaEvidenciasList, DiplomadosEvidenciasList, FormadoresConsolidadoRh,CertificadosEscuelaTic
+from rest.views import RendimientoAuxiliaresList
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -127,4 +128,6 @@ urlpatterns = [
     url(r'rh/consolidadoformadores/',FormadoresConsolidadoRh.as_view()),
 
     url(r'diplomas/escuelatic/',CertificadosEscuelaTic.as_view()),
+
+    url(r'auxiliares/rendimiento/',RendimientoAuxiliaresList.as_view()),
 ]

@@ -398,3 +398,9 @@ class NuevoCargaMasivaView(LoginRequiredMixin,
         self.object = form.save()
         carga_masiva_evidencias.delay(self.object.id,self.request.user.id)
         return super(NuevoCargaMasivaView,self).form_valid(form)
+
+class AuxiliaresListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/rendimiento/lista.html'
+    permission_required = "permisos_sican.auxiliares.rendimiento.ver"
