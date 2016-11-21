@@ -24,6 +24,7 @@ class Formador(models.Model):
     nombres = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     cedula = models.BigIntegerField(unique=True)
+    expedicion = models.CharField(max_length=100,blank=True)
     correo_personal = models.EmailField(max_length=100,blank=True)
     celular_personal = models.CharField(max_length=100,blank=True)
 
