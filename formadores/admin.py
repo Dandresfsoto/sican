@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.contrib import admin
 from formadores.models import Formador
 from formadores.models import SolicitudTransporte, Desplazamiento
@@ -10,6 +13,7 @@ from fdfgen import forge_fdf
 import os
 from matrices.models import Beneficiario
 import random
+from evidencias.models import Evidencia
 
 # Register your models here.
 
@@ -64,8 +68,11 @@ def grupos_colombia_aprende(modeladmin, request, queryset):
 grupos_colombia_aprende.short_description = 'Usuarios colombia aprende'
 
 def actas_compromiso(modeladmin, request, queryset):
+    evidencia = Evidencia.objects.filter(entregable__id__in = [8,72,127]).values_list('beneficiarios_cargados__id',flat=True).distinct()
+    x = list(evidencia)
+    x.remove(None)
     for formador in queryset:
-        for beneficiario in Beneficiario.objects.filter(formador = formador):
+        for beneficiario in Beneficiario.objects.filter(formador = formador).exclude(id__in = x):
 
             municipio = ''
             sede = ''
@@ -75,7 +82,8 @@ def actas_compromiso(modeladmin, request, queryset):
                 sede = beneficiario.radicado.nombre_sede.upper()
             else:
                 municipio = beneficiario.municipio_text.upper()
-                sede = beneficiario.sede_text.upper()
+                if beneficiario.sede_text != None:
+                    sede = beneficiario.sede_text.upper()
 
             fields = [('Texto1', beneficiario.get_full_name().upper()),
                       ('Texto2', beneficiario.cedula),
@@ -93,14 +101,14 @@ def actas_compromiso(modeladmin, request, queryset):
 
             fdf = forge_fdf("",fields,[],[],[])
 
-            if not os.path.exists("C:\\Temp\\ACTAS\\"+ formador.get_full_name().upper()):
-                os.mkdir("C:\\Temp\\ACTAS\\"+ formador.get_full_name().upper())
+            if not os.path.exists("C:\\Temp\\ACTAS\\"+ formador.get_full_name().upper().encode('ascii',errors='ignore')):
+                os.mkdir("C:\\Temp\\ACTAS\\"+ formador.get_full_name().upper().encode('ascii',errors='ignore'))
 
-            fdf_file = open("C:\\Temp\\ACTAS\\"+ formador.get_full_name().upper() +"\\"+str(beneficiario.cedula)+".fdf","wb")
+            fdf_file = open("C:\\Temp\\ACTAS\\"+ formador.get_full_name().upper().encode('ascii',errors='ignore') +"\\"+str(beneficiario.cedula)+".fdf","wb")
             fdf_file.write(fdf)
             fdf_file.close()
-            os.system('pdftk "C:\\Temp\\ACTAS\\Acta de compromiso.pdf" fill_form "C:\\Temp\\ACTAS\\'+ formador.get_full_name().upper() + "\\" + str(beneficiario.cedula)+'.fdf" output "C:\\Temp\\ACTAS\\' + formador.get_full_name().upper() + "\\" + str(beneficiario.cedula)+'.pdf"')
-
+            os.system('pdftk "C:\\Temp\\ACTAS\\Acta de compromiso.pdf" fill_form "C:\\Temp\\ACTAS\\'+ formador.get_full_name().upper().encode('ascii',errors='ignore') + "\\" + str(beneficiario.cedula)+'.fdf" output "C:\\Temp\\ACTAS\\' + formador.get_full_name().upper().encode('ascii',errors='ignore') + "\\" + str(beneficiario.cedula)+'.pdf"')
+            os.remove('C:\\Temp\\ACTAS\\'+ formador.get_full_name().upper().encode('ascii',errors='ignore') + "\\" + str(beneficiario.cedula)+'.fdf')
 actas_compromiso.short_description = 'Actas de compromiso'
 
 class FormadorAdmin(admin.ModelAdmin):
