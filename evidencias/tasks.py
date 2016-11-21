@@ -160,7 +160,7 @@ def build_red(id_red):
         ws.cell('B'+str(i)).value = beneficiario.region.nombre.upper()
         ws.cell('C'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text.upper()
         ws.cell('D'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text.upper()
-        ws.cell('E'+str(i)).value = beneficiario.grupo.formador.codigo_ruta.upper() + '-' + beneficiario.grupo.nombre
+        ws.cell('E'+str(i)).value = beneficiario.ruta.upper() + '-' + beneficiario.grupo.nombre
         ws.cell('F'+str(i)).value = beneficiario.formador.get_full_name().upper()
         ws.cell('G'+str(i)).value = beneficiario.formador.cedula
         ws.cell('G'+str(i)).number_format = '0'

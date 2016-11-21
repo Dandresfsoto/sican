@@ -38,6 +38,7 @@ class Beneficiario(models.Model):
 
     formador = models.ForeignKey(Formador,related_name='formador_beneficiario')
     grupo = models.ForeignKey(Grupos,related_name='grupo_beneficiario')
+    ruta = models.CharField(max_length=100,blank=True)
     apellidos = models.CharField(max_length=100)
     nombres = models.CharField(max_length=100)
     cedula = models.BigIntegerField(unique=True)
@@ -61,12 +62,7 @@ class Beneficiario(models.Model):
         return self.nombres + ' ' + self.apellidos
 
     def get_grupo(self):
-        if self.formador.codigo_ruta != None:
-            codigo_ruta = self.formador.codigo_ruta
-        else:
-            codigo_ruta = ''
-
-        return codigo_ruta + '-' + self.grupo.nombre
+        return self.ruta + '-' + self.grupo.nombre
 
     def get_diploma_url(self):
         try:

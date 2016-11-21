@@ -150,6 +150,13 @@ def carga_masiva_matrices(id,email):
                                     except:
                                         resultado = 'No se puede identificar el grupo'
                                     else:
+                                        ruta = ''
+
+                                        for t in grupo_list[:-1]:
+                                            ruta += str(t) + '-'
+
+                                        ruta = ruta[:-1]
+
                                         grupo, grupo_creado = Grupos.objects.get_or_create(formador=formador,nombre = grupo_numero)
 
                                         if grupo_creado:
@@ -204,6 +211,7 @@ def carga_masiva_matrices(id,email):
 
                                                         beneficiario.radicado_text = radicado_text
                                                         beneficiario.formador = formador
+                                                        beneficiario.ruta = ruta
                                                         beneficiario.grupo = grupo
                                                         beneficiario.apellidos =fila[13].value
                                                         beneficiario.nombres = fila[14].value
@@ -224,7 +232,7 @@ def carga_masiva_matrices(id,email):
                                                                                     departamento_text=fila[1].value,secretaria_text=fila[2].value,
                                                                                     dane_ie_text=fila[4].value,ie_text=fila[5].value,dane_sede_text=fila[6].value,
                                                                                     sede_text=fila[7].value,municipio_text=fila[8].value,zona_text=fila[9].value,
-                                                                                    formador=formador,grupo=grupo,apellidos=fila[13].value,
+                                                                                    formador=formador,grupo=grupo,apellidos=fila[13].value,ruta=ruta,
                                                                                     nombres=fila[14].value,cedula=fila[15].value,correo=fila[16].value,
                                                                                     telefono_fijo=fila[17].value,telefono_celular=fila[18].value,
                                                                                     area=area,grado=grado,genero=fila[22].value,estado=fila[23].value)
