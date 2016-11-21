@@ -6,6 +6,10 @@ from financiera.tasks import cortes
 import openpyxl
 from sican.settings import base as settings
 from administrativos.models import Administrativo
+from fdfgen import forge_fdf
+import os
+from matrices.models import Beneficiario
+import random
 
 # Register your models here.
 
@@ -57,13 +61,53 @@ def grupos_colombia_aprende(modeladmin, request, queryset):
             fila += 1
 
     wb.save('C:\\Temp\\Colombia\\Formadores.xlsx')
-
 grupos_colombia_aprende.short_description = 'Usuarios colombia aprende'
 
+def actas_compromiso(modeladmin, request, queryset):
+    for formador in queryset:
+        for beneficiario in Beneficiario.objects.filter(formador = formador):
+
+            municipio = ''
+            sede = ''
+
+            if beneficiario.radicado != None:
+                municipio = beneficiario.radicado.municipio.nombre.upper()
+                sede = beneficiario.radicado.nombre_sede.upper()
+            else:
+                municipio = beneficiario.municipio_text.upper()
+                sede = beneficiario.sede_text.upper()
+
+            fields = [('Texto1', beneficiario.get_full_name().upper()),
+                      ('Texto2', beneficiario.cedula),
+                      ('Texto3', municipio),
+                      ('Texto4', sede),
+                      ('Texto5', formador.get_full_name().upper()),
+                      ('Texto6', formador.cedula),
+                      ('Texto7', formador.expedicion.upper()),
+                      ('Texto8', 'ASOANDES'),
+                      ('Texto9', beneficiario.diplomado.nombre.upper()),
+                      ('Texto10', municipio.upper()),
+                      ('Texto11', random.randint(15,31)),
+                      ('Texto12', 'AGOSTO'),
+            ]
+
+            fdf = forge_fdf("",fields,[],[],[])
+
+            if not os.path.exists("C:\\Temp\\ACTAS\\"+ formador.get_full_name().upper()):
+                os.mkdir("C:\\Temp\\ACTAS\\"+ formador.get_full_name().upper())
+
+            fdf_file = open("C:\\Temp\\ACTAS\\"+ formador.get_full_name().upper() +"\\"+str(beneficiario.cedula)+".fdf","wb")
+            fdf_file.write(fdf)
+            fdf_file.close()
+            os.system('pdftk "C:\\Temp\\ACTAS\\Acta de compromiso.pdf" fill_form "C:\\Temp\\ACTAS\\'+ formador.get_full_name().upper() + "\\" + str(beneficiario.cedula)+'.fdf" output "C:\\Temp\\ACTAS\\' + formador.get_full_name().upper() + "\\" + str(beneficiario.cedula)+'.pdf"')
+
+actas_compromiso.short_description = 'Actas de compromiso'
+
 class FormadorAdmin(admin.ModelAdmin):
+    search_fields = ['cedula']
     list_display = ['get_full_name','cedula']
     ordering = ['cedula']
-    actions = [grupos_colombia_aprende]
+    actions = [grupos_colombia_aprende,actas_compromiso]
 
 admin.site.register(Formador,FormadorAdmin)
 admin.site.register(SolicitudTransporte)
