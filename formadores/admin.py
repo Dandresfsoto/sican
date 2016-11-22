@@ -107,7 +107,7 @@ def actas_compromiso(modeladmin, request, queryset):
             fdf_file = open("C:\\Temp\\ACTAS\\"+ formador.get_full_name().upper().encode('ascii',errors='ignore') +"\\"+str(beneficiario.cedula)+".fdf","wb")
             fdf_file.write(fdf)
             fdf_file.close()
-            os.system('pdftk "C:\\Temp\\ACTAS\\Acta de compromiso.pdf" fill_form "C:\\Temp\\ACTAS\\'+ formador.get_full_name().upper().encode('ascii',errors='ignore') + "\\" + str(beneficiario.cedula)+'.fdf" output "C:\\Temp\\ACTAS\\' + formador.get_full_name().upper().encode('ascii',errors='ignore') + "\\" + str(beneficiario.cedula)+'.pdf"')
+            os.system('pdftk "C:\\Temp\\ACTAS\\Acta de compromiso.pdf" fill_form "C:\\Temp\\ACTAS\\'+ formador.get_full_name().upper().encode('ascii',errors='ignore') + "\\" + str(beneficiario.cedula)+'.fdf" output "C:\\Temp\\ACTAS\\' + formador.get_full_name().upper().encode('ascii',errors='ignore') + "\\" + str(beneficiario.cedula)+'.pdf" flatten')
             os.remove('C:\\Temp\\ACTAS\\'+ formador.get_full_name().upper().encode('ascii',errors='ignore') + "\\" + str(beneficiario.cedula)+'.fdf')
 actas_compromiso.short_description = 'Actas de compromiso'
 
