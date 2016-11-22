@@ -2663,7 +2663,7 @@ class BeneficiariosListView(BaseDatatableView):
         json_data = []
         for item in qs:
 
-            evidencia = Evidencia.objects.filter(beneficiarios_cargados__id = item.id)
+            evidencia = Evidencia.objects.filter(entregable__id = self.kwargs['id_actividad'],beneficiarios_cargados__id = item.id)
 
             json_data.append([
                 item.id,
