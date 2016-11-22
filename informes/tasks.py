@@ -2022,3 +2022,410 @@ def progreso_listados_actas(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
+
+
+
+
+@app.task
+def matriz_chequeo_actividad(email,id_actividad):
+    usuario = User.objects.get(email=email)
+    nombre = ''
+
+    id_diplomado = str(Entregable.objects.get(id = id_actividad).sesion.nivel.diplomado.id)
+
+    if id_diplomado == '1':
+        nombre = "Matriz lista de chequeo de productos InnovaTIC actividad: " + str(id_actividad)
+    elif id_diplomado == '2':
+        nombre = "Matriz lista de chequeo de productos TecnoTIC actividad: " + str(id_actividad)
+    elif id_diplomado == '3':
+        nombre = "Matriz lista de chequeo de productos DirecTIC actividad: " + str(id_actividad)
+    elif id_diplomado == '4':
+        nombre = "Matriz lista de chequeo de productos EscuelaTIC actividad: " + str(id_actividad)
+
+
+    proceso = "REV-INF05"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+    output = StringIO()
+    dict_productos = []
+
+    if id_diplomado == '1':
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
+        ws = wb.get_sheet_by_name('InnovaTIC')
+        diplomado = Diplomado.objects.get(id = 1)
+        i = 6
+
+        dict_productos = [{'letter':'Y','id':8},
+                          {'letter':'Z','id':9},
+                          {'letter':'AA','id':10},
+                          {'letter':'AC','id':11},
+                          {'letter':'AF','id':12},
+                          {'letter':'AG','id':13},
+                          {'letter':'AK','id':14},
+                          {'letter':'AL','id':15},
+                          {'letter':'AN','id':16},
+                          {'letter':'AR','id':17},
+                          {'letter':'AS','id':18},
+                          {'letter':'AT','id':19},
+                          {'letter':'AD','id':20},
+                          {'letter':'AI','id':21},
+                          {'letter':'AJ','id':22},
+                          {'letter':'AO','id':23},
+                          {'letter':'AQ','id':24},
+                          {'letter':'AU','id':25},
+                          {'letter':'AV','id':26},
+                          {'letter':'AW','id':27},
+                          {'letter':'AX','id':28},
+                          {'letter':'AY','id':29},
+                          {'letter':'BB','id':30},
+                          {'letter':'BC','id':31},
+                          {'letter':'BD','id':32},
+                          {'letter':'BG','id':33},
+                          {'letter':'BH','id':34},
+                          {'letter':'BJ','id':35},
+                          {'letter':'BN','id':36},
+                          {'letter':'BO','id':37},
+                          {'letter':'BP','id':38},
+                          {'letter':'AZ','id':39},
+                          {'letter':'BA','id':40},
+                          {'letter':'BF','id':41},
+                          {'letter':'BL','id':42},
+                          {'letter':'BM','id':43},
+                          {'letter':'BQ','id':44},
+                          {'letter':'BR','id':45},
+                          {'letter':'BS','id':46},
+                          {'letter':'BT','id':47},
+                          {'letter':'BU','id':48},
+                          {'letter':'BX','id':49},
+                          {'letter':'BY','id':50},
+                          {'letter':'BZ','id':51},
+                          {'letter':'CB','id':52},
+                          {'letter':'CC','id':53},
+                          {'letter':'CD','id':54},
+                          {'letter':'CG','id':55},
+                          {'letter':'CH','id':56},
+                          {'letter':'CI','id':57},
+                          {'letter':'BV','id':58},
+                          {'letter':'CA','id':59},
+                          {'letter':'CE','id':60},
+                          {'letter':'CJ','id':61},
+                          {'letter':'CK','id':62},
+                          {'letter':'CL','id':63},
+                          {'letter':'CM','id':64},
+                          {'letter':'CO','id':65},
+                          {'letter':'CR','id':66},
+                          {'letter':'CS','id':67},
+                          {'letter':'CN','id':68},
+                          {'letter':'CQ','id':69},
+                          ]
+
+    elif id_diplomado == '2':
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Tecnotic.xlsx')
+        ws = wb.get_sheet_by_name('TecnoTIC')
+        diplomado = Diplomado.objects.get(id = 2)
+        i = 6
+        dict_productos = [{'letter':'Y','id':72},
+                          {'letter':'AB','id':73},
+                          {'letter':'AF','id':74},
+                          {'letter':'AE','id':75},
+                          {'letter':'AJ','id':76},
+                          {'letter':'AI','id':77},
+                          {'letter':'AP','id':78},
+                          {'letter':'AO','id':79},
+                          {'letter':'AC','id':80},
+                          {'letter':'AD','id':81},
+                          {'letter':'AG','id':82},
+                          {'letter':'AH','id':83},
+                          {'letter':'AK','id':84},
+                          {'letter':'AM','id':85},
+                          {'letter':'AQ','id':86},
+                          {'letter':'AR','id':87},
+                          {'letter':'AS','id':88},
+                          {'letter':'AV','id':89},
+                          {'letter':'AT','id':90},
+                          {'letter':'AU','id':91},
+                          {'letter':'AZ','id':92},
+                          {'letter':'AY','id':93},
+                          {'letter':'BB','id':94},
+                          {'letter':'BE','id':95},
+                          {'letter':'BD','id':96},
+                          {'letter':'AW','id':97},
+                          {'letter':'AX','id':98},
+                          {'letter':'BA','id':99},
+                          {'letter':'BC','id':100},
+                          {'letter':'BF','id':101},
+                          {'letter':'BG','id':102},
+                          {'letter':'BH','id':103},
+                          {'letter':'BJ','id':104},
+                          {'letter':'BI','id':105},
+                          {'letter':'BO','id':106},
+                          {'letter':'BM','id':107},
+                          {'letter':'BR','id':108},
+                          {'letter':'BQ','id':109},
+                          {'letter':'BV','id':110},
+                          {'letter':'BT','id':111},
+                          {'letter':'BK','id':112},
+                          {'letter':'BP','id':113},
+                          {'letter':'BS','id':114},
+                          {'letter':'BW','id':115},
+                          {'letter':'BX','id':116},
+                          {'letter':'BY','id':117},
+                          {'letter':'CB','id':118},
+                          {'letter':'BZ','id':119},
+                          {'letter':'CG','id':120},
+                          {'letter':'CI','id':121},
+                          {'letter':'CC','id':122},
+                          {'letter':'CD','id':123},
+                          {'letter':'CE','id':124}
+                          ]
+    elif id_diplomado == '3':
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Directic.xlsx')
+        ws = wb.get_sheet_by_name('DirecTIC')
+        diplomado = Diplomado.objects.get(id = 3)
+        i = 6
+        dict_productos = [{'letter':'Y','id':127},
+                          {'letter':'Z','id':128},
+                          {'letter':'AF','id':129},
+                          {'letter':'AB','id':130},
+                          {'letter':'AD','id':131},
+                          {'letter':'AE','id':132},
+                          {'letter':'AI','id':133},
+                          {'letter':'AG','id':134},
+                          {'letter':'AN','id':135},
+                          {'letter':'AL','id':136},
+                          {'letter':'AR','id':137},
+                          {'letter':'AQ','id':138},
+                          {'letter':'AW','id':139},
+                          {'letter':'AU','id':140},
+                          {'letter':'AF','id':141},
+                          {'letter':'AJ','id':142},
+                          {'letter':'AO','id':143},
+                          {'letter':'AS','id':144},
+                          {'letter':'AX','id':145},
+                          {'letter':'AZ','id':146},
+                          {'letter':'AY','id':147},
+                          {'letter':'BE','id':148},
+                          {'letter':'BD','id':149},
+                          {'letter':'BH','id':150},
+                          {'letter':'BG','id':151},
+                          {'letter':'BA','id':152},
+                          {'letter':'BF','id':153},
+                          {'letter':'BI','id':154},
+                          {'letter':'BL','id':155},
+                          {'letter':'BJ','id':156},
+                          {'letter':'BN','id':157},
+                          {'letter':'BO','id':158},
+                          {'letter':'BT','id':159},
+                          {'letter':'BR','id':160},
+                          {'letter':'BX','id':161},
+                          {'letter':'BW','id':162},
+                          {'letter':'BM','id':163},
+                          {'letter':'BP','id':164},
+                          {'letter':'BU','id':165},
+                          {'letter':'BY','id':166},
+                          {'letter':'CA','id':167},
+                          {'letter':'CB','id':168},
+                          {'letter':'CE','id':169},
+                          {'letter':'CD','id':170},
+                          {'letter':'CC','id':171},
+                          {'letter':'CF','id':172}
+                          ]
+    else:
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz EscuelaTIC.xlsx')
+        ws = wb.get_sheet_by_name('EscuelaTIC')
+        diplomado = Diplomado.objects.get(id = 4)
+        i = 10
+        dict_productos = [{'letter':'Z','id':221},
+                          {'letter':'AD','id':233},
+                          {'letter':'AI','id':224},
+                          {'letter':'AP','id':228},
+        ]
+
+    number = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='right',vertical='center',wrap_text=False),
+                   number_format='0',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+             )
+
+    text = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='left',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+                 )
+
+
+    validado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                   fill=PatternFill(fill_type='solid',start_color='FF00B050',end_color='FF00B050')
+                 )
+
+    enviado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                   fill=PatternFill(fill_type='solid',start_color='FFFFC000',end_color='FFFFC000')
+                 )
+
+    cargado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                 )
+
+
+    rechazado = Style(font=Font(name='Calibri',size=12),
+                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
+                   number_format='General',
+                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
+                   fill=PatternFill(fill_type='solid',start_color='FFFF0000',end_color='FFFF0000')
+                 )
+
+    for beneficiario in Beneficiario.objects.filter(diplomado = diplomado).order_by('formador'):
+        ws.cell('A'+str(i)).value = beneficiario.region.nombre.upper()
+        ws.cell('A'+str(i)).style = text
+
+        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text
+        ws.cell('B'+str(i)).style = text
+
+        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else beneficiario.secretaria_text
+        ws.cell('C'+str(i)).style = text
+
+        ws.cell('D'+str(i)).value = beneficiario.radicado.numero if beneficiario.radicado != None else ''
+        ws.cell('D'+str(i)).style = number
+
+        ws.cell('E'+str(i)).value = beneficiario.dane_ie_text
+        ws.cell('E'+str(i)).style = number
+
+        ws.cell('F'+str(i)).value = beneficiario.ie_text
+        ws.cell('F'+str(i)).style = text
+
+        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else beneficiario.dane_sede_text
+        ws.cell('G'+str(i)).style = number
+
+        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else beneficiario.sede_text
+        ws.cell('H'+str(i)).style = text
+
+        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text
+        ws.cell('I'+str(i)).style = text
+
+        ws.cell('J'+str(i)).value = beneficiario.radicado.ubicacion if beneficiario.radicado != None else ''
+        ws.cell('J'+str(i)).style = text
+
+        ws.cell('K'+str(i)).value = beneficiario.get_grupo()
+        ws.cell('K'+str(i)).style = text
+
+        ws.cell('L'+str(i)).value = beneficiario.formador.get_full_name()
+        ws.cell('L'+str(i)).style = text
+
+        ws.cell('M'+str(i)).value = beneficiario.formador.cedula
+        ws.cell('M'+str(i)).style = number
+
+        ws.cell('N'+str(i)).value = beneficiario.apellidos
+        ws.cell('N'+str(i)).style = text
+
+        ws.cell('O'+str(i)).value = beneficiario.nombres
+        ws.cell('O'+str(i)).style = text
+
+        ws.cell('P'+str(i)).value = beneficiario.cedula
+        ws.cell('P'+str(i)).style = number
+
+        ws.cell('Q'+str(i)).value = beneficiario.correo
+        ws.cell('Q'+str(i)).style = text
+
+        ws.cell('R'+str(i)).value = beneficiario.telefono_fijo
+        ws.cell('R'+str(i)).style = text
+
+        ws.cell('S'+str(i)).value = beneficiario.telefono_celular
+        ws.cell('S'+str(i)).style = text
+
+        ws.cell('T'+str(i)).value = beneficiario.area.nombre.upper() if beneficiario.area != None else ''
+        ws.cell('T'+str(i)).style = text
+
+        ws.cell('U'+str(i)).value = beneficiario.grado.nombre.upper() if beneficiario.grado != None else ''
+        ws.cell('U'+str(i)).style = text
+
+        ws.cell('V'+str(i)).value = ''
+        ws.cell('V'+str(i)).style = text
+
+        ws.cell('W'+str(i)).value = beneficiario.genero
+        ws.cell('W'+str(i)).style = text
+
+        ws.cell('X'+str(i)).value = beneficiario.estado
+        ws.cell('X'+str(i)).style = text
+
+        ws.cell('Y'+str(i)).value = ''
+        ws.cell('Y'+str(i)).style = text
+
+
+        for producto in dict_productos:
+            if producto['id'] == id_actividad:
+                entregable = Entregable.objects.get(id = producto['id'])
+
+                evidencias_cargado = Evidencia.objects.filter(beneficiarios_cargados = beneficiario,entregable = entregable)
+                evidencias_validado = Evidencia.objects.filter(beneficiarios_validados = beneficiario,entregable = entregable)
+
+                q = Q(evidencias__id__in = evidencias_cargado.values_list('id',flat=True)) | \
+                    Q(evidencias__id__in = evidencias_validado.values_list('id',flat=True))
+
+                reds = Red.objects.filter(q)
+
+                if evidencias_validado.count() > 0:
+                    red = Red.objects.get(evidencias__id = evidencias_validado[0].id)
+                    ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
+                    ws.cell(producto['letter']+str(i)).style = validado
+                    ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url()
+                    ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(evidencias_validado[0].id),'SICAN')
+
+
+                elif evidencias_validado.count() == 0 and evidencias_cargado.count() > 0:
+                    ultima_evidencia_cargada = evidencias_cargado[len(evidencias_cargado)-1]
+
+                    try:
+                        red = reds.get(evidencias__id = ultima_evidencia_cargada.id)
+                    except:
+                        # si ningun red contiene la evidencia
+                        ws.cell(producto['letter']+str(i)).value = 'SIC-' + str(ultima_evidencia_cargada.id)
+                        ws.cell(producto['letter']+str(i)).style = cargado
+                        ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+
+                    else:
+                        # si hay un red que contiene la evidencia
+                        if red.retroalimentacion:
+                            # si el red fue retroalimentado
+
+                            evidencias_rechazado = Evidencia.objects.filter(beneficiarios_rechazados__beneficiario_rechazo = beneficiario,
+                                                                            beneficiarios_rechazados__red_id = red.id,
+                                                                            beneficiarios_rechazados__evidencia_id = ultima_evidencia_cargada.id)
+
+                            if evidencias_rechazado > 0:
+                                try:
+                                    causa = evidencias_rechazado[0].beneficiarios_rechazados.get(beneficiario_rechazo = beneficiario).observacion
+                                except:
+                                    causa = ''
+                                ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
+                                ws.cell(producto['letter']+str(i)).style = rechazado
+                                ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+                                ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id) + ':\n' + causa,'SICAN')
+                            else:
+                                pass
+
+
+                        else:
+                            #si el red no ha sido retroalimentado
+                            ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
+                            ws.cell(producto['letter']+str(i)).style = enviado
+                            ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+                            ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id),'SICAN')
+
+
+                else:
+                    ws.cell(producto['letter']+str(i)).style = text
+        i += 1
+
+    wb.save(output)
+
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"

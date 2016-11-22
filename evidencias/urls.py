@@ -4,6 +4,7 @@ from evidencias.views import NuevoSoporteView, UpdateSoporteView, DeleteSoporteV
 from evidencias.views import RedsListView, NuevoRedView
 from evidencias.views import CargaMasivaListView, NuevoCargaMasivaView, UpdateRedView
 from evidencias.views import AuxiliaresListView, DiplomadosActividadesListView, ActividadesListView
+from evidencias.views import BeneficiariosEvidenciaListView
 
 urlpatterns = [
     url(r'^general/$', DiplomadosListView.as_view()),
@@ -30,4 +31,6 @@ urlpatterns = [
 
     url(r'^actividades/$', DiplomadosActividadesListView.as_view()),
     url(r'^actividades/diplomado/(?P<id_diplomado>[0-9]+)/$', ActividadesListView.as_view()),
+
+    url(r'^actividades/diplomado/(?P<id_diplomado>[0-9]+)/evidencia/(?P<id_evidencia>[0-9]+)/$', BeneficiariosEvidenciaListView.as_view()),
 ]

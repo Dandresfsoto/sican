@@ -60,6 +60,21 @@ class ActividadesListView(LoginRequiredMixin,
 
 
 
+class BeneficiariosEvidenciaListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/actividades/lista_beneficiarios.html'
+    permission_required = "permisos_sican.evidencias.codigos_evidencia.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['id_diplomado'] = self.kwargs['id_diplomado']
+        kwargs['id_actividad'] = self.kwargs['id_evidencia']
+        kwargs['nombre_diplomado'] = Diplomado.objects.get(id = self.kwargs['id_diplomado']).nombre
+        kwargs['nombre_actividad'] = Entregable.objects.get(id = self.kwargs['id_evidencia']).nombre
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.evidencias.codigos_evidencia.informes')
+        return super(BeneficiariosEvidenciaListView,self).get_context_data(**kwargs)
+
+
 
 class NivelesListView(LoginRequiredMixin,
                          PermissionRequiredMixin,

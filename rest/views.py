@@ -55,7 +55,7 @@ from requerimientos.models import Requerimiento
 from evidencias.models import Red, CargaMasiva as CargaMasivaEvidencias
 from django.utils.timezone import localtime
 from informes.tasks import zip_hv, zip_contrato
-from informes.tasks import descargas_certificados_escuelatic, progreso_listados_actas
+from informes.tasks import descargas_certificados_escuelatic, progreso_listados_actas, matriz_chequeo_actividad
 
 
 # Create your views here.
@@ -233,6 +233,9 @@ class ReportesView(APIView):
             x = descargas_certificados_escuelatic.delay(request.user.email)
         if id_accion == '23':
             x = progreso_listados_actas.delay(request.user.email)
+        if id_accion == '24':
+            id_actividad = request._request.GET['id_actividad']
+            x = matriz_chequeo_actividad.delay(request.user.email,id_actividad)
 
 
         return HttpResponse(status=200)
@@ -2631,6 +2634,42 @@ class MatricesDiplomadosList(BaseDatatableView):
                 item.estado,
                 self.request.user.has_perm('permisos_sican.acceso.retoma.editar'),
                 self.request.user.has_perm('permisos_sican.acceso.retoma.eliminar'),
+            ])
+        return json_data
+
+class BeneficiariosListView(BaseDatatableView):
+    """
+    """
+    model = Beneficiario
+    columns = ['region','radicado','formador','grupo','apellidos','nombres','cedula','correo']
+
+    order_columns = ['region','radicado','formador','grupo','apellidos','nombres','cedula','correo']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        evidencias = Evidencia.objects.filter(entregable__id = self.kwargs['id_actividad']).values_list('beneficiarios_cargados__id',flat=True).distinct()
+        evidencias = list(evidencias)
+        evidencias.remove(None)
+        return Beneficiario.objects.filter(id__in = evidencias)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+
+            evidencia = Evidencia.objects.filter(beneficiarios_cargados__id = item.id)
+
+            json_data.append([
+                item.id,
+                item.get_full_name(),
+                item.cedula,
+                evidencia[ evidencia.count() - 1 ].get_archivo_url()
             ])
         return json_data
 
