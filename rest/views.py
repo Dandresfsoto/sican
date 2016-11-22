@@ -489,6 +489,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'codigos_evidencia':{
+                'ver':{'name':'Actividades','link':'/evidencias/actividades/'}
+            },
             'auxiliares':{
                 'ver':{'name':'Rendimiento carga de evidencias','link':'/evidencias/rendimiento/'}
             },
@@ -1690,6 +1693,87 @@ class EntregablesList(BaseDatatableView):
                 item.get_archivo_url(),
                 self.request.user.has_perm('permisos_sican.productos.entregables.editar'),
                 self.request.user.has_perm('permisos_sican.productos.entregables.eliminar'),
+            ])
+        return json_data
+
+class AcividadesList(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.numero
+    3.diplomado
+    4.nivel
+    5.sesion
+    6.soporte
+    7.permiso para editar
+    8.permiso para eliminar
+    """
+    model = Entregable
+    columns = ['id','nombre','numero','diplomado','nivel','sesion']
+
+    order_columns = ['nombre','numero','diplomado','nivel','sesion']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Entregable.objects.filter(sesion__nivel__diplomado__id = self.kwargs['id_diplomado'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search) | Q(numero__icontains=search) | Q(sesion__nivel__nombre__icontains=search.capitalize()) | \
+                Q(sesion__nivel__diplomado__nombre__icontains=search.upper())
+
+            qs = qs.filter(q)
+
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        evidencias_diplomado = Evidencia.objects.filter(entregable__sesion__nivel__diplomado__id = self.kwargs['id_diplomado'])
+
+        if self.kwargs['id_diplomado'] == '1':
+            meta_r1 = 11106
+            meta_r2 = 17869
+        elif self.kwargs['id_diplomado'] == '2':
+            meta_r1 = 1160
+            meta_r2 = 1124
+        elif self.kwargs['id_diplomado'] == '3':
+            meta_r1 = 2860
+            meta_r2 = 1298
+        else:
+            meta_r1 = 0
+            meta_r2 = 0
+
+
+        for item in qs:
+
+            evidencias_actividad = evidencias_diplomado.filter(entregable = item).values_list('beneficiarios_cargados__id',flat = True)
+            beneficiarios = Beneficiario.objects.filter(id__in = evidencias_actividad)
+
+            cargados = evidencias_actividad.distinct().count()
+            progreso = "{0:.2f}".format((float(beneficiarios.count())/float(meta_r1+meta_r2))*100.0) + "%"
+
+            pendientes = meta_r1+ meta_r2 + cargados
+
+            cantidad_r1 = beneficiarios.filter(formador__region__id = 1).count()
+            progreso_r1 = "{0:.2f}".format((float(cantidad_r1)/float(meta_r1))*100.0) + "%"
+            cantidad_r2 = beneficiarios.filter(formador__region__id = 2).count()
+            progreso_r2 = "{0:.2f}".format((float(cantidad_r2)/float(meta_r2))*100.0) + "%"
+
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.sesion.nivel.nombre + '-' + item.sesion.nombre,
+                cargados,
+                progreso,
+                pendientes,
+                cantidad_r1,
+                progreso_r1,
+                cantidad_r2,
+                progreso_r2,
             ])
         return json_data
 
@@ -3202,6 +3286,7 @@ class FormadoresListEvidencias(BaseDatatableView):
                 beneficiarios
             ])
         return json_data
+
 
 class DiplomadosEvidenciasList(BaseDatatableView):
     """

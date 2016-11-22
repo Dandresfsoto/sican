@@ -25,6 +25,12 @@ class DiplomadosListView(LoginRequiredMixin,
     permission_required = "permisos_sican.evidencias.general.ver"
 
 
+class DiplomadosActividadesListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/actividades/lista_diplomados.html'
+    permission_required = "permisos_sican.evidencias.codigos_evidencia.ver"
+
 
 class FormadoresListView(LoginRequiredMixin,
                          PermissionRequiredMixin,
@@ -37,6 +43,21 @@ class FormadoresListView(LoginRequiredMixin,
         kwargs['nombre_diplomado'] = Diplomado.objects.get(id = self.kwargs['id_diplomado']).nombre
         kwargs['informes'] = self.request.user.has_perm('permisos_sican.evidencias.general.informes')
         return super(FormadoresListView,self).get_context_data(**kwargs)
+
+
+
+class ActividadesListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/actividades/lista_actividades.html'
+    permission_required = "permisos_sican.evidencias.codigos_evidencia.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['id_diplomado'] = self.kwargs['id_diplomado']
+        kwargs['nombre_diplomado'] = Diplomado.objects.get(id = self.kwargs['id_diplomado']).nombre
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.evidencias.general.informes')
+        return super(ActividadesListView,self).get_context_data(**kwargs)
+
 
 
 
