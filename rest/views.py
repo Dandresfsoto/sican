@@ -3238,8 +3238,8 @@ class DiplomadosEvidenciasList(BaseDatatableView):
                 item.nombre,
                 item.numero,
                 cantidad,
-                self.request.user.has_perm('permisos_sican.productos.diplomados.editar'),
-                self.request.user.has_perm('permisos_sican.productos.diplomados.eliminar'),
+                self.request.user.has_perm('permisos_sican.evidencias.general.editar'),
+                self.request.user.has_perm('permisos_sican.evidencias.general.eliminar'),
             ])
         return json_data
 
