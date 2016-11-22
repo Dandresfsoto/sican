@@ -3326,7 +3326,6 @@ class FormadoresListEvidencias(BaseDatatableView):
             ])
         return json_data
 
-
 class DiplomadosEvidenciasList(BaseDatatableView):
     """
     0.id
@@ -3705,7 +3704,6 @@ class CargaMasivaEvidenciasList(BaseDatatableView):
                 item.get_resultado_url()
             ])
         return json_data
-
 
 class RendimientoAuxiliaresList(BaseDatatableView):
     """

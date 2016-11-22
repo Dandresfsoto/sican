@@ -2360,7 +2360,7 @@ def matriz_chequeo_actividad(email,id_actividad):
 
 
         for producto in dict_productos:
-            if producto['id'] == id_actividad:
+            if producto['id'] == int(id_actividad):
                 entregable = Entregable.objects.get(id = producto['id'])
 
                 evidencias_cargado = Evidencia.objects.filter(beneficiarios_cargados = beneficiario,entregable = entregable)
