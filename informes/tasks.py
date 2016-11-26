@@ -2374,9 +2374,9 @@ def matriz_chequeo_actividad(email,id_actividad):
                 if evidencias_validado.count() > 0:
                     red = Red.objects.get(evidencias__id = evidencias_validado[0].id)
                     ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
-                    ws.cell(producto['letter']+str(i)).style = validado
-                    ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url()
-                    ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(evidencias_validado[0].id),'SICAN')
+                    #ws.cell(producto['letter']+str(i)).style = validado
+                    #ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url()
+                    #ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(evidencias_validado[0].id),'SICAN')
 
 
                 elif evidencias_validado.count() == 0 and evidencias_cargado.count() > 0:
@@ -2387,8 +2387,8 @@ def matriz_chequeo_actividad(email,id_actividad):
                     except:
                         # si ningun red contiene la evidencia
                         ws.cell(producto['letter']+str(i)).value = 'SIC-' + str(ultima_evidencia_cargada.id)
-                        ws.cell(producto['letter']+str(i)).style = cargado
-                        ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+                        #ws.cell(producto['letter']+str(i)).style = cargado
+                        #ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
 
                     else:
                         # si hay un red que contiene la evidencia
@@ -2405,9 +2405,9 @@ def matriz_chequeo_actividad(email,id_actividad):
                                 except:
                                     causa = ''
                                 ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
-                                ws.cell(producto['letter']+str(i)).style = rechazado
-                                ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
-                                ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id) + ':\n' + causa,'SICAN')
+                                #ws.cell(producto['letter']+str(i)).style = rechazado
+                                #ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+                                #ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id) + ':\n' + causa,'SICAN')
                             else:
                                 pass
 
@@ -2415,9 +2415,9 @@ def matriz_chequeo_actividad(email,id_actividad):
                         else:
                             #si el red no ha sido retroalimentado
                             ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
-                            ws.cell(producto['letter']+str(i)).style = enviado
-                            ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
-                            ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id),'SICAN')
+                            #ws.cell(producto['letter']+str(i)).style = enviado
+                            #ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+                            #ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id),'SICAN')
 
 
                 else:
