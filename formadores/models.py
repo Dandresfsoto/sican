@@ -31,6 +31,7 @@ class Formador(models.Model):
 
     #---------- INFORMACION PROFESIONAL ----------------------
     cargo = models.ForeignKey(Cargo)
+    respaldo_cargo = models.ForeignKey(Cargo,related_name="respaldo_cargo",blank=True,null=True)
     profesion = models.CharField(max_length=100,blank=True)
 
     fecha_contratacion = models.DateField(null=True,blank=True)
