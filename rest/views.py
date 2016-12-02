@@ -2649,7 +2649,8 @@ class BeneficiariosListView(BaseDatatableView):
     def get_initial_queryset(self):
         evidencias = Evidencia.objects.filter(entregable__id = self.kwargs['id_actividad']).values_list('beneficiarios_cargados__id',flat=True).distinct()
         evidencias = list(evidencias)
-        evidencias.remove(None)
+        if None in evidencias:
+            evidencias.remove(None)
         return Beneficiario.objects.filter(id__in = evidencias)
 
     def filter_queryset(self, qs):
