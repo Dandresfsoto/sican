@@ -1038,41 +1038,44 @@ class FormadoresRh(BaseDatatableView):
 
     def prepare_results(self, qs):
         json_data = []
-
+        stack = []
 
         for item in qs:
 
-            region_str = ''
-            for region in item.region.values_list('numero',flat=True):
-                region_str = region_str + str(region) + ','
-            region_str = region_str[:-1]
+            if item not in stack:
+                stack.append(item)
 
-            if item.banco != None:
-                banco = item.banco.nombre
-            else:
-                banco = ''
+                region_str = ''
+                for region in item.region.values_list('numero',flat=True):
+                    region_str = region_str + str(region) + ','
+                region_str = region_str[:-1]
 
-            json_data.append([
-                item.id,
-                item.nombres + " " + item.apellidos,
-                item.get_cargo_string(),
-                region_str,
-                item.cedula,
-                item.correo_personal,
-                item.celular_personal,
-                item.profesion,
-                item.fecha_contratacion,
-                item.fecha_terminacion,
-                banco,
-                item.tipo_cuenta,
-                item.numero_cuenta,
-                item.eps,
-                item.pension,
-                item.arl,
-                self.request.user.has_perm('permisos_sican.rh.formadores.editar'),
-                self.request.user.has_perm('permisos_sican.rh.formadores.eliminar'),
-                self.request.user.has_perm('permisos_sican.rh.formadores_soportes.ver'),
-            ])
+                if item.banco != None:
+                    banco = item.banco.nombre
+                else:
+                    banco = ''
+
+                json_data.append([
+                    item.id,
+                    item.nombres + " " + item.apellidos,
+                    item.get_cargo_string(),
+                    region_str,
+                    item.cedula,
+                    item.correo_personal,
+                    item.celular_personal,
+                    item.profesion,
+                    item.fecha_contratacion,
+                    item.fecha_terminacion,
+                    banco,
+                    item.tipo_cuenta,
+                    item.numero_cuenta,
+                    item.eps,
+                    item.pension,
+                    item.arl,
+                    self.request.user.has_perm('permisos_sican.rh.formadores.editar'),
+                    self.request.user.has_perm('permisos_sican.rh.formadores.eliminar'),
+                    self.request.user.has_perm('permisos_sican.rh.formadores_soportes.ver'),
+                ])
         return json_data
 
 class FormadoresConsolidadoRh(BaseDatatableView):

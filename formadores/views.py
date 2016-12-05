@@ -5,7 +5,7 @@ from django.shortcuts import HttpResponseRedirect
 from formadores.models import TipoSoporte
 from formadores.models import Formador, Soporte
 from django.shortcuts import HttpResponseRedirect
-from formadores.tables import SolicitudTable, EntregablesTable, CortesTable, RevisionTable, PagoTable
+from formadores.tables import SolicitudTable, EntregablesTable, CortesTable, RevisionTable, PagoTable, TipologiasTable
 from formadores.models import SolicitudTransporte, Desplazamiento
 from formadores.forms import NuevaSolicitudTransportes, SubirSoporteForm, SeguridadSocialForm
 from departamentos.models import Departamento
@@ -15,6 +15,7 @@ from formadores.forms import OtroSiForm
 from productos.models import Entregable
 from formadores.models import Cortes, Revision
 from django.utils import timezone
+from cargos.models import Cargo
 
 # Create your views here.
 class InicioView(FormView):
@@ -57,7 +58,7 @@ class VinculosView(TemplateView):
             },
         }
 
-        kwargs['carta'] = '/static/documentos/'+dic[str(formador.region.all()[0].numero)][formador.get_cargo_string()]
+        kwargs['carta'] = '/static/documentos/'+dic[str(formador.region.all()[0].numero)][formador.cargo.all()[0].nombre]
         kwargs['cargo'] = formador.get_cargo_string()
 
         return super(VinculosView,self).get_context_data(**kwargs)
@@ -364,13 +365,15 @@ class EntregablesView(TemplateView):
         kwargs['formador'] = formador.get_full_name()
         kwargs['tipo'] = formador.get_cargo_string()
 
-        if formador.cargo.nombre == "Formador Tipo 1":
+        nombre = Cargo.objects.get(id = self.kwargs['id_cargo']).nombre
+
+        if nombre == "Formador Tipo 1":
             numero_diplomado = 1
-        elif formador.cargo.nombre == "Formador Tipo 2":
+        elif nombre == "Formador Tipo 2":
             numero_diplomado = 2
-        elif formador.cargo.nombre == "Formador Tipo 3":
+        elif nombre == "Formador Tipo 3":
             numero_diplomado = 3
-        elif formador.cargo.nombre == "Formador Tipo 4":
+        elif nombre == "Formador Tipo 4":
             numero_diplomado = 4
         else:
             numero_diplomado = 0
@@ -378,6 +381,22 @@ class EntregablesView(TemplateView):
         query = Entregable.objects.all().filter(sesion__nivel__diplomado__numero = numero_diplomado).order_by('numero')
         kwargs['table'] = EntregablesTable(query)
         return super(EntregablesView,self).get_context_data(**kwargs)
+
+
+
+class TipologiasView(TemplateView):
+    template_name = 'formadores/entregables/tipologias.html'
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=self.kwargs['cedula'])
+        kwargs['formador'] = formador.get_full_name()
+        kwargs['tipo'] = formador.get_cargo_string()
+
+        query = formador.cargo.all()
+        kwargs['table'] = TipologiasTable(query)
+        return super(TipologiasView,self).get_context_data(**kwargs)
+
+
 
 class PagosView(TemplateView):
     template_name = 'formadores/pagos/cortes.html'

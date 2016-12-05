@@ -9,6 +9,7 @@ from productos.models import Entregable
 from formadores.models import Cortes
 from formadores.models import Formador, Revision, Producto
 import pytz
+from cargos.models import Cargo
 
 class SolicitudTable(tables.Table):
     nombre = tables.Column('Nombre')
@@ -81,6 +82,20 @@ class SolicitudTable(tables.Table):
     class Meta:
         model = SolicitudTransporte
         fields = ['nombre','creacion_date','valor','estado','desplazamientos','terminada','observacion','valor_aprobado']
+
+
+class TipologiasTable(tables.Table):
+    nombre = tables.Column('Tipologia')
+
+
+
+    def render_nombre(self,value,record):
+        return mark_safe('<a href="cargo/'+ str(record.id) +'">' + record.nombre +'</a>')
+
+
+    class Meta:
+        model = Cargo
+        fields = ['nombre']
 
 
 class EntregablesTable(tables.Table):
