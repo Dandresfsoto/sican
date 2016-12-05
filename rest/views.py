@@ -1055,7 +1055,7 @@ class FormadoresRh(BaseDatatableView):
             json_data.append([
                 item.id,
                 item.nombres + " " + item.apellidos,
-                item.cargo.nombre,
+                item.get_cargo_string(),
                 region_str,
                 item.cedula,
                 item.correo_personal,
@@ -1759,7 +1759,7 @@ class AcividadesList(BaseDatatableView):
             cargados = evidencias_actividad.distinct().count()
             progreso = "{0:.2f}".format((float(beneficiarios.count())/float(meta_r1+meta_r2))*100.0) + "%"
 
-            pendientes = meta_r1+ meta_r2 + cargados
+            pendientes = meta_r1+ meta_r2 - cargados
 
             cantidad_r1 = beneficiarios.filter(formador__region__id = 1).count()
             progreso_r1 = "{0:.2f}".format((float(cantidad_r1)/float(meta_r1))*100.0) + "%"
@@ -2768,7 +2768,7 @@ class FormadoresGrupos(BaseDatatableView):
             json_data.append([
                 item.id,
                 item.get_full_name(),
-                item.cargo.nombre,
+                item.get_cargo_string(),
                 item.get_region_string(),
                 item.cedula,
                 item.codigo_ruta,
@@ -2929,23 +2929,28 @@ class FormadoresRevision(BaseDatatableView):
 
     def prepare_results(self, qs):
         json_data = []
-
+        stack = []
 
         for item in qs:
-            valor = 0
-            for revision in Revision.objects.filter(formador_revision = item):
-                for producto in revision.productos.all():
-                    valor += producto.cantidad * producto.valor_entregable.valor
-            json_data.append([
-                item.id,
-                item.nombres + " " + item.apellidos,
-                item.cargo.nombre,
-                item.get_region_string(),
-                'Primera' if item.primera_capacitacion else 'Segunda',
-                item.codigo_ruta,
-                valor,
-                self.request.user.has_perm('permisos_sican.formacion.revision.editar')
-            ])
+
+            if item not in stack:
+
+                stack.append(item)
+
+                valor = 0
+                for revision in Revision.objects.filter(formador_revision = item):
+                    for producto in revision.productos.all():
+                        valor += producto.cantidad * producto.valor_entregable.valor
+                json_data.append([
+                    item.id,
+                    item.nombres + " " + item.apellidos,
+                    item.get_cargo_string(),
+                    item.get_region_string(),
+                    'Primera' if item.primera_capacitacion else 'Segunda',
+                    item.codigo_ruta,
+                    valor,
+                    self.request.user.has_perm('permisos_sican.formacion.revision.editar')
+                ])
         return json_data
 
 class FormadoresRevisionFormador(BaseDatatableView):
@@ -2964,7 +2969,25 @@ class FormadoresRevisionFormador(BaseDatatableView):
     max_display_length = 100
 
     def get_initial_queryset(self):
-        return Revision.objects.filter(formador_revision__id=self.kwargs['id_formador'])
+        ids = []
+        cargo = Cargo.objects.get(id=self.kwargs['id_cargo'])
+        diplomado__id = 0
+
+        if cargo.nombre == "Formador Tipo 1":
+            diplomado__id = 1
+        elif cargo.nombre == "Formador Tipo 2":
+            diplomado__id = 2
+        elif cargo.nombre == "Formador Tipo 3":
+            diplomado__id = 3
+        elif cargo.nombre == "Formador Tipo 4":
+            diplomado__id = 4
+
+        for revision in Revision.objects.filter(formador_revision__id=self.kwargs['id_formador']):
+            diplomado = revision.productos.values_list('valor_entregable__entregable__sesion__nivel__diplomado__id',flat=True).distinct()
+            if diplomado__id in diplomado:
+                ids.append(revision.id)
+
+        return Revision.objects.filter(formador_revision__id=self.kwargs['id_formador']).filter(id__in = ids)
 
 
     def filter_queryset(self, qs):
@@ -2993,6 +3016,73 @@ class FormadoresRevisionFormador(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.formacion.revision.eliminar')
             ])
         return json_data
+
+
+class FormadoresContratosFormador(BaseDatatableView):
+    """
+    0.id
+    1.fecha
+    2.descripcion
+    3.valor
+    4.permiso para editar
+    5.permiso para eliminar
+    """
+    model = Cargo
+    columns = ['id','nombre']
+
+    order_columns = ['id','nombre']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        formador = Formador.objects.get(id=self.kwargs['id_formador'])
+        cargos = formador.cargo.all().values_list('id',flat=True)
+        return Cargo.objects.filter(id__in = cargos)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            #q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+            #    Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            #qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        formador = Formador.objects.get(id=self.kwargs['id_formador'])
+
+        for item in qs:
+
+            valor = 0
+
+            diplomado = None
+
+            if item.nombre == "Formador Tipo 1":
+                diplomado = Diplomado.objects.get(id=1)
+            elif item.nombre == "Formador Tipo 2":
+                diplomado = Diplomado.objects.get(id=2)
+            elif item.nombre == "Formador Tipo 3":
+                diplomado = Diplomado.objects.get(id=3)
+            elif item.nombre == "Formador Tipo 4":
+                diplomado = Diplomado.objects.get(id=4)
+
+            revisiones = Revision.objects.filter(formador_revision = formador)
+
+            for revision in revisiones:
+                for producto in revision.productos.all():
+                    if producto.valor_entregable.entregable.sesion.nivel.diplomado == diplomado:
+                        valor += producto.cantidad * producto.valor_entregable.valor
+
+            json_data.append([
+                item.id,
+                item.nombre,
+                valor,
+                self.request.user.has_perm('permisos_sican.formacion.revision.editar'),
+                self.request.user.has_perm('permisos_sican.formacion.revision.eliminar')
+            ])
+        return json_data
+
 
 class CortesList(BaseDatatableView):
     """
@@ -3275,7 +3365,8 @@ class FormadoresListEvidencias(BaseDatatableView):
     max_display_length = 100
 
     def get_initial_queryset(self):
-        return Formador.objects.filter(cargo__nombre = 'Formador Tipo ' + self.kwargs['id_diplomado'])
+        qs = Formador.objects.filter(cargo__nombre = 'Formador Tipo ' + self.kwargs['id_diplomado'])
+        return qs
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
@@ -3288,43 +3379,44 @@ class FormadoresListEvidencias(BaseDatatableView):
 
     def prepare_results(self, qs):
         json_data = []
-
+        stack = []
 
         for item in qs:
+            if item not in stack:
+                stack.append(item)
+                region_str = ''
+                for region in item.region.values_list('numero',flat=True):
+                    region_str = region_str + str(region) + ','
+                region_str = region_str[:-1]
 
-            region_str = ''
-            for region in item.region.values_list('numero',flat=True):
-                region_str = region_str + str(region) + ','
-            region_str = region_str[:-1]
+                if item.banco != None:
+                    banco = item.banco.nombre
+                else:
+                    banco = ''
 
-            if item.banco != None:
-                banco = item.banco.nombre
-            else:
-                banco = ''
+                grupos = Grupos.objects.filter(formador = item).count()
+                beneficiarios = Beneficiario.objects.filter(formador = item,diplomado__id=self.kwargs['id_diplomado']).count()
 
-            grupos = Grupos.objects.filter(formador = item).count()
-            beneficiarios = Beneficiario.objects.filter(formador = item).count()
-
-            json_data.append([
-                item.id,
-                item.nombres + " " + item.apellidos,
-                item.cargo.nombre,
-                region_str,
-                item.cedula,
-                item.correo_personal,
-                item.celular_personal,
-                item.profesion,
-                item.fecha_contratacion,
-                item.fecha_terminacion,
-                banco,
-                item.tipo_cuenta,
-                item.numero_cuenta,
-                item.eps,
-                item.pension,
-                item.arl,
-                grupos,
-                beneficiarios
-            ])
+                json_data.append([
+                    item.id,
+                    item.nombres + " " + item.apellidos,
+                    'Formador Tipo ' + self.kwargs['id_diplomado'],
+                    region_str,
+                    item.cedula,
+                    item.correo_personal,
+                    item.celular_personal,
+                    item.profesion,
+                    item.fecha_contratacion,
+                    item.fecha_terminacion,
+                    banco,
+                    item.tipo_cuenta,
+                    item.numero_cuenta,
+                    item.eps,
+                    item.pension,
+                    item.arl,
+                    grupos,
+                    beneficiarios
+                ])
         return json_data
 
 class DiplomadosEvidenciasList(BaseDatatableView):

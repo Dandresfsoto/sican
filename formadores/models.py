@@ -30,7 +30,7 @@ class Formador(models.Model):
 
 
     #---------- INFORMACION PROFESIONAL ----------------------
-    cargo = models.ForeignKey(Cargo)
+    cargo = models.ManyToManyField(Cargo)
     respaldo_cargo = models.ForeignKey(Cargo,related_name="respaldo_cargo",blank=True,null=True)
     profesion = models.CharField(max_length=100,blank=True)
 
@@ -62,6 +62,12 @@ class Formador(models.Model):
         value = ''
         for region in self.region.values_list('nombre',flat=True):
             value = value + unicode(region) + ', '
+        return value[:-2]
+
+    def get_cargo_string(self):
+        value = ''
+        for cargo in self.cargo.values_list('nombre',flat=True):
+            value = value + unicode(cargo) + ', '
         return value[:-2]
 
     def get_interventoria_region(self):
@@ -170,7 +176,6 @@ class Grupos(models.Model):
 
     def get_full_name(self):
         return self.formador.codigo_ruta + '-' + self.nombre
-
 
 class Producto(models.Model):
     valor_entregable = models.ForeignKey(ValorEntregable)

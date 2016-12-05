@@ -2057,7 +2057,9 @@ class RevisionForm(forms.ModelForm):
         formador = Formador.objects.get(id = kwargs['initial']['formador_id'])
         self.fields['formador_revision'].initial = formador
 
-        contrato = Contratos.objects.filter(cargo = formador.cargo).get(nombre = 'Capacitación 1') if formador.primera_capacitacion else Contratos.objects.filter(cargo = formador.cargo).get(nombre = 'Capacitación 2')
+        cargo = Cargo.objects.get(id = kwargs['initial']['cargo_id'])
+
+        contrato = Contratos.objects.filter(cargo = cargo).get(nombre = 'Capacitación 1') if formador.primera_capacitacion else Contratos.objects.filter(cargo = cargo).get(nombre = 'Capacitación 2')
         entregables = ValorEntregable.objects.filter(contrato = contrato)
         revisiones = Revision.objects.filter(formador_revision = formador)
 
@@ -2157,10 +2159,13 @@ class RevisionForm(forms.ModelForm):
         self.fields['formador_revision'].widget = forms.HiddenInput()
 
     def clean(self):
+
+        cargo = Cargo.objects.get(id = self.initial['cargo_id'])
+
         cleaned_data = super(RevisionForm, self).clean()
         formador = cleaned_data.get('formador_revision')
 
-        contrato = Contratos.objects.filter(cargo = formador.cargo).get(nombre = 'Capacitación 1') if formador.primera_capacitacion else Contratos.objects.filter(cargo = formador.cargo).get(nombre = 'Capacitación 2')
+        contrato = Contratos.objects.filter(cargo = cargo).get(nombre = 'Capacitación 1') if formador.primera_capacitacion else Contratos.objects.filter(cargo = cargo).get(nombre = 'Capacitación 2')
         entregables = ValorEntregable.objects.filter(contrato = contrato)
         revisiones = Revision.objects.filter(formador_revision = formador)
 

@@ -115,7 +115,7 @@ def cortes(email,id):
             formador.get_region_string(),
             formador.correo_personal,
             formador.celular_personal,
-            formador.cargo.nombre if formador.cargo != None else '',
+            formador.get_cargo_string() if formador.cargo != None else '',
 
             formador.banco.nombre if formador.banco != None else '',
             formador.tipo_cuenta,

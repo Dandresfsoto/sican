@@ -18,33 +18,27 @@ block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
-    a(href="../../../",class="link_button")
+    a(href="../",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Listado de formadores
             iron-icon(icon="check",item-icon)
-    a(href="../../",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Tipologias: {{formador}}
-            iron-icon(icon="check",item-icon)
-    paper-icon-item(class="breadcrum_active",disabled) Revisiones: {{nombre_cargo}}
+    paper-icon-item(class="breadcrum_active",disabled) Tipologias: {{formador}}
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
     div(class="container-fluid container-index")
-
-        |{% if nuevo_permiso %}
+        | {% if nuevo_permiso %}
         a(href="nuevo",class="link_button")
             paper-button(class="submit") Nuevo
-        |{% endif %}
-
+        | {% endif %}
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
-                    th Fecha
-                    th Descripción
+                    th Cargo
                     th Valor
             tbody
                 tr
-                    td Fecha
-                    td Descripción
-                    th Valor
+                    td Cargo
+                    td Valor
+
 block body_script_content
     script.
         $(document).ready(function () {
@@ -54,33 +48,26 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/formadores/revision/{{id_formador}}/{{id_cargo}}",
+                "ajax": "/rest/formadores/contratos/{{id_formador}}/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
-                "order": [[1, "asc"]],
-
                 "columns": [
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
                             var date = new Date(data);
-                            if (row[4]) {
-
-                                return '<a href="editar/' + row[0] + '" style="color:#004c99;">' + date.toLocaleString() + '</a>';
+                            if (row[3]) {
+                                return '<a href="cargo/' + row[0] + '" style="color:#004c99;">' + row[1] + '</a>';
                             }
                             else {
-                                return date.toLocaleString();
+                                return row[1];
                             }
                         },
                         "orderable": true,
                     },
                     {
                         "data": 2,
-                        "orderable": false,
-                    },
-                    {
-                        "data": 3,
                         "render": function (data, type, row, meta) {
                             return accounting.formatMoney(data);
                         },

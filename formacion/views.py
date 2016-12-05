@@ -32,6 +32,9 @@ from formadores.models import Producto, Revision
 from rh.models import RequerimientoPersonal
 from rh.forms import RequerimientoPersonalForm, RequerimientoPersonalRhCapacitado
 from django.utils import timezone
+from cargos.models import Cargo
+
+
 
 class DiplomasEscuelaTic(LoginRequiredMixin,
                          PermissionRequiredMixin,
@@ -723,7 +726,28 @@ class ListaRevisionFormadorView(LoginRequiredMixin,
         kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.formacion.revision.informes')
         kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador']).get_full_name()
         kwargs['id_formador'] = self.kwargs['id_formador']
+        kwargs['id_cargo'] = self.kwargs['id_cargo']
+        kwargs['nombre_cargo'] = Cargo.objects.get(id = self.kwargs['id_cargo']).nombre
         return super(ListaRevisionFormadorView, self).get_context_data(**kwargs)
+
+
+
+
+class ListaRevisionTipologiaView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'formacion/revision/lista_revisiones_diplomado.html'
+    permission_required = "permisos_sican.formacion.revision.ver"
+
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.formacion.revision.crear')
+        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.formacion.revision.informes')
+        kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador']).get_full_name()
+        kwargs['id_formador'] = self.kwargs['id_formador']
+        return super(ListaRevisionTipologiaView, self).get_context_data(**kwargs)
+
+
 
 
 
@@ -737,16 +761,21 @@ class NuevaRevisionFormadorView(LoginRequiredMixin,
     permission_required = "permisos_sican.formacion.revision.crear"
 
     def get_initial(self):
-        return {'formador_id':self.kwargs['id_formador']}
+        return {'formador_id':self.kwargs['id_formador'],'cargo_id':self.kwargs['id_cargo']}
 
     def get_context_data(self, **kwargs):
         kwargs['formador'] = Formador.objects.get(id=self.kwargs['id_formador']).get_full_name()
+        kwargs['id_cargo'] = self.kwargs['id_cargo']
+        kwargs['nombre_cargo'] = Cargo.objects.get(id = self.kwargs['id_cargo']).nombre
         return super(NuevaRevisionFormadorView,self).get_context_data(**kwargs)
 
     def form_valid(self, form):
         self.object = form.save()
         formador = Formador.objects.get(id = self.kwargs['id_formador'])
-        contrato = Contratos.objects.filter(cargo = formador.cargo).get(nombre = 'Capacitación 1') if formador.primera_capacitacion else Contratos.objects.filter(cargo = formador.cargo).get(nombre = 'Capacitación 2')
+
+        cargo = Cargo.objects.get(id = self.kwargs['id_cargo'])
+
+        contrato = Contratos.objects.filter(cargo = cargo).get(nombre = 'Capacitación 1') if formador.primera_capacitacion else Contratos.objects.filter(cargo = cargo).get(nombre = 'Capacitación 2')
         entregables = ValorEntregable.objects.filter(contrato = contrato)
 
         for entregable in entregables:

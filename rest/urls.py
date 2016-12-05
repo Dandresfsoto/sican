@@ -19,7 +19,7 @@ from rest.views import CargaMasivaMatrices, FormadoresListEvidencias, NivelesLis
 from rest.views import SoportesListEvidencias,Cedulas2BeneficiariosId
 from rest.views import DelegacionRequerimientos, EvidenciasCodigos
 from rest.views import RedList, CargaMasivaEvidenciasList, DiplomadosEvidenciasList, FormadoresConsolidadoRh,CertificadosEscuelaTic
-from rest.views import RendimientoAuxiliaresList, AcividadesList, BeneficiariosListView
+from rest.views import RendimientoAuxiliaresList, AcividadesList, BeneficiariosListView, FormadoresContratosFormador
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -101,7 +101,8 @@ urlpatterns = [
     url(r'financiera/entregablesvalor/(?P<id_contrato>\w+)/$', EntregablesValorList.as_view()),
 
     url(r'formadores/revision/$', FormadoresRevision.as_view()),
-    url(r'formadores/revision/(?P<id_formador>\w+)/$', FormadoresRevisionFormador.as_view()),
+    url(r'formadores/revision/(?P<id_formador>\w+)/(?P<id_cargo>\w+)/$', FormadoresRevisionFormador.as_view()),
+    url(r'formadores/contratos/(?P<id_formador>\w+)/$', FormadoresContratosFormador.as_view()),
 
     url(r'financiera/cortes/$', CortesList.as_view()),
 

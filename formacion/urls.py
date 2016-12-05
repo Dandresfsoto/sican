@@ -10,6 +10,7 @@ from formacion.views import ListadoFormadoresGruposView, FormadoresGruposLista, 
 from formacion.views import ListaRevisionFormadorView,NuevaRevisionFormadorView, EditarRevisionFormadorView
 from formacion.views import ListaRequerimientosContratacionView, NuevoRequerimientoContratacionView, UpdateRequerimientoContratacionView
 from formacion.views import DiplomasEscuelaTic
+from formacion.views import ListaRevisionTipologiaView
 
 urlpatterns = [
     url(r'^preinscritos/$', ListaPreinscritosView.as_view()),
@@ -19,12 +20,10 @@ urlpatterns = [
 
     url(r'^transportes/$', ListaTransportesView.as_view()),
 
-
     url(r'^transportes/consignadas/(?P<id>[0-9]+)/$', ListaTransportesConsignadasView.as_view()),
     url(r'^transportes/aprobadasfinanciera/(?P<id>[0-9]+)/$', ListaTransportesAprobadasFinancieraView.as_view()),
     url(r'^transportes/aprobadaslideres/(?P<id>[0-9]+)/$', ListaTransportesAprobadasLideresView.as_view()),
     url(r'^transportes/rechazadas/(?P<id>[0-9]+)/$', ListaTransportesRechazadasView.as_view()),
-
 
     url(r'^transportes/pendientes/(?P<id>[0-9]+)/$', ListaTransportesPendientesView.as_view()),
     url(r'^transportes/pendientes/(?P<id>[0-9]+)/estado/(?P<id_solicitud>[0-9]+)/$', TransporteFormView.as_view()),
@@ -44,9 +43,12 @@ urlpatterns = [
     url(r'^grupos/formador/(?P<id_formador>\w+)/eliminar/(?P<id_grupo>\w+)/', EliminarGrupoFormador.as_view()),
 
     url(r'^revision/$', ListaRevisionView.as_view()),
-    url(r'^revision/(?P<id_formador>\w+)/$', ListaRevisionFormadorView.as_view()),
-    url(r'^revision/(?P<id_formador>\w+)/nuevo/$', NuevaRevisionFormadorView.as_view()),
-    url(r'^revision/(?P<id_formador>\w+)/editar/(?P<id_revision>\w+)/$', EditarRevisionFormadorView.as_view()),
+    url(r'^revision/(?P<id_formador>\w+)/$', ListaRevisionTipologiaView.as_view()),
+
+    url(r'^revision/(?P<id_formador>\w+)/cargo/(?P<id_cargo>\w+)/$', ListaRevisionFormadorView.as_view()),
+
+    url(r'^revision/(?P<id_formador>\w+)/cargo/(?P<id_cargo>\w+)/nuevo/$', NuevaRevisionFormadorView.as_view()),
+    url(r'^revision/(?P<id_formador>\w+)/cargo/(?P<id_cargo>\w+)/editar/(?P<id_revision>\w+)/$', EditarRevisionFormadorView.as_view()),
 
     url(r'^requerimientoscontratacion/$', ListaRequerimientosContratacionView.as_view()),
     url(r'^requerimientoscontratacion/nuevo/$', NuevoRequerimientoContratacionView.as_view()),
