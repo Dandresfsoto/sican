@@ -406,13 +406,15 @@ class PagosView(TemplateView):
         kwargs['formador'] = formador.get_full_name()
         kwargs['tipo'] = formador.get_cargo_string()
 
-        if formador.cargo.nombre == "Formador Tipo 1":
+        nombre = Cargo.objects.get(id = self.kwargs['id_cargo'])
+
+        if nombre == "Formador Tipo 1":
             numero_diplomado = 1
-        elif formador.cargo.nombre == "Formador Tipo 2":
+        elif nombre == "Formador Tipo 2":
             numero_diplomado = 2
-        elif formador.cargo.nombre == "Formador Tipo 3":
+        elif nombre == "Formador Tipo 3":
             numero_diplomado = 3
-        elif formador.cargo.nombre == "Formador Tipo 4":
+        elif nombre == "Formador Tipo 4":
             numero_diplomado = 4
         else:
             numero_diplomado = 0
@@ -430,6 +432,22 @@ class PagosView(TemplateView):
         kwargs['table'] = CortesTable(Cortes.objects.filter(id__in = revisiones),id_formador = formador.id)
         return super(PagosView,self).get_context_data(**kwargs)
 
+
+
+class TipologiasPagosView(TemplateView):
+    template_name = 'formadores/pagos/tipologias.html'
+
+    def get_context_data(self, **kwargs):
+        formador = Formador.objects.get(cedula=self.kwargs['cedula'])
+        kwargs['formador'] = formador.get_full_name()
+        kwargs['tipo'] = formador.get_cargo_string()
+
+
+        query = formador.cargo.all()
+        kwargs['table'] = TipologiasTable(query)
+        return super(TipologiasPagosView,self).get_context_data(**kwargs)
+
+
 class PagosCorteView(TemplateView):
     template_name = 'formadores/pagos/pagos_corte.html'
 
@@ -438,13 +456,15 @@ class PagosCorteView(TemplateView):
         kwargs['formador'] = formador.get_full_name()
         kwargs['tipo'] = formador.get_cargo_string()
 
-        if formador.cargo.nombre == "Formador Tipo 1":
+        nombre = Cargo.objects.get(id = self.kwargs['id_cargo'])
+
+        if nombre == "Formador Tipo 1":
             numero_diplomado = 1
-        elif formador.cargo.nombre == "Formador Tipo 2":
+        elif nombre == "Formador Tipo 2":
             numero_diplomado = 2
-        elif formador.cargo.nombre == "Formador Tipo 3":
+        elif nombre == "Formador Tipo 3":
             numero_diplomado = 3
-        elif formador.cargo.nombre == "Formador Tipo 4":
+        elif nombre == "Formador Tipo 4":
             numero_diplomado = 4
         else:
             numero_diplomado = 0
@@ -470,13 +490,15 @@ class PagosCorteEntregableView(TemplateView):
         kwargs['formador'] = formador.get_full_name()
         kwargs['tipo'] = formador.get_cargo_string()
 
-        if formador.cargo.nombre == "Formador Tipo 1":
+        nombre = Cargo.objects.get(id = self.kwargs['id_cargo'])
+
+        if nombre == "Formador Tipo 1":
             numero_diplomado = 1
-        elif formador.cargo.nombre == "Formador Tipo 2":
+        elif nombre == "Formador Tipo 2":
             numero_diplomado = 2
-        elif formador.cargo.nombre == "Formador Tipo 3":
+        elif nombre == "Formador Tipo 3":
             numero_diplomado = 3
-        elif formador.cargo.nombre == "Formador Tipo 4":
+        elif nombre == "Formador Tipo 4":
             numero_diplomado = 4
         else:
             numero_diplomado = 0
