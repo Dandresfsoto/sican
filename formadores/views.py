@@ -39,7 +39,7 @@ class VinculosView(TemplateView):
             link = contrato.get_archivo_url()
 
         kwargs['formador'] = formador.nombres + " " + formador.apellidos
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
         kwargs['link_contrato'] = link
 
         dic = {
@@ -57,8 +57,8 @@ class VinculosView(TemplateView):
             },
         }
 
-        kwargs['carta'] = '/static/documentos/'+dic[str(formador.region.all()[0].numero)][formador.cargo.nombre]
-        kwargs['cargo'] = formador.cargo.nombre
+        kwargs['carta'] = '/static/documentos/'+dic[str(formador.region.all()[0].numero)][formador.get_cargo_string()]
+        kwargs['cargo'] = formador.get_cargo_string()
 
         return super(VinculosView,self).get_context_data(**kwargs)
 
@@ -152,7 +152,7 @@ class LegalizacionCompletaView(TemplateView):
             link = contrato.get_archivo_url()
 
         kwargs['formador'] = formador.nombres + " " + formador.apellidos
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
         kwargs['link_contrato'] = link
         return super(LegalizacionCompletaView,self).get_context_data(**kwargs)
 
@@ -162,7 +162,7 @@ class TransportesView(TemplateView):
     def get_context_data(self, **kwargs):
         formador = Formador.objects.get(cedula=kwargs['cedula'])
         kwargs['formador'] = formador.nombres + " " + formador.apellidos
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
         query = SolicitudTransporte.objects.filter(formador=formador)
         kwargs['table'] = SolicitudTable(query)
         return super(TransportesView,self).get_context_data(**kwargs)
@@ -175,7 +175,7 @@ class NuevaSolicitudTransportesView(FormView):
     def get_context_data(self, **kwargs):
         formador = Formador.objects.get(cedula=self.kwargs['cedula'])
         kwargs['formador'] = formador.nombres + " " + formador.apellidos
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
         return super(NuevaSolicitudTransportesView,self).get_context_data(**kwargs)
 
     def form_valid(self, form):
@@ -353,7 +353,7 @@ class OtroSiCompletoView(TemplateView):
     def get_context_data(self, **kwargs):
         formador = Formador.objects.get(cedula=kwargs['cedula'])
         kwargs['formador'] = formador.nombres + " " + formador.apellidos
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
         return super(OtroSiCompletoView,self).get_context_data(**kwargs)
 
 class EntregablesView(TemplateView):
@@ -362,7 +362,7 @@ class EntregablesView(TemplateView):
     def get_context_data(self, **kwargs):
         formador = Formador.objects.get(cedula=self.kwargs['cedula'])
         kwargs['formador'] = formador.get_full_name()
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
 
         if formador.cargo.nombre == "Formador Tipo 1":
             numero_diplomado = 1
@@ -385,7 +385,7 @@ class PagosView(TemplateView):
     def get_context_data(self, **kwargs):
         formador = Formador.objects.get(cedula=self.kwargs['cedula'])
         kwargs['formador'] = formador.get_full_name()
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
 
         if formador.cargo.nombre == "Formador Tipo 1":
             numero_diplomado = 1
@@ -417,7 +417,7 @@ class PagosCorteView(TemplateView):
     def get_context_data(self, **kwargs):
         formador = Formador.objects.get(cedula=self.kwargs['cedula'])
         kwargs['formador'] = formador.get_full_name()
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
 
         if formador.cargo.nombre == "Formador Tipo 1":
             numero_diplomado = 1
@@ -449,7 +449,7 @@ class PagosCorteEntregableView(TemplateView):
     def get_context_data(self, **kwargs):
         formador = Formador.objects.get(cedula=self.kwargs['cedula'])
         kwargs['formador'] = formador.get_full_name()
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
 
         if formador.cargo.nombre == "Formador Tipo 1":
             numero_diplomado = 1
@@ -496,7 +496,7 @@ class SeguridadSocialView(FormView):
     def get_context_data(self, **kwargs):
         formador = Formador.objects.get(cedula=self.kwargs['cedula'])
         kwargs['formador'] = formador.nombres + " " + formador.apellidos
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
         kwargs['cedula'] = formador.cedula
         return super(SeguridadSocialView,self).get_context_data(**kwargs)
 
@@ -568,6 +568,6 @@ class SeguridadSocialCompletaView(TemplateView):
             link = contrato.get_archivo_url()
 
         kwargs['formador'] = formador.nombres + " " + formador.apellidos
-        kwargs['tipo'] = formador.cargo.nombre
+        kwargs['tipo'] = formador.get_cargo_string()
         kwargs['link_contrato'] = link
         return super(SeguridadSocialCompletaView,self).get_context_data(**kwargs)
