@@ -15,6 +15,7 @@ from django.shortcuts import HttpResponseRedirect
 from evidencias.tasks import build_red, carga_masiva_evidencias, retroalimentacion_red
 from evidencias.models import CargaMasiva
 from evidencias.forms import CargaMasivaForm
+from matrices.models import Beneficiario
 
 # Create your views here.
 
@@ -444,3 +445,23 @@ class AuxiliaresListView(LoginRequiredMixin,
                          TemplateView):
     template_name = 'evidencias/rendimiento/lista.html'
     permission_required = "permisos_sican.auxiliares.rendimiento.ver"
+
+
+class BeneficiarioEvidenciaCedulaList(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/cedula/lista_beneficiarios.html'
+    permission_required = "permisos_sican.evidencias.cedula_beneficiario.ver"
+
+
+class BeneficiarioEvidenciaCedulaProductoList(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/cedula/lista_productos.html'
+    permission_required = "permisos_sican.evidencias.cedula_beneficiario.ver"
+
+
+    def get_context_data(self, **kwargs):
+        kwargs['id_beneficiario'] = self.kwargs['id_beneficiario']
+        kwargs['nombre_beneficiario'] = Beneficiario.objects.get(id = self.kwargs['id_beneficiario']).get_full_name()
+        return super(BeneficiarioEvidenciaCedulaProductoList,self).get_context_data(**kwargs)

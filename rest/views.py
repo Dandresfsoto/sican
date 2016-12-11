@@ -492,6 +492,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'cedula_beneficiario':{
+                'ver':{'name':'Cedula beneficiario','link':'/evidencias/cedula/'}
+            },
             'codigos_evidencia':{
                 'ver':{'name':'Actividades','link':'/evidencias/actividades/'}
             },
@@ -2639,6 +2642,94 @@ class MatricesDiplomadosList(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.acceso.retoma.eliminar'),
             ])
         return json_data
+
+
+
+class BeneficiariosCedulaListView(BaseDatatableView):
+    """
+    """
+    model = Beneficiario
+    columns = ['id','nombres','apellidos','cedula','region','diplomado','formador']
+    order_columns = ['nombres','apellidos','cedula','region','diplomado','formador']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) |\
+                Q(cedula__icontains=search) | Q(diplomado__nombre__icontains=search) |\
+                Q(formador__nombres__icontains=search)
+
+            qs = qs.filter(q)
+        return qs
+
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombres,
+                item.apellidos,
+                item.cedula,
+                item.region.nombre,
+                item.diplomado.nombre,
+                item.formador.get_full_name()
+            ])
+        return json_data
+
+
+
+class BeneficiariosCedulaProductosListView(BaseDatatableView):
+    """
+    """
+    model = Entregable
+    columns = ['id']
+    order_columns = ['id']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        beneficiario = Beneficiario.objects.get(id=self.kwargs['id_beneficiario'])
+        return Entregable.objects.filter(sesion__nivel__diplomado__id = beneficiario.diplomado.id)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) |\
+                Q(cedula__icontains=search) | Q(diplomado__nombre__icontains=search) |\
+                Q(formador__nombres__icontains=search)
+
+            qs = qs.filter(q)
+        return qs
+
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        beneficiario = Beneficiario.objects.get(id=self.kwargs['id_beneficiario'])
+        evidencias = Evidencia.objects.filter(beneficiarios_cargados = beneficiario)
+
+        for item in qs:
+            evidencia = evidencias.filter(entregable__id = item.id)
+
+            if evidencia.count() == 0:
+                link = ''
+            else:
+                link = evidencia[len(evidencia)-1].get_archivo_url()
+
+            json_data.append([
+                item.id,
+                item.sesion.nivel.diplomado.nombre,
+                item.sesion.nivel.nombre,
+                item.sesion.nombre,
+                item.nombre,
+                link
+            ])
+        return json_data
+
+
 
 class BeneficiariosListView(BaseDatatableView):
     """

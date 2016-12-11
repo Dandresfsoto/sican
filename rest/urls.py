@@ -20,6 +20,7 @@ from rest.views import SoportesListEvidencias,Cedulas2BeneficiariosId
 from rest.views import DelegacionRequerimientos, EvidenciasCodigos
 from rest.views import RedList, CargaMasivaEvidenciasList, DiplomadosEvidenciasList, FormadoresConsolidadoRh,CertificadosEscuelaTic
 from rest.views import RendimientoAuxiliaresList, AcividadesList, BeneficiariosListView, FormadoresContratosFormador
+from rest.views import BeneficiariosCedulaListView, BeneficiariosCedulaProductosListView
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -135,4 +136,8 @@ urlpatterns = [
     url(r'evidencias/actividades/(?P<id_diplomado>\w+)/$', AcividadesList.as_view()),
 
     url(r'evidencias/beneficiarios/(?P<id_actividad>\w+)/$', BeneficiariosListView.as_view()),
+
+    url(r'evidencias/cedula/$', BeneficiariosCedulaListView.as_view()),
+
+    url(r'evidencias/cedula/(?P<id_beneficiario>\w+)/$', BeneficiariosCedulaProductosListView.as_view()),
 ]
