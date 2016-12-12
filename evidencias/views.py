@@ -465,3 +465,9 @@ class BeneficiarioEvidenciaCedulaProductoList(LoginRequiredMixin,
         kwargs['id_beneficiario'] = self.kwargs['id_beneficiario']
         kwargs['nombre_beneficiario'] = Beneficiario.objects.get(id = self.kwargs['id_beneficiario']).get_full_name()
         return super(BeneficiarioEvidenciaCedulaProductoList,self).get_context_data(**kwargs)
+
+class SubsanacionListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/subsanacion/lista_reds.html'
+    permission_required = "permisos_sican.evidencias.subsanacion.ver"

@@ -492,6 +492,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'subsanacion':{
+                'ver':{'name':'Subsanación de evidencias','link':'/evidencias/subsanacion/'}
+            },
             'cedula_beneficiario':{
                 'ver':{'name':'Cedula beneficiario','link':'/evidencias/cedula/'}
             },
@@ -3861,6 +3864,62 @@ class RedList(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.evidencias.red.editar'),
             ])
         return json_data
+
+
+
+class RedSubsanacionList(BaseDatatableView):
+    """
+    """
+    model = Red
+    columns = ['id','diplomado','region','fecha']
+
+    order_columns = ['id','diplomado','region','fecha']
+    max_display_length = 100
+
+
+    def get_initial_queryset(self):
+        return Red.objects.filter(retroalimentacion = True)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(id__exact = search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+
+            cargados = list(item.evidencias.all().values_list('beneficiarios_cargados__id',flat=True))
+            validados = list(item.evidencias.all().values_list('beneficiarios_validados__id',flat=True))
+            rechazados = list(item.evidencias.all().values_list('beneficiarios_rechazados__id',flat=True))
+
+            while None in cargados:
+                cargados.remove(None)
+            while None in validados:
+                validados.remove(None)
+            while None in rechazados:
+                rechazados.remove(None)
+
+
+            json_data.append([
+                item.id,
+                item.diplomado.nombre,
+                item.region.nombre,
+                item.evidencias.all().count(),
+                len(cargados),
+                len(validados),
+                len(rechazados),
+                item.get_archivo_url(),
+                self.request.user.has_perm('permisos_sican.evidencias.red.editar'),
+            ])
+        return json_data
+
+
 
 class CargaMasivaEvidenciasList(BaseDatatableView):
     """

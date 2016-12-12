@@ -136,7 +136,12 @@ $(document).ready(function () {
     if ($('#input_mensaje').val() != ""){
         toast_message.open();
     }
-});</script><script>$('#id_permissions').selectpicker({});
+});</script><script>$("#id_permissions").chosen(
+        {
+            no_results_text: "No hay resultados para",
+            placeholder_text_multiple: "Seleccione los permisos"
+        }
+);
 submit_form.addEventListener('click', function (e) {
     form.submit();
 });</script></body></html>

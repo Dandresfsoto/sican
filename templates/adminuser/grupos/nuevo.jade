@@ -30,7 +30,12 @@ block scroll_header_panel_content
                         paper-button(class="submit",id="submit_form") Guardar
 block body_script_content
     script.
-        $('#id_permissions').selectpicker({});
+        $("#id_permissions").chosen(
+                {
+                    no_results_text: "No hay resultados para",
+                    placeholder_text_multiple: "Seleccione los permisos"
+                }
+        );
         submit_form.addEventListener('click', function (e) {
             form.submit();
         });

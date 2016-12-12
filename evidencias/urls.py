@@ -6,6 +6,7 @@ from evidencias.views import CargaMasivaListView, NuevoCargaMasivaView, UpdateRe
 from evidencias.views import AuxiliaresListView, DiplomadosActividadesListView, ActividadesListView
 from evidencias.views import BeneficiariosEvidenciaListView
 from evidencias.views import BeneficiarioEvidenciaCedulaList, BeneficiarioEvidenciaCedulaProductoList
+from evidencias.views import SubsanacionListView
 
 urlpatterns = [
     url(r'^general/$', DiplomadosListView.as_view()),
@@ -38,4 +39,6 @@ urlpatterns = [
     url(r'^cedula/$', BeneficiarioEvidenciaCedulaList.as_view()),
 
     url(r'^cedula/beneficiario/(?P<id_beneficiario>[0-9]+)/$', BeneficiarioEvidenciaCedulaProductoList.as_view()),
+
+    url(r'^subsanacion/$', SubsanacionListView.as_view()),
 ]
