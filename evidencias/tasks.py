@@ -131,7 +131,7 @@ def build_red(id_red):
                {'id':167,'letter':'AP'},
                {'id':171,'letter':'AQ'},
                {'id':171,'letter':'AR'},
-               {'id':172,'letter':'AS'}]
+               {'id':169,'letter':'AS'}]
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED DIRECTIC.xlsx')
         ws = wb.get_sheet_by_name('RED DirecTIC')
         inicia = 6

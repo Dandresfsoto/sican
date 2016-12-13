@@ -31,6 +31,7 @@ block scroll_header_panel_content
                     th Asignaciones
                     th Asig. Aprobados
                     th Asig. Rechazados
+                    th Diferencia
                     th Archivo
             tbody
                 tr
@@ -41,6 +42,7 @@ block scroll_header_panel_content
                     td Asignaciones
                     td Asig. Aprobados
                     td Asig. Rechazados
+                    td Diferencia
                     td Archivo
 block body_script_content
     script.
@@ -55,13 +57,13 @@ block body_script_content
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
-                "order": [[1, "asc"]],
+                "order": [[0, "desc"]],
                 "columns": [
                     {
                         "data": 0,
                         "orderable": true,
                         "render": function (data, type, row, meta) {
-                            if (row[7]) {
+                            if (row[9]) {
                                 return '<a href="editar/' + row[0] + '" style="color:#004c99;">RED-' + data + '</a>';
                             }
                             else {
@@ -98,12 +100,17 @@ block body_script_content
                         "className": 'text-center',
                     },
                     {
+                        "data": 7,
+                        "orderable": false,
+                        "className": 'text-center',
+                    },
+                    {
                         "orderable": false,
                         "className": 'text-center',
                         "data": null,
                         "render": function (data, type, row, meta) {
-                            if (row[7] != '') {
-                                return '<a target="_blank" href="' + row[7] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
+                            if (row[8] != '') {
+                                return '<a target="_blank" href="' + row[8] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
                             }
                             else {
                                 return '';

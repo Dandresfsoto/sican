@@ -3910,10 +3910,11 @@ class RedSubsanacionList(BaseDatatableView):
                 item.id,
                 item.diplomado.nombre,
                 item.region.nombre,
-                item.evidencias.all().count(),
+                item.evidencias.exclude(beneficiarios_cargados = None).count(),
                 len(cargados),
                 len(validados),
                 len(rechazados),
+                len(cargados)-len(validados)-len(rechazados),
                 item.get_archivo_url(),
                 self.request.user.has_perm('permisos_sican.evidencias.red.editar'),
             ])
