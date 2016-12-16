@@ -22,6 +22,7 @@ from rest.views import RedList, CargaMasivaEvidenciasList, DiplomadosEvidenciasL
 from rest.views import RendimientoAuxiliaresList, AcividadesList, BeneficiariosListView, FormadoresContratosFormador
 from rest.views import BeneficiariosCedulaListView, BeneficiariosCedulaProductosListView
 from rest.views import RedSubsanacionList
+from rest.views import EvidenciasSubsanacionCodigos
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -143,4 +144,6 @@ urlpatterns = [
     url(r'evidencias/cedula/(?P<id_beneficiario>\w+)/$', BeneficiariosCedulaProductosListView.as_view()),
 
     url(r'reds/subsanacion/',RedSubsanacionList.as_view()),
+
+    url(r'reds/subsanacionevidencias/red/(?P<id_red>\w+)/',EvidenciasSubsanacionCodigos.as_view()),
 ]

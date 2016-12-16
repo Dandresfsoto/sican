@@ -471,3 +471,14 @@ class SubsanacionListView(LoginRequiredMixin,
                          TemplateView):
     template_name = 'evidencias/subsanacion/lista_reds.html'
     permission_required = "permisos_sican.evidencias.subsanacion.ver"
+
+
+class SubsanacionEvidenciasListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/subsanacion/lista_evidencias.html'
+    permission_required = "permisos_sican.evidencias.subsanacion.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['id_red'] = self.kwargs['id_red']
+        return super(SubsanacionEvidenciasListView,self).get_context_data(**kwargs)

@@ -3832,6 +3832,92 @@ class EvidenciasCodigos(BaseDatatableView):
             ])
         return json_data
 
+
+class EvidenciasSubsanacionCodigos(BaseDatatableView):
+    """
+    0.id
+    1.red
+    2.fecha
+    3.actualizacion
+    4.usuario
+    5.archivo
+    6.entregable
+    7.beneficiarios cargados
+    8.beneficiarios validados
+    9.formador
+    """
+    model = Evidencia
+    columns = ['id']
+
+    order_columns = ['id','id','id','id']
+    max_display_length = 100
+
+
+    def get_initial_queryset(self):
+        red = Red.objects.get(id=self.kwargs['id_red'])
+        ids = red.evidencias.exclude(beneficiarios_rechazados = None).values_list('id',flat=True)
+        return Evidencia.objects.filter(id__in = ids)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(id__exact = search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+
+            try:
+                red = 'RED-' + str(Red.objects.get(evidencias__id = item.id).id)
+            except:
+                red = None
+
+
+            baneficiarios_cargados = []
+            baneficiarios_validados = []
+            baneficiarios_rechazados = []
+
+            for beneficiario in item.beneficiarios_cargados.all():
+                if beneficiario != None:
+                    baneficiarios_cargados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
+
+            for beneficiario in item.beneficiarios_validados.all():
+                if beneficiario != None:
+                    baneficiarios_validados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.get_grupo()])
+
+            for beneficiario in item.beneficiarios_rechazados.all():
+                if beneficiario != None:
+                    baneficiarios_rechazados.append([beneficiario.beneficiario_rechazo.get_full_name(),beneficiario.beneficiario_rechazo.cedula,beneficiario.beneficiario_rechazo.get_grupo(),beneficiario.observacion])
+
+
+            json_data.append([
+                item.id,
+                red,
+                item.get_beneficiarios_cantidad(),
+                item.get_validados_cantidad(),
+                item.get_archivo_url(),
+                item.entregable.sesion.nivel.diplomado.nombre,
+                item.entregable.sesion.nivel.nombre,
+                item.entregable.sesion.nombre,
+                item.entregable.id,
+
+                localtime(item.fecha).strftime('%d/%m/%Y %I:%M:%S %p'),
+                localtime(item.updated).strftime('%d/%m/%Y %I:%M:%S %p'),
+                item.usuario.get_full_name(),
+                item.entregable.nombre,
+                item.formador.get_full_name(),
+                baneficiarios_cargados,
+                baneficiarios_validados,
+                baneficiarios_rechazados
+            ])
+        return json_data
+
+
 class RedList(BaseDatatableView):
     """
     """
