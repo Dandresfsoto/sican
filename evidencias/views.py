@@ -16,6 +16,9 @@ from evidencias.tasks import build_red, carga_masiva_evidencias, retroalimentaci
 from evidencias.models import CargaMasiva
 from evidencias.forms import CargaMasivaForm
 from matrices.models import Beneficiario
+from django.views.generic import FormView
+from evidencias.forms import SubsanacionEvidenciaForm
+import os
 
 # Create your views here.
 
@@ -482,3 +485,37 @@ class SubsanacionEvidenciasListView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['id_red'] = self.kwargs['id_red']
         return super(SubsanacionEvidenciasListView,self).get_context_data(**kwargs)
+
+
+
+
+
+
+
+class SubsanacionEvidenciasFormView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              FormView):
+
+    form_class = SubsanacionEvidenciaForm
+    success_url = '../../'
+    template_name = 'evidencias/subsanacion/evidencia.html'
+    permission_required = "permisos_sican.evidencias.subsanacion.crear"
+
+    def get_context_data(self, **kwargs):
+
+        evidencia = Evidencia.objects.get(id = self.kwargs['id_evidencia'])
+
+        kwargs['id_red'] = self.kwargs['id_red']
+        kwargs['id_evidencia'] = self.kwargs['id_evidencia']
+        kwargs['link_soporte'] = evidencia.get_archivo_url()
+        kwargs['nombre_soporte'] = os.path.basename(evidencia.archivo.name)
+
+        return super(SubsanacionEvidenciasFormView,self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'id_red':self.kwargs['id_red'],'id_evidencia':self.kwargs['id_evidencia']}
+
+    def form_valid(self, form):
+        self.object = form.save()
+        carga_masiva_evidencias.delay(self.object.id,self.request.user.id)
+        return super(SubsanacionEvidenciasFormView,self).form_valid(form)
