@@ -17,7 +17,7 @@ from isoweek import Week
 import datetime
 from formacion.models import Semana
 from lideres.models import Lideres, Soporte
-from encuestas.models import PercepcionInicial
+from encuestas.models import PercepcionInicial, PercepcionFinal
 from radicados.models import Radicado
 from formadores.models import Cortes
 from formadores.models import Revision
@@ -527,6 +527,77 @@ def encuesta_percepcion_inicial(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
+
+
+@app.task
+def encuesta_percepcion_final(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Base de datos respuestas percepción final"
+    proceso = "ENC-INF02"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Cedula','Primer Apellido','Segundo Apellido','Primer Nombre','Segundo Nombre','Cargo','Correo','Telefono Fijo','Telefono Celular',
+               'Departamento','Municipio','Verificado','Fecha','Radicado','Secretaria','Municipio Radicado','Nombre Sede','Dane Sede','Ubicación',
+               'Area','Tiempo Formación','Pregunta 1','Pregunta 2','Pregunta 3','Pregunta 4','Pregunta 5','Pregunta 6','Pregunta 7','Pregunta 8',
+               'Pregunta 9','Pregunta 10','Pregunta 11','Pregunta 12']
+
+    formatos = ['General','0','General','General','General','General','General','General','General','General',
+                'General','General','General','d/m/yy','0','General','General','General','0','General',
+                'General','General','General','General','General','General','General','General','General','General',
+                'General','General','General','General']
+
+
+    ancho_columnas =  [30,20,15,15,15,40,40,40,40,40,
+                       40,40,40,40,40,40,40,40,40,40,
+                       60,60,60,60,60,60,60,60,60,60,
+                       60,60,60,60]
+
+    contenidos = []
+
+    for encuestado in PercepcionFinal.objects.all():
+        contenidos.append([
+            'ENC-'+unicode(encuestado.id),
+            encuestado.docente_preinscrito.cedula,
+            encuestado.docente_preinscrito.primer_apellido,
+            encuestado.docente_preinscrito.segundo_apellido,
+            encuestado.docente_preinscrito.primer_nombre,
+            encuestado.docente_preinscrito.segundo_nombre,
+            encuestado.docente_preinscrito.cargo,
+            encuestado.docente_preinscrito.correo,
+            encuestado.docente_preinscrito.telefono_fijo,
+            encuestado.docente_preinscrito.telefono_celular,
+            encuestado.docente_preinscrito.departamento.nombre if encuestado.docente_preinscrito.departamento != None else '',
+            encuestado.docente_preinscrito.municipio.nombre if encuestado.docente_preinscrito.municipio != None else '',
+            'SI' if encuestado.docente_preinscrito.verificado else 'NO',
+            encuestado.docente_preinscrito.fecha,
+            encuestado.docente_preinscrito.radicado.numero if encuestado.docente_preinscrito.radicado != None else '',
+            encuestado.docente_preinscrito.radicado.secretaria.nombre if encuestado.docente_preinscrito.radicado.secretaria != None else '',
+            encuestado.docente_preinscrito.radicado.municipio.nombre if encuestado.docente_preinscrito.radicado.municipio != None else '',
+            encuestado.docente_preinscrito.radicado.nombre_sede if encuestado.docente_preinscrito.radicado != None else '',
+            encuestado.docente_preinscrito.radicado.dane_sede if encuestado.docente_preinscrito.radicado != None else '',
+            encuestado.docente_preinscrito.radicado.ubicacion if encuestado.docente_preinscrito.radicado != None else '',
+            encuestado.area,
+            encuestado.tiempo_formacion,
+            encuestado.pregunta_1,
+            encuestado.pregunta_2,
+            encuestado.pregunta_3,
+            encuestado.pregunta_4,
+            encuestado.pregunta_5,
+            encuestado.pregunta_6,
+            encuestado.pregunta_7,
+            encuestado.pregunta_8,
+            encuestado.pregunta_9,
+            encuestado.pregunta_10,
+            encuestado.pregunta_11,
+            encuestado.pregunta_12,
+        ])
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
 
 @app.task
 def radicados(email):
