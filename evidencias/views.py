@@ -18,7 +18,9 @@ from evidencias.forms import CargaMasivaForm
 from matrices.models import Beneficiario
 from django.views.generic import FormView
 from evidencias.forms import SubsanacionEvidenciaForm
+from matrices.forms import BeneficiarioUpdateForm
 import os
+from radicados.models import Radicado
 
 # Create your views here.
 
@@ -443,6 +445,7 @@ class NuevoCargaMasivaView(LoginRequiredMixin,
         carga_masiva_evidencias.delay(self.object.id,self.request.user.id)
         return super(NuevoCargaMasivaView,self).form_valid(form)
 
+
 class AuxiliaresListView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
@@ -516,6 +519,65 @@ class SubsanacionEvidenciasFormView(LoginRequiredMixin,
         return {'id_red':self.kwargs['id_red'],'id_evidencia':self.kwargs['id_evidencia']}
 
     def form_valid(self, form):
-        self.object = form.save()
-        carga_masiva_evidencias.delay(self.object.id,self.request.user.id)
+        keys = list(form.cleaned_data.keys())
+        keys.remove('archivo')
+        keys.remove('observacion')
+        x = 0
         return super(SubsanacionEvidenciasFormView,self).form_valid(form)
+
+
+
+
+class SubsanacionEvidenciasBeneficiarioView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              UpdateView):
+
+    model = Beneficiario
+    form_class = BeneficiarioUpdateForm
+    success_url = '../../'
+    template_name = 'evidencias/subsanacion/actualizar_participante.html'
+    permission_required = "permisos_sican.evidencias.subsanacion.crear"
+    pk_url_kwarg = 'id_beneficiario'
+
+    def get_context_data(self, **kwargs):
+
+        evidencia = Evidencia.objects.get(id = self.kwargs['id_evidencia'])
+
+        kwargs['id_red'] = self.kwargs['id_red']
+        kwargs['id_evidencia'] = self.kwargs['id_evidencia']
+        kwargs['link_soporte'] = evidencia.get_archivo_url()
+        kwargs['nombre_soporte'] = os.path.basename(evidencia.archivo.name)
+
+        return super(SubsanacionEvidenciasBeneficiarioView,self).get_context_data(**kwargs)
+
+
+    def get_initial(self):
+        return {'id_red':self.kwargs['id_red'],'id_evidencia':self.kwargs['id_evidencia'],'diplomado_nombre':self.object.diplomado.nombre.upper(),'formador_id':self.object.formador.id,'beneficiario_id':self.object.id}
+
+
+    def form_valid(self, form):
+        self.object = form.save()
+        if self.object.diplomado.nombre != 'ESCUELA TIC FAMILIA':
+            self.object.radicado = Radicado.objects.get(numero=form.cleaned_data['radicado_text'])
+        self.object.save()
+        return super(SubsanacionEvidenciasBeneficiarioView, self).form_valid(form)
+
+
+
+
+class ListaSubsanacionEvidenciaView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/subsanacion/lista_subsanaciones.html'
+    permission_required = "permisos_sican.evidencias.subsanacion.ver"
+
+    def get_context_data(self, **kwargs):
+
+        evidencia = Evidencia.objects.get(id = self.kwargs['id_evidencia'])
+
+        kwargs['id_red'] = self.kwargs['id_red']
+        kwargs['id_evidencia'] = self.kwargs['id_evidencia']
+        kwargs['link_soporte'] = evidencia.get_archivo_url()
+        kwargs['nombre_soporte'] = os.path.basename(evidencia.archivo.name)
+
+        return super(ListaSubsanacionEvidenciaView,self).get_context_data(**kwargs)

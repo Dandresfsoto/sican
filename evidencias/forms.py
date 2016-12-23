@@ -283,15 +283,23 @@ class SubsanacionEvidenciaForm(forms.Form):
                                          )
 
 
+        self.helper.layout.fields.append(Fieldset('Observación',
+                                                  Div(
+                                                      'observacion',
+                                                      css_class = 'container-fluid')
+                                                  )
+                                         )
+
+
+
         container = self.helper.layout.fields[1].fields[0]
 
-        row = self.helper.layout.fields[1].fields[0].fields[0]
 
         for rechazo in evidencia.beneficiarios_rechazados.all():
 
             nombre = 'beneficiario_' + str(rechazo.beneficiario_rechazo.id)
 
-            self.fields[nombre] = forms.BooleanField(label="")
+            self.fields[nombre] = forms.BooleanField(label="",required=False)
 
             container.append(Div(
                                     Div(HTML("""<p style="margin-top:10px"><a href='beneficiario/""" + str(rechazo.beneficiario_rechazo.id) + """ '>"""+ rechazo.beneficiario_rechazo.get_full_name() +"""</a></p>"""),css_class='col-sm-3'),
@@ -305,4 +313,5 @@ class SubsanacionEvidenciaForm(forms.Form):
 
         x = 0
 
-    archivo = forms.FileField()
+    archivo = forms.FileField(required=False)
+    observacion = forms.CharField(max_length=100,widget = forms.Textarea(),required=False,label="*Use este campo en caso de requerir un comentario adicional")

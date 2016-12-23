@@ -1,10 +1,10 @@
 extends ../../inicio
 block scroll_header_panel_title
-    span(class="title") EVIDENCIAS CÓDIGO DE SOPORTE
+    span(class="title") SUBSANACIÓN FORMATOS RED
 block help_content
     p(class="title-help") Descripción:
     p.
-        En esta pagina puedes visualizar todos los soportes de la asociación ANDES.
+        En esta pagina se visualizan los formatos RED retroalimentados por la interventoria.
 block head_content_inicio
     link(rel="import",href="{% static 'bower_components/paper-button/paper-button.html'%}")
 block custom_style_panel
@@ -12,26 +12,24 @@ block custom_style_panel
         | paper-button{
         |   margin-bottom:15px;
         | }
+
+
 block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
-    paper-icon-item(class="breadcrum_active",disabled) Listado de evidencias
+    a(href="../../../../",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Listado de formatos RED
+            iron-icon(icon="check",item-icon)
+    a(href="../../",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Subsanación: RED-{{id_red}}
+            iron-icon(icon="check",item-icon)
+    paper-icon-item(class="breadcrum_active",disabled) Subsanaciónes SIC-{{id_evidencia}}
         iron-icon(icon="check",item-icon)
+
 
 block scroll_header_panel_content
     div(class="container-fluid container-index")
-
-        div(class="header-buttons")
-            | {% if informes %}
-            div
-                select(class="selectpicker",id="select_accion")
-                    option(value="") ---------
-                    option(value="23") Progreso de carga listados de asistencia y actas de compromiso
-                    option(value="25") Aprobación listados de asistencia y actas de compromiso
-                button(class="btn",id="accion") Generar reporte
-            | {% endif %}
-
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
@@ -57,24 +55,7 @@ block scroll_header_panel_content
                     td Cargados
                     td Validados
                     td Archivo
-
 block body_script_content
-    script.
-        $("#accion").on("click",function(){
-            var action = $("#select_accion").val();
-            var id_diplomado = $("#id_diplomado").val();
-            if(action != ''){
-                $.ajax({
-                    type: "GET",
-                    url: '/rest/reportes/?action=' + action + '&id_diplomado=' + id_diplomado,
-                    success: function(data){
-                        $('#myModal').modal('show');
-                        $("#select_accion").val('');
-                        $("#select_accion").selectpicker('refresh');
-                    }
-                });
-            }
-        });
     script.
         $(document).ready(function () {
             var table = $('#table').DataTable({
@@ -83,11 +64,11 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/evidencias/codigos/",
+                "ajax": "/rest/reds/subsanacionevidencias/red/{{id_red}}/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
-                "order": [[1, "desc"]],
+                "order": [[1, "asc"]],
                 "columns": [
                     {
                         "className": 'details-control',
@@ -99,7 +80,7 @@ block body_script_content
                         "data": 0,
                         "orderable": true,
                         "render": function (data, type, row, meta) {
-                            return 'SIC-' + data;
+                            return '<a href="editar/' + row[0] + '" style="color:#004c99;">SIC-' + row[0] + '</a>';
                         },
                     },
                     {
@@ -166,7 +147,6 @@ block body_script_content
             });
         });
         function format(d) {
-
             var cargados = '';
             var aprobados = '';
             var rechazados = '';
@@ -207,7 +187,6 @@ block body_script_content
                         '<td colspan=8><p>No hay registros</p></td>' +
                         '</tr>'
             }
-
             return '<table class="table table-striped">' +
                     '<tr>' +
                     '<td><p class="bold-p">Fecha creación:</p>' + d[9] + '</td>' +
@@ -221,43 +200,33 @@ block body_script_content
                     '<td><p class="bold-p"></p></td>' +
                     '<td><p class="bold-p"></p></td>' +
                     '</tr>' +
-
-                        '<tr style="background:#1488ca;color:white;">' +
-                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS CARGADOS</p></td>' +
-                        '</tr>' +
-
-                        '<tr>' +
-                            '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
-                            '<td><p class="bold-p">Cedula:</p></td>' +
-                            '<td><p class="bold-p">Grupo:</p></td>' +
-                        '</tr>' +
-
-                        cargados +
-
-                        '<tr style="background:#76b82a;color:white;">' +
-                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS APROBADOS</p></td>' +
-                        '</tr>' +
-
-                        '<tr>' +
-                            '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
-                            '<td><p class="bold-p">Cedula:</p></td>' +
-                            '<td><p class="bold-p">Grupo:</p></td>' +
-                        '</tr>' +
-
-                        aprobados +
-
-                        '<tr style="background:#DF4113;color:white;">' +
-                            '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS RECHAZADOS</p></td>' +
-                        '</tr>'+
-
-                            '<tr>' +
-                            '<td><p class="bold-p">Nombre:</p></td>' +
-                            '<td><p class="bold-p">Cedula:</p></td>' +
-                            '<td><p class="bold-p">Grupo:</p></td>' +
-                            '<td><p class="bold-p">Causa:</p></td>' +
-                        '</tr>' +
-
-                        rechazados +
-
+                    '<tr style="background:#1488ca;color:white;">' +
+                    '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS CARGADOS</p></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
+                    '<td><p class="bold-p">Cedula:</p></td>' +
+                    '<td><p class="bold-p">Grupo:</p></td>' +
+                    '</tr>' +
+                    cargados +
+                    '<tr style="background:#76b82a;color:white;">' +
+                    '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS APROBADOS</p></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
+                    '<td><p class="bold-p">Cedula:</p></td>' +
+                    '<td><p class="bold-p">Grupo:</p></td>' +
+                    '</tr>' +
+                    aprobados +
+                    '<tr style="background:#DF4113;color:white;">' +
+                    '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS RECHAZADOS</p></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td><p class="bold-p">Nombre:</p></td>' +
+                    '<td><p class="bold-p">Cedula:</p></td>' +
+                    '<td><p class="bold-p">Grupo:</p></td>' +
+                    '<td><p class="bold-p">Causa:</p></td>' +
+                    '</tr>' +
+                    rechazados +
                     '</table>';
         }

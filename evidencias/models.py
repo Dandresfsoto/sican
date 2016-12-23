@@ -14,6 +14,7 @@ class Rechazo(models.Model):
     red_id = models.IntegerField()
     evidencia_id = models.IntegerField()
 
+
 class Evidencia(models.Model):
     fecha = models.DateTimeField(auto_now_add= True)
     updated = models.DateTimeField(auto_now=True)
@@ -42,6 +43,14 @@ class Evidencia(models.Model):
         return self.beneficiarios_validados.all().count()
 
 
+class Subsanacion(models.Model):
+    evidencia = models.ForeignKey(Evidencia)
+    usuario = models.ForeignKey(User)
+    date = models.DateTimeField(auto_now_add= True)
+    observacion = models.TextField(max_length=1000,blank=True)
+
+
+
 class Red(models.Model):
     diplomado = models.ForeignKey(Diplomado)
     region = models.ForeignKey(Region)
@@ -57,7 +66,6 @@ class Red(models.Model):
         except:
             url = ""
         return url
-
 
 class CargaMasiva(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
