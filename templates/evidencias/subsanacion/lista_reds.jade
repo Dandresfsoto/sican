@@ -32,6 +32,7 @@ block scroll_header_panel_content
                     th Asig. Aprobados
                     th Asig. Rechazados
                     th Diferencia
+                    th Asig. Subsanadas
                     th Archivo
             tbody
                 tr
@@ -43,6 +44,7 @@ block scroll_header_panel_content
                     td Asig. Aprobados
                     td Asig. Rechazados
                     td Diferencia
+                    td Asig. Subsanadas
                     td Archivo
 block body_script_content
     script.
@@ -63,7 +65,7 @@ block body_script_content
                         "data": 0,
                         "orderable": true,
                         "render": function (data, type, row, meta) {
-                            if (row[9]) {
+                            if (row[10]) {
                                 return '<a href="red/' + row[0] + '" style="color:#004c99;">RED-' + data + '</a>';
                             }
                             else {
@@ -105,12 +107,20 @@ block body_script_content
                         "className": 'text-center',
                     },
                     {
+                        "data": 8,
+                        "orderable": false,
+                        "className": 'text-center',
+                        "render": function (data, type, row, meta) {
+                            return '<p style="color:#004c99;font-weight: bold;margin-top: 10px;">' + data + '</p>';
+                        },
+                    },
+                    {
                         "orderable": false,
                         "className": 'text-center',
                         "data": null,
                         "render": function (data, type, row, meta) {
-                            if (row[8] != '') {
-                                return '<a target="_blank" href="' + row[8] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
+                            if (row[9] != '') {
+                                return '<a target="_blank" href="' + row[9] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
                             }
                             else {
                                 return '';

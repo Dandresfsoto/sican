@@ -56,7 +56,8 @@ from evidencias.models import Red, CargaMasiva as CargaMasivaEvidencias
 from django.utils.timezone import localtime
 from informes.tasks import zip_hv, zip_contrato
 from informes.tasks import descargas_certificados_escuelatic, progreso_listados_actas, matriz_chequeo_actividad, progreso_listados_actas_aprobadas
-
+from evidencias.models import Subsanacion
+from django.db.models import Sum
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -3897,9 +3898,11 @@ class EvidenciasSubsanacionCodigos(BaseDatatableView):
                     baneficiarios_rechazados.append([beneficiario.beneficiario_rechazo.get_full_name(),beneficiario.beneficiario_rechazo.cedula,beneficiario.beneficiario_rechazo.get_grupo(),beneficiario.observacion])
 
 
+            subsanadas = Subsanacion.objects.filter(red__id = self.kwargs['id_red']).aggregate(Sum('evidencia_subsanada__cantidad_cargados'))['evidencia_subsanada__cantidad_cargados__sum']
+
             json_data.append([
                 item.id,
-                red,
+                item.get_rechazados_cantidad(),
                 item.get_beneficiarios_cantidad(),
                 item.get_validados_cantidad(),
                 item.get_archivo_url(),
@@ -3915,9 +3918,51 @@ class EvidenciasSubsanacionCodigos(BaseDatatableView):
                 item.formador.get_full_name(),
                 baneficiarios_cargados,
                 baneficiarios_validados,
-                baneficiarios_rechazados
+                baneficiarios_rechazados,
+                subsanadas if subsanadas != None else 0
             ])
         return json_data
+
+
+
+class EvidenciasSubsanacionCodigosSubsanacion(BaseDatatableView):
+    """
+
+    """
+    model = Subsanacion
+    columns = ['id']
+
+    order_columns = ['id','id','id','id']
+    max_display_length = 100
+
+
+    def get_initial_queryset(self):
+        return Subsanacion.objects.filter(evidencia_origen__id = self.kwargs['id_evidencia'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(id__exact = search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+
+            json_data.append([
+                item.id,
+                item.usuario.get_full_name_string(),
+                localtime(item.date).strftime('%d/%m/%Y %I:%M:%S %p'),
+                item.evidencia_subsanada.cantidad_cargados,
+                item.get_archivo_url(),
+            ])
+        return json_data
+
+
 
 
 class RedList(BaseDatatableView):
@@ -3985,6 +4030,7 @@ class RedSubsanacionList(BaseDatatableView):
             cargados = list(item.evidencias.all().values_list('beneficiarios_cargados__id',flat=True))
             validados = list(item.evidencias.all().values_list('beneficiarios_validados__id',flat=True))
             rechazados = list(item.evidencias.all().values_list('beneficiarios_rechazados__id',flat=True))
+            subsanadas = Subsanacion.objects.filter(red__id = item.id).aggregate(Sum('evidencia_subsanada__cantidad_cargados'))['evidencia_subsanada__cantidad_cargados__sum']
 
             while None in cargados:
                 cargados.remove(None)
@@ -4003,6 +4049,7 @@ class RedSubsanacionList(BaseDatatableView):
                 len(validados),
                 len(rechazados),
                 len(cargados)-len(validados)-len(rechazados),
+                subsanadas if subsanadas != None else 0,
                 item.get_archivo_url(),
                 self.request.user.has_perm('permisos_sican.evidencias.red.editar'),
             ])

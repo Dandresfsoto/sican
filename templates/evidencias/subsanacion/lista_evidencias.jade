@@ -32,9 +32,10 @@ block scroll_header_panel_content
                     th Nivel
                     th Sesión
                     th ID Entregable
-                    th Red
                     th Cargados
                     th Validados
+                    th Rechazados
+                    th Subsanados
                     th Archivo
             tbody
                 tr
@@ -44,9 +45,10 @@ block scroll_header_panel_content
                     td Nivel
                     td Sesión
                     td ID Entregable
-                    td Red
                     td Cargados
                     td Validados
+                    td Rechazados
+                    td Subsanados
                     td Archivo
 
 block body_script_content
@@ -74,7 +76,7 @@ block body_script_content
                       "data": 0,
                       "orderable": true,
                       "render": function (data, type, row, meta) {
-                          return '<a href="editar/' + row[0] + '" style="color:#004c99;">SIC-'+ row[0] +'</a>';
+                          return '<a href="evidencia/' + row[0] + '" style="color:#004c99;">SIC-'+ row[0] +'</a>';
                       },
                    },
                    {
@@ -94,11 +96,7 @@ block body_script_content
                       "orderable": false,
                       "className": 'text-center',
                    },
-                   {
-                      "data": 1,
-                      "orderable": false,
-                      "className": 'text-center',
-                   },
+
                    {
                       "data": 2,
                       "orderable": false,
@@ -108,6 +106,19 @@ block body_script_content
                       "data": 3,
                       "orderable": false,
                       "className": 'text-center',
+                   },
+                   {
+                      "data": 1,
+                      "orderable": false,
+                      "className": 'text-center',
+                   },
+                   {
+                      "data": 17,
+                      "orderable": false,
+                      "className": 'text-center',
+                      "render": function (data, type, row, meta) {
+                            return '<p style="color:#004c99;font-weight: bold;margin-top: 10px;">' + data + '</p>';
+                      },
                    },
                    {
                       "orderable": false,

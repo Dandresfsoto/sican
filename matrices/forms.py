@@ -47,7 +47,7 @@ class BeneficiarioForm(forms.ModelForm):
             numero = 2
         elif diplomado_nombre == 'DIRECTIC':
             numero = 3
-        elif diplomado_nombre == 'ESCUELATIC':
+        elif diplomado_nombre == 'ESCUELA TIC FAMILIA':
             numero = 4
         else:
             numero = 0
@@ -162,7 +162,7 @@ class BeneficiarioUpdateForm(forms.ModelForm):
             numero = 2
         elif diplomado_nombre == 'DIRECTIC':
             numero = 3
-        elif diplomado_nombre == 'ESCUELATIC':
+        elif diplomado_nombre == 'ESCUELA TIC FAMILIA':
             numero = 4
         else:
             numero = 0

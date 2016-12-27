@@ -46,9 +46,9 @@ urlpatterns = [
 
     url(r'^subsanacion/red/(?P<id_red>[0-9]+)/$', SubsanacionEvidenciasListView.as_view()),
 
-    url(r'^subsanacion/red/(?P<id_red>[0-9]+)/editar/(?P<id_evidencia>[0-9]+)/$', ListaSubsanacionEvidenciaView.as_view()),
+    url(r'^subsanacion/red/(?P<id_red>[0-9]+)/evidencia/(?P<id_evidencia>[0-9]+)/$', ListaSubsanacionEvidenciaView.as_view()),
 
-    #url(r'^subsanacion/red/(?P<id_red>[0-9]+)/editar/(?P<id_evidencia>[0-9]+)/$', SubsanacionEvidenciasFormView.as_view()),
+    url(r'^subsanacion/red/(?P<id_red>[0-9]+)/evidencia/(?P<id_evidencia>[0-9]+)/nuevo/$', SubsanacionEvidenciasFormView.as_view()),
 
-    url(r'^subsanacion/red/(?P<id_red>[0-9]+)/editar/(?P<id_evidencia>[0-9]+)/beneficiario/(?P<id_beneficiario>[0-9]+)/$', SubsanacionEvidenciasBeneficiarioView.as_view()),
+    url(r'^subsanacion/red/(?P<id_red>[0-9]+)/evidencia/(?P<id_evidencia>[0-9]+)/nuevo/beneficiario/(?P<id_beneficiario>[0-9]+)/$', SubsanacionEvidenciasBeneficiarioView.as_view()),
 ]

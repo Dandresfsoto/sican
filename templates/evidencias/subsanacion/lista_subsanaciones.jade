@@ -30,31 +30,27 @@ block breadcrum
 
 block scroll_header_panel_content
     div(class="container-fluid container-index")
+
+        a(href="nuevo",class="link_button")
+            paper-button(class="submit") Nuevo
+
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
-                    th
                     th Código
-                    th Diplomado
-                    th Nivel
-                    th Sesión
-                    th ID Entregable
-                    th Red
-                    th Cargados
-                    th Validados
+                    th Usuario
+                    th Fecha
+                    th Cantidad subsanados
                     th Archivo
             tbody
                 tr
-                    td
                     td Código
-                    td Diplomado
-                    td Nivel
-                    td Sesión
-                    td ID Entregable
-                    td Red
-                    td Cargados
-                    td Validados
+                    td Usuario
+                    td Fecha
+                    td Cantidad subsanados
                     td Archivo
+
+
 block body_script_content
     script.
         $(document).ready(function () {
@@ -64,57 +60,32 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/reds/subsanacionevidencias/red/{{id_red}}/",
+                "ajax": "/rest/reds/subsanacionevidencias_id/red/{{id_red}}/evidencia/{{id_evidencia}}/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
-                "order": [[1, "asc"]],
+                "order": [[0, "asc"]],
                 "columns": [
-                    {
-                        "className": 'details-control',
-                        "orderable": false,
-                        "data": null,
-                        "defaultContent": ''
-                    },
                     {
                         "data": 0,
                         "orderable": true,
                         "render": function (data, type, row, meta) {
-                            return '<a href="editar/' + row[0] + '" style="color:#004c99;">SIC-' + row[0] + '</a>';
+                            return 'SUB-' + row[0];
                         },
-                    },
-                    {
-                        "data": 5,
-                        "orderable": false,
-                    },
-                    {
-                        "data": 6,
-                        "orderable": false,
-                    },
-                    {
-                        "data": 7,
-                        "orderable": false,
-                    },
-                    {
-                        "data": 8,
-                        "orderable": false,
-                        "className": 'text-center',
                     },
                     {
                         "data": 1,
                         "orderable": false,
-                        "className": 'text-center',
                     },
                     {
                         "data": 2,
                         "orderable": false,
-                        "className": 'text-center',
                     },
                     {
                         "data": 3,
                         "orderable": false,
-                        "className": 'text-center',
                     },
+
                     {
                         "orderable": false,
                         "className": 'text-center',
@@ -130,103 +101,5 @@ block body_script_content
                     },
                 ]
             });
-            // Add event listener for opening and closing details
-            $('#table tbody').on('click', 'td.details-control', function () {
-                var tr = $(this).closest('tr');
-                var row = table.row(tr);
-                if (row.child.isShown()) {
-                    // This row is already open - close it
-                    row.child.hide();
-                    tr.removeClass('shown');
-                }
-                else {
-                    // Open this row
-                    row.child(format(row.data())).show();
-                    tr.addClass('shown');
-                }
-            });
+
         });
-        function format(d) {
-            var cargados = '';
-            var aprobados = '';
-            var rechazados = '';
-            for (i = 0; i < d[14].length; i++) {
-                cargados += '<tr>' +
-                        '<td colspan=2><p>' + d[14][i][0] + '</p></td>' +
-                        '<td><p>' + d[14][i][1] + '</p></td>' +
-                        '<td><p>' + d[14][i][2] + '</p></td>' +
-                        '</tr>'
-            }
-            for (i = 0; i < d[15].length; i++) {
-                aprobados += '<tr>' +
-                        '<td colspan=2><p>' + d[15][i][0] + '</p></td>' +
-                        '<td><p>' + d[15][i][1] + '</p></td>' +
-                        '<td><p>' + d[15][i][2] + '</p></td>' +
-                        '</tr>'
-            }
-            for (i = 0; i < d[16].length; i++) {
-                rechazados += '<tr>' +
-                        '<td><p>' + d[16][i][0] + '</p></td>' +
-                        '<td><p>' + d[16][i][1] + '</p></td>' +
-                        '<td><p>' + d[16][i][2] + '</p></td>' +
-                        '<td><p>' + d[16][i][3] + '</p></td>' +
-                        '</tr>'
-            }
-            if (cargados == '') {
-                cargados += '<tr>' +
-                        '<td colspan=8><p>No hay registros</p></td>' +
-                        '</tr>'
-            }
-            if (aprobados == '') {
-                aprobados += '<tr>' +
-                        '<td colspan=8><p>No hay registros</p></td>' +
-                        '</tr>'
-            }
-            if (rechazados == '') {
-                rechazados += '<tr>' +
-                        '<td colspan=8><p>No hay registros</p></td>' +
-                        '</tr>'
-            }
-            return '<table class="table table-striped">' +
-                    '<tr>' +
-                    '<td><p class="bold-p">Fecha creación:</p>' + d[9] + '</td>' +
-                    '<td><p class="bold-p">Fecha modificación:</p>' + d[10] + '</td>' +
-                    '<td><p class="bold-p">Usuario:</p>' + d[11] + '</td>' +
-                    '<td><p class="bold-p"></p></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td><p class="bold-p">Formador:</p>' + d[13] + '</td>' +
-                    '<td><p class="bold-p">Entregable:</p>' + d[12] + '</td>' +
-                    '<td><p class="bold-p"></p></td>' +
-                    '<td><p class="bold-p"></p></td>' +
-                    '</tr>' +
-                    '<tr style="background:#1488ca;color:white;">' +
-                    '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS CARGADOS</p></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
-                    '<td><p class="bold-p">Cedula:</p></td>' +
-                    '<td><p class="bold-p">Grupo:</p></td>' +
-                    '</tr>' +
-                    cargados +
-                    '<tr style="background:#76b82a;color:white;">' +
-                    '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS APROBADOS</p></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td colspan=2><p class="bold-p">Nombre:</p></td>' +
-                    '<td><p class="bold-p">Cedula:</p></td>' +
-                    '<td><p class="bold-p">Grupo:</p></td>' +
-                    '</tr>' +
-                    aprobados +
-                    '<tr style="background:#DF4113;color:white;">' +
-                    '<td colspan = 8 class="text-center"><p class="bold-p">BENEFICIARIOS RECHAZADOS</p></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                    '<td><p class="bold-p">Nombre:</p></td>' +
-                    '<td><p class="bold-p">Cedula:</p></td>' +
-                    '<td><p class="bold-p">Grupo:</p></td>' +
-                    '<td><p class="bold-p">Causa:</p></td>' +
-                    '</tr>' +
-                    rechazados +
-                    '</table>';
-        }

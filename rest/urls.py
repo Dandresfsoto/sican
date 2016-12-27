@@ -22,7 +22,7 @@ from rest.views import RedList, CargaMasivaEvidenciasList, DiplomadosEvidenciasL
 from rest.views import RendimientoAuxiliaresList, AcividadesList, BeneficiariosListView, FormadoresContratosFormador
 from rest.views import BeneficiariosCedulaListView, BeneficiariosCedulaProductosListView
 from rest.views import RedSubsanacionList
-from rest.views import EvidenciasSubsanacionCodigos
+from rest.views import EvidenciasSubsanacionCodigos, EvidenciasSubsanacionCodigosSubsanacion
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -146,4 +146,6 @@ urlpatterns = [
     url(r'reds/subsanacion/',RedSubsanacionList.as_view()),
 
     url(r'reds/subsanacionevidencias/red/(?P<id_red>\w+)/',EvidenciasSubsanacionCodigos.as_view()),
+
+    url(r'reds/subsanacionevidencias_id/red/(?P<id_red>\w+)/evidencia/(?P<id_evidencia>\w+)/',EvidenciasSubsanacionCodigosSubsanacion.as_view()),
 ]

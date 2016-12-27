@@ -25,6 +25,8 @@ class Evidencia(models.Model):
     beneficiarios_validados = models.ManyToManyField(Beneficiario,related_name='beneficiarios_validados',blank=True)
     beneficiarios_rechazados = models.ManyToManyField(Rechazo,related_name='beneficiarios_rechazados',blank=True)
     formador = models.ForeignKey(Formador)
+    subsanacion = models.BooleanField(default=False)
+    cantidad_cargados = models.IntegerField(blank=True,null=True)
 
     def __unicode__(self):
         return self.entregable.nombre
@@ -42,13 +44,8 @@ class Evidencia(models.Model):
     def get_validados_cantidad(self):
         return self.beneficiarios_validados.all().count()
 
-
-class Subsanacion(models.Model):
-    evidencia = models.ForeignKey(Evidencia)
-    usuario = models.ForeignKey(User)
-    date = models.DateTimeField(auto_now_add= True)
-    observacion = models.TextField(max_length=1000,blank=True)
-
+    def get_rechazados_cantidad(self):
+        return self.beneficiarios_rechazados.all().count()
 
 
 class Red(models.Model):
@@ -63,6 +60,22 @@ class Red(models.Model):
     def get_archivo_url(self):
         try:
             url = self.archivo.url
+        except:
+            url = ""
+        return url
+
+class Subsanacion(models.Model):
+    evidencia_origen = models.ForeignKey(Evidencia,related_name="evidencia_origen")
+    evidencia_subsanada = models.ForeignKey(Evidencia,related_name="evidencia_subsanada")
+    usuario = models.ForeignKey(User)
+    red = models.ForeignKey(Red)
+    date = models.DateTimeField(auto_now_add= True)
+    observacion = models.TextField(max_length=1000,blank=True)
+
+
+    def get_archivo_url(self):
+        try:
+            url = self.evidencia_subsanada.archivo.url
         except:
             url = ""
         return url

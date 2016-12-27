@@ -8,7 +8,7 @@ from formadores.models import Formador
 from evidencias.models import Evidencia
 from evidencias.forms import EvidenciaForm
 from productos.models import Entregable
-from evidencias.models import Red
+from evidencias.models import Red, Subsanacion
 from evidencias.forms import RedForm, RedRetroalimentacionForm
 from region.models import Region
 from django.shortcuts import HttpResponseRedirect
@@ -21,6 +21,7 @@ from evidencias.forms import SubsanacionEvidenciaForm
 from matrices.forms import BeneficiarioUpdateForm
 import os
 from radicados.models import Radicado
+from evidencias.models import Rechazo
 
 # Create your views here.
 
@@ -500,7 +501,7 @@ class SubsanacionEvidenciasFormView(LoginRequiredMixin,
                               FormView):
 
     form_class = SubsanacionEvidenciaForm
-    success_url = '../../'
+    success_url = '../'
     template_name = 'evidencias/subsanacion/evidencia.html'
     permission_required = "permisos_sican.evidencias.subsanacion.crear"
 
@@ -522,7 +523,43 @@ class SubsanacionEvidenciasFormView(LoginRequiredMixin,
         keys = list(form.cleaned_data.keys())
         keys.remove('archivo')
         keys.remove('observacion')
-        x = 0
+
+        evidencia = Evidencia.objects.get(id = self.kwargs['id_evidencia'])
+
+
+        if form.cleaned_data['archivo'] != None:
+            archivo = form.cleaned_data['archivo']
+        else:
+            archivo = evidencia.archivo
+
+        nueva_evidencia = Evidencia.objects.create(usuario = self.request.user,archivo = archivo,entregable=evidencia.entregable,
+                                                   formador=evidencia.formador,subsanacion=True)
+
+        cantidad = 0
+
+        for key in keys:
+            if form.cleaned_data[key]:
+                cantidad += 1
+                beneficiario = Beneficiario.objects.get(id = key.split('_')[1])
+                nueva_evidencia.beneficiarios_cargados.add(beneficiario)
+                rechazo = Rechazo.objects.filter(evidencia_id__exact = self.kwargs['id_evidencia'],beneficiario_rechazo = beneficiario)
+
+                try:
+                    evidencia.beneficiarios_cargados.remove(beneficiario)
+                except:
+                    pass
+                try:
+                    evidencia.beneficiarios_rechazados.remove(rechazo[0])
+                except:
+                    pass
+
+        nueva_evidencia.cantidad_cargados = cantidad
+        nueva_evidencia.save()
+
+        Subsanacion.objects.create(evidencia_origen = evidencia,evidencia_subsanada=nueva_evidencia,usuario=self.request.user,
+                                   red = Red.objects.get(id = self.kwargs['id_red']),observacion = form.cleaned_data['observacion'])
+
+
         return super(SubsanacionEvidenciasFormView,self).form_valid(form)
 
 
