@@ -58,6 +58,7 @@ from informes.tasks import zip_hv, zip_contrato
 from informes.tasks import descargas_certificados_escuelatic, progreso_listados_actas, matriz_chequeo_actividad, progreso_listados_actas_aprobadas
 from evidencias.models import Subsanacion
 from django.db.models import Sum
+from informes.tasks import progreso_virtuales, progreso_virtuales_aprobadas
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -239,7 +240,10 @@ class ReportesView(APIView):
             x = matriz_chequeo_actividad.delay(request.user.email,id_actividad)
         if id_accion == '25':
             x = progreso_listados_actas_aprobadas.delay(request.user.email)
-
+        if id_accion == '26':
+            x = progreso_virtuales.delay(request.user.email)
+        if id_accion == '27':
+            x = progreso_virtuales_aprobadas.delay(request.user.email)
 
         return HttpResponse(status=200)
 

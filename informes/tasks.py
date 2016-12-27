@@ -2202,6 +2202,215 @@ def progreso_listados_actas_aprobadas(email):
 
 
 
+
+@app.task
+def progreso_virtuales(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Progreso de carga actividades virtuales"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    output = StringIO()
+    wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/PROGRESO_VIRTUAL.xlsx')
+    ws = wb.get_sheet_by_name('Hoja1')
+
+    dict_productos_t1 = [{'letter':'B','id':20},
+                          {'letter':'C','id':21},
+                          {'letter':'D','id':22},
+                          {'letter':'E','id':15},
+                          {'letter':'F','id':16},
+                          {'letter':'G','id':23},
+
+                          {'letter':'N','id':28},
+                          {'letter':'O','id':40},
+                          {'letter':'P','id':31},
+                          {'letter':'Q','id':34},
+
+                          {'letter':'V','id':58},
+                          {'letter':'W','id':59},
+                          {'letter':'X','id':60},
+
+                          {'letter':'AB','id':64},
+                          {'letter':'AC','id':67},
+
+                          ]
+
+    dict_productos_t2 = [{'letter':'B','id':75},
+                          {'letter':'C','id':77},
+                          {'letter':'D','id':84},
+                          {'letter':'E','id':85},
+
+                          {'letter':'J','id':97},
+                          {'letter':'K','id':98},
+                          {'letter':'L','id':93},
+                          {'letter':'M','id':99},
+                          {'letter':'N','id':100},
+
+                          {'letter':'T','id':112},
+                          {'letter':'U','id':109},
+
+                          {'letter':'X','id':119},
+                          {'letter':'Y','id':124},
+                          {'letter':'Z','id':121},
+                          ]
+
+    dict_productos_t3 = [{'letter':'B','id':132},
+                          {'letter':'C','id':134},
+                          {'letter':'D','id':142},
+                          {'letter':'E','id':143},
+                          {'letter':'F','id':138},
+                          {'letter':'G','id':140},
+
+                          {'letter':'N','id':147},
+                          {'letter':'O','id':152},
+                          {'letter':'P','id':149},
+                          {'letter':'Q','id':151},
+
+                          {'letter':'V','id':156},
+                          {'letter':'W','id':164},
+                          {'letter':'X','id':165},
+                          {'letter':'Y','id':162},
+                          {'letter':'Z','id':166},
+
+                          {'letter':'AF','id':171},
+                          ]
+
+
+    for producto in dict_productos_t1:
+        evidencias = Evidencia.objects.filter(entregable__id = producto['id'])
+        i = 6
+        for region in Region.objects.filter(id__in=[1,2]):
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            i += 1
+
+    for producto in dict_productos_t2:
+        evidencias = Evidencia.objects.filter(entregable__id = producto['id'])
+        i = 18
+        for region in Region.objects.filter(id__in=[1,2]):
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            i += 1
+
+    for producto in dict_productos_t3:
+        evidencias = Evidencia.objects.filter(entregable__id = producto['id'])
+        i = 30
+        for region in Region.objects.filter(id__in=[1,2]):
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            i += 1
+
+
+    wb.save(output)
+
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+
+
+@app.task
+def progreso_virtuales_aprobadas(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Aprobacion actividades virtuales"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    output = StringIO()
+    wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/PROGRESO_VIRTUAL.xlsx')
+    ws = wb.get_sheet_by_name('Hoja1')
+
+    dict_productos_t1 = [{'letter':'B','id':20},
+                          {'letter':'C','id':21},
+                          {'letter':'D','id':22},
+                          {'letter':'E','id':15},
+                          {'letter':'F','id':16},
+                          {'letter':'G','id':23},
+
+                          {'letter':'N','id':28},
+                          {'letter':'O','id':40},
+                          {'letter':'P','id':31},
+                          {'letter':'Q','id':34},
+
+                          {'letter':'V','id':58},
+                          {'letter':'W','id':59},
+                          {'letter':'X','id':60},
+
+                          {'letter':'AB','id':64},
+                          {'letter':'AC','id':67},
+
+                          ]
+
+    dict_productos_t2 = [{'letter':'B','id':75},
+                          {'letter':'C','id':77},
+                          {'letter':'D','id':84},
+                          {'letter':'E','id':85},
+
+                          {'letter':'J','id':97},
+                          {'letter':'K','id':98},
+                          {'letter':'L','id':93},
+                          {'letter':'M','id':99},
+                          {'letter':'N','id':100},
+
+                          {'letter':'T','id':112},
+                          {'letter':'U','id':109},
+
+                          {'letter':'X','id':119},
+                          {'letter':'Y','id':124},
+                          {'letter':'Z','id':121},
+                          ]
+
+    dict_productos_t3 = [{'letter':'B','id':132},
+                          {'letter':'C','id':134},
+                          {'letter':'D','id':142},
+                          {'letter':'E','id':143},
+                          {'letter':'F','id':138},
+                          {'letter':'G','id':140},
+
+                          {'letter':'N','id':147},
+                          {'letter':'O','id':152},
+                          {'letter':'P','id':149},
+                          {'letter':'Q','id':151},
+
+                          {'letter':'V','id':156},
+                          {'letter':'W','id':164},
+                          {'letter':'X','id':165},
+                          {'letter':'Y','id':162},
+                          {'letter':'Z','id':166},
+
+                          {'letter':'AF','id':171},
+                          ]
+
+
+    for producto in dict_productos_t1:
+        evidencias = Evidencia.objects.filter(entregable__id = producto['id'])
+        i = 6
+        for region in Region.objects.filter(id__in=[1,2]):
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
+            i += 1
+
+    for producto in dict_productos_t2:
+        evidencias = Evidencia.objects.filter(entregable__id = producto['id'])
+        i = 18
+        for region in Region.objects.filter(id__in=[1,2]):
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
+            i += 1
+
+    for producto in dict_productos_t3:
+        evidencias = Evidencia.objects.filter(entregable__id = producto['id'])
+        i = 30
+        for region in Region.objects.filter(id__in=[1,2]):
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
+            i += 1
+
+
+    wb.save(output)
+
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+
+
 @app.task
 def matriz_chequeo_actividad(email,id_actividad):
     usuario = User.objects.get(email=email)
