@@ -3898,7 +3898,7 @@ class EvidenciasSubsanacionCodigos(BaseDatatableView):
                     baneficiarios_rechazados.append([beneficiario.beneficiario_rechazo.get_full_name(),beneficiario.beneficiario_rechazo.cedula,beneficiario.beneficiario_rechazo.get_grupo(),beneficiario.observacion])
 
 
-            subsanadas = Subsanacion.objects.filter(red__id = self.kwargs['id_red']).aggregate(Sum('evidencia_subsanada__cantidad_cargados'))['evidencia_subsanada__cantidad_cargados__sum']
+            subsanadas = Subsanacion.objects.filter(red__id = self.kwargs['id_red'],evidencia_origen__id = item.id).aggregate(Sum('evidencia_subsanada__cantidad_cargados'))['evidencia_subsanada__cantidad_cargados__sum']
 
             json_data.append([
                 item.id,
