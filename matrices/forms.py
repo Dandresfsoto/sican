@@ -49,6 +49,8 @@ class BeneficiarioForm(forms.ModelForm):
             numero = 3
         elif diplomado_nombre == 'ESCUELA TIC FAMILIA':
             numero = 4
+        elif diplomado_nombre == 'ESCUELATIC':
+            numero = 4
         else:
             numero = 0
 
@@ -137,7 +139,7 @@ class BeneficiarioUpdateForm(forms.ModelForm):
         area = cleaned_data.get('area')
         grado = cleaned_data.get('grado')
 
-        if diplomado.nombre != 'ESCUELA TIC FAMILIA':
+        if diplomado.nombre != 'ESCUELA TIC FAMILIA' or diplomado.nombre != 'ESCUELATIC':
             if radicado_text == '':
                 self.add_error('radicado_text','Este campo es requerido.')
 
@@ -163,6 +165,8 @@ class BeneficiarioUpdateForm(forms.ModelForm):
         elif diplomado_nombre == 'DIRECTIC':
             numero = 3
         elif diplomado_nombre == 'ESCUELA TIC FAMILIA':
+            numero = 4
+        elif diplomado_nombre == 'ESCUELATIC':
             numero = 4
         else:
             numero = 0
