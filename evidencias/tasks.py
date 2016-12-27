@@ -175,6 +175,8 @@ def build_red(id_red):
         for id in ids:
             evidencia = evidencias.filter(entregable__id = id['id'])
             if evidencia.count() == 1:
+                if evidencia[0].subsanacion:
+                    ws.cell('L'+str(i)).value = 'S'
                 ws.cell( id['letter'] + str(i)).value = 'SIC-' + str(evidencia[0].id)
                 ws.cell( id['letter'] + str(i)).hyperlink = 'https://sican.asoandes.org' + evidencia[0].get_archivo_url()
 
