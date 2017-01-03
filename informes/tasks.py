@@ -1428,8 +1428,7 @@ def matriz_chequeo(email,id_diplomado):
 
             if evidencias_validado.count() > 0:
                 red = Red.objects.get(evidencias__id = evidencias_validado[0].id)
-                ws.write(producto['letter']+str(i), 'RED-' + str(red.id), validado)
-                ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url())
+                ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url() , validado, 'RED-' + str(red.id))
                 ws.write_comment( producto['letter'] + str(i) , 'SIC-' + str(evidencias_validado[0].id) )
 
 
@@ -1440,8 +1439,7 @@ def matriz_chequeo(email,id_diplomado):
                     red = reds.get(evidencias__id = ultima_evidencia_cargada.id)
                 except:
                     # si ningun red contiene la evidencia
-                    ws.write(producto['letter']+str(i), 'SIC-' + str(ultima_evidencia_cargada.id), cargado)
-                    ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url() )
+                    ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url(), cargado, 'SIC-' + str(ultima_evidencia_cargada.id) )
 
                 else:
                     # si hay un red que contiene la evidencia
@@ -1457,8 +1455,7 @@ def matriz_chequeo(email,id_diplomado):
                                 causa = evidencias_rechazado[0].beneficiarios_rechazados.get(beneficiario_rechazo = beneficiario).observacion
                             except:
                                 causa = ''
-                            ws.write(producto['letter']+str(i), 'RED-' + str(red.id), rechazado)
-                            ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url() )
+                            ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url(), rechazado, 'RED-' + str(red.id) )
                             ws.write_comment( producto['letter'] + str(i) , 'SIC-' + str(ultima_evidencia_cargada.id) + ':\n' + causa )
                         else:
                             pass
@@ -1466,8 +1463,7 @@ def matriz_chequeo(email,id_diplomado):
 
                     else:
                         #si el red no ha sido retroalimentado
-                        ws.write(producto['letter']+str(i), 'RED-' + str(red.id), enviado)
-                        ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url() )
+                        ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url(), enviado, 'RED-' + str(red.id) )
                         ws.write_comment( producto['letter'] + str(i) , 'SIC-' + str(ultima_evidencia_cargada.id) )
 
 
