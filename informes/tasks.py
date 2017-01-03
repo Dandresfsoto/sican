@@ -38,6 +38,7 @@ from evidencias.models import Red
 from openpyxl.comments import Comment
 from django.db.models import Q
 from region.models import Region
+import xlsxwriter
 
 @app.task
 def nueva_semana():
@@ -528,7 +529,6 @@ def encuesta_percepcion_inicial(email):
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
 
-
 @app.task
 def encuesta_percepcion_final(email):
     usuario = User.objects.get(email=email)
@@ -597,7 +597,6 @@ def encuesta_percepcion_final(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
-
 
 @app.task
 def radicados(email):
@@ -1121,8 +1120,8 @@ def matriz_chequeo(email,id_diplomado):
     dict_productos = []
 
     if id_diplomado == '1':
-        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
-        ws = wb.get_sheet_by_name('InnovaTIC')
+        #wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
+        #ws = wb.get_sheet_by_name('InnovaTIC')
         diplomado = Diplomado.objects.get(id = 1)
         i = 6
 
@@ -1191,8 +1190,8 @@ def matriz_chequeo(email,id_diplomado):
                           ]
 
     elif id_diplomado == '2':
-        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Tecnotic.xlsx')
-        ws = wb.get_sheet_by_name('TecnoTIC')
+        #wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Tecnotic.xlsx')
+        #ws = wb.get_sheet_by_name('TecnoTIC')
         diplomado = Diplomado.objects.get(id = 2)
         i = 6
         dict_productos = [{'letter':'Y','id':72},
@@ -1250,8 +1249,8 @@ def matriz_chequeo(email,id_diplomado):
                           {'letter':'CE','id':124}
                           ]
     elif id_diplomado == '3':
-        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Directic.xlsx')
-        ws = wb.get_sheet_by_name('DirecTIC')
+        #wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Directic.xlsx')
+        #ws = wb.get_sheet_by_name('DirecTIC')
         diplomado = Diplomado.objects.get(id = 3)
         i = 6
         dict_productos = [{'letter':'Y','id':127},
@@ -1302,8 +1301,8 @@ def matriz_chequeo(email,id_diplomado):
                           {'letter':'CF','id':172}
                           ]
     else:
-        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz EscuelaTIC.xlsx')
-        ws = wb.get_sheet_by_name('EscuelaTIC')
+        #wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz EscuelaTIC.xlsx')
+        #ws = wb.get_sheet_by_name('EscuelaTIC')
         diplomado = Diplomado.objects.get(id = 4)
         i = 10
         dict_productos = [{'letter':'Z','id':221},
@@ -1324,110 +1323,97 @@ def matriz_chequeo(email,id_diplomado):
                    border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
                  )
 
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet('Hoja1')
 
-    validado = Style(font=Font(name='Calibri',size=12),
-                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
-                   number_format='General',
-                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
-                   fill=PatternFill(fill_type='solid',start_color='FF00B050',end_color='FF00B050')
-                 )
+    text = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'left', 'valign':'center', 'text_wrap':False})
 
-    enviado = Style(font=Font(name='Calibri',size=12),
-                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
-                   number_format='General',
-                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
-                   fill=PatternFill(fill_type='solid',start_color='FFFFC000',end_color='FFFFC000')
-                 )
+    number = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'right', 'valign':'center', 'text_wrap':False,'num_format':'0'})
 
-    cargado = Style(font=Font(name='Calibri',size=12),
-                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
-                   number_format='General',
-                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
-                 )
+    validado = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'left', 'valign':'center', 'text_wrap':False, 'pattern':1, 'bg_color':'#00B050'})
 
+    enviado = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'left', 'valign':'center', 'text_wrap':False, 'pattern':1, 'bg_color':'#FFC000'})
 
-    rechazado = Style(font=Font(name='Calibri',size=12),
-                   alignment=Alignment(horizontal='center',vertical='center',wrap_text=False),
-                   number_format='General',
-                   border=Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin')),
-                   fill=PatternFill(fill_type='solid',start_color='FFFF0000',end_color='FFFF0000')
-                 )
+    cargado = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'left', 'valign':'center', 'text_wrap':False})
+
+    rechazado = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'left', 'valign':'center', 'text_wrap':False, 'pattern':1, 'bg_color':'#FF0000'})
+
 
     for beneficiario in Beneficiario.objects.filter(diplomado = diplomado).order_by('formador'):
-        ws.cell('A'+str(i)).value = beneficiario.region.nombre.upper()
-        ws.cell('A'+str(i)).style = text
+        ws.write('A'+str(i),beneficiario.region.nombre.upper(),text)
+        #ws.cell('A'+str(i)).style = text
 
-        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text
-        ws.cell('B'+str(i)).style = text
+        ws.write('B'+str(i), beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text,text)
+        #ws.cell('B'+str(i)).style = text
 
-        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else beneficiario.secretaria_text
-        ws.cell('C'+str(i)).style = text
+        ws.write('C'+str(i), beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else beneficiario.secretaria_text,text)
+        #ws.cell('C'+str(i)).style = text
 
-        ws.cell('D'+str(i)).value = beneficiario.radicado.numero if beneficiario.radicado != None else ''
-        ws.cell('D'+str(i)).style = number
+        ws.write('D'+str(i), beneficiario.radicado.numero if beneficiario.radicado != None else '',text)
+        #ws.cell('D'+str(i)).style = number
 
-        ws.cell('E'+str(i)).value = beneficiario.dane_ie_text
-        ws.cell('E'+str(i)).style = number
+        ws.write('E'+str(i), beneficiario.dane_ie_text,text)
+        #ws.cell('E'+str(i)).style = number
 
-        ws.cell('F'+str(i)).value = beneficiario.ie_text
-        ws.cell('F'+str(i)).style = text
+        ws.write('F'+str(i), beneficiario.ie_text,text)
+        #ws.cell('F'+str(i)).style = text
 
-        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else beneficiario.dane_sede_text
-        ws.cell('G'+str(i)).style = number
+        ws.write('G'+str(i), beneficiario.radicado.dane_sede if beneficiario.radicado != None else beneficiario.dane_sede_text,text)
+        #ws.cell('G'+str(i)).style = number
 
-        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else beneficiario.sede_text
-        ws.cell('H'+str(i)).style = text
+        ws.write('H'+str(i), beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else beneficiario.sede_text,text)
+        #ws.cell('H'+str(i)).style = text
 
-        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text
-        ws.cell('I'+str(i)).style = text
+        ws.write('I'+str(i), beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text,text)
+        #ws.cell('I'+str(i)).style = text
 
-        ws.cell('J'+str(i)).value = beneficiario.radicado.ubicacion if beneficiario.radicado != None else ''
-        ws.cell('J'+str(i)).style = text
+        ws.write('J'+str(i), beneficiario.radicado.ubicacion if beneficiario.radicado != None else '',text)
+        #ws.cell('J'+str(i)).style = text
 
-        ws.cell('K'+str(i)).value = beneficiario.get_grupo()
-        ws.cell('K'+str(i)).style = text
+        ws.write('K'+str(i), beneficiario.get_grupo(),text)
+        #ws.cell('K'+str(i)).style = text
 
-        ws.cell('L'+str(i)).value = beneficiario.formador.get_full_name()
-        ws.cell('L'+str(i)).style = text
+        ws.write('L'+str(i), beneficiario.formador.get_full_name(),text)
+        #ws.cell('L'+str(i)).style = text
 
-        ws.cell('M'+str(i)).value = beneficiario.formador.cedula
-        ws.cell('M'+str(i)).style = number
+        ws.write('M'+str(i), beneficiario.formador.cedula,text)
+        #ws.cell('M'+str(i)).style = number
 
-        ws.cell('N'+str(i)).value = beneficiario.apellidos
-        ws.cell('N'+str(i)).style = text
+        ws.write('N'+str(i), beneficiario.apellidos,text)
+        #ws.cell('N'+str(i)).style = text
 
-        ws.cell('O'+str(i)).value = beneficiario.nombres
-        ws.cell('O'+str(i)).style = text
+        ws.write('O'+str(i), beneficiario.nombres,text)
+        #ws.cell('O'+str(i)).style = text
 
-        ws.cell('P'+str(i)).value = beneficiario.cedula
-        ws.cell('P'+str(i)).style = number
+        ws.write('P'+str(i), beneficiario.cedula,text)
+        #ws.cell('P'+str(i)).style = number
 
-        ws.cell('Q'+str(i)).value = beneficiario.correo
-        ws.cell('Q'+str(i)).style = text
+        ws.write('Q'+str(i), beneficiario.correo,text)
+        #ws.cell('Q'+str(i)).style = text
 
-        ws.cell('R'+str(i)).value = beneficiario.telefono_fijo
-        ws.cell('R'+str(i)).style = text
+        ws.write('R'+str(i), beneficiario.telefono_fijo,text)
+        #ws.cell('R'+str(i)).style = text
 
-        ws.cell('S'+str(i)).value = beneficiario.telefono_celular
-        ws.cell('S'+str(i)).style = text
+        ws.write('S'+str(i), beneficiario.telefono_celular,text)
+        #ws.cell('S'+str(i)).style = text
 
-        ws.cell('T'+str(i)).value = beneficiario.area.nombre.upper() if beneficiario.area != None else ''
-        ws.cell('T'+str(i)).style = text
+        ws.write('T'+str(i), beneficiario.area.nombre.upper() if beneficiario.area != None else '',text)
+        #ws.cell('T'+str(i)).style = text
 
-        ws.cell('U'+str(i)).value = beneficiario.grado.nombre.upper() if beneficiario.grado != None else ''
-        ws.cell('U'+str(i)).style = text
+        ws.write('U'+str(i), beneficiario.grado.nombre.upper() if beneficiario.grado != None else '',text)
+        #ws.cell('U'+str(i)).style = text
 
-        ws.cell('V'+str(i)).value = ''
-        ws.cell('V'+str(i)).style = text
+        ws.write('V'+str(i), '',text)
+        #ws.cell('V'+str(i)).style = text
 
-        ws.cell('W'+str(i)).value = beneficiario.genero
-        ws.cell('W'+str(i)).style = text
+        ws.write('W'+str(i), beneficiario.genero,text)
+        #ws.cell('W'+str(i)).style = text
 
-        ws.cell('X'+str(i)).value = beneficiario.estado
-        ws.cell('X'+str(i)).style = text
+        ws.write('X'+str(i), beneficiario.estado,text)
+        #ws.cell('X'+str(i)).style = text
 
-        ws.cell('Y'+str(i)).value = ''
-        ws.cell('Y'+str(i)).style = text
+        ws.write('Y'+str(i), '')
+        #ws.cell('Y'+str(i)).style = text
 
         for producto in dict_productos:
             entregable = Entregable.objects.get(id = producto['id'])
@@ -1442,10 +1428,9 @@ def matriz_chequeo(email,id_diplomado):
 
             if evidencias_validado.count() > 0:
                 red = Red.objects.get(evidencias__id = evidencias_validado[0].id)
-                ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
-                #ws.cell(producto['letter']+str(i)).style = validado
-                #ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url()
-                #ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(evidencias_validado[0].id),'SICAN')
+                ws.write(producto['letter']+str(i), 'RED-' + str(red.id), validado)
+                ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url())
+                ws.write_comment( producto['letter'] + str(i) , 'SIC-' + str(evidencias_validado[0].id) )
 
 
             elif evidencias_validado.count() == 0 and evidencias_cargado.count() > 0:
@@ -1455,9 +1440,8 @@ def matriz_chequeo(email,id_diplomado):
                     red = reds.get(evidencias__id = ultima_evidencia_cargada.id)
                 except:
                     # si ningun red contiene la evidencia
-                    ws.cell(producto['letter']+str(i)).value = 'SIC-' + str(ultima_evidencia_cargada.id)
-                    #ws.cell(producto['letter']+str(i)).style = cargado
-                    #ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
+                    ws.write(producto['letter']+str(i), 'SIC-' + str(ultima_evidencia_cargada.id), cargado)
+                    ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url() )
 
                 else:
                     # si hay un red que contiene la evidencia
@@ -1473,27 +1457,26 @@ def matriz_chequeo(email,id_diplomado):
                                 causa = evidencias_rechazado[0].beneficiarios_rechazados.get(beneficiario_rechazo = beneficiario).observacion
                             except:
                                 causa = ''
-                            ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
-                            #ws.cell(producto['letter']+str(i)).style = rechazado
-                            #ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
-                            #ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id) + ':\n' + causa,'SICAN')
+                            ws.write(producto['letter']+str(i), 'RED-' + str(red.id), rechazado)
+                            ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url() )
+                            ws.write_comment( producto['letter'] + str(i) , 'SIC-' + str(ultima_evidencia_cargada.id) + ':\n' + causa )
                         else:
                             pass
 
 
                     else:
                         #si el red no ha sido retroalimentado
-                        ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
-                        #ws.cell(producto['letter']+str(i)).style = enviado
-                        #ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url()
-                        #ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(ultima_evidencia_cargada.id),'SICAN')
+                        ws.write(producto['letter']+str(i), 'RED-' + str(red.id), enviado)
+                        ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + ultima_evidencia_cargada.get_archivo_url() )
+                        ws.write_comment( producto['letter'] + str(i) , 'SIC-' + str(ultima_evidencia_cargada.id) )
 
 
             else:
-                ws.cell(producto['letter']+str(i)).style = text
+                pass
+
         i += 1
 
-    wb.save(output)
+    wb.close()
 
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
@@ -1507,13 +1490,13 @@ def matriz_chequeo_formador(email,id_formador):
     id_diplomado = ''
     nombre = ''
 
-    if formador.cargo.nombre == 'Formador Tipo 1':
+    if formador.get_cargo_string() == 'Formador Tipo 1':
         id_diplomado = '1'
-    elif formador.cargo.nombre == 'Formador Tipo 2':
+    elif formador.get_cargo_string() == 'Formador Tipo 2':
         id_diplomado = '2'
-    elif formador.cargo.nombre == 'Formador Tipo 3':
+    elif formador.get_cargo_string() == 'Formador Tipo 3':
         id_diplomado = '3'
-    elif formador.cargo.nombre == 'Formador Tipo 4':
+    elif formador.get_cargo_string() == 'Formador Tipo 4':
         id_diplomado = '4'
 
 
@@ -1534,8 +1517,8 @@ def matriz_chequeo_formador(email,id_formador):
     dict_productos = []
 
     if id_diplomado == '1':
-        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
-        ws = wb.get_sheet_by_name('InnovaTIC')
+        #wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Innovatic.xlsx')
+        #ws = wb.get_sheet_by_name('InnovaTIC')
         diplomado = Diplomado.objects.get(id = 1)
         i = 6
 
@@ -1604,8 +1587,8 @@ def matriz_chequeo_formador(email,id_formador):
                           ]
 
     elif id_diplomado == '2':
-        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Tecnotic.xlsx')
-        ws = wb.get_sheet_by_name('TecnoTIC')
+        #wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Tecnotic.xlsx')
+        #ws = wb.get_sheet_by_name('TecnoTIC')
         diplomado = Diplomado.objects.get(id = 2)
         i = 6
         dict_productos = [{'letter':'Y','id':72},
@@ -1663,8 +1646,8 @@ def matriz_chequeo_formador(email,id_formador):
                           {'letter':'CE','id':124}
                           ]
     elif id_diplomado == '3':
-        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Directic.xlsx')
-        ws = wb.get_sheet_by_name('DirecTIC')
+        #wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz Directic.xlsx')
+        #ws = wb.get_sheet_by_name('DirecTIC')
         diplomado = Diplomado.objects.get(id = 3)
         i = 6
         dict_productos = [{'letter':'Y','id':127},
@@ -1715,8 +1698,8 @@ def matriz_chequeo_formador(email,id_formador):
                           {'letter':'CF','id':172}
                           ]
     else:
-        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz EscuelaTIC.xlsx')
-        ws = wb.get_sheet_by_name('EscuelaTIC')
+        #wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/Matriz EscuelaTIC.xlsx')
+        #ws = wb.get_sheet_by_name('EscuelaTIC')
         diplomado = Diplomado.objects.get(id = 4)
         i = 10
         dict_productos = [{'letter':'Z','id':221},
@@ -1725,6 +1708,7 @@ def matriz_chequeo_formador(email,id_formador):
                           {'letter':'AP','id':228},
         ]
 
+    """
     number = Style(font=Font(name='Calibri',size=12),
                    alignment=Alignment(horizontal='right',vertical='center',wrap_text=False),
                    number_format='0',
@@ -1766,81 +1750,88 @@ def matriz_chequeo_formador(email,id_formador):
                    fill=PatternFill(fill_type='solid',start_color='FFFF0000',end_color='FFFF0000')
                  )
 
+    """
+
+    wb = xlsxwriter.Workbook(output)
+    ws = wb.add_worksheet()
+
     for beneficiario in Beneficiario.objects.filter(diplomado = diplomado).order_by('formador').filter(formador__id = id_formador):
-        ws.cell('A'+str(i)).value = beneficiario.region.nombre.upper()
-        ws.cell('A'+str(i)).style = text
+        ws.write('A'+str(i), beneficiario.region.nombre.upper())
+        #ws.cell('A'+str(i)).style = text
 
-        ws.cell('B'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text
-        ws.cell('B'+str(i)).style = text
+        ws.write('B'+str(i), beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text)
+        #ws.cell('B'+str(i)).style = text
 
-        ws.cell('C'+str(i)).value = beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else beneficiario.secretaria_text
-        ws.cell('C'+str(i)).style = text
+        ws.write('C'+str(i), beneficiario.radicado.secretaria.nombre.upper() if beneficiario.radicado != None else beneficiario.secretaria_text)
+        #ws.cell('C'+str(i)).style = text
 
-        ws.cell('D'+str(i)).value = beneficiario.radicado.numero if beneficiario.radicado != None else ''
-        ws.cell('D'+str(i)).style = number
+        ws.write('D'+str(i), beneficiario.radicado.numero if beneficiario.radicado != None else '')
+        #ws.cell('D'+str(i)).style = number
 
-        ws.cell('E'+str(i)).value = beneficiario.dane_ie_text
-        ws.cell('E'+str(i)).style = number
+        ws.write('E'+str(i), beneficiario.dane_ie_text)
+        #ws.cell('E'+str(i)).style = number
 
-        ws.cell('F'+str(i)).value = beneficiario.ie_text
-        ws.cell('F'+str(i)).style = text
+        ws.write('F'+str(i), beneficiario.ie_text)
+        #ws.cell('F'+str(i)).style = text
 
-        ws.cell('G'+str(i)).value = beneficiario.radicado.dane_sede if beneficiario.radicado != None else beneficiario.dane_sede_text
-        ws.cell('G'+str(i)).style = number
+        ws.write('G'+str(i), beneficiario.radicado.dane_sede if beneficiario.radicado != None else beneficiario.dane_sede_text)
+        #ws.cell('G'+str(i)).style = number
 
-        ws.cell('H'+str(i)).value = beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else beneficiario.sede_text
-        ws.cell('H'+str(i)).style = text
+        ws.write('H'+str(i), beneficiario.radicado.nombre_sede.upper() if beneficiario.radicado != None else beneficiario.sede_text)
+        #ws.cell('H'+str(i)).style = text
 
-        ws.cell('I'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text
-        ws.cell('I'+str(i)).style = text
+        ws.write('I'+str(i), beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text)
+        #ws.cell('I'+str(i)).style = text
 
-        ws.cell('J'+str(i)).value = beneficiario.radicado.ubicacion if beneficiario.radicado != None else ''
-        ws.cell('J'+str(i)).style = text
+        ws.write('J'+str(i), beneficiario.radicado.ubicacion if beneficiario.radicado != None else '')
+        #ws.cell('J'+str(i)).style = text
 
-        ws.cell('K'+str(i)).value = beneficiario.get_grupo()
-        ws.cell('K'+str(i)).style = text
+        ws.write('K'+str(i), beneficiario.get_grupo())
+        #ws.cell('K'+str(i)).style = text
 
-        ws.cell('L'+str(i)).value = beneficiario.formador.get_full_name()
-        ws.cell('L'+str(i)).style = text
+        ws.write('L'+str(i), beneficiario.formador.get_full_name())
+        #ws.cell('L'+str(i)).style = text
 
-        ws.cell('M'+str(i)).value = beneficiario.formador.cedula
-        ws.cell('M'+str(i)).style = number
+        ws.write('M'+str(i), beneficiario.formador.cedula)
+        #ws.cell('M'+str(i)).style = number
 
-        ws.cell('N'+str(i)).value = beneficiario.apellidos
-        ws.cell('N'+str(i)).style = text
+        ws.write('N'+str(i), beneficiario.apellidos)
+        #ws.cell('N'+str(i)).style = text
 
-        ws.cell('O'+str(i)).value = beneficiario.nombres
-        ws.cell('O'+str(i)).style = text
+        ws.write('O'+str(i), beneficiario.nombres)
+        #ws.cell('O'+str(i)).style = text
 
-        ws.cell('P'+str(i)).value = beneficiario.cedula
-        ws.cell('P'+str(i)).style = number
+        ws.write('P'+str(i), beneficiario.cedula)
+        #ws.cell('P'+str(i)).style = number
 
-        ws.cell('Q'+str(i)).value = beneficiario.correo
-        ws.cell('Q'+str(i)).style = text
+        ws.write('Q'+str(i), beneficiario.correo)
+        #ws.cell('Q'+str(i)).style = text
 
-        ws.cell('R'+str(i)).value = beneficiario.telefono_fijo
-        ws.cell('R'+str(i)).style = text
+        ws.write('R'+str(i), beneficiario.telefono_fijo)
+        #ws.cell('R'+str(i)).style = text
 
-        ws.cell('S'+str(i)).value = beneficiario.telefono_celular
-        ws.cell('S'+str(i)).style = text
+        ws.write('S'+str(i), beneficiario.telefono_celular)
+        #ws.cell('S'+str(i)).style = text
 
-        ws.cell('T'+str(i)).value = beneficiario.area.nombre.upper() if beneficiario.area != None else ''
-        ws.cell('T'+str(i)).style = text
+        ws.write('T'+str(i), beneficiario.area.nombre.upper() if beneficiario.area != None else '')
+        #ws.cell('T'+str(i)).style = text
 
-        ws.cell('U'+str(i)).value = beneficiario.grado.nombre.upper() if beneficiario.grado != None else ''
-        ws.cell('U'+str(i)).style = text
+        ws.write('U'+str(i), beneficiario.grado.nombre.upper() if beneficiario.grado != None else '')
+        #ws.cell('U'+str(i)).style = text
 
-        ws.cell('V'+str(i)).value = ''
-        ws.cell('V'+str(i)).style = text
+        ws.write('V'+str(i), '')
+        #ws.cell('V'+str(i)).style = text
 
-        ws.cell('W'+str(i)).value = beneficiario.genero
-        ws.cell('W'+str(i)).style = text
+        ws.write('W'+str(i), beneficiario.genero)
+        #ws.cell('W'+str(i)).style = text
 
-        ws.cell('X'+str(i)).value = beneficiario.estado
-        ws.cell('X'+str(i)).style = text
+        ws.write('X'+str(i), beneficiario.estado)
+        #ws.cell('X'+str(i)).style = text
 
-        ws.cell('Y'+str(i)).value = ''
-        ws.cell('Y'+str(i)).style = text
+        ws.write('Y'+str(i), '')
+        #ws.cell('Y'+str(i)).style = text
+
+        """
 
         for producto in dict_productos:
             entregable = Entregable.objects.get(id = producto['id'])
@@ -1904,9 +1895,10 @@ def matriz_chequeo_formador(email,id_formador):
 
             else:
                 ws.cell(producto['letter']+str(i)).style = text
+        """
         i += 1
 
-    wb.save(output)
+    wb.close()
 
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
@@ -2094,8 +2086,6 @@ def progreso_listados_actas(email):
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
 
-
-
 @app.task
 def progreso_listados_actas_aprobadas(email):
     usuario = User.objects.get(email=email)
@@ -2200,9 +2190,6 @@ def progreso_listados_actas_aprobadas(email):
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
 
-
-
-
 @app.task
 def progreso_virtuales(email):
     usuario = User.objects.get(email=email)
@@ -2305,8 +2292,6 @@ def progreso_virtuales(email):
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
 
-
-
 @app.task
 def progreso_virtuales_aprobadas(email):
     usuario = User.objects.get(email=email)
@@ -2408,8 +2393,6 @@ def progreso_virtuales_aprobadas(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
-
-
 
 @app.task
 def matriz_chequeo_actividad(email,id_actividad):
