@@ -139,7 +139,7 @@ class BeneficiarioUpdateForm(forms.ModelForm):
         area = cleaned_data.get('area')
         grado = cleaned_data.get('grado')
 
-        if diplomado.nombre != 'ESCUELA TIC FAMILIA' or diplomado.nombre != 'ESCUELATIC':
+        if diplomado.nombre != u'ESCUELA TIC FAMILIA' and diplomado.nombre != u'ESCUELATIC':
             if radicado_text == '':
                 self.add_error('radicado_text','Este campo es requerido.')
 
