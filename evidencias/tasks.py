@@ -146,14 +146,14 @@ def build_red(id_red):
         ws = wb.get_sheet_by_name('RED Familia')
         inicia = 2
 
-
-    beneficiarios_id = red.evidencias.exclude(beneficiarios_cargados = None).values_list('beneficiarios_cargados__id',flat=True).distinct()
+    evidencias_total = Evidencia.objects.filter(red_id = id_red)
+    beneficiarios_id = evidencias_total.exclude(beneficiarios_cargados = None).values_list('beneficiarios_cargados__id',flat=True).distinct()
 
 
     i = 0 + inicia
     for beneficiario_id in beneficiarios_id:
         beneficiario = Beneficiario.objects.get(id = beneficiario_id)
-        evidencias = red.evidencias.filter(beneficiarios_cargados__id = beneficiario_id)
+        evidencias = evidencias_total.filter(beneficiarios_cargados__id = beneficiario_id)
 
 
         ws.cell('A'+str(i)).value = i - inicia + 1
@@ -300,7 +300,7 @@ def carga_masiva_evidencias(id_carga_masiva,id_usuario):
 def retroalimentacion_red(id_red):
 
     red = Red.objects.get(id = id_red)
-    evidencias_red = red.evidencias.values_list('id',flat=True)
+    evidencias_red = Evidencia.objects.filter(red_id = id_red).values_list('id',flat=True)
 
     wb = openpyxl.load_workbook(red.archivo_retroalimentacion.file)
     ws = wb.get_active_sheet()

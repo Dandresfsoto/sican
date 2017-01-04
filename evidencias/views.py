@@ -292,8 +292,7 @@ class NuevoRedView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
 
-        evidencias_red_list = Red.objects.all().values_list('evidencias__id',flat=True)
-        evidencias = Evidencia.objects.exclude(id__in = evidencias_red_list)
+        evidencias = Evidencia.objects.filter(red_id = None)
 
         region_1 = Region.objects.get(numero = 1)
         region_2 = Region.objects.get(numero = 2)
@@ -349,8 +348,9 @@ class NuevoRedView(LoginRequiredMixin,
     def form_valid(self, form):
         self.object = form.save()
 
-        evidencias_red_list = Red.objects.all().exclude(evidencias = None).values_list('evidencias__id',flat=True)
-        evidencias = Evidencia.objects.exclude(id__in = evidencias_red_list)
+        red = Red.objects.get(id = self.object.id)
+
+        evidencias = Evidencia.objects.filter(red_id = None)
 
         region_1 = Region.objects.get(numero = 1)
         region_2 = Region.objects.get(numero = 2)
@@ -358,39 +358,39 @@ class NuevoRedView(LoginRequiredMixin,
         evidencias_r1 = evidencias.filter(formador__region = region_1)
         evidencias_r2 = evidencias.filter(formador__region = region_2)
 
-        evidencias_r1_innovatic = list(evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC'))
-        evidencias_r1_tecnotic = list(evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC'))
-        evidencias_r1_directic = list(evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC'))
-        evidencias_r1_escuelatic = list(evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA'))
+        evidencias_r1_innovatic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC')
+        evidencias_r1_tecnotic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC')
+        evidencias_r1_directic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
+        evidencias_r1_escuelatic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
 
-        evidencias_r2_innovatic = list(evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC'))
-        evidencias_r2_tecnotic = list(evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC'))
-        evidencias_r2_directic = list(evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC'))
-        evidencias_r2_escuelatic = list(evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA'))
+        evidencias_r2_innovatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC')
+        evidencias_r2_tecnotic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC')
+        evidencias_r2_directic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
+        evidencias_r2_escuelatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
 
-        red = Red.objects.get(id = self.object.id)
+
 
         if self.object.region.numero == 1:
             if self.object.diplomado.nombre == 'INNOVATIC':
-                red.evidencias.add(*evidencias_r1_innovatic)
+                evidencias_r1_innovatic.update(red_id = red.id)
             elif self.object.diplomado.nombre == 'TECNOTIC':
-                red.evidencias.add(*evidencias_r1_tecnotic)
+                evidencias_r1_tecnotic.update(red_id = red.id)
             elif self.object.diplomado.nombre == 'DIRECTIC':
-                red.evidencias.add(*evidencias_r1_directic)
+                evidencias_r1_directic.update(red_id = red.id)
             elif self.object.diplomado.nombre == 'ESCUELA TIC FAMILIA':
-                red.evidencias.add(*evidencias_r1_escuelatic)
+                evidencias_r1_escuelatic.update(red_id = red.id)
             else:
                 pass
 
         elif self.object.region.numero == 2:
             if self.object.diplomado.nombre == 'INNOVATIC':
-                red.evidencias.add(*evidencias_r2_innovatic)
+                evidencias_r2_innovatic.update(red_id = red.id)
             elif self.object.diplomado.nombre == 'TECNOTIC':
-                red.evidencias.add(*evidencias_r2_tecnotic)
+                evidencias_r2_tecnotic.update(red_id = red.id)
             elif self.object.diplomado.nombre == 'DIRECTIC':
-                red.evidencias.add(*evidencias_r2_directic)
+                evidencias_r2_directic.update(red_id = red.id)
             elif self.object.diplomado.nombre == 'ESCUELA TIC FAMILIA':
-                red.evidencias.add(*evidencias_r2_escuelatic)
+                evidencias_r2_escuelatic.update(red_id = red.id)
             else:
                 pass
 

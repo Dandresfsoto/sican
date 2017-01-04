@@ -3995,7 +3995,7 @@ class RedList(BaseDatatableView):
                 item.diplomado.nombre,
                 item.region.nombre,
                 localtime(item.fecha).strftime('%d/%m/%Y %I:%M:%S %p'),
-                item.evidencias.all().count(),
+                Evidencia.objects.filter(red_id = item.id).count(),
                 'Si' if item.retroalimentacion else 'No',
                 item.get_archivo_url(),
                 self.request.user.has_perm('permisos_sican.evidencias.red.editar'),
