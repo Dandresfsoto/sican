@@ -2737,7 +2737,7 @@ def matriz_chequeo_actividad(email,id_actividad):
 
                 if evidencias_validado.count() > 0:
                     red = Red.objects.get(evidencias__id = evidencias_validado[0].id)
-                    ws.cell(producto['letter']+str(i)).value = 'RED-' + str(red.id)
+                    ws.cell(producto['letter']+str(i)).value = 'SIC-' + str(evidencias_validado[0].id)
                     #ws.cell(producto['letter']+str(i)).style = validado
                     #ws.cell( producto['letter'] + str(i) ).hyperlink = 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url()
                     #ws.cell( producto['letter'] + str(i) ).comment = Comment('SIC-' + str(evidencias_validado[0].id),'SICAN')
