@@ -2111,7 +2111,7 @@ class RevisionForm(forms.ModelForm):
             else:
                 max = maximos[field]
 
-            self.fields[field].label = 'Max: ' + str(formador.cantidad_docentes - max) + ' - ' + entregable.entregable.tipo + ' - ' + entregable.entregable.sesion.nombre + ' - ' + entregable.entregable.nombre
+            self.fields[field].label = 'Max: ' + str(formador.cantidad_docentes - max) + ' - Pago: '+ str(max) +' - ' + entregable.entregable.tipo + ' - ' + entregable.entregable.sesion.nombre + ' - ' + entregable.entregable.nombre
 
             if entregable.entregable.sesion.nivel.nombre == "Nivel 0":
                 if entregable.entregable.tipo == "Presencial":
