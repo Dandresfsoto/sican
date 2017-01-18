@@ -59,6 +59,7 @@ from informes.tasks import descargas_certificados_escuelatic, progreso_listados_
 from evidencias.models import Subsanacion
 from django.db.models import Sum
 from informes.tasks import progreso_virtuales, progreso_virtuales_aprobadas
+from evidencias.tasks import build_consolidado_red, build_consolidado_aprobacion_red
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -244,6 +245,10 @@ class ReportesView(APIView):
             x = progreso_virtuales.delay(request.user.email)
         if id_accion == '27':
             x = progreso_virtuales_aprobadas.delay(request.user.email)
+        if id_accion == '28':
+            x = build_consolidado_red.delay(request.user.email)
+        if id_accion == '29':
+            x = build_consolidado_aprobacion_red.delay(request.user.email)
 
         return HttpResponse(status=200)
 

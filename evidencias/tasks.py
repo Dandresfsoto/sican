@@ -18,6 +18,8 @@ from usuarios.models import User
 import os
 import shutil
 from evidencias.models import Rechazo
+from informes.models import InformesExcel
+from openpyxl.styles import Style, PatternFill, Border, Side, Alignment, Protection, Font
 
 @app.task
 def build_red(id_red):
@@ -456,3 +458,353 @@ def retroalimentacion_red(id_red):
     red.save()
 
     return "Retroalimentado RED-" + str(id_red)
+
+
+
+@app.task
+def build_consolidado_red(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Consolidado RED"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    output = StringIO()
+
+    ids_innovatic = [{'id':8,'letter':'M'},
+               {'id':9,'letter':'N'},
+               {'id':20,'letter':'O'},
+               {'id':12,'letter':'P'},
+               {'id':21,'letter':'Q'},
+               {'id':22,'letter':'R'},
+               {'id':14,'letter':'S'},
+               {'id':15,'letter':'T'},
+               {'id':16,'letter':'U'},
+               {'id':23,'letter':'V'},
+               {'id':17,'letter':'W'},
+               {'id':27,'letter':'X'},
+               {'id':28,'letter':'Y'},
+               {'id':40,'letter':'Z'},
+               {'id':30,'letter':'AA'},
+               {'id':31,'letter':'AB'},
+               {'id':33,'letter':'AC'},
+               {'id':34,'letter':'AD'},
+               {'id':35,'letter':'AE'},
+               {'id':36,'letter':'AF'},
+               {'id':46,'letter':'AG'},
+               {'id':58,'letter':'AH'},
+               {'id':49,'letter':'AI'},
+               {'id':59,'letter':'AJ'},
+               {'id':52,'letter':'AK'},
+               {'id':60,'letter':'AL'},
+               {'id':55,'letter':'AM'},
+               {'id':63,'letter':'AN'},
+               {'id':64,'letter':'AO'},
+               {'id':66,'letter':'AP'},
+               {'id':67,'letter':'AQ'}]
+
+    ids_tecnotic = [{'id':72,'letter':'M'},
+               {'id':73,'letter':'N'},
+               {'id':75,'letter':'O'},
+               {'id':74,'letter':'P'},
+               {'id':76,'letter':'Q'},
+               {'id':77,'letter':'R'},
+               {'id':84,'letter':'S'},
+               {'id':85,'letter':'T'},
+               {'id':78,'letter':'U'},
+               {'id':89,'letter':'V'},
+               {'id':97,'letter':'W'},
+               {'id':98,'letter':'X'},
+               {'id':93,'letter':'Y'},
+               {'id':92,'letter':'Z'},
+               {'id':99,'letter':'AA'},
+               {'id':94,'letter':'AB'},
+               {'id':100,'letter':'AC'},
+               {'id':95,'letter':'AD'},
+               {'id':104,'letter':'AE'},
+               {'id':112,'letter':'AF'},
+               {'id':106,'letter':'AG'},
+               {'id':109,'letter':'AH'},
+               {'id':108,'letter':'AI'},
+               {'id':110,'letter':'AJ'},
+               {'id':119,'letter':'AK'},
+               {'id':124,'letter':'AL'},
+               {'id':118,'letter':'AM'},
+               {'id':120,'letter':'AN'},
+               {'id':121,'letter':'AO'}]
+
+    ids_directic = [{'id':127,'letter':'M'},
+               {'id':128,'letter':'N'},
+               {'id':131,'letter':'O'},
+               {'id':132,'letter':'P'},
+               {'id':134,'letter':'Q'},
+               {'id':133,'letter':'R'},
+               {'id':142,'letter':'S'},
+               {'id':143,'letter':'T'},
+               {'id':135,'letter':'U'},
+               {'id':144,'letter':'V'},
+               {'id':137,'letter':'W'},
+               {'id':140,'letter':'X'},
+               {'id':139,'letter':'Y'},
+               {'id':147,'letter':'Z'},
+               {'id':146,'letter':'AA'},
+               {'id':152,'letter':'AB'},
+               {'id':148,'letter':'AC'},
+               {'id':149,'letter':'AD'},
+               {'id':151,'letter':'AE'},
+               {'id':150,'letter':'AF'},
+               {'id':156,'letter':'AG'},
+               {'id':155,'letter':'AH'},
+               {'id':157,'letter':'AI'},
+               {'id':164,'letter':'AJ'},
+               {'id':165,'letter':'AK'},
+               {'id':159,'letter':'AL'},
+               {'id':162,'letter':'AM'},
+               {'id':161,'letter':'AN'},
+               {'id':166,'letter':'AO'},
+               {'id':167,'letter':'AP'},
+               {'id':171,'letter':'AQ'},
+               {'id':171,'letter':'AR'},
+               {'id':169,'letter':'AS'}]
+
+    ids_escuelatic = [{'id':221,'letter':'M'},
+               {'id':221,'letter':'N'},
+               {'id':221,'letter':'O'},
+               {'id':224,'letter':'P'},
+               {'id':228,'letter':'Q'}]
+
+    wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/CONSOLIDADO RED.xlsx')
+    ws_innovatic = wb.get_sheet_by_name('RED InnovaTIC')
+    ws_tecnotic = wb.get_sheet_by_name('RED TecnoTIC')
+    ws_directic = wb.get_sheet_by_name('RED DirecTIC')
+    ws_escuelatic = wb.get_sheet_by_name('RED Familia')
+
+
+    i_innovatic = 5
+    i_tecnotic = 5
+    i_directic = 5
+    i_escuelatic = 5
+
+
+    for red in Red.objects.all():
+
+        if red.diplomado.numero == 1:
+            ids = ids_innovatic
+            i_innovatic += 1
+            i = i_innovatic
+            ws = ws_innovatic
+
+        elif red.diplomado.numero == 2:
+            ids = ids_tecnotic
+            i_tecnotic += 1
+            i = i_tecnotic
+            ws = ws_tecnotic
+
+        elif red.diplomado.numero == 3:
+            ids = ids_directic
+            i_directic += 1
+            i = i_directic
+            ws = ws_directic
+
+        else:
+            ids = ids_escuelatic
+            i_escuelatic += 1
+            i = i_escuelatic
+            ws = ws_escuelatic
+
+        ws.cell('A'+str(i)).value = 'RED-' + unicode(red.id)
+        ws.cell('B'+str(i)).value = unicode(red.region.nombre)
+
+        for id in ids:
+            evidencias = Evidencia.objects.filter(red_id = red.id).filter(entregable__id = id['id']).values_list('beneficiarios_cargados',flat=True)
+            ws.cell( id['letter'] + str(i)).value = evidencias.count()
+            ws.cell( id['letter'] + str(i)).style =Style(font=Font(name='Arial',
+                                                                          size=11,
+                                                                          bold=False,
+                                                                          color='FF000000'
+                                                                        ),
+                                                                alignment=Alignment(
+                                                                    horizontal='center',
+                                                                    vertical='center',
+                                                                    wrap_text=True
+                                                                ),
+                                                                number_format='0'
+                                                                )
+
+
+    wb.save(output)
+    filename = 'CONSOLIDADOS_RED.xlsx'
+    informe.archivo.save(filename,File(output))
+
+    return "Generado consolidados RED"
+
+
+@app.task
+def build_consolidado_aprobacion_red(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Consolidado aprobacion RED"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    output = StringIO()
+
+    ids_innovatic = [{'id':8,'letter':'M'},
+               {'id':9,'letter':'N'},
+               {'id':20,'letter':'O'},
+               {'id':12,'letter':'P'},
+               {'id':21,'letter':'Q'},
+               {'id':22,'letter':'R'},
+               {'id':14,'letter':'S'},
+               {'id':15,'letter':'T'},
+               {'id':16,'letter':'U'},
+               {'id':23,'letter':'V'},
+               {'id':17,'letter':'W'},
+               {'id':27,'letter':'X'},
+               {'id':28,'letter':'Y'},
+               {'id':40,'letter':'Z'},
+               {'id':30,'letter':'AA'},
+               {'id':31,'letter':'AB'},
+               {'id':33,'letter':'AC'},
+               {'id':34,'letter':'AD'},
+               {'id':35,'letter':'AE'},
+               {'id':36,'letter':'AF'},
+               {'id':46,'letter':'AG'},
+               {'id':58,'letter':'AH'},
+               {'id':49,'letter':'AI'},
+               {'id':59,'letter':'AJ'},
+               {'id':52,'letter':'AK'},
+               {'id':60,'letter':'AL'},
+               {'id':55,'letter':'AM'},
+               {'id':63,'letter':'AN'},
+               {'id':64,'letter':'AO'},
+               {'id':66,'letter':'AP'},
+               {'id':67,'letter':'AQ'}]
+
+    ids_tecnotic = [{'id':72,'letter':'M'},
+               {'id':73,'letter':'N'},
+               {'id':75,'letter':'O'},
+               {'id':74,'letter':'P'},
+               {'id':76,'letter':'Q'},
+               {'id':77,'letter':'R'},
+               {'id':84,'letter':'S'},
+               {'id':85,'letter':'T'},
+               {'id':78,'letter':'U'},
+               {'id':89,'letter':'V'},
+               {'id':97,'letter':'W'},
+               {'id':98,'letter':'X'},
+               {'id':93,'letter':'Y'},
+               {'id':92,'letter':'Z'},
+               {'id':99,'letter':'AA'},
+               {'id':94,'letter':'AB'},
+               {'id':100,'letter':'AC'},
+               {'id':95,'letter':'AD'},
+               {'id':104,'letter':'AE'},
+               {'id':112,'letter':'AF'},
+               {'id':106,'letter':'AG'},
+               {'id':109,'letter':'AH'},
+               {'id':108,'letter':'AI'},
+               {'id':110,'letter':'AJ'},
+               {'id':119,'letter':'AK'},
+               {'id':124,'letter':'AL'},
+               {'id':118,'letter':'AM'},
+               {'id':120,'letter':'AN'},
+               {'id':121,'letter':'AO'}]
+
+    ids_directic = [{'id':127,'letter':'M'},
+               {'id':128,'letter':'N'},
+               {'id':131,'letter':'O'},
+               {'id':132,'letter':'P'},
+               {'id':134,'letter':'Q'},
+               {'id':133,'letter':'R'},
+               {'id':142,'letter':'S'},
+               {'id':143,'letter':'T'},
+               {'id':135,'letter':'U'},
+               {'id':144,'letter':'V'},
+               {'id':137,'letter':'W'},
+               {'id':140,'letter':'X'},
+               {'id':139,'letter':'Y'},
+               {'id':147,'letter':'Z'},
+               {'id':146,'letter':'AA'},
+               {'id':152,'letter':'AB'},
+               {'id':148,'letter':'AC'},
+               {'id':149,'letter':'AD'},
+               {'id':151,'letter':'AE'},
+               {'id':150,'letter':'AF'},
+               {'id':156,'letter':'AG'},
+               {'id':155,'letter':'AH'},
+               {'id':157,'letter':'AI'},
+               {'id':164,'letter':'AJ'},
+               {'id':165,'letter':'AK'},
+               {'id':159,'letter':'AL'},
+               {'id':162,'letter':'AM'},
+               {'id':161,'letter':'AN'},
+               {'id':166,'letter':'AO'},
+               {'id':167,'letter':'AP'},
+               {'id':171,'letter':'AQ'},
+               {'id':171,'letter':'AR'},
+               {'id':169,'letter':'AS'}]
+
+    ids_escuelatic = [{'id':221,'letter':'M'},
+               {'id':221,'letter':'N'},
+               {'id':221,'letter':'O'},
+               {'id':224,'letter':'P'},
+               {'id':228,'letter':'Q'}]
+
+    wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/CONSOLIDADO RED.xlsx')
+    ws_innovatic = wb.get_sheet_by_name('RED InnovaTIC')
+    ws_tecnotic = wb.get_sheet_by_name('RED TecnoTIC')
+    ws_directic = wb.get_sheet_by_name('RED DirecTIC')
+    ws_escuelatic = wb.get_sheet_by_name('RED Familia')
+
+
+    i_innovatic = 5
+    i_tecnotic = 5
+    i_directic = 5
+    i_escuelatic = 5
+
+
+    for red in Red.objects.all():
+
+        if red.diplomado.numero == 1:
+            ids = ids_innovatic
+            i_innovatic += 1
+            i = i_innovatic
+            ws = ws_innovatic
+
+        elif red.diplomado.numero == 2:
+            ids = ids_tecnotic
+            i_tecnotic += 1
+            i = i_tecnotic
+            ws = ws_tecnotic
+
+        elif red.diplomado.numero == 3:
+            ids = ids_directic
+            i_directic += 1
+            i = i_directic
+            ws = ws_directic
+
+        else:
+            ids = ids_escuelatic
+            i_escuelatic += 1
+            i = i_escuelatic
+            ws = ws_escuelatic
+
+        ws.cell('A'+str(i)).value = 'RED-' + unicode(red.id)
+        ws.cell('B'+str(i)).value = unicode(red.region.nombre)
+
+        for id in ids:
+            evidencias = Evidencia.objects.filter(red_id = red.id).filter(entregable__id = id['id']).values_list('beneficiarios_validados',flat=True)
+            ws.cell( id['letter'] + str(i)).value = evidencias.count()
+            ws.cell( id['letter'] + str(i)).style =Style(font=Font(name='Arial',
+                                                                          size=11,
+                                                                          bold=False,
+                                                                          color='FF000000'
+                                                                        ),
+                                                                alignment=Alignment(
+                                                                    horizontal='center',
+                                                                    vertical='center',
+                                                                    wrap_text=True
+                                                                ),
+                                                                number_format='0'
+                                                                )
+
+    wb.save(output)
+    filename = 'CONSOLIDADOS_APROBACION_RED.xlsx'
+    informe.archivo.save(filename,File(output))
+
+    return "Generado consolidados RED"
