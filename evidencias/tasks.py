@@ -613,8 +613,11 @@ def build_consolidado_red(email):
         ws.cell('B'+str(i)).value = unicode(red.region.nombre)
 
         for id in ids:
-            evidencias = Evidencia.objects.filter(red_id = red.id).filter(entregable__id = id['id']).values_list('beneficiarios_cargados',flat=True)
-            ws.cell( id['letter'] + str(i)).value = evidencias.count()
+            evidencias = Evidencia.objects.filter(red_id = red.id).filter(entregable__id = id['id']).values_list('beneficiarios_cargados',flat=True).distinct()
+            x = list(evidencias)
+            if None in x:
+                x.remove(None)
+            ws.cell( id['letter'] + str(i)).value = len(x)
             ws.cell( id['letter'] + str(i)).style =Style(font=Font(name='Arial',
                                                                           size=11,
                                                                           bold=False,
@@ -788,8 +791,11 @@ def build_consolidado_aprobacion_red(email):
         ws.cell('B'+str(i)).value = unicode(red.region.nombre)
 
         for id in ids:
-            evidencias = Evidencia.objects.filter(red_id = red.id).filter(entregable__id = id['id']).values_list('beneficiarios_validados',flat=True)
-            ws.cell( id['letter'] + str(i)).value = evidencias.count()
+            evidencias = Evidencia.objects.filter(red_id = red.id).filter(entregable__id = id['id']).values_list('beneficiarios_cargados',flat=True).distinct()
+            x = list(evidencias)
+            if None in x:
+                x.remove(None)
+            ws.cell( id['letter'] + str(i)).value = len(x)
             ws.cell( id['letter'] + str(i)).style =Style(font=Font(name='Arial',
                                                                           size=11,
                                                                           bold=False,
