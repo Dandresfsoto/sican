@@ -2048,7 +2048,7 @@ def progreso_listados_actas(email):
         i = 5
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_cargados__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
             i += 1
 
     for producto in dict_productos_t2:
@@ -2056,7 +2056,7 @@ def progreso_listados_actas(email):
         i = 16
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_cargados__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
             i += 1
 
     for producto in dict_productos_t3:
@@ -2064,7 +2064,7 @@ def progreso_listados_actas(email):
         i = 27
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_cargados__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
             i += 1
 
 
@@ -2073,7 +2073,7 @@ def progreso_listados_actas(email):
         i = 38
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_cargados__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
             i += 1
 
     wb.save(output)
@@ -2152,7 +2152,7 @@ def progreso_listados_actas_aprobadas(email):
         i = 5
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_validados__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
             i += 1
 
     for producto in dict_productos_t2:
@@ -2160,7 +2160,7 @@ def progreso_listados_actas_aprobadas(email):
         i = 16
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_validados__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
             i += 1
 
     for producto in dict_productos_t3:
@@ -2168,7 +2168,7 @@ def progreso_listados_actas_aprobadas(email):
         i = 27
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_validados__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
             i += 1
 
 
@@ -2177,7 +2177,7 @@ def progreso_listados_actas_aprobadas(email):
         i = 38
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_validados__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
             i += 1
 
     wb.save(output)
@@ -2262,7 +2262,7 @@ def progreso_virtuales(email):
         i = 6
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_cargados__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
             i += 1
 
     for producto in dict_productos_t2:
@@ -2270,7 +2270,7 @@ def progreso_virtuales(email):
         i = 18
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_cargados__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
             i += 1
 
     for producto in dict_productos_t3:
@@ -2278,7 +2278,7 @@ def progreso_virtuales(email):
         i = 30
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_cargados__region__id = region.id).values_list('beneficiarios_cargados',flat=True).distinct().count()
             i += 1
 
 
@@ -2364,7 +2364,7 @@ def progreso_virtuales_aprobadas(email):
         i = 6
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_validados__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
             i += 1
 
     for producto in dict_productos_t2:
@@ -2372,7 +2372,7 @@ def progreso_virtuales_aprobadas(email):
         i = 18
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_validados__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
             i += 1
 
     for producto in dict_productos_t3:
@@ -2380,7 +2380,7 @@ def progreso_virtuales_aprobadas(email):
         i = 30
         for region in Region.objects.filter(id__in=[1,2]):
             ws.cell('A' + str(i)).value = region.nombre.upper()
-            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(formador__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
+            ws.cell(producto['letter'] + str(i)).value = evidencias.filter(beneficiarios_validados__region__id = region.id).values_list('beneficiarios_validados',flat=True).distinct().count()
             i += 1
 
 
