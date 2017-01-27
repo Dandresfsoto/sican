@@ -3867,7 +3867,7 @@ class EvidenciasSubsanacionCodigos(BaseDatatableView):
 
     def get_initial_queryset(self):
         red = Red.objects.get(id=self.kwargs['id_red'])
-        ids = red.evidencias.exclude(beneficiarios_rechazados = None).values_list('id',flat=True)
+        ids = Evidencia.objects.filter(red_id=red.id).exclude(beneficiarios_rechazados = None).values_list('id',flat=True)
         return Evidencia.objects.filter(id__in = ids)
 
 
@@ -4036,9 +4036,9 @@ class RedSubsanacionList(BaseDatatableView):
 
         for item in qs:
 
-            cargados = list(item.evidencias.all().values_list('beneficiarios_cargados__id',flat=True))
-            validados = list(item.evidencias.all().values_list('beneficiarios_validados__id',flat=True))
-            rechazados = list(item.evidencias.all().values_list('beneficiarios_rechazados__id',flat=True))
+            cargados = list(Evidencia.objects.filter(red_id = item.id).values_list('beneficiarios_cargados__id',flat=True))
+            validados = list(Evidencia.objects.filter(red_id = item.id).values_list('beneficiarios_validados__id',flat=True))
+            rechazados = list(Evidencia.objects.filter(red_id = item.id).values_list('beneficiarios_rechazados__id',flat=True))
             subsanadas = Subsanacion.objects.filter(red__id = item.id).aggregate(Sum('evidencia_subsanada__cantidad_cargados'))['evidencia_subsanada__cantidad_cargados__sum']
 
             while None in cargados:
