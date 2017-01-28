@@ -1427,7 +1427,7 @@ def matriz_chequeo(email,id_diplomado):
             reds = Red.objects.filter(q)
 
             if evidencias_validado.count() > 0:
-                red = Red.objects.get(evidencias__id = evidencias_validado[0].id)
+                #red = Red.objects.get(evidencias__id = evidencias_validado[0].id)
                 #ws.write_url( producto['letter'] + str(i) , 'https://sican.asoandes.org' + evidencias_validado[0].get_archivo_url() , validado, 'RED-' + str(red.id))
                 ws.write( producto['letter'] + str(i) , 'SIC-' + str(evidencias_validado[0].id), validado )
 
