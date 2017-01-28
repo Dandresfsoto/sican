@@ -58,7 +58,7 @@ from informes.tasks import zip_hv, zip_contrato
 from informes.tasks import descargas_certificados_escuelatic, progreso_listados_actas, matriz_chequeo_actividad, progreso_listados_actas_aprobadas
 from evidencias.models import Subsanacion
 from django.db.models import Sum
-from informes.tasks import progreso_virtuales, progreso_virtuales_aprobadas
+from informes.tasks import progreso_virtuales, progreso_virtuales_aprobadas,aprobados_niveles
 from evidencias.tasks import build_consolidado_red, build_consolidado_aprobacion_red
 
 # Create your views here.
@@ -249,6 +249,8 @@ class ReportesView(APIView):
             x = build_consolidado_red.delay(request.user.email)
         if id_accion == '29':
             x = build_consolidado_aprobacion_red.delay(request.user.email)
+        if id_accion == '30':
+            x = aprobados_niveles.delay(request.user.email)
 
         return HttpResponse(status=200)
 

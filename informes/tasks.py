@@ -2793,3 +2793,145 @@ def matriz_chequeo_actividad(email,id_actividad):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
+
+@app.task
+def aprobados_niveles(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Aprobación de listados de asistencia por nivel"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    output = StringIO()
+    wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/PROGRESO_DESEMBOLSO.xlsx')
+    ws = wb.get_sheet_by_name('Hoja1')
+
+    dict_productos_t1 = [{'letter':'B','aprueba':3,'id':[9,12,14,17]},
+                        {'letter':'D','aprueba':3,'id':[27,30,33,36]},
+                        {'letter':'F','aprueba':3,'id':[46,49,52,55]},
+                        {'letter':'H','aprueba':2,'id':[63,66]}
+                        ]
+
+    dict_productos_t2 = [{'letter':'B','aprueba':3,'id':[73,74,76,78]},
+                         {'letter':'D','aprueba':3,'id':[89,92,94,95]},
+                         {'letter':'F','aprueba':3,'id':[104,106,108,110]},
+                         {'letter':'H','aprueba':2,'id':[118,120]},
+                          ]
+
+    dict_productos_t3 = [{'letter':'B','aprueba':5,'id':[128,131,133,135,137,139]},
+                         {'letter':'D','aprueba':2,'id':[146,148,150]},
+                         {'letter':'F','aprueba':3,'id':[155,157,159,161]},
+                         {'letter':'H','aprueba':2,'id':[167,169]},
+                        ]
+
+    dict_productos_t4 = [ {'letter':'B','aprueba':2,'id':[224,228]},
+        ]
+
+    for producto in dict_productos_t1:
+
+        i = 5
+        for region in Region.objects.filter(id__in=[1,2]):
+
+            cantidad = 0
+
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+
+            evidencias = list(Evidencia.objects.filter(beneficiarios_cargados__region__id = region.id, entregable__id__in = producto['id']).values_list('beneficiarios_validados',flat=True).distinct())
+
+            parciales = []
+
+            for item in producto['id']:
+                parciales.append(list(Evidencia.objects.filter(beneficiarios_cargados__region__id = region.id, entregable__id = item).values_list('beneficiarios_validados',flat=True).distinct()))
+
+            for evidencia in evidencias:
+                j = 0
+                for parcial in parciales:
+                    if evidencia in parcial:
+                        j += 1
+                if j >= producto['aprueba']:
+                    cantidad += 1
+
+            ws.cell(producto['letter'] + str(i)).value = cantidad
+            i += 1
+
+    for producto in dict_productos_t2:
+        i = 16
+        for region in Region.objects.filter(id__in=[1,2]):
+
+            cantidad = 0
+
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+
+            evidencias = list(Evidencia.objects.filter(beneficiarios_cargados__region__id = region.id, entregable__id__in = producto['id']).values_list('beneficiarios_validados',flat=True).distinct())
+
+            parciales = []
+
+            for item in producto['id']:
+                parciales.append(list(Evidencia.objects.filter(beneficiarios_cargados__region__id = region.id, entregable__id = item).values_list('beneficiarios_validados',flat=True).distinct()))
+
+            for evidencia in evidencias:
+                j = 0
+                for parcial in parciales:
+                    if evidencia in parcial:
+                        j += 1
+                if j >= producto['aprueba']:
+                    cantidad += 1
+
+            ws.cell(producto['letter'] + str(i)).value = cantidad
+            i += 1
+
+    for producto in dict_productos_t3:
+        i = 27
+        for region in Region.objects.filter(id__in=[1,2]):
+
+            cantidad = 0
+
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+
+            evidencias = list(Evidencia.objects.filter(beneficiarios_cargados__region__id = region.id, entregable__id__in = producto['id']).values_list('beneficiarios_validados',flat=True).distinct())
+
+            parciales = []
+
+            for item in producto['id']:
+                parciales.append(list(Evidencia.objects.filter(beneficiarios_cargados__region__id = region.id, entregable__id = item).values_list('beneficiarios_validados',flat=True).distinct()))
+
+            for evidencia in evidencias:
+                j = 0
+                for parcial in parciales:
+                    if evidencia in parcial:
+                        j += 1
+                if j >= producto['aprueba']:
+                    cantidad += 1
+
+            ws.cell(producto['letter'] + str(i)).value = cantidad
+            i += 1
+
+
+    for producto in dict_productos_t4:
+        i = 38
+        for region in Region.objects.filter(id__in=[1,2]):
+
+            cantidad = 0
+
+            ws.cell('A' + str(i)).value = region.nombre.upper()
+
+            evidencias = list(Evidencia.objects.filter(beneficiarios_cargados__region__id = region.id, entregable__id__in = producto['id']).values_list('beneficiarios_validados',flat=True).distinct())
+
+            parciales = []
+
+            for item in producto['id']:
+                parciales.append(list(Evidencia.objects.filter(beneficiarios_cargados__region__id = region.id, entregable__id = item).values_list('beneficiarios_validados',flat=True).distinct()))
+
+            for evidencia in evidencias:
+                j = 0
+                for parcial in parciales:
+                    if evidencia in parcial:
+                        j += 1
+                if j >= producto['aprueba']:
+                    cantidad += 1
+
+            ws.cell(producto['letter'] + str(i)).value = cantidad
+            i += 1
+
+    wb.save(output)
+
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
