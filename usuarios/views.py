@@ -27,27 +27,15 @@ class Perfil(LoginRequiredMixin,UpdateView):
     def get_object(self):
         return User.objects.get(email=self.request.user.email)
 
-    def form_valid(self, form):
-        # take some other action here
-        super(Perfil, self).form_valid(form)
-        self.object = form.save()
-        self.object.fullname = self.object.first_name + " " + self.object.last_name
-        self.object.save()
-        return self.render_to_response(self.get_context_data(form=form,mensaje='Se actualizo correctamente.'))
-
-    def form_invalid(self, form, **kwargs):
-        """
-        If the form is invalid, re-render the context data with the
-        data-filled form and errors.
-        """
-        self.object = self.get_object()
-        return self.render_to_response(self.get_context_data(form=form,mensaje='No se pudo actualizar el perfil.'))
-
     def get_context_data(self, mensaje='',**kwargs):
         kwargs['photo_filename'] = self.object.photo_filename
         kwargs['photo_link'] = self.object.get_url_photo
-        kwargs['mensaje'] = mensaje
+        kwargs['cargo'] = self.request.user.cargo
+        kwargs['avatar'] = self.request.user.get_photo()
         return super(Perfil, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'id_user':self.request.user.id}
 
 class ChangePassword(LoginRequiredMixin,FormView):
     form_class = ChangePasswordForm

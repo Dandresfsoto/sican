@@ -27,19 +27,45 @@ block breadcrum
 block scroll_header_panel_content
     div(class="container-fluid container-panel")
         div(class="row")
-            div(class="col-sm-8 col-sm-offset-2")
+            div(class="col-sm-12")
                 form(method="POST",enctype="multipart/form-data",id="form")
                     |{% csrf_token %}
                     |{% crispy form %}
-                    p(class="bold-p inline",style="margin-left:10px;") Email:
-                        p(class="inline") {{user.email}}
-                    p(class="bold-p inline",style="margin-left:10px;") Cargo:
-                        p(class="inline") {{user.cargo}}
                     div(class="text-right login-form-button")
                         paper-button(class="submit",id="submit_form") Guardar
 
 block body_script_content
     script.
+        $("#id_photo").fileinput({
+            language: "es",
+            showRemove: false,
+            showUpload: false,
+            initialPreview: ["<img src='{{avatar}}' class='file-preview-image' width='202'>" ],
+        });
+
+        $('#id_fecha_nacimiento').datetimepicker({
+            locale: 'es',
+            viewMode: 'years',
+            format: 'DD/MM/YYYY'
+        });
+
+        $("#id_municipio_natal").remoteChained({
+            parents: "#id_departamento_natal",
+            url: "/rest/chained/municipios/"
+        });
+
+        $("#id_municipio_residencia").remoteChained({
+            parents: "#id_departamento_residencia",
+            url: "/rest/chained/municipios/"
+        });
+
+        $("#id_municipio_residencia_temporal").remoteChained({
+            parents: "#id_departamento_residencia_temporal",
+            url: "/rest/chained/municipios/"
+        });
+
+        $("#id_valor_transporte").maskMoney();
+
         submit_form.addEventListener('click',function(e){
             form.submit();
         });

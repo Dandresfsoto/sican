@@ -12,6 +12,8 @@ from django.db.models.signals import post_save
 from rest_framework.authtoken.models import Token
 from django.dispatch import receiver
 from django.conf import settings
+from departamentos.models import Departamento
+from municipios.models import Municipio
 
 
 class UserManager(BaseUserManager):
@@ -63,6 +65,49 @@ class User(AbstractBaseUser, PermissionsMixin):
     recovery = models.CharField(max_length=20,null=True,blank=True,default="")
     new_password = models.CharField(max_length=100,null=True,blank=True,default="")
     photo = ContentTypeRestrictedFileField(upload_to='Usuarios/Foto',blank=True,null=True,content_types=['image/jpg', 'image/jpeg', 'image/png'],max_upload_size=10485760)
+
+    numero_contrato = models.CharField(max_length=100,blank=True,null=True)
+    fecha_inicio = models.DateField(blank=True,null=True)
+    fecha_terminacion = models.DateField(blank=True,null=True)
+    fecha_nacimiento = models.DateField(blank=True,null=True)
+    departamento_natal = models.ForeignKey(Departamento,blank=True,null=True)
+    municipio_natal = models.ForeignKey(Municipio,blank=True,null=True)
+    genero = models.CharField(max_length=100,blank=True,null=True)
+    tipo_sangre = models.CharField(max_length=100,blank=True,null=True)
+    cedula = models.BigIntegerField(blank=True,null=True)
+
+    skype = models.CharField(max_length=100,blank=True,null=True)
+    facebook = models.CharField(max_length=100,blank=True,null=True)
+    twitter = models.CharField(max_length=100,blank=True,null=True)
+    whatsapp = models.CharField(max_length=100,blank=True,null=True)
+    email_corporativo = models.EmailField(max_length=100,blank=True)
+
+    departamento_residencia = models.ForeignKey(Departamento,blank=True,null=True,related_name='departamento_residencia')
+    municipio_residencia = models.ForeignKey(Municipio,blank=True,null=True,related_name='municipio_residencia')
+    direccion_residencia = models.CharField(max_length=100,blank=True,null=True)
+    barrio_residencia = models.CharField(max_length=100,blank=True,null=True)
+    telefono_residencia = models.CharField(max_length=100,blank=True,null=True)
+    celular_residencia = models.CharField(max_length=100,blank=True,null=True)
+    nombre_contacto_residencia = models.CharField(max_length=100,blank=True,null=True)
+    telefono_contacto_residencia = models.CharField(max_length=100,blank=True,null=True)
+    celular_contacto_residencia = models.CharField(max_length=100,blank=True,null=True)
+
+    departamento_residencia_temporal = models.ForeignKey(Departamento,blank=True,null=True,related_name='departamento_residencia_temporal')
+    municipio_residencia_temporal = models.ForeignKey(Municipio,blank=True,null=True,related_name='municipio_residencia_temporal')
+    direccion_residencia_temporal = models.CharField(max_length=100,blank=True,null=True)
+    barrio_residencia_temporal = models.CharField(max_length=100,blank=True,null=True)
+    telefono_residencia_temporal = models.CharField(max_length=100,blank=True,null=True)
+    celular_residencia_temporal = models.CharField(max_length=100,blank=True,null=True)
+    nombre_contacto_residencia_temporal = models.CharField(max_length=100,blank=True,null=True)
+    telefono_contacto_residencia_temporal = models.CharField(max_length=100,blank=True,null=True)
+    celular_contacto_residencia_temporal = models.CharField(max_length=100,blank=True,null=True)
+
+    empresa_transporte = models.CharField(max_length=100,blank=True,null=True)
+    horarios_transporte = models.TextField(max_length=5000,blank=True,null=True)
+    tiempo_transporte = models.CharField(max_length=100,blank=True,null=True)
+    valor_transporte = models.CharField(max_length=100,blank=True,null=True)
+
+    informacion_adicional = models.TextField(max_length=5000,blank=True,null=True)
 
 
     class Meta:

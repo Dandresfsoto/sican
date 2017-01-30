@@ -249,3 +249,16 @@ legend {
   display: block;
   border-bottom: 1px solid #000;
 }
+.title-large-primary {
+  color: #004c99;
+  font-weight: bold;
+  font-size: 18px;
+  padding-right: 0.1em;
+}
+.title-large-bold {
+  font-weight: bold;
+  font-size: 18px;
+}
+.margin-bottom-space {
+  margin-bottom: 10px;
+}

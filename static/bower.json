@@ -33,6 +33,8 @@
     "chartjs-Chart.js": "^2.2.1",
     "jquery.steps": "^1.1.0",
     "chosen": "^1.6.2",
-    "devbridge-autocomplete": "^1.2.26"
+    "devbridge-autocomplete": "^1.2.26",
+    "dropzone": "^4.3.0",
+    "components-font-awesome": "^4.7.0"
   }
 }

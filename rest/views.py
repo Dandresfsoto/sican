@@ -265,6 +265,9 @@ class MunicipiosChainedList(APIView):
 
         keys = [
             'departamento',
+            'departamento_natal',
+            'departamento_residencia',
+            'departamento_residencia_temporal',
             'departamento_origen_1','departamento_destino_1',
             'departamento_origen_2','departamento_destino_2',
             'departamento_origen_3','departamento_destino_3',
