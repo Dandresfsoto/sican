@@ -3804,10 +3804,10 @@ class EvidenciasCodigos(BaseDatatableView):
 
         for item in qs:
 
-            try:
-                red = 'RED-' + str(Red.objects.get(evidencias__id = item.id).id)
-            except:
-                red = None
+            red = ''
+
+            if item.red_id != None:
+                red = 'RED-' + item.red_id
 
 
             baneficiarios_cargados = []
