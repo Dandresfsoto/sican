@@ -3807,7 +3807,7 @@ class EvidenciasCodigos(BaseDatatableView):
             red = ''
 
             if item.red_id != None:
-                red = 'RED-' + item.red_id
+                red = 'RED-' + str(item.red_id)
 
 
             baneficiarios_cargados = []
