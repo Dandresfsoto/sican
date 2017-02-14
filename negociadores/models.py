@@ -11,6 +11,8 @@ import os
 from usuarios.models import User
 
 class Negociador(models.Model):
+    usuario = models.ForeignKey(User,blank=True,null=True,related_name='usuario_sistema_negociador')
+
     lider = models.ForeignKey(User,blank=True,null=True)
     departamentos = models.ManyToManyField(Departamento,related_name="departamento_negociador",blank=True)
     codigo_ruta = models.CharField(max_length=100,blank=True,null=True)
@@ -95,3 +97,22 @@ class Soporte(models.Model):
 
     def archivo_filename(self):
         return os.path.basename(self.archivo.name)
+
+class SolicitudSoportes(models.Model):
+    nombre = models.CharField(max_length=200)
+    soportes_requeridos = models.ManyToManyField(TipoSoporte,related_name='tipo_soporte_negociadores')
+
+    def __unicode__(self):
+        return self.nombre
+
+class Contrato(models.Model):
+    nombre = models.CharField(max_length=200)
+    negociador = models.ForeignKey(Negociador)
+    soportes_requeridos = models.ForeignKey(SolicitudSoportes)
+    fecha = models.DateTimeField(auto_now_add = True)
+    fecha_inicio = models.DateField(blank=True,null=True)
+    fecha_fin = models.DateField(blank=True,null=True)
+    renuncia = models.BooleanField(default=False)
+    soporte_renuncia = models.FileField(upload_to='Contratos/Negociadores/Soporte Renuncia/',blank=True,null=True)
+    liquidado = models.BooleanField(default=False)
+    soporte_liquidacion = models.FileField(upload_to='Contratos/Negociadores/Soporte Liquidacion/',blank=True,null=True)

@@ -436,7 +436,7 @@ class UserUpdateForm(ModelForm):
             'celular_contacto_residencia_temporal':'Celular',
             'empresa_transporte':'Nombre de la transportadora',
             'horarios_transporte':'Horarios de despacho',
-            'tiempo_transporte':'Tempo aproximado',
+            'tiempo_transporte':'Tiempo aproximado',
             'valor_transporte':'Valor ($)',
             'informacion_adicional':'Información adicional'
         }

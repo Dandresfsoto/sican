@@ -10,6 +10,7 @@ import os
 class TipoSoporte(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField(max_length=500,blank=True)
+    categoria = models.CharField(max_length=100,blank=True,null=True)
     oculto = models.BooleanField(default=False)
 
     class Meta:

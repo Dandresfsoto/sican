@@ -11,6 +11,8 @@ import os
 from usuarios.models import User
 
 class Lideres(models.Model):
+    usuario = models.ForeignKey(User,blank=True,null=True,related_name='usuario_sistema_lider')
+
     lider = models.ForeignKey(User,blank=True,null=True)
     departamentos = models.ManyToManyField(Departamento,related_name="departamento_lider",blank=True)
     codigo_ruta = models.CharField(max_length=100,blank=True,null=True)
@@ -70,14 +72,34 @@ class Lideres(models.Model):
     def get_full_name(self):
         return self.nombres + " " + self.apellidos
 
+class SolicitudSoportes(models.Model):
+    nombre = models.CharField(max_length=200)
+    soportes_requeridos = models.ManyToManyField(TipoSoporte,related_name='tipo_soporte_lider')
+
+    def __unicode__(self):
+        return self.nombre
+
+class Contrato(models.Model):
+    nombre = models.CharField(max_length=200)
+    lider = models.ForeignKey(Lideres)
+    soportes_requeridos = models.ForeignKey(SolicitudSoportes)
+    fecha = models.DateTimeField(auto_now_add = True)
+    fecha_inicio = models.DateField(blank=True,null=True)
+    fecha_fin = models.DateField(blank=True,null=True)
+    renuncia = models.BooleanField(default=False)
+    soporte_renuncia = models.FileField(upload_to='Contratos/Lideres/Soporte Renuncia/',blank=True,null=True)
+    liquidado = models.BooleanField(default=False)
+    soporte_liquidacion = models.FileField(upload_to='Contratos/Lideres/Soporte Liquidacion/',blank=True,null=True)
+
 class Soporte(models.Model):
     lider = models.ForeignKey(Lideres)
     creacion = models.DateField(auto_now=True)
-    fecha = models.DateField()
+    fecha = models.DateField(blank=True,null=True)
     tipo = models.ForeignKey(TipoSoporte,related_name='soporte_lider')
     descripcion = models.TextField(max_length=1000,blank=True)
     oculto = models.BooleanField(default=False)
     archivo = models.FileField(upload_to='Lideres/Soportes/',blank=True)
+    contrato = models.ForeignKey(Contrato,blank=True,null=True)
 
     class Meta:
         ordering = ['lider']
@@ -88,6 +110,57 @@ class Soporte(models.Model):
     def get_archivo_url(self):
         try:
             url = self.archivo.url
+        except:
+            url = ""
+        return url
+
+
+    def archivo_filename(self):
+        return os.path.basename(self.archivo.name)
+
+class Desplazamiento(models.Model):
+    departamento_origen = models.ForeignKey(Departamento,related_name="departamento_origen_desplazamiento_lider")
+    municipio_origen = models.ForeignKey(Municipio,related_name="municipio_origen_desplazamiento_lider")
+    departamento_destino = models.ForeignKey(Departamento,related_name="departamento_destino_desplazamiento_lider")
+    municipio_destino = models.ForeignKey(Municipio,related_name="municipio_destino_desplazamiento_lider")
+    valor = models.BigIntegerField()
+    creacion = models.DateTimeField(auto_now=True)
+    fecha = models.DateField()
+    motivo = models.CharField(max_length=600)
+
+    def __unicode__(self):
+        return unicode(self.id)
+
+class SolicitudTransporte(models.Model):
+    lider = models.ForeignKey(Lideres,related_name="lider_solicitud_transporte_lider")
+    nombre = models.CharField(max_length=100)
+    creacion = models.DateTimeField(auto_now_add=True)
+    creacion_date = models.DateTimeField(blank=True,null=True)
+    aprobacion_lider = models.DateTimeField(blank=True,null=True)
+    desplazamientos = models.ManyToManyField(Desplazamiento,blank=True)
+    estado = models.CharField(max_length=100,default="revision")
+    observacion = models.TextField(max_length=1000,blank=True,null=True)
+    valor = models.BigIntegerField()
+    terminada = models.BooleanField(default=False)
+    valor_aprobado = models.BigIntegerField(blank=True,null=True)
+    valor_aprobado_lider = models.BigIntegerField(blank=True,null=True)
+    archivo = models.FileField(upload_to='Transportes/Solicitudes/',blank=True,null=True)
+    pdf = models.FileField(upload_to = 'Transportes/Pdf/',blank=True,null=True)
+
+
+    def __unicode__(self):
+        return unicode(self.lider.cedula)
+
+    def get_archivo_url(self):
+        try:
+            url = self.archivo.url
+        except:
+            url = ""
+        return url
+
+    def get_pdf_url(self):
+        try:
+            url = self.pdf.url
         except:
             url = ""
         return url

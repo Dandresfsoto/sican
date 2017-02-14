@@ -19,6 +19,7 @@ from operator import itemgetter
 from formadores.models import Formador
 from formadores.models import Soporte as SoporteFormador
 from lideres.models import Soporte as SoporteLider
+from negociadores.models import Soporte as SoporteNegociador
 from departamentos.models import Departamento
 from municipios.models import Municipio
 from secretarias.models import Secretaria
@@ -60,6 +61,13 @@ from evidencias.models import Subsanacion
 from django.db.models import Sum
 from informes.tasks import progreso_virtuales, progreso_virtuales_aprobadas,aprobados_niveles
 from evidencias.tasks import build_consolidado_red, build_consolidado_aprobacion_red
+from formadores.models import Contrato
+from django.utils.timezone import localtime
+from formadores.models import SolicitudSoportes as SolicitudSoportesFormador
+from lideres.models import Contrato as ContratoLider
+from lideres.models import SolicitudSoportes as SolicitudSoportesLider
+from negociadores.models import Contrato as ContratoNegociador
+from negociadores.models import SolicitudSoportes as SolicitudSoportesNegociador
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -506,9 +514,48 @@ class UserPermissionList(APIView):
                   'id':'requerimientos',
                   'links':[]
             },
+            'formadores':{'name':'Formadores',
+                  'icon':'icons:face',
+                  'id':'formadores',
+                  'links':[]
+            },
+            'lideres':{'name':'Lideres regionales',
+                  'icon':'hardware:computer',
+                  'id':'lideres',
+                  'links':[]
+            },
+            'negociadores':{'name':'Negociadores',
+                  'icon':'icons:gavel',
+                  'id':'negociadores',
+                  'links':[]
+            },
         }
 
         links = {
+            'legalizacion':{
+                'ver':{'name':'Legalización de contratos','link':'/formadores/legalizacion/'}
+            },
+            'legalizacion_lideres':{
+                'ver':{'name':'Legalización de contratos','link':'/lideres/legalizacion/'}
+            },
+            'legalizacion_negociadores':{
+                'ver':{'name':'Legalización de contratos','link':'/negociadores/legalizacion/'}
+            },
+            'seguridadsocial':{
+                'ver':{'name':'Soportes de seguridad social','link':'/formadores/seguridadsocial/'}
+            },
+            'seguridadsocial_lideres':{
+                'ver':{'name':'Soportes de seguridad social','link':'/lideres/seguridadsocial/'}
+            },
+            'seguridadsocial_negociadores':{
+                'ver':{'name':'Soportes de seguridad social','link':'/negociadores/seguridadsocial/'}
+            },
+            'contratacion':{
+                'ver':{'name':'Contratación','link':'/rh/contratacion/'}
+            },
+            'personal':{
+                'ver':{'name':'Personal','link':'/rh/personal/'}
+            },
             'subsanacion':{
                 'ver':{'name':'Subsanación de evidencias','link':'/evidencias/subsanacion/'}
             },
@@ -569,12 +616,6 @@ class UserPermissionList(APIView):
             'radicadosretoma':{
                 'ver':{'name':'Radicados retoma','link':'/acceso/radicadosretoma/'}
             },
-            'lideres':{
-                'ver':{'name':'Lideres Acceso','link':'/rh/lideres/'}
-            },
-            'negociadores':{
-                'ver':{'name':'Negociadores Acceso','link':'/rh/negociadores/'}
-            },
             'cronogramafinanciera':{
                 'ver':{'name':'Cronograma de formación','link':'/financiera/cronograma/'}
             },
@@ -614,17 +655,8 @@ class UserPermissionList(APIView):
             'grupos':{
                 'ver':{'name':'Grupos','link':'/adminuser/grupos/'}
             },
-            'administrativos':{
-                'ver':{'name':'Administrativos','link':'/rh/administrativos/'}
-            },
-            'cargos':{
-                'ver':{'name':'Cargos','link':'/rh/cargos/'}
-            },
             'rh_tipo_soporte':{
                 'ver':{'name':'Tipo de soportes','link':'/rh/tipo_soporte/'}
-            },
-            'formadores':{
-                'ver':{'name':'Formadores','link':'/rh/formadores/'}
             },
             'interventoria_formadores':{
                 'ver':{'name':'Consolidado Hv y Contratos','link':'/rh/consolidadoformadores/'}
@@ -1098,6 +1130,530 @@ class FormadoresRh(BaseDatatableView):
                     self.request.user.has_perm('permisos_sican.rh.formadores.editar'),
                     self.request.user.has_perm('permisos_sican.rh.formadores.eliminar'),
                     self.request.user.has_perm('permisos_sican.rh.formadores_soportes.ver'),
+                ])
+        return json_data
+
+class ContratosFormadoresView(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cedula
+    3.cantidad de contratos
+    4.permiso para editar
+    """
+    model = Formador
+    columns = ['id','nombres','cedula']
+
+    order_columns = ['nombres','cedula']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Formador.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombres + " " + item.apellidos,
+                    item.cedula,
+                    Contrato.objects.filter(formador = item).count(),
+                    self.request.user.has_perm('permisos_sican.rh.contratos_formadores.editar'),
+                ])
+        return json_data
+
+class ContratosLideresView(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cedula
+    3.cantidad de contratos
+    4.permiso para editar
+    """
+    model = Lideres
+    columns = ['id','nombres','cedula']
+
+    order_columns = ['nombres','cedula']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Lideres.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombres + " " + item.apellidos,
+                    item.cedula,
+                    ContratoLider.objects.filter(lider = item).count(),
+                    self.request.user.has_perm('permisos_sican.rh.contratos_lideres.editar'),
+                ])
+        return json_data
+
+class ContratosNegociadoresView(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cedula
+    3.cantidad de contratos
+    4.permiso para editar
+    """
+    model = Negociador
+    columns = ['id','nombres','cedula']
+
+    order_columns = ['nombres','cedula']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Negociador.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombres + " " + item.apellidos,
+                    item.cedula,
+                    ContratoNegociador.objects.filter(negociador = item).count(),
+                    self.request.user.has_perm('permisos_sican.rh.contratos_negociadores.editar'),
+                ])
+        return json_data
+
+class SolicitudSoportesFormadorView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.permiso para editar
+    """
+    model = SolicitudSoportesFormador
+    columns = ['id','nombre']
+
+    order_columns = ['nombre']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_formadores.editar'),
+                ])
+        return json_data
+
+class SolicitudSoportesLiderView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.permiso para editar
+    """
+    model = SolicitudSoportesLider
+    columns = ['id','nombre']
+
+    order_columns = ['nombre']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_lideres.editar'),
+                ])
+        return json_data
+
+class SolicitudSoportesNegociadorView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.permiso para editar
+    """
+    model = SolicitudSoportesNegociador
+    columns = ['id','nombre']
+
+    order_columns = ['nombre']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_negociadores.editar'),
+                ])
+        return json_data
+
+class ContratoFormadorView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.fecha creacion
+    3.fecha inicio
+    4.fecha finalizacion
+    5.renuncia
+    6.liquidacion
+    7.permiso para editar
+    """
+    model = Contrato
+    columns = ['id','nombre','fecha']
+
+    order_columns = ['id','nombre','fecha']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Contrato.objects.filter(formador__id = self.kwargs['id_formador'])
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
+                    item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
+                    item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',
+                    item.renuncia,
+                    item.liquidado,
+                    self.request.user.has_perm('permisos_sican.rh.contratos_formadores.editar'),
+                ])
+        return json_data
+
+class ContratoFormadorUserView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.fecha creacion
+    3.fecha inicio
+    4.fecha finalizacion
+    5.renuncia
+    6.liquidacion
+    7.permiso para editar
+    """
+    model = Contrato
+    columns = ['id','nombre','fecha_inicio','fecha_fin']
+
+    order_columns = ['id','nombre','fecha_inicio','fecha_fin']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Contrato.objects.filter(formador__usuario = self.request.user)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
+                    item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
+                    item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',
+                    item.renuncia,
+                    item.liquidado,
+                    self.request.user.has_perm('permisos_sican.rh.contratos_formadores.editar'),
+                ])
+        return json_data
+
+class ContratoLiderUserView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.fecha creacion
+    3.fecha inicio
+    4.fecha finalizacion
+    5.renuncia
+    6.liquidacion
+    7.permiso para editar
+    """
+    model = ContratoLider
+    columns = ['id','nombre','fecha_inicio','fecha_fin']
+
+    order_columns = ['id','nombre','fecha_inicio','fecha_fin']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return ContratoLider.objects.filter(lider__usuario = self.request.user)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
+                    item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
+                    item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',
+                    item.renuncia,
+                    item.liquidado,
+                    self.request.user.has_perm('permisos_sican.rh.contratos_lideres.editar'),
+                ])
+        return json_data
+
+class ContratoNegociadorUserView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.fecha creacion
+    3.fecha inicio
+    4.fecha finalizacion
+    5.renuncia
+    6.liquidacion
+    7.permiso para editar
+    """
+    model = ContratoNegociador
+    columns = ['id','nombre','fecha_inicio','fecha_fin']
+
+    order_columns = ['id','nombre','fecha_inicio','fecha_fin']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return ContratoNegociador.objects.filter(negociador__usuario = self.request.user)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
+                    item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
+                    item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',
+                    item.renuncia,
+                    item.liquidado,
+                    self.request.user.has_perm('permisos_sican.rh.contratos_negociadores.editar'),
+                ])
+        return json_data
+
+class ContratoLiderView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.fecha creacion
+    3.fecha inicio
+    4.fecha finalizacion
+    5.renuncia
+    6.liquidacion
+    7.permiso para editar
+    """
+    model = ContratoLider
+    columns = ['id','nombre','fecha']
+
+    order_columns = ['id','nombre','fecha']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return ContratoLider.objects.filter(lider__id = self.kwargs['id_lider'])
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
+                    item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
+                    item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',
+                    item.renuncia,
+                    item.liquidado,
+                    self.request.user.has_perm('permisos_sican.rh.contratos_lideres.editar'),
+                ])
+        return json_data
+
+class ContratoNegociadorView(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cedula
+    3.cantidad de contratos
+    4.permiso para editar
+    """
+    model = ContratoNegociador
+    columns = ['id','nombre','fecha']
+
+    order_columns = ['nombre','fecha']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return ContratoNegociador.objects.filter(negociador__id = self.kwargs['id_negociador'])
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    localtime(item.fecha).strftime('%d de %B del %Y, %X'),
+                    self.request.user.has_perm('permisos_sican.rh.contratos_negociadores.editar'),
                 ])
         return json_data
 
@@ -2287,6 +2843,51 @@ class LideresRhSoportes(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.rh.lideres_soportes.eliminar'),
             ])
         return json_data
+
+
+class NegociadoresRhSoportes(BaseDatatableView):
+    """
+    0.id
+    1.tipo
+    2.fecha
+    3.descripcion
+    4.archivo (url o string vacio)
+    5.creacion
+    6.permiso para editar
+    7.permiso para eliminar
+    """
+    model = SoporteNegociador
+    columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
+
+    order_columns = ['id','tipo','fecha','descripcion']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return SoporteNegociador.objects.filter(oculto = False,negociador__id=self.kwargs['id_negociador'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(tipo__nombre__icontains=search) | Q(tipo__descripcion__icontains=search) | Q(fecha__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.tipo.nombre,
+                item.fecha,
+                item.tipo.descripcion,
+                item.get_archivo_url(),
+                item.creacion,
+                self.request.user.has_perm('permisos_sican.rh.negociadores_soportes.editar'),
+                self.request.user.has_perm('permisos_sican.rh.negociadores_soportes.eliminar'),
+            ])
+        return json_data
+
 
 class NegociadoresRh(BaseDatatableView):
     """

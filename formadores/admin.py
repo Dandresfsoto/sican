@@ -14,6 +14,7 @@ import os
 from matrices.models import Beneficiario
 import random
 from evidencias.models import Evidencia
+from formadores.models import SolicitudSoportes
 
 # Register your models here.
 
@@ -122,6 +123,7 @@ admin.site.register(SolicitudTransporte)
 admin.site.register(Desplazamiento)
 admin.site.register(Producto)
 admin.site.register(Revision)
+admin.site.register(SolicitudSoportes)
 
 
 def cortes_archivo(modeladmin, request, queryset):

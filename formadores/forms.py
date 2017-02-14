@@ -18,7 +18,8 @@ from formadores.models import Grupos
 import locale
 from formadores.models import Revision
 from productos.models import Contratos, ValorEntregable
-from formadores.models import Cortes
+from formadores.models import Cortes, Contrato
+from formadores.models import SolicitudSoportes
 import datetime
 
 class FormadorForm(forms.ModelForm):
@@ -28,6 +29,13 @@ class FormadorForm(forms.ModelForm):
         self.fields['cargo'].queryset = Cargo.objects.exclude(oculto = True)
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
+            Fieldset(
+                'Usuario del sistema',
+                Div(
+                    Div('usuario',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+            ),
             Fieldset(
                 'Región',
                 Div(
@@ -113,6 +121,77 @@ class FormadorForm(forms.ModelForm):
                                         ),
         }
 
+class ContratoForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(ContratoForm, self).__init__(*args, **kwargs)
+
+        self.fields['formador'].initial = Formador.objects.get(id = kwargs['initial']['id_formador'])
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Información inicial de contrato',
+                Div(
+                    Div('nombre',css_class='col-sm-6'),
+                    Div('soportes_requeridos',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('fecha_inicio',css_class='col-sm-6'),
+                    Div('fecha_fin',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('formador',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+            ),
+            Fieldset(
+                'Soportes',
+                Div(
+                    Div('soporte_renuncia',css_class='col-sm-6'),
+                    Div('soporte_liquidacion',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('renuncia',css_class='col-sm-6'),
+                    Div('liquidado',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+            ),
+        )
+
+    class Meta:
+        model = Contrato
+        exclude = ['soportes']
+        widgets = {'formador':forms.HiddenInput()}
+        labels = {
+            'fecha_inicio' : 'Fecha de inicio',
+            'fecha_fin' : 'Fecha de finalización'
+        }
+
+class SolicitudSoportesFormadorForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(SolicitudSoportesFormadorForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Solicitud de soportes',
+                Div(
+                    Div('nombre',css_class='col-sm-6'),
+                    Div('soportes_requeridos',css_class='col-sm-6'),
+                    css_class = 'row'
+                )
+            ),
+        )
+
+    class Meta:
+        model = SolicitudSoportes
+        fields = '__all__'
+
 class NuevoSoporteFormadorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -183,6 +262,7 @@ class ConsultaFormador(forms.Form):
 
     cedula = forms.IntegerField(label="Digita tu número de cedula (sin puntos o comas)")
 
+'''
 class LegalizacionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LegalizacionForm, self).__init__(*args, **kwargs)
@@ -311,6 +391,7 @@ class LegalizacionForm(forms.ModelForm):
             'tipo_cuenta':'Tipo cuenta*',
             'numero_cuenta':'Numero de cuenta*'
         }
+'''
 
 class NuevaSolicitudTransportes(forms.Form):
     nombre = forms.CharField(label="Nombre de la solicitud",max_length=20)
@@ -2365,3 +2446,103 @@ class CortesForm(forms.ModelForm):
     class Meta:
         model = Cortes
         fields = ['descripcion']
+
+class LegalizacionForm(forms.Form):
+
+    ids = forms.CharField(max_length=200,required=False,widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super(LegalizacionForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        contrato = Contrato.objects.get(id = kwargs['initial']['id_contrato'])
+        ids = contrato.soportes_requeridos.soportes_requeridos.filter(categoria = 'General').values_list('id',flat=True)
+        self.fields['ids'].initial = unicode(ids)
+
+        self.helper.layout = Layout(
+            Fieldset(
+                'Documentos generales',
+            ),
+            Div('ids'),
+            HTML(
+                """
+                <p>*Anexe todos los soportes digitales para la legalización del contrato, todos los campos con obligatorios.</p>
+                """
+            )
+        )
+
+        fields = []
+
+        for soporte in contrato.soportes_requeridos.soportes_requeridos.filter(categoria = 'General'):
+
+            tipo = TipoSoporte.objects.get(id = soporte.id)
+
+            soporte_file = None
+
+            try:
+                soporte_file = Soporte.objects.get(contrato = contrato,formador = contrato.formador,tipo = tipo)
+            except:
+                pass
+
+            self.fields[str(soporte.id)] = forms.FileField(label = soporte.nombre)
+
+            if soporte_file != None:
+                self.fields[str(soporte.id)].initial = soporte_file.archivo
+
+            fields.append(Div(
+                Div(str(soporte.id),css_class='col-sm-12'),
+                css_class = 'row'
+            ))
+
+
+        self.helper.layout[0].fields = fields
+
+class LegalizacionSeguridadForm(forms.Form):
+
+    ids = forms.CharField(max_length=200,required=False,widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super(LegalizacionSeguridadForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+
+        contrato = Contrato.objects.get(id = kwargs['initial']['id_contrato'])
+        ids = contrato.soportes_requeridos.soportes_requeridos.filter(categoria = 'Seguridad Social').values_list('id',flat=True)
+        self.fields['ids'].initial = unicode(ids)
+
+        self.helper.layout = Layout(
+            Fieldset(
+                'Documentos de Seguridad Social',
+            ),
+            Div('ids'),
+            HTML(
+                """
+                <p>*Cargue mensualmente la planilla PILA que soporte el pago de Seguridad Social, Pensión y Arl.</p>
+                """
+            )
+        )
+
+        fields = []
+
+        for soporte in contrato.soportes_requeridos.soportes_requeridos.filter(categoria = 'Seguridad Social'):
+
+            tipo = TipoSoporte.objects.get(id = soporte.id)
+
+            soporte_file = None
+
+            try:
+                soporte_file = Soporte.objects.get(contrato = contrato,formador = contrato.formador,tipo = tipo)
+            except:
+                pass
+
+            self.fields[str(soporte.id)] = forms.FileField(label = soporte.nombre,required=False)
+
+            if soporte_file != None:
+                self.fields[str(soporte.id)].initial = soporte_file.archivo
+
+            fields.append(Div(
+                Div(str(soporte.id),css_class='col-sm-12'),
+                css_class = 'row'
+            ))
+
+
+        self.helper.layout[0].fields = fields

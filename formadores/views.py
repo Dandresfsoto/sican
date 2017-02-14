@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, CreateView, DeleteView, UpdateView, FormView
 from formadores.forms import ConsultaFormador, LegalizacionForm
+from braces.views import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import HttpResponseRedirect
 from formadores.models import TipoSoporte
 from formadores.models import Formador, Soporte
@@ -16,8 +17,101 @@ from productos.models import Entregable
 from formadores.models import Cortes, Revision
 from django.utils import timezone
 from cargos.models import Cargo
+from formadores.models import Contrato
+from formadores.forms import LegalizacionSeguridadForm
 
-# Create your views here.
+#----------------------------------- LEGALIZACION DE CONTRATO ----------------------------------------------------------
+
+class LegalizacionContratosView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    '''
+    DatatableView enlazada a la lista de formadores y cantidad de contratos de cada uno
+    '''
+    template_name = 'formadores/legalizacion/general/lista.html'
+    permission_required = "permisos_sican.formadores.legalizacion.ver"
+
+
+
+class LegalizacionContratoView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              FormView):
+    form_class = LegalizacionForm
+    success_url = '../../'
+    template_name = 'formadores/legalizacion/general/general.html'
+    permission_required = "permisos_sican.formadores.legalizacion.general"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_contrato'] = Contrato.objects.get(id = self.kwargs['id_contrato']).nombre
+        return super(LegalizacionContratoView,self).get_context_data(**kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user == Contrato.objects.get(id = kwargs['id_contrato']).formador.usuario:
+            return super(LegalizacionContratoView,self).dispatch(request,*args,**kwargs)
+        else:
+            return HttpResponseRedirect('../../')
+
+    def get_initial(self):
+        return {'id_contrato': self.kwargs['id_contrato']}
+
+    def form_valid(self, form):
+        contrato = Contrato.objects.get(id = self.kwargs['id_contrato'])
+        for field in form.cleaned_data.keys():
+            if field != 'ids':
+                tipo = TipoSoporte.objects.get(id = field)
+                soporte, created = Soporte.objects.get_or_create(contrato = contrato,formador = contrato.formador,tipo = tipo)
+                soporte.fecha = datetime.datetime.now().date()
+                soporte.archivo = form.cleaned_data[field]
+                soporte.save()
+        return super(LegalizacionContratoView,self).form_valid(form)
+
+
+
+class LegalizacionSeguridadView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    '''
+    DatatableView enlazada a la lista de formadores y cantidad de contratos de cada uno
+    '''
+    template_name = 'formadores/legalizacion/seguridadsocial/lista.html'
+    permission_required = "permisos_sican.formadores.seguridadsocial.ver"
+
+
+class SoportesSeguridadSocialView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              FormView):
+    form_class = LegalizacionSeguridadForm
+    success_url = '../../'
+    template_name = 'formadores/legalizacion/seguridadsocial/seguridadsocial.html'
+    permission_required = "permisos_sican.formadores.legalizacion.general"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_contrato'] = Contrato.objects.get(id = self.kwargs['id_contrato']).nombre
+        return super(SoportesSeguridadSocialView,self).get_context_data(**kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user == Contrato.objects.get(id = kwargs['id_contrato']).formador.usuario:
+            return super(SoportesSeguridadSocialView,self).dispatch(request,*args,**kwargs)
+        else:
+            return HttpResponseRedirect('../../')
+
+    def get_initial(self):
+        return {'id_contrato': self.kwargs['id_contrato']}
+
+    def form_valid(self, form):
+        contrato = Contrato.objects.get(id = self.kwargs['id_contrato'])
+        for field in form.cleaned_data.keys():
+            if field != 'ids':
+                tipo = TipoSoporte.objects.get(id = field)
+                soporte, created = Soporte.objects.get_or_create(contrato = contrato,formador = contrato.formador,tipo = tipo)
+                soporte.fecha = datetime.datetime.now().date()
+                soporte.archivo = form.cleaned_data[field]
+                soporte.save()
+        return super(SoportesSeguridadSocialView,self).form_valid(form)
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+
 class InicioView(FormView):
     form_class = ConsultaFormador
     template_name = 'formadores/inicio.html'
@@ -25,6 +119,7 @@ class InicioView(FormView):
     def form_valid(self, form):
         cedula = form.cleaned_data['cedula']
         return HttpResponseRedirect('/formadores/'+str(cedula))
+
 
 class VinculosView(TemplateView):
     template_name = 'formadores/vinculos/vinculos.html'

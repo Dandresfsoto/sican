@@ -22,7 +22,8 @@ from rest.views import RedList, CargaMasivaEvidenciasList, DiplomadosEvidenciasL
 from rest.views import RendimientoAuxiliaresList, AcividadesList, BeneficiariosListView, FormadoresContratosFormador
 from rest.views import BeneficiariosCedulaListView, BeneficiariosCedulaProductosListView
 from rest.views import RedSubsanacionList
-from rest.views import EvidenciasSubsanacionCodigos, EvidenciasSubsanacionCodigosSubsanacion
+from rest.views import EvidenciasSubsanacionCodigos, EvidenciasSubsanacionCodigosSubsanacion, NegociadoresRhSoportes
+from rest import views
 
 urlpatterns = [
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -50,6 +51,7 @@ urlpatterns = [
     url(r'lideres/rh/soportes/(?P<id_lider>\w+)/$', LideresRhSoportes.as_view()),
 
     url(r'negociadores/rh/$', NegociadoresRh.as_view()),
+    url(r'negociadores/rh/soportes/(?P<id_negociador>\w+)/$', NegociadoresRhSoportes.as_view()),
 
 
     url(r'bases/departamentos/$', DepartamentosList.as_view()),
@@ -148,4 +150,30 @@ urlpatterns = [
     url(r'reds/subsanacionevidencias/red/(?P<id_red>\w+)/',EvidenciasSubsanacionCodigos.as_view()),
 
     url(r'reds/subsanacionevidencias_id/red/(?P<id_red>\w+)/evidencia/(?P<id_evidencia>\w+)/',EvidenciasSubsanacionCodigosSubsanacion.as_view()),
+
+    url(r'rh/contratacion/contratos/formadores/$', views.ContratosFormadoresView.as_view()),
+
+    url(r'rh/contratacion/contratos/formadores/(?P<id_formador>\w+)/$', views.ContratoFormadorView.as_view()),
+
+    url(r'rh/contratacion/solicitud_soportes/formadores/$', views.SolicitudSoportesFormadorView.as_view()),
+
+    url(r'rh/contratacion/contratos/lideres/$', views.ContratosLideresView.as_view()),
+
+    url(r'rh/contratacion/contratos/lideres/(?P<id_lider>\w+)/$', views.ContratoLiderView.as_view()),
+
+    url(r'rh/contratacion/solicitud_soportes/lideres/$', views.SolicitudSoportesLiderView.as_view()),
+
+    url(r'rh/contratacion/contratos/negociadores/$', views.ContratosNegociadoresView.as_view()),
+
+    url(r'rh/contratacion/contratos/negociadores/(?P<id_negociador>\w+)/$', views.ContratoNegociadorView.as_view()),
+
+
+    url(r'rh/contratacion/solicitud_soportes/negociadores/$', views.SolicitudSoportesNegociadorView.as_view()),
+
+
+    url(r'formadores/legalizacion/$', views.ContratoFormadorUserView.as_view()),
+
+    url(r'lideres/legalizacion/$', views.ContratoLiderUserView.as_view()),
+
+    url(r'negociadores/legalizacion/$', views.ContratoNegociadorUserView.as_view()),
 ]

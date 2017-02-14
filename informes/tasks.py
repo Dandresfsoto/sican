@@ -1436,7 +1436,7 @@ def matriz_chequeo(email,id_diplomado):
                 ultima_evidencia_cargada = evidencias_cargado[len(evidencias_cargado)-1]
 
                 try:
-                    red = reds.get(evidencias__id = ultima_evidencia_cargada.id)
+                    red = Red.objects.get(id = ultima_evidencia_cargada.red_id)
                 except:
                     # si ningun red contiene la evidencia
                     ws.write( producto['letter'] + str(i), 'SIC-' + str(ultima_evidencia_cargada.id), cargado )
@@ -1464,7 +1464,7 @@ def matriz_chequeo(email,id_diplomado):
                     else:
                         #si el red no ha sido retroalimentado
                         ws.write( producto['letter'] + str(i) , 'SIC-' + str(ultima_evidencia_cargada.id), enviado )
-                        #ws.write_comment( producto['letter'] + str(i) , 'SIC-' + str(ultima_evidencia_cargada.id) )
+                        ws.write_comment( producto['letter'] + str(i) , 'RED-' + str(ultima_evidencia_cargada.red_id) )
 
 
             else:

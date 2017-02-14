@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from __future__ import unicode_literals
 from django.views.generic import UpdateView, TemplateView, FormView
 from braces.views import LoginRequiredMixin
 from usuarios.forms import UserUpdateForm
@@ -40,6 +40,7 @@ class Perfil(LoginRequiredMixin,UpdateView):
 class ChangePassword(LoginRequiredMixin,FormView):
     form_class = ChangePasswordForm
     template_name = 'usuarios/changepassword.html'
+    success_url = '/'
 
     def get_initial(self):
         return {'user':self.request.user}
@@ -52,9 +53,8 @@ class ChangePassword(LoginRequiredMixin,FormView):
         update_session_auth_hash(self.request, user)
         url_base = self.request.META['HTTP_ORIGIN']
         send_mail_templated.delay('email/change_password.tpl', {'url_base':url_base,'first_name':user.first_name,'last_name':user.last_name,'email':user.email,'password':form.data['new_password_1']}, DEFAULT_FROM_EMAIL, [user.email])
-        return self.render_to_response(self.get_context_data(mensaje='Se cambio correctamente la contraseña'))
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_context_data(self, mensaje=None ,**kwargs):
-        if mensaje != None:
-            kwargs['mensaje'] = mensaje
+        kwargs['email'] = self.request.user.email
         return super(ChangePassword, self).get_context_data(**kwargs)

@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^evidencias/', include('evidencias.urls', namespace='evidencias')),
     url(r'^requerimientos/', include('requerimientos.urls', namespace='requerimientos')),
     url(r'^diplomas/', Diplomas.as_view()),
+    url(r'^negociadores/', include('negociadores.urls', namespace='negociadores')),
 ]
 
 if settings.DEBUG:

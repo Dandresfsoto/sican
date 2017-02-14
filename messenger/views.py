@@ -8,7 +8,7 @@ import openpyxl
 
 
 class WebHookView(TemplateView):
-    template_name = 'rh/administrativos/lista.html'
+    template_name = 'rh/personal/administrativos/lista.html'
     permission_required = "permisos_sican.rh.cargos.ver"
 
 

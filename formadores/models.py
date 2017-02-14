@@ -12,8 +12,13 @@ from usuarios.models import User
 from productos.models import Contratos
 from productos.models import ValorEntregable
 from django.utils import timezone
+from rh.models import TipoSoporte
+
 
 class Formador(models.Model):
+
+    usuario = models.ForeignKey(User,blank=True,null=True,related_name='usuario_sistema_formador')
+
     lider = models.ForeignKey(User,blank=True,null=True)
     departamentos = models.ManyToManyField(Departamento,related_name="departamento_formador",blank=True)
     codigo_ruta = models.CharField(max_length=100,blank=True,null=True)
@@ -86,14 +91,34 @@ class Formador(models.Model):
     def get_full_name(self):
         return self.nombres + " " + self.apellidos
 
+class SolicitudSoportes(models.Model):
+    nombre = models.CharField(max_length=200)
+    soportes_requeridos = models.ManyToManyField(TipoSoporte)
+
+    def __unicode__(self):
+        return self.nombre
+
+class Contrato(models.Model):
+    nombre = models.CharField(max_length=200)
+    formador = models.ForeignKey(Formador)
+    soportes_requeridos = models.ForeignKey(SolicitudSoportes)
+    fecha = models.DateTimeField(auto_now_add = True)
+    fecha_inicio = models.DateField(blank=True,null=True)
+    fecha_fin = models.DateField(blank=True,null=True)
+    renuncia = models.BooleanField(default=False)
+    soporte_renuncia = models.FileField(upload_to='Contratos/Formadores/Soporte Renuncia/',blank=True,null=True)
+    liquidado = models.BooleanField(default=False)
+    soporte_liquidacion = models.FileField(upload_to='Contratos/Formadores/Soporte Liquidacion/',blank=True,null=True)
+
 class Soporte(models.Model):
     formador = models.ForeignKey(Formador)
     creacion = models.DateField(auto_now=True)
-    fecha = models.DateField()
+    fecha = models.DateField(blank=True,null=True)
     tipo = models.ForeignKey(TipoSoporte,related_name='soporte_formador')
     descripcion = models.TextField(max_length=1000,blank=True)
     oculto = models.BooleanField(default=False)
     archivo = models.FileField(upload_to='Formadores/Soportes/',blank=True)
+    contrato = models.ForeignKey(Contrato,blank=True,null=True)
 
     class Meta:
         ordering = ['formador']

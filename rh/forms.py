@@ -24,12 +24,17 @@ class NuevoTipoSoporteForm(forms.ModelForm):
                     Div('descripcion',css_class='col-sm-12'),
                     css_class = 'row'
                 ),
+                Div(
+                    Div('categoria',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
             ),
         )
 
     class Meta:
         model = TipoSoporte
         fields = '__all__'
+        widgets = {'categoria':forms.Select(choices=[('','----------'),('General','General'),('Seguridad Social','Seguridad Social')])}
 
 class RequerimientoPersonalForm(forms.ModelForm):
 
