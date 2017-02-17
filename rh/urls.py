@@ -5,16 +5,18 @@ from rh import views
 urlpatterns = [
 
     url(r'^personal/$', views.PersonalView.as_view()),
+
     url(r'^personal/administrativos/$', views.AdministrativoView.as_view()),
     url(r'^personal/administrativos/nuevo/$', views.NuevoAdministrativoView.as_view()),
     url(r'^personal/administrativos/editar/(?P<pk>[0-9]+)/$', views.UpdateAdministrativoView.as_view()),
     url(r'^personal/administrativos/eliminar/(?P<pk>[0-9]+)/$', views.DeleteAdministrativoView.as_view()),
 
-
     url(r'^personal/administrativos/soportes/(?P<pk>[0-9]+)/$', views.SoporteAdministrativoView.as_view()),
     url(r'^personal/administrativos/soportes/(?P<pk>[0-9]+)/nuevo/$', views.NuevoSoporteAdministrativoView.as_view()),
     url(r'^personal/administrativos/soportes/(?P<pk>[0-9]+)/editar/(?P<id_soporte>[0-9]+)/$', views.UpdateSoporteAdministrativoView.as_view()),
     url(r'^personal/administrativos/soportes/(?P<pk>[0-9]+)/eliminar/(?P<id_soporte>[0-9]+)/$', views.DeleteSoporteAdministrativoView.as_view()),
+
+
 
 
     url(r'^personal/acceso/$', views.AccesoView.as_view()),
@@ -62,12 +64,8 @@ urlpatterns = [
     url(r'^personal/tipo_soporte/eliminar/(?P<pk>[0-9]+)/$', views.DeleteTipoSoporteAdministrativoView.as_view()),
 
 
-    url(r'^requerimientoscontratacion/$', ListaRequerimientosContratacionView.as_view()),
-    url(r'^requerimientoscontratacion/(?P<pk>[0-9]+)/$', NuevoRequerimientoContratacionView.as_view()),
-    url(r'^consolidadoformadores/$', FormadoresConsolidadoView.as_view()),
 
     url(r'^contratacion/$', views.ContratacionView.as_view()),
-
 
     url(r'^contratacion/contratos/formadores/$', views.ContratosFormadoresView.as_view()),
     url(r'^contratacion/contratos/formadores/editar/(?P<id_formador>[0-9]+)/$', views.ContratoFormadorView.as_view()),
@@ -77,7 +75,6 @@ urlpatterns = [
     url(r'^contratacion/solicitud_soportes/formadores/$', views.SolicitudSoportesFormadoresView.as_view()),
     url(r'^contratacion/solicitud_soportes/formadores/nuevo/$', views.NuevaSolicitudSoportesFormadorView.as_view()),
     url(r'^contratacion/solicitud_soportes/formadores/editar/(?P<id_solicitud_soporte>[0-9]+)/$', views.UpdateSolicitudSoportesFormadorView.as_view()),
-
 
 
     url(r'^contratacion/contratos/lideres/$', views.ContratosLideresView.as_view()),
@@ -91,11 +88,6 @@ urlpatterns = [
 
 
 
-
-
-
-
-
     url(r'^contratacion/contratos/negociadores/$', views.ContratosNegociadoresView.as_view()),
     url(r'^contratacion/contratos/negociadores/editar/(?P<id_negociador>[0-9]+)/$', views.ContratoNegociadorView.as_view()),
     url(r'^contratacion/contratos/negociadores/editar/(?P<id_negociador>[0-9]+)/nuevo/$', views.NuevoContratoNegociadorView.as_view()),
@@ -104,4 +96,10 @@ urlpatterns = [
     url(r'^contratacion/solicitud_soportes/negociadores/$', views.SolicitudSoportesNegociadoresView.as_view()),
     url(r'^contratacion/solicitud_soportes/negociadores/nuevo/$', views.NuevaSolicitudSoportesNegociadorView.as_view()),
     url(r'^contratacion/solicitud_soportes/negociadores/editar/(?P<id_solicitud_soporte>[0-9]+)/$', views.UpdateSolicitudSoportesNegociadorView.as_view()),
+
+
+
+    url(r'^requerimientoscontratacion/$', ListaRequerimientosContratacionView.as_view()),
+    url(r'^requerimientoscontratacion/(?P<pk>[0-9]+)/$', NuevoRequerimientoContratacionView.as_view()),
+    url(r'^consolidadoformadores/$', FormadoresConsolidadoView.as_view()),
 ]

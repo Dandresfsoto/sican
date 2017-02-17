@@ -148,6 +148,23 @@ def build_red(id_red):
         ws = wb.get_sheet_by_name('RED Familia')
         inicia = 2
 
+    elif red.diplomado.numero == 6:
+        ids = [{'id':258,'letter':'M'},
+               {'id':234,'letter':'N'},
+               {'id':235,'letter':'O'},
+               {'id':236,'letter':'P'},
+               {'id':239,'letter':'Q'},
+               {'id':242,'letter':'R'},
+               {'id':244,'letter':'S'},
+               {'id':247,'letter':'T'},
+               {'id':248,'letter':'U'},
+               {'id':255,'letter':'V'},
+               {'id':256,'letter':'W'}]
+
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED BOGOTA.xlsx')
+        ws = wb.get_sheet_by_name('RED Familia')
+        inicia = 5
+
     evidencias_total = Evidencia.objects.filter(red_id = id_red)
     beneficiarios_id = evidencias_total.exclude(beneficiarios_cargados = None).values_list('beneficiarios_cargados__id',flat=True).distinct()
 
@@ -459,8 +476,6 @@ def retroalimentacion_red(id_red):
 
     return "Retroalimentado RED-" + str(id_red)
 
-
-
 @app.task
 def build_consolidado_red(email):
     usuario = User.objects.get(email=email)
@@ -637,7 +652,6 @@ def build_consolidado_red(email):
     informe.archivo.save(filename,File(output))
 
     return "Generado consolidados RED"
-
 
 @app.task
 def build_consolidado_aprobacion_red(email):

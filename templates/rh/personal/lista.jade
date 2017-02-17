@@ -37,8 +37,8 @@ block scroll_header_panel_content
             button(type="button",class="btn btn-sican",data-filter=".acceso") Acceso
             |{% endif %}
 
-            |{% if permiso_formacion %}
-            button(type="button",class="btn btn-sican",data-filter=".formacion") Formación
+            |{% if permiso_formadores %}
+            button(type="button",class="btn btn-sican",data-filter=".formadores") Formación
             |{% endif %}
 
             |{% if permiso_general %}
@@ -69,8 +69,8 @@ block scroll_header_panel_content
                         Lideres y negociadores regionales.
             |{% endif %}
 
-            |{% if permiso_formacion %}
-            div(class="mix formacion",data-order="3")
+            |{% if permiso_formadores %}
+            div(class="mix formadores",data-order="3")
                 div(class="title-mix")
                     a(href="formadores/")
                         i(class="fa fa-child fa-2x",aria-hidden="true")
