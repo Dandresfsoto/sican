@@ -162,7 +162,7 @@ def build_red(id_red):
                {'id':256,'letter':'W'}]
 
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED BOGOTA.xlsx')
-        ws = wb.get_sheet_by_name('RED Familia')
+        ws = wb.get_sheet_by_name('RED BOGOTA')
         inicia = 6
 
     evidencias_total = Evidencia.objects.filter(red_id = id_red)
