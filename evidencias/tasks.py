@@ -163,7 +163,7 @@ def build_red(id_red):
 
         wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED BOGOTA.xlsx')
         ws = wb.get_sheet_by_name('RED Familia')
-        inicia = 5
+        inicia = 6
 
     evidencias_total = Evidencia.objects.filter(red_id = id_red)
     beneficiarios_id = evidencias_total.exclude(beneficiarios_cargados = None).values_list('beneficiarios_cargados__id',flat=True).distinct()
