@@ -1045,15 +1045,14 @@ class ContratosLideresView(LoginRequiredMixin,
     '''
     template_name = 'rh/contratacion/contratos_lideres/lista.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_lideres.ver",
-                "permisos_sican.rh.contratos_lideres.ver"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_lideres.ver",
+                "permisos_sican.rh.rh_contratos_lideres.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.contratos_lideres.crear')
-        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.contratos_lideres.informes')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_contratos_lideres.informes')
         return super(ContratosLideresView, self).get_context_data(**kwargs)
 
 class ContratoLiderView(LoginRequiredMixin,
@@ -1063,17 +1062,16 @@ class ContratoLiderView(LoginRequiredMixin,
     DatatableView enlazada al listado de contratos de cada lider.
     '''
     template_name = 'rh/contratacion/contratos_lideres/lista_contratos.html'
-    permission_required = "permisos_sican.rh.contratos_lideres.ver"
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_lideres.ver",
-                "permisos_sican.rh.contratos_lideres.ver"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_lideres.ver",
+                "permisos_sican.rh.rh_contratos_lideres.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.contratos_lideres.crear')
-        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.contratos_lideres.informes')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_contratos_lideres.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_contratos_lideres.informes')
         kwargs['lider'] = Lideres.objects.get(id = self.kwargs['id_lider']).get_full_name()
         kwargs['id_lider'] = self.kwargs['id_lider']
         return super(ContratoLiderView, self).get_context_data(**kwargs)
@@ -1089,10 +1087,10 @@ class NuevoContratoLiderView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/contratacion/contratos_lideres/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_lideres.ver",
-                "permisos_sican.rh.contratos_lideres.ver",
-                "permisos_sican.rh.contratos_lideres.crear"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_lideres.ver",
+                "permisos_sican.rh.rh_contratos_lideres.ver",
+                "permisos_sican.rh.rh_contratos_lideres.crear"),
         "any": ()
     }
 
@@ -1117,10 +1115,10 @@ class UpdateContratoLiderView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/contratacion/contratos_lideres/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_lideres.ver",
-                "permisos_sican.rh.contratos_lideres.ver",
-                "permisos_sican.rh.contratos_lideres.editar"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_lideres.ver",
+                "permisos_sican.rh.rh_contratos_lideres.ver",
+                "permisos_sican.rh.rh_contratos_lideres.editar"),
         "any": ()
     }
 
@@ -1142,15 +1140,15 @@ class SolicitudSoportesLideresView(LoginRequiredMixin,
     template_name = 'rh/contratacion/solicitud_soportes_lideres/lista.html'
     permission_required = "permisos_sican.rh.solicitud_soportes_lideres.ver"
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_lideres.ver",
-                "permisos_sican.rh.solicitud_soportes_lideres.ver"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_lideres.ver",
+                "permisos_sican.rh.rh_solicitud_soportes_lideres.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_lideres.crear')
-        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_lideres.informes')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_solicitud_soportes_lideres.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_solicitud_soportes_lideres.informes')
 
         return super(SolicitudSoportesLideresView, self).get_context_data(**kwargs)
 
@@ -1162,10 +1160,10 @@ class NuevaSolicitudSoportesLiderView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/contratacion/solicitud_soportes_lideres/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_lideres.ver",
-                "permisos_sican.rh.solicitud_soportes_lideres.ver",
-                "permisos_sican.rh.solicitud_soportes_lideres.crear"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_lideres.ver",
+                "permisos_sican.rh.rh_solicitud_soportes_lideres.ver",
+                "permisos_sican.rh.rh_solicitud_soportes_lideres.crear"),
         "any": ()
     }
 
@@ -1178,10 +1176,10 @@ class UpdateSolicitudSoportesLiderView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/contratacion/solicitud_soportes_lideres/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_lideres.ver",
-                "permisos_sican.rh.solicitud_soportes_lideres.ver",
-                "permisos_sican.rh.solicitud_soportes_lideres.editar"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_lideres.ver",
+                "permisos_sican.rh.rh_solicitud_soportes_lideres.ver",
+                "permisos_sican.rh.rh_solicitud_soportes_lideres.editar"),
         "any": ()
     }
 

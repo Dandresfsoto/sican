@@ -852,48 +852,7 @@ class AdminUserPermissionList(BaseDatatableView):
 
 
 
-class ContratosLideresView(BaseDatatableView):
-    """
-    0.id
-    1.nombres
-    2.cedula
-    3.cantidad de contratos
-    4.permiso para editar
-    """
-    model = Lideres
-    columns = ['id','nombres','cedula']
 
-    order_columns = ['nombres','cedula']
-    max_display_length = 100
-
-    def get_initial_queryset(self):
-        return Lideres.objects.filter(oculto = False)
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            search = unicode(search).capitalize()
-            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-        stack = []
-
-        for item in qs:
-
-            if item not in stack:
-                stack.append(item)
-
-                json_data.append([
-                    item.id,
-                    item.nombres + " " + item.apellidos,
-                    item.cedula,
-                    ContratoLider.objects.filter(lider = item).count(),
-                    self.request.user.has_perm('permisos_sican.rh.contratos_lideres.editar'),
-                ])
-        return json_data
 
 class ContratosNegociadoresView(BaseDatatableView):
     """
@@ -1195,54 +1154,7 @@ class ContratoNegociadorUserView(BaseDatatableView):
                 ])
         return json_data
 
-class ContratoLiderView(BaseDatatableView):
-    """
-    0.id
-    1.nombre
-    2.fecha creacion
-    3.fecha inicio
-    4.fecha finalizacion
-    5.renuncia
-    6.liquidacion
-    7.permiso para editar
-    """
-    model = ContratoLider
-    columns = ['id','nombre','fecha']
 
-    order_columns = ['id','nombre','fecha']
-    max_display_length = 100
-
-    def get_initial_queryset(self):
-        return ContratoLider.objects.filter(lider__id = self.kwargs['id_lider'])
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            search = unicode(search).capitalize()
-            q = Q(nombres__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-        stack = []
-
-        for item in qs:
-
-            if item not in stack:
-                stack.append(item)
-
-                json_data.append([
-                    item.id,
-                    item.nombre,
-                    localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
-                    item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
-                    item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',
-                    item.renuncia,
-                    item.liquidado,
-                    self.request.user.has_perm('permisos_sican.rh.contratos_lideres.editar'),
-                ])
-        return json_data
 
 class ContratoNegociadorView(BaseDatatableView):
     """
@@ -4756,6 +4668,98 @@ class ContratoFormadorView(BaseDatatableView):
                     item.renuncia,
                     item.liquidado,
                     self.request.user.has_perm('permisos_sican.rh.rh_contratos_formadores.editar'),
+                ])
+        return json_data
+
+class ContratosLideresView(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cedula
+    3.cantidad de contratos
+    4.permiso para editar
+    """
+    model = Lideres
+    columns = ['id','nombres','cedula']
+
+    order_columns = ['nombres','cedula']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Lideres.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombres + " " + item.apellidos,
+                    item.cedula,
+                    ContratoLider.objects.filter(lider = item).count(),
+                    self.request.user.has_perm('permisos_sican.rh.rh_contratos_lideres.editar'),
+                ])
+        return json_data
+
+class ContratoLiderView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.fecha creacion
+    3.fecha inicio
+    4.fecha finalizacion
+    5.renuncia
+    6.liquidacion
+    7.permiso para editar
+    """
+    model = ContratoLider
+    columns = ['id','nombre','fecha']
+
+    order_columns = ['id','nombre','fecha']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return ContratoLider.objects.filter(lider__id = self.kwargs['id_lider'])
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
+                    item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
+                    item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',
+                    item.renuncia,
+                    item.liquidado,
+                    self.request.user.has_perm('permisos_sican.rh.rh_contratos_lideres.editar'),
                 ])
         return json_data
 #-----------------------------------------------------------------------------------------------------------------------
