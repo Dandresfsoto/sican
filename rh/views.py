@@ -1286,7 +1286,7 @@ class SolicitudSoportesNegociadoresView(LoginRequiredMixin,
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.rh_solicitud_soportes_negociadores.crear')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_solicitud_soportes_negociadores.crear')
         kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_solicitud_soportes_negociadores.informes')
 
         return super(SolicitudSoportesNegociadoresView, self).get_context_data(**kwargs)
