@@ -550,7 +550,7 @@ class UserPermissionList(APIView):
             'seguridadsocial_negociadores':{
                 'ver':{'name':'Soportes de seguridad social','link':'/negociadores/seguridadsocial/'}
             },
-            'contratacion':{
+            'rh_contratacion':{
                 'ver':{'name':'Contratación','link':'/rh/contratacion/'}
             },
             'rh_personal':{

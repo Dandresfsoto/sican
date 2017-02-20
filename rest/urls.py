@@ -38,6 +38,8 @@ urlpatterns = [
     url(r'rh/personal/soportes_formadores/(?P<id_formador>\w+)/$', views.FormadoresRhSoportes.as_view()),
     url(r'rh/personal/cargos/$', views.CargosRh.as_view()),
     url(r'rh/personal/tipo_soporte/$', views.TipoSoporteRh.as_view()),
+    url(r'rh/contratacion/contratos/formadores/$', views.ContratosFormadoresView.as_view()),
+    url(r'rh/contratacion/contratos/formadores/(?P<id_formador>\w+)/$', views.ContratoFormadorView.as_view()),
     #-------------------------------------------------------------------------------------------------------------------
 
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -154,9 +156,9 @@ urlpatterns = [
 
     url(r'reds/subsanacionevidencias_id/red/(?P<id_red>\w+)/evidencia/(?P<id_evidencia>\w+)/',EvidenciasSubsanacionCodigosSubsanacion.as_view()),
 
-    url(r'rh/contratacion/contratos/formadores/$', views.ContratosFormadoresView.as_view()),
 
-    url(r'rh/contratacion/contratos/formadores/(?P<id_formador>\w+)/$', views.ContratoFormadorView.as_view()),
+
+
 
     url(r'rh/contratacion/solicitud_soportes/formadores/$', views.SolicitudSoportesFormadorView.as_view()),
 

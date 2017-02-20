@@ -876,12 +876,12 @@ class ContratacionView(LoginRequiredMixin,
                    PermissionRequiredMixin,
                    TemplateView):
     template_name = 'rh/contratacion/lista.html'
-    permission_required = "permisos_sican.rh.contratacion.ver"
+    permission_required = "permisos_sican.rh.rh_contratacion.ver"
 
     def get_context_data(self, **kwargs):
-        kwargs['permiso_formadores'] = self.request.user.has_perm('permisos_sican.rh.contratacion_formadores.ver')
-        kwargs['permiso_lideres'] = self.request.user.has_perm('permisos_sican.rh.contratacion_lideres.ver')
-        kwargs['permiso_negociadores'] = self.request.user.has_perm('permisos_sican.rh.contratacion_negociadores.ver')
+        kwargs['permiso_formadores'] = self.request.user.has_perm('permisos_sican.rh.rh_contratacion_formadores.ver')
+        kwargs['permiso_lideres'] = self.request.user.has_perm('permisos_sican.rh.rh_contratacion_lideres.ver')
+        kwargs['permiso_negociadores'] = self.request.user.has_perm('permisos_sican.rh.rh_contratacion_negociadores.ver')
         return super(ContratacionView,self).get_context_data(**kwargs)
 
 #--------------------------------------------- 2.1.1 FORMADORES --------------------------------------------------------
@@ -894,15 +894,14 @@ class ContratosFormadoresView(LoginRequiredMixin,
     '''
     template_name = 'rh/contratacion/contratos_formadores/lista.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_formadores.ver",
-                "permisos_sican.rh.contratos_formadores.ver"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_formadores.ver",
+                "permisos_sican.rh.rh_contratos_formadores.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.contratos_formadores.crear')
-        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.contratos_formadores.informes')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_contratos_formadores.informes')
         return super(ContratosFormadoresView, self).get_context_data(**kwargs)
 
 class ContratoFormadorView(LoginRequiredMixin,
@@ -913,15 +912,15 @@ class ContratoFormadorView(LoginRequiredMixin,
     '''
     template_name = 'rh/contratacion/contratos_formadores/lista_contratos.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_formadores.ver",
-                "permisos_sican.rh.contratos_formadores.ver"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_formadores.ver",
+                "permisos_sican.rh.rh_contratos_formadores.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.contratos_formadores.crear')
-        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.contratos_formadores.informes')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_contratos_formadores.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_contratos_formadores.informes')
         kwargs['formador'] = Formador.objects.get(id = self.kwargs['id_formador']).get_full_name()
         kwargs['id_formador'] = self.kwargs['id_formador']
         return super(ContratoFormadorView, self).get_context_data(**kwargs)
@@ -937,10 +936,10 @@ class NuevoContratoFormadorView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/contratacion/contratos_formadores/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_formadores.ver",
-                "permisos_sican.rh.contratos_formadores.ver",
-                "permisos_sican.rh.contratos_formadores.crear"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_formadores.ver",
+                "permisos_sican.rh.rh_contratos_formadores.ver",
+                "permisos_sican.rh.rh_contratos_formadores.crear"),
         "any": ()
     }
 
@@ -965,10 +964,10 @@ class UpdateContratoFormadorView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/contratacion/contratos_formadores/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_formadores.ver",
-                "permisos_sican.rh.contratos_formadores.ver",
-                "permisos_sican.rh.contratos_formadores.editar"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_formadores.ver",
+                "permisos_sican.rh.rh_contratos_formadores.ver",
+                "permisos_sican.rh.rh_contratos_formadores.editar"),
         "any": ()
     }
 
@@ -989,15 +988,15 @@ class SolicitudSoportesFormadoresView(LoginRequiredMixin,
                          TemplateView):
     template_name = 'rh/contratacion/solicitud_soportes_formadores/lista.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_formadores.ver",
-                "permisos_sican.rh.solicitud_soportes_formadores.ver"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_formadores.ver",
+                "permisos_sican.rh.rh_solicitud_soportes_formadores.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_formadores.crear')
-        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_formadores.informes')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_solicitud_soportes_formadores.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_solicitud_soportes_formadores.informes')
 
         return super(SolicitudSoportesFormadoresView, self).get_context_data(**kwargs)
 
@@ -1009,10 +1008,10 @@ class NuevaSolicitudSoportesFormadorView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/contratacion/solicitud_soportes_formadores/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_formadores.ver",
-                "permisos_sican.rh.solicitud_soportes_formadores.ver",
-                "permisos_sican.rh.solicitud_soportes_formadores.crear"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_formadores.ver",
+                "permisos_sican.rh.rh_solicitud_soportes_formadores.ver",
+                "permisos_sican.rh.rh_solicitud_soportes_formadores.crear"),
         "any": ()
     }
 
@@ -1025,10 +1024,10 @@ class UpdateSolicitudSoportesFormadorView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/contratacion/solicitud_soportes_formadores/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.contratacion.ver",
-                "permisos_sican.rh.contratacion_formadores.ver",
-                "permisos_sican.rh.solicitud_soportes_formadores.ver",
-                "permisos_sican.rh.solicitud_soportes_formadores.editar"),
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_formadores.ver",
+                "permisos_sican.rh.rh_solicitud_soportes_formadores.ver",
+                "permisos_sican.rh.rh_solicitud_soportes_formadores.editar"),
         "any": ()
     }
 
