@@ -41,13 +41,13 @@ class PersonalView(LoginRequiredMixin,
                    PermissionRequiredMixin,
                    TemplateView):
     template_name = 'rh/personal/lista.html'
-    permission_required = "permisos_sican.rh.personal.ver"
+    permission_required = "permisos_sican.rh.rh_personal.ver"
 
     def get_context_data(self, **kwargs):
-        kwargs['permiso_administrativo'] = self.request.user.has_perm('permisos_sican.rh.administrativos.ver')
-        kwargs['permiso_acceso'] = self.request.user.has_perm('permisos_sican.rh.acceso.ver')
-        kwargs['permiso_formadores'] = self.request.user.has_perm('permisos_sican.rh.formadores.ver')
-        kwargs['permiso_general'] = self.request.user.has_perm('permisos_sican.rh.general.ver')
+        kwargs['permiso_administrativo'] = self.request.user.has_perm('permisos_sican.rh.rh_administrativos.ver')
+        kwargs['permiso_acceso'] = self.request.user.has_perm('permisos_sican.rh.rh_acceso.ver')
+        kwargs['permiso_formadores'] = self.request.user.has_perm('permisos_sican.rh.rh_formadores.ver')
+        kwargs['permiso_general'] = self.request.user.has_perm('permisos_sican.rh.rh_general.ver')
         return super(PersonalView,self).get_context_data(**kwargs)
 
 #------------------------------------------ 1.1.1 ADMINISTRATIVOS ------------------------------------------------------
@@ -56,15 +56,15 @@ class AdministrativoView(LoginRequiredMixin,
                          MultiplePermissionsRequiredMixin,
                          TemplateView):
     template_name = 'rh/personal/administrativos/lista.html'
-    permission_required = "permisos_sican.rh.administrativos.ver"
+    permission_required = "permisos_sican.rh.rh_administrativos.ver"
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.administrativos.ver"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_administrativos.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.administrativos.crear')
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.rh_administrativos.crear')
         return super(AdministrativoView, self).get_context_data(**kwargs)
 
 class NuevoAdministrativoView(LoginRequiredMixin,

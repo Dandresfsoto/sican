@@ -553,7 +553,7 @@ class UserPermissionList(APIView):
             'contratacion':{
                 'ver':{'name':'Contratación','link':'/rh/contratacion/'}
             },
-            'personal':{
+            'rh_personal':{
                 'ver':{'name':'Personal','link':'/rh/personal/'}
             },
             'subsanacion':{
