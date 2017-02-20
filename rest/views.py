@@ -854,156 +854,9 @@ class AdminUserPermissionList(BaseDatatableView):
 
 
 
-class ContratosNegociadoresView(BaseDatatableView):
-    """
-    0.id
-    1.nombres
-    2.cedula
-    3.cantidad de contratos
-    4.permiso para editar
-    """
-    model = Negociador
-    columns = ['id','nombres','cedula']
 
-    order_columns = ['nombres','cedula']
-    max_display_length = 100
 
-    def get_initial_queryset(self):
-        return Negociador.objects.filter(oculto = False)
 
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            search = unicode(search).capitalize()
-            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-        stack = []
-
-        for item in qs:
-
-            if item not in stack:
-                stack.append(item)
-
-                json_data.append([
-                    item.id,
-                    item.nombres + " " + item.apellidos,
-                    item.cedula,
-                    ContratoNegociador.objects.filter(negociador = item).count(),
-                    self.request.user.has_perm('permisos_sican.rh.contratos_negociadores.editar'),
-                ])
-        return json_data
-
-class SolicitudSoportesFormadorView(BaseDatatableView):
-    """
-    0.id
-    1.nombre
-    2.permiso para editar
-    """
-    model = SolicitudSoportesFormador
-    columns = ['id','nombre']
-
-    order_columns = ['nombre']
-    max_display_length = 100
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            search = unicode(search).capitalize()
-            q = Q(nombre__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-        stack = []
-
-        for item in qs:
-
-            if item not in stack:
-                stack.append(item)
-
-                json_data.append([
-                    item.id,
-                    item.nombre,
-                    self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_formadores.editar'),
-                ])
-        return json_data
-
-class SolicitudSoportesLiderView(BaseDatatableView):
-    """
-    0.id
-    1.nombre
-    2.permiso para editar
-    """
-    model = SolicitudSoportesLider
-    columns = ['id','nombre']
-
-    order_columns = ['nombre']
-    max_display_length = 100
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            search = unicode(search).capitalize()
-            q = Q(nombre__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-        stack = []
-
-        for item in qs:
-
-            if item not in stack:
-                stack.append(item)
-
-                json_data.append([
-                    item.id,
-                    item.nombre,
-                    self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_lideres.editar'),
-                ])
-        return json_data
-
-class SolicitudSoportesNegociadorView(BaseDatatableView):
-    """
-    0.id
-    1.nombre
-    2.permiso para editar
-    """
-    model = SolicitudSoportesNegociador
-    columns = ['id','nombre']
-
-    order_columns = ['nombre']
-    max_display_length = 100
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            search = unicode(search).capitalize()
-            q = Q(nombre__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-        stack = []
-
-        for item in qs:
-
-            if item not in stack:
-                stack.append(item)
-
-                json_data.append([
-                    item.id,
-                    item.nombre,
-                    self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_negociadores.editar'),
-                ])
-        return json_data
 
 
 
@@ -1156,47 +1009,7 @@ class ContratoNegociadorUserView(BaseDatatableView):
 
 
 
-class ContratoNegociadorView(BaseDatatableView):
-    """
-    0.id
-    1.nombres
-    2.cedula
-    3.cantidad de contratos
-    4.permiso para editar
-    """
-    model = ContratoNegociador
-    columns = ['id','nombre','fecha']
 
-    order_columns = ['nombre','fecha']
-    max_display_length = 100
-
-    def get_initial_queryset(self):
-        return ContratoNegociador.objects.filter(negociador__id = self.kwargs['id_negociador'])
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            search = unicode(search).capitalize()
-            q = Q(nombres__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-        stack = []
-
-        for item in qs:
-
-            if item not in stack:
-                stack.append(item)
-
-                json_data.append([
-                    item.id,
-                    item.nombre,
-                    localtime(item.fecha).strftime('%d de %B del %Y, %X'),
-                    self.request.user.has_perm('permisos_sican.rh.contratos_negociadores.editar'),
-                ])
-        return json_data
 
 class FormadoresConsolidadoRh(BaseDatatableView):
     """
@@ -4671,6 +4484,44 @@ class ContratoFormadorView(BaseDatatableView):
                 ])
         return json_data
 
+class SolicitudSoportesFormadorView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.permiso para editar
+    """
+    model = SolicitudSoportesFormador
+    columns = ['id','nombre']
+
+    order_columns = ['nombre']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    self.request.user.has_perm('permisos_sican.rh.rh_solicitud_soportes_formadores.editar'),
+                ])
+        return json_data
+
+
+
 class ContratosLideresView(BaseDatatableView):
     """
     0.id
@@ -4760,6 +4611,165 @@ class ContratoLiderView(BaseDatatableView):
                     item.renuncia,
                     item.liquidado,
                     self.request.user.has_perm('permisos_sican.rh.rh_contratos_lideres.editar'),
+                ])
+        return json_data
+
+class SolicitudSoportesLiderView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.permiso para editar
+    """
+    model = SolicitudSoportesLider
+    columns = ['id','nombre']
+
+    order_columns = ['nombre']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    self.request.user.has_perm('permisos_sican.rh.rh_solicitud_soportes_lideres.editar'),
+                ])
+        return json_data
+
+
+
+class ContratosNegociadoresView(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cedula
+    3.cantidad de contratos
+    4.permiso para editar
+    """
+    model = Negociador
+    columns = ['id','nombres','cedula']
+
+    order_columns = ['nombres','cedula']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Negociador.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombres + " " + item.apellidos,
+                    item.cedula,
+                    ContratoNegociador.objects.filter(negociador = item).count(),
+                    self.request.user.has_perm('permisos_sican.rh.rh_contratos_negociadores.editar'),
+                ])
+        return json_data
+
+class ContratoNegociadorView(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cedula
+    3.cantidad de contratos
+    4.permiso para editar
+    """
+    model = ContratoNegociador
+    columns = ['id','nombre','fecha']
+
+    order_columns = ['nombre','fecha']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return ContratoNegociador.objects.filter(negociador__id = self.kwargs['id_negociador'])
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    localtime(item.fecha).strftime('%d de %B del %Y, %X'),
+                    self.request.user.has_perm('permisos_sican.rh.rh_contratos_negociadores.editar'),
+                ])
+        return json_data
+
+class SolicitudSoportesNegociadorView(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.permiso para editar
+    """
+    model = SolicitudSoportesNegociador
+    columns = ['id','nombre']
+
+    order_columns = ['nombre']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        stack = []
+
+        for item in qs:
+
+            if item not in stack:
+                stack.append(item)
+
+                json_data.append([
+                    item.id,
+                    item.nombre,
+                    self.request.user.has_perm('permisos_sican.rh.rh_solicitud_soportes_negociadores.editar'),
                 ])
         return json_data
 #-----------------------------------------------------------------------------------------------------------------------

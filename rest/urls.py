@@ -40,8 +40,15 @@ urlpatterns = [
     url(r'rh/personal/tipo_soporte/$', views.TipoSoporteRh.as_view()),
     url(r'rh/contratacion/contratos/formadores/$', views.ContratosFormadoresView.as_view()),
     url(r'rh/contratacion/contratos/formadores/(?P<id_formador>\w+)/$', views.ContratoFormadorView.as_view()),
+    url(r'rh/contratacion/solicitud_soportes/formadores/$', views.SolicitudSoportesFormadorView.as_view()),
+
     url(r'rh/contratacion/contratos/lideres/$', views.ContratosLideresView.as_view()),
     url(r'rh/contratacion/contratos/lideres/(?P<id_lider>\w+)/$', views.ContratoLiderView.as_view()),
+    url(r'rh/contratacion/solicitud_soportes/lideres/$', views.SolicitudSoportesLiderView.as_view()),
+
+    url(r'rh/contratacion/contratos/negociadores/$', views.ContratosNegociadoresView.as_view()),
+    url(r'rh/contratacion/contratos/negociadores/(?P<id_negociador>\w+)/$', views.ContratoNegociadorView.as_view()),
+    url(r'rh/contratacion/solicitud_soportes/negociadores/$', views.SolicitudSoportesNegociadorView.as_view()),
     #-------------------------------------------------------------------------------------------------------------------
 
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -162,20 +169,13 @@ urlpatterns = [
 
 
 
-    url(r'rh/contratacion/solicitud_soportes/formadores/$', views.SolicitudSoportesFormadorView.as_view()),
 
 
 
 
 
-    url(r'rh/contratacion/solicitud_soportes/lideres/$', views.SolicitudSoportesLiderView.as_view()),
-
-    url(r'rh/contratacion/contratos/negociadores/$', views.ContratosNegociadoresView.as_view()),
-
-    url(r'rh/contratacion/contratos/negociadores/(?P<id_negociador>\w+)/$', views.ContratoNegociadorView.as_view()),
 
 
-    url(r'rh/contratacion/solicitud_soportes/negociadores/$', views.SolicitudSoportesNegociadorView.as_view()),
 
 
     url(r'formadores/legalizacion/$', views.ContratoFormadorUserView.as_view()),
