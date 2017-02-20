@@ -56,7 +56,6 @@ class AdministrativoView(LoginRequiredMixin,
                          MultiplePermissionsRequiredMixin,
                          TemplateView):
     template_name = 'rh/personal/administrativos/lista.html'
-    permission_required = "permisos_sican.rh.rh_administrativos.ver"
     permissions = {
         "all": ("permisos_sican.rh.rh_personal.ver",
                 "permisos_sican.rh.rh_administrativos.ver"),
@@ -64,7 +63,7 @@ class AdministrativoView(LoginRequiredMixin,
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.rh_administrativos.crear')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_administrativos.crear')
         return super(AdministrativoView, self).get_context_data(**kwargs)
 
 class NuevoAdministrativoView(LoginRequiredMixin,
@@ -75,9 +74,9 @@ class NuevoAdministrativoView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/personal/administrativos/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.administrativos.ver",
-                "permisos_sican.rh.administrativos.crear"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_administrativos.ver",
+                "permisos_sican.rh.rh_administrativos.crear"),
         "any": ()
     }
 
@@ -91,9 +90,9 @@ class UpdateAdministrativoView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/administrativos/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.administrativos.ver",
-                "permisos_sican.rh.administrativos.editar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_administrativos.ver",
+                "permisos_sican.rh.rh_administrativos.editar"),
         "any": ()
     }
 
@@ -105,9 +104,9 @@ class DeleteAdministrativoView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/administrativos/eliminar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.administrativos.ver",
-                "permisos_sican.rh.administrativos.eliminar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_administrativos.ver",
+                "permisos_sican.rh.rh_administrativos.eliminar"),
         "any": ()
     }
 
@@ -126,16 +125,16 @@ class SoporteAdministrativoView(LoginRequiredMixin,
     template_name = 'rh/personal/administrativos/soportes/lista.html'
     permission_required = "permisos_sican.rh.administrativos_soportes.ver"
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.administrativos.ver",
-                "permisos_sican.rh.administrativos_soportes.ver"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_administrativos.ver",
+                "permisos_sican.rh.rh_administrativos_soportes.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
         kwargs['nombre_administrativo'] = Administrativo.objects.get(id=kwargs['pk']).get_full_name
         kwargs['id_administrativo'] = kwargs['pk']
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.administrativos_soportes.crear')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_administrativos_soportes.crear')
         return super(SoporteAdministrativoView, self).get_context_data(**kwargs)
 
 
@@ -147,10 +146,10 @@ class NuevoSoporteAdministrativoView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/personal/administrativos/soportes/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.administrativos.ver",
-                "permisos_sican.rh.administrativos_soportes.ver",
-                "permisos_sican.rh.administrativos_soportes.crear"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_administrativos.ver",
+                "permisos_sican.rh.rh_administrativos_soportes.ver",
+                "permisos_sican.rh.rh_administrativos_soportes.crear"),
         "any": ()
     }
 
@@ -171,10 +170,10 @@ class UpdateSoporteAdministrativoView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/administrativos/soportes/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.administrativos.ver",
-                "permisos_sican.rh.administrativos_soportes.ver",
-                "permisos_sican.rh.administrativos_soportes.editar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_administrativos.ver",
+                "permisos_sican.rh.rh_administrativos_soportes.ver",
+                "permisos_sican.rh.rh_administrativos_soportes.editar"),
         "any": ()
     }
 
@@ -193,10 +192,10 @@ class DeleteSoporteAdministrativoView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/administrativos/soportes/eliminar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.administrativos.ver",
-                "permisos_sican.rh.administrativos_soportes.ver",
-                "permisos_sican.rh.administrativos_soportes.eliminar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_administrativos.ver",
+                "permisos_sican.rh.rh_administrativos_soportes.ver",
+                "permisos_sican.rh.rh_administrativos_soportes.eliminar"),
         "any": ()
     }
 
