@@ -26,13 +26,19 @@ from rest.views import EvidenciasSubsanacionCodigos, EvidenciasSubsanacionCodigo
 from rest import views
 
 urlpatterns = [
+
+    #----------------------------------------------- RH ----------------------------------------------------------------
+    url(r'rh/personal/administrativos/$', views.AdministrativosRh.as_view()),
+    url(r'rh/personal/soportes_administrativos/(?P<id_administrativo>\w+)/$', views.AdministrativosRhSoportes.as_view()),
+    #-------------------------------------------------------------------------------------------------------------------
+
     url(r'usuarios/chat_list/$', UserList.as_view()),
     url(r'usuarios/chat_list/(?P<id>\w+)/$', UserDetail.as_view()),
     url(r'usuarios/chat_last/$', UserChatList.as_view()),
     url(r'usuarios/permisos/$', UserPermissionList.as_view()),
 
-    url(r'administrativos/rh/$', AdministrativosRh.as_view()),
-    url(r'administrativos/rh/soportes/(?P<id_administrativo>\w+)/$', AdministrativosRhSoportes.as_view()),
+
+
 
     url(r'adminuser/usuarios/$', AdminUserList.as_view()),
     url(r'adminuser/grupos/$', GroupUserList.as_view()),

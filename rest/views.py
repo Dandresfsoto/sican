@@ -725,88 +725,7 @@ class UserPermissionList(APIView):
 
         return Response(r)
 
-class AdministrativosRh(BaseDatatableView):
-    """
-    0.id
-    1.nombres
-    2.cargo
-    3.region
-    4.cedula
-    5.correo_personal
-    6.celular_personal
-    7.profesion
-    8.correo_corporativo
-    9.celular_corporativo
-    10.fecha_contratacion
-    11.fecha_terminacion
-    12.banco
-    13.tipo_cuenta
-    14.numero_cuenta
-    15.eps
-    16.pension
-    17.arl
-    18.permiso para editar
-    19.permiso para eliminar
-    20.permiso para ver soportes
-    """
-    model = Administrativo
-    columns = ['id','nombres','cargo','region','cedula','correo_personal','celular_personal','profesion',
-               'correo_corporativo','celular_corporativo','fecha_contratacion','fecha_terminacion',
-               'banco','tipo_cuenta','numero_cuenta','eps','pension','arl']
 
-    order_columns = ['','nombres','cargo','']
-    max_display_length = 100
-
-    def get_initial_queryset(self):
-        return Administrativo.objects.filter(oculto = False)
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-
-
-        for item in qs:
-
-            region_str = ''
-            for region in item.region.values_list('numero',flat=True):
-                region_str = region_str + str(region) + ','
-            region_str = region_str[:-1]
-
-            if item.banco != None:
-                banco = item.banco.nombre
-            else:
-                banco = ''
-
-            json_data.append([
-                item.id,
-                item.nombres + " " + item.apellidos,
-                item.cargo.nombre,
-                region_str,
-                item.cedula,
-                item.correo_personal,
-                item.celular_personal,
-                item.profesion,
-                item.correo_corporativo,
-                item.celular_corporativo,
-                item.fecha_contratacion,
-                item.fecha_terminacion,
-                banco,
-                item.tipo_cuenta,
-                item.numero_cuenta,
-                item.eps,
-                item.pension,
-                item.arl,
-                self.request.user.has_perm('permisos_sican.rh.administrativos.editar'),
-                self.request.user.has_perm('permisos_sican.rh.administrativos.eliminar'),
-                self.request.user.has_perm('permisos_sican.rh.administrativos_soportes.ver'),
-            ])
-        return json_data
 
 class CargosRh(BaseDatatableView):
     """
@@ -852,48 +771,6 @@ class CargosRh(BaseDatatableView):
             ])
         return json_data
 
-class AdministrativosRhSoportes(BaseDatatableView):
-    """
-    0.id
-    1.tipo
-    2.fecha
-    3.descripcion
-    4.archivo (url o string vacio)
-    5.creacion
-    6.permiso para editar
-    7.permiso para eliminar
-    """
-    model = Soporte
-    columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
-
-    order_columns = ['id','tipo','fecha','descripcion']
-    max_display_length = 100
-
-    def get_initial_queryset(self):
-        return Soporte.objects.filter(oculto = False,administrativo__id=self.kwargs['id_administrativo'])
-
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            q = Q(tipo__nombre__icontains=search) | Q(tipo__descripcion__icontains=search) | Q(fecha__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-        for item in qs:
-            json_data.append([
-                item.id,
-                item.tipo.nombre,
-                item.fecha,
-                item.tipo.descripcion,
-                item.get_archivo_url(),
-                item.creacion,
-                self.request.user.has_perm('permisos_sican.rh.administrativos_soportes.editar'),
-                self.request.user.has_perm('permisos_sican.rh.administrativos_soportes.eliminar'),
-            ])
-        return json_data
 
 class AdminUserList(BaseDatatableView):
     """
@@ -4735,3 +4612,134 @@ class RendimientoAuxiliaresList(BaseDatatableView):
                 Evidencia.objects.filter(usuario = item,updated__year = str(now.year),updated__month = str(now.month),updated__day = str(now.day)).count()
             ])
         return json_data
+
+
+#--------------------------------------------------RH-------------------------------------------------------------------
+
+class AdministrativosRh(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cargo
+    3.region
+    4.cedula
+    5.correo_personal
+    6.celular_personal
+    7.profesion
+    8.correo_corporativo
+    9.celular_corporativo
+    10.fecha_contratacion
+    11.fecha_terminacion
+    12.banco
+    13.tipo_cuenta
+    14.numero_cuenta
+    15.eps
+    16.pension
+    17.arl
+    18.permiso para editar
+    19.permiso para eliminar
+    20.permiso para ver soportes
+    """
+    model = Administrativo
+    columns = ['id','nombres','cargo','region','cedula','correo_personal','celular_personal','profesion',
+               'correo_corporativo','celular_corporativo','fecha_contratacion','fecha_terminacion',
+               'banco','tipo_cuenta','numero_cuenta','eps','pension','arl']
+
+    order_columns = ['','nombres','cargo','']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Administrativo.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+
+            region_str = ''
+            for region in item.region.values_list('numero',flat=True):
+                region_str = region_str + str(region) + ','
+            region_str = region_str[:-1]
+
+            if item.banco != None:
+                banco = item.banco.nombre
+            else:
+                banco = ''
+
+            json_data.append([
+                item.id,
+                item.nombres + " " + item.apellidos,
+                item.cargo.nombre,
+                region_str,
+                item.cedula,
+                item.correo_personal,
+                item.celular_personal,
+                item.profesion,
+                item.correo_corporativo,
+                item.celular_corporativo,
+                item.fecha_contratacion,
+                item.fecha_terminacion,
+                banco,
+                item.tipo_cuenta,
+                item.numero_cuenta,
+                item.eps,
+                item.pension,
+                item.arl,
+                self.request.user.has_perm('permisos_sican.rh.rh_administrativos.editar'),
+                self.request.user.has_perm('permisos_sican.rh.rh_administrativos.eliminar'),
+                self.request.user.has_perm('permisos_sican.rh.rh_administrativos_soportes.ver'),
+            ])
+        return json_data
+
+class AdministrativosRhSoportes(BaseDatatableView):
+    """
+    0.id
+    1.tipo
+    2.fecha
+    3.descripcion
+    4.archivo (url o string vacio)
+    5.creacion
+    6.permiso para editar
+    7.permiso para eliminar
+    """
+    model = Soporte
+    columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
+
+    order_columns = ['id','tipo','fecha','descripcion']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Soporte.objects.filter(oculto = False,administrativo__id=self.kwargs['id_administrativo'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(tipo__nombre__icontains=search) | Q(tipo__descripcion__icontains=search) | Q(fecha__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.tipo.nombre,
+                item.fecha,
+                item.tipo.descripcion,
+                item.get_archivo_url(),
+                item.creacion,
+                self.request.user.has_perm('permisos_sican.rh.rh_administrativos_soportes.editar'),
+                self.request.user.has_perm('permisos_sican.rh.rh_administrativos_soportes.eliminar'),
+            ])
+        return json_data
+
+#-----------------------------------------------------------------------------------------------------------------------
