@@ -123,7 +123,6 @@ class SoporteAdministrativoView(LoginRequiredMixin,
                          MultiplePermissionsRequiredMixin,
                          TemplateView):
     template_name = 'rh/personal/administrativos/soportes/lista.html'
-    permission_required = "permisos_sican.rh.administrativos_soportes.ver"
     permissions = {
         "all": ("permisos_sican.rh.rh_personal.ver",
                 "permisos_sican.rh.rh_administrativos.ver",
@@ -217,14 +216,14 @@ class AccesoView(LoginRequiredMixin,
                    TemplateView):
     template_name = 'rh/personal/acceso/links.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['permiso_lideres'] = self.request.user.has_perm('permisos_sican.rh.lideres.ver')
-        kwargs['permiso_negociadores'] = self.request.user.has_perm('permisos_sican.rh.negociadores.ver')
+        kwargs['permiso_lideres'] = self.request.user.has_perm('permisos_sican.rh.rh_lideres.ver')
+        kwargs['permiso_negociadores'] = self.request.user.has_perm('permisos_sican.rh.rh_negociadores.ver')
         return super(AccesoView,self).get_context_data(**kwargs)
 
 #------------------------------------------- 1.2.1.1 ACCESO LIDERES ----------------------------------------------------
@@ -234,15 +233,15 @@ class LideresView(LoginRequiredMixin,
                          TemplateView):
     template_name = 'rh/personal/acceso/lideres/lista.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.lideres.ver"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_lideres.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.lideres.crear')
-        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.rh.lideres.masivo')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_lideres.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_lideres.informes')
         return super(LideresView, self).get_context_data(**kwargs)
 
 class NuevoLiderView(LoginRequiredMixin,
@@ -253,10 +252,10 @@ class NuevoLiderView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/personal/acceso/lideres/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.lideres.ver",
-                "permisos_sican.rh.lideres.crear"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_lideres.ver",
+                "permisos_sican.rh.rh_lideres.crear"),
         "any": ()
     }
 
@@ -269,10 +268,10 @@ class UpdateLiderView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/acceso/lideres/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.lideres.ver",
-                "permisos_sican.rh.lideres.editar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_lideres.ver",
+                "permisos_sican.rh.rh_lideres.editar"),
         "any": ()
     }
 
@@ -284,10 +283,10 @@ class DeleteLiderView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/acceso/lideres/eliminar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.lideres.ver",
-                "permisos_sican.rh.lideres.eliminar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_lideres.ver",
+                "permisos_sican.rh.rh_lideres.eliminar"),
         "any": ()
     }
 
@@ -306,17 +305,17 @@ class SoporteLiderView(LoginRequiredMixin,
     template_name = 'rh/personal/acceso/lideres/soportes/lista.html'
     permission_required = "permisos_sican.rh.lideres_soportes.ver"
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.lideres.ver",
-                "permisos_sican.rh.lideres_soportes.ver"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_lideres.ver",
+                "permisos_sican.rh.rh_lideres_soportes.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
         kwargs['nombre_lider'] = Lideres.objects.get(id=kwargs['pk']).get_full_name
         kwargs['id_lider'] = kwargs['pk']
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.lideres_soportes.crear')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.lideres_soportes.crear')
         return super(SoporteLiderView, self).get_context_data(**kwargs)
 
 class NuevoSoporteLiderView(LoginRequiredMixin,
@@ -327,11 +326,11 @@ class NuevoSoporteLiderView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/personal/acceso/lideres/soportes/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.lideres.ver",
-                "permisos_sican.rh.lideres_soportes.ver",
-                "permisos_sican.rh.lideres_soportes.crear"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_lideres.ver",
+                "permisos_sican.rh.rh_lideres_soportes.ver",
+                "permisos_sican.rh.rh_lideres_soportes.crear"),
         "any": ()
     }
 
@@ -351,11 +350,11 @@ class UpdateSoporteLiderView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/acceso/lideres/soportes/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.lideres.ver",
-                "permisos_sican.rh.lideres_soportes.ver",
-                "permisos_sican.rh.lideres_soportes.editar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_lideres.ver",
+                "permisos_sican.rh.rh_lideres_soportes.ver",
+                "permisos_sican.rh.rh_lideres_soportes.editar"),
         "any": ()
     }
 
@@ -376,11 +375,11 @@ class DeleteSoporteLiderView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/acceso/lideres/soportes/eliminar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.lideres.ver",
-                "permisos_sican.rh.lideres_soportes.ver",
-                "permisos_sican.rh.lideres_soportes.eliminar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_lideres.ver",
+                "permisos_sican.rh.rh_lideres_soportes.ver",
+                "permisos_sican.rh.rh_lideres_soportes.eliminar"),
         "any": ()
     }
 

@@ -30,6 +30,8 @@ urlpatterns = [
     #----------------------------------------------- RH ----------------------------------------------------------------
     url(r'rh/personal/administrativos/$', views.AdministrativosRh.as_view()),
     url(r'rh/personal/soportes_administrativos/(?P<id_administrativo>\w+)/$', views.AdministrativosRhSoportes.as_view()),
+    url(r'rh/personal/lideres/$', views.LideresRh.as_view()),
+    url(r'rh/personal/soportes_lideres/(?P<id_lider>\w+)/$', views.LideresRhSoportes.as_view()),
     #-------------------------------------------------------------------------------------------------------------------
 
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -53,8 +55,7 @@ urlpatterns = [
     url(r'formadores/rh/soportes/(?P<id_formador>\w+)/$', FormadoresRhSoportes.as_view()),
 
 
-    url(r'lideres/rh/$', LideresRh.as_view()),
-    url(r'lideres/rh/soportes/(?P<id_lider>\w+)/$', LideresRhSoportes.as_view()),
+
 
     url(r'negociadores/rh/$', NegociadoresRh.as_view()),
     url(r'negociadores/rh/soportes/(?P<id_negociador>\w+)/$', NegociadoresRhSoportes.as_view()),

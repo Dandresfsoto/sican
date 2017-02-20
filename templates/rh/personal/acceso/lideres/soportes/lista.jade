@@ -31,7 +31,7 @@ block breadcrum
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
     div(class="container-fluid container-index")
-        | {% if nuevo_permiso %}
+        | {% if crear %}
         a(href="nuevo",class="link_button")
             paper-button(class="submit") Nuevo soporte
         | {% endif %}
@@ -61,7 +61,7 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/lideres/rh/soportes/{{id_lider}}/",
+                "ajax": "/rest/rh/personal/soportes_lideres/{{id_lider}}/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
