@@ -315,7 +315,7 @@ class SoporteLiderView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['nombre_lider'] = Lideres.objects.get(id=kwargs['pk']).get_full_name
         kwargs['id_lider'] = kwargs['pk']
-        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.lideres_soportes.crear')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_lideres_soportes.crear')
         return super(SoporteLiderView, self).get_context_data(**kwargs)
 
 class NuevoSoporteLiderView(LoginRequiredMixin,
@@ -401,15 +401,15 @@ class NegociadoresView(LoginRequiredMixin,
                          TemplateView):
     template_name = 'rh/personal/acceso/negociadores/lista.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.negociadores.ver"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_negociadores.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.negociadores.crear')
-        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.rh.negociadores.masivo')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_negociadores.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_negociadores.informes')
         return super(NegociadoresView, self).get_context_data(**kwargs)
 
 
@@ -421,10 +421,10 @@ class NuevoNegociadorView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/personal/acceso/negociadores/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.negociadores.ver",
-                "permisos_sican.rh.negociadores.crear"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_negociadores.ver",
+                "permisos_sican.rh.rh_negociadores.crear"),
         "any": ()
     }
 
@@ -438,10 +438,10 @@ class UpdateNegociadorView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/acceso/negociadores/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.negociadores.ver",
-                "permisos_sican.rh.negociadores.editar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_negociadores.ver",
+                "permisos_sican.rh.rh_negociadores.editar"),
         "any": ()
     }
 
@@ -454,10 +454,10 @@ class DeleteNegociadorView(LoginRequiredMixin,
     success_url = '/rh/negociadores/'
     template_name = 'rh/personal/acceso/negociadores/eliminar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.negociadores.ver",
-                "permisos_sican.rh.negociadores.eliminar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_negociadores.ver",
+                "permisos_sican.rh.rh_negociadores.eliminar"),
         "any": ()
     }
 
@@ -474,19 +474,19 @@ class SoporteNegociadorView(LoginRequiredMixin,
                          MultiplePermissionsRequiredMixin,
                          TemplateView):
     template_name = 'rh/personal/acceso/negociadores/soportes/lista.html'
-    permission_required = "permisos_sican.rh.negociador_soportes.ver"
+    permission_required = "permisos_sican.rh.rh_negociador_soportes.ver"
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.negociadores.ver",
-                "permisos_sican.rh.negociadores_soportes.ver"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_negociadores.ver",
+                "permisos_sican.rh.rh_negociadores_soportes.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
         kwargs['nombre_negociador'] = Negociador.objects.get(id=kwargs['pk']).get_full_name
         kwargs['id_negociador'] = kwargs['pk']
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.negociadores_soportes.crear')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_negociadores_soportes.crear')
         return super(SoporteNegociadorView, self).get_context_data(**kwargs)
 
 class NuevoSoporteNegociadorView(LoginRequiredMixin,
@@ -497,11 +497,11 @@ class NuevoSoporteNegociadorView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/personal/acceso/negociadores/soportes/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.negociadores.ver",
-                "permisos_sican.rh.negociadores_soportes.ver",
-                "permisos_sican.rh.negociadores_soportes.crear"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_negociadores.ver",
+                "permisos_sican.rh.rh_negociadores_soportes.ver",
+                "permisos_sican.rh.rh_negociadores_soportes.crear"),
         "any": ()
     }
 
@@ -521,11 +521,11 @@ class UpdateSoporteNegociadorView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/acceso/negociadores/soportes/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.negociadores.ver",
-                "permisos_sican.rh.negociadores_soportes.ver",
-                "permisos_sican.rh.negociadores_soportes.editar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_negociadores.ver",
+                "permisos_sican.rh.rh_negociadores_soportes.ver",
+                "permisos_sican.rh.rh_negociadores_soportes.editar"),
         "any": ()
     }
 
@@ -546,11 +546,11 @@ class DeleteSoporteNegociadorView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/acceso/negociadores/soportes/eliminar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.acceso.ver",
-                "permisos_sican.rh.negociadores.ver",
-                "permisos_sican.rh.negociadores_soportes.ver",
-                "permisos_sican.rh.negociadores_soportes.eliminar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_acceso.ver",
+                "permisos_sican.rh.rh_negociadores.ver",
+                "permisos_sican.rh.rh_negociadores_soportes.ver",
+                "permisos_sican.rh.rh_negociadores_soportes.eliminar"),
         "any": ()
     }
 
