@@ -1281,10 +1281,15 @@ class UpdateContratoNegociadorView(LoginRequiredMixin,
 #------------------------------------- 2.3.2 SOLICITUD SOPORTES NEGOCIADORES -------------------------------------------
 
 class SolicitudSoportesNegociadoresView(LoginRequiredMixin,
-                         PermissionRequiredMixin,
+                         MultiplePermissionsRequiredMixin,
                          TemplateView):
     template_name = 'rh/contratacion/solicitud_soportes_negociadores/lista.html'
-    permission_required = "permisos_sican.rh.solicitud_soportes_negociadores.ver"
+    permissions = {
+        "all": ("permisos_sican.rh.contratacion.ver",
+                "permisos_sican.rh.contratacion_negociadores.ver",
+                "permisos_sican.rh.solicitud_soportes_negociadores.ver"),
+        "any": ()
+    }
 
     def get_context_data(self, **kwargs):
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.solicitud_soportes_negociadores.crear')
@@ -1293,23 +1298,36 @@ class SolicitudSoportesNegociadoresView(LoginRequiredMixin,
         return super(SolicitudSoportesNegociadoresView, self).get_context_data(**kwargs)
 
 class NuevaSolicitudSoportesNegociadorView(LoginRequiredMixin,
-                              PermissionRequiredMixin,
+                              MultiplePermissionsRequiredMixin,
                               CreateView):
     model = SolicitudSoportesNegociador
     form_class = SolicitudSoportesNegociadorForm
     success_url = '../'
     template_name = 'rh/contratacion/solicitud_soportes_negociadores/nuevo.html'
-    permission_required = "permisos_sican.rh.solicitud_soportes_negociadores.crear"
+    permissions = {
+        "all": ("permisos_sican.rh.contratacion.ver",
+                "permisos_sican.rh.contratacion_negociadores.ver",
+                "permisos_sican.rh.solicitud_soportes_negociadores.ver",
+                "permisos_sican.rh.solicitud_soportes_negociadores.crear"),
+        "any": ()
+    }
 
 class UpdateSolicitudSoportesNegociadorView(LoginRequiredMixin,
-                              PermissionRequiredMixin,
+                              MultiplePermissionsRequiredMixin,
                               UpdateView):
     model = SolicitudSoportesNegociador
     form_class = SolicitudSoportesNegociadorForm
     pk_url_kwarg = 'id_solicitud_soporte'
     success_url = '../../'
     template_name = 'rh/contratacion/solicitud_soportes_negociadores/editar.html'
-    permission_required = "permisos_sican.rh.solicitud_soportes_negociadores.editar"
+    permissions = {
+        "all": ("permisos_sican.rh.contratacion.ver",
+                "permisos_sican.rh.contratacion_negociadores.ver",
+                "permisos_sican.rh.solicitud_soportes_negociadores.ver",
+                "permisos_sican.rh.solicitud_soportes_negociadores.editar"),
+        "any": ()
+    }
+
 
     def get_context_data(self, **kwargs):
         kwargs['nombre'] = SolicitudSoportesNegociador.objects.get(id=self.kwargs['id_solicitud_soporte']).nombre
