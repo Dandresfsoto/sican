@@ -655,9 +655,6 @@ class UserPermissionList(APIView):
             'grupos':{
                 'ver':{'name':'Grupos','link':'/adminuser/grupos/'}
             },
-            'rh_tipo_soporte':{
-                'ver':{'name':'Tipo de soportes','link':'/rh/tipo_soporte/'}
-            },
             'interventoria_formadores':{
                 'ver':{'name':'Consolidado Hv y Contratos','link':'/rh/consolidadoformadores/'}
             },
