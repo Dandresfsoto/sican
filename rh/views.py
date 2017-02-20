@@ -734,14 +734,14 @@ class CargosView(LoginRequiredMixin,
                  TemplateView):
     template_name = 'rh/personal/cargos/lista.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.cargos.ver"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_cargos.ver"),
         "any": ()
     }
 
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.cargos.crear')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_cargos.crear')
         return super(CargosView, self).get_context_data(**kwargs)
 
 class NuevoCargoView(LoginRequiredMixin,
@@ -753,9 +753,9 @@ class NuevoCargoView(LoginRequiredMixin,
     template_name = 'rh/personal/cargos/nuevo.html'
 
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.cargos.ver",
-                "permisos_sican.rh.cargos.crear"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_cargos.ver",
+                "permisos_sican.rh.rh_cargos.crear"),
         "any": ()
     }
 
@@ -768,9 +768,9 @@ class UpdateCargoView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/cargos/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.cargos.ver",
-                "permisos_sican.rh.cargos.editar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_cargos.ver",
+                "permisos_sican.rh.rh_cargos.editar"),
         "any": ()
     }
 
@@ -791,9 +791,9 @@ class DeleteCargoView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/cargos/eliminar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.cargos.ver",
-                "permisos_sican.rh.cargos.eliminar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_cargos.ver",
+                "permisos_sican.rh.rh_cargos.eliminar"),
         "any": ()
     }
 
@@ -811,13 +811,13 @@ class TipoSoporteAdministrativoView(LoginRequiredMixin,
                  TemplateView):
     template_name = 'rh/personal/tipo_soporte/lista.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
+        "all": ("permisos_sican.rh.rh_personal.ver",
                 "permisos_sican.rh.rh_tipo_soporte.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.rh_tipo_soporte.crear')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_tipo_soporte.crear')
         return super(TipoSoporteAdministrativoView, self).get_context_data(**kwargs)
 
 class NuevoTipoSoporteAdministrativoView(LoginRequiredMixin,

@@ -28,7 +28,7 @@ block breadcrum
 
 block scroll_header_panel_content
     div(class="container-fluid container-index")
-        | {% if nuevo_permiso %}
+        | {% if crear %}
         a(href="nuevo",class="link_button")
             paper-button(class="submit") Nuevo
         | {% endif %}
@@ -54,7 +54,7 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/tipo_soporte/rh/",
+                "ajax": "/rest/rh/personal/tipo_soporte/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },

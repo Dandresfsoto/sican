@@ -727,49 +727,7 @@ class UserPermissionList(APIView):
 
 
 
-class CargosRh(BaseDatatableView):
-    """
-    0.id
-    1.nombre
-    2.manual (retorna la url o string vacio)
-    3.descripcion
-    4.permiso para editar
-    5.permiso para eliminar
-    """
-    model = Cargo
-    columns = ['id','nombre','manual','descripcion']
 
-    order_columns = ['','nombre','']
-    max_display_length = 100
-
-    def get_initial_queryset(self):
-        return Cargo.objects.filter(oculto = False)
-
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            q = Q(nombre__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-        for item in qs:
-            try:
-                url = item.manual.url
-            except:
-                url = ""
-
-            json_data.append([
-                item.id,
-                item.nombre,
-                url,
-                item.descripcion,
-                self.request.user.has_perm('permisos_sican.rh.cargos.editar'),
-                self.request.user.has_perm('permisos_sican.rh.cargos.eliminar'),
-            ])
-        return json_data
 
 
 class AdminUserList(BaseDatatableView):
@@ -891,40 +849,7 @@ class AdminUserPermissionList(BaseDatatableView):
             qs = qs.filter(q)
         return qs
 
-class TipoSoporteRh(BaseDatatableView):
-    """
-    0.id
-    1.nombre
-    2.descripcion
-    3.permiso para editar
-    4.permiso para eliminar
-    """
-    model = TipoSoporte
-    columns = ['id','nombre','descripcion']
-    order_columns = ['id','nombre','descripcion']
-    max_display_length = 100
 
-    def prepare_results(self, qs):
-        json_data = []
-        for item in qs:
-            json_data.append([
-                item.id,
-                item.nombre,
-                item.descripcion,
-                self.request.user.has_perm('permisos_sican.rh.rh_tipo_soporte.crear'),
-                self.request.user.has_perm('permisos_sican.rh.rh_tipo_soporte.eliminar')
-            ])
-        return json_data
-
-    def get_initial_queryset(self):
-        return TipoSoporte.objects.exclude(oculto = True)
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            q = Q(nombre__icontains=search) | Q(descripcion__icontains=search)
-            qs = qs.filter(q)
-        return qs
 
 
 
@@ -4751,4 +4676,84 @@ class FormadoresRhSoportes(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.rh.rh_formadores_soportes.eliminar'),
             ])
         return json_data
+
+
+class CargosRh(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.manual (retorna la url o string vacio)
+    3.descripcion
+    4.permiso para editar
+    5.permiso para eliminar
+    """
+    model = Cargo
+    columns = ['id','nombre','manual','descripcion']
+
+    order_columns = ['','nombre','']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Cargo.objects.filter(oculto = False)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            try:
+                url = item.manual.url
+            except:
+                url = ""
+
+            json_data.append([
+                item.id,
+                item.nombre,
+                url,
+                item.descripcion,
+                self.request.user.has_perm('permisos_sican.rh.rh_cargos.editar'),
+                self.request.user.has_perm('permisos_sican.rh.rh_cargos.eliminar'),
+            ])
+        return json_data
+
+class TipoSoporteRh(BaseDatatableView):
+    """
+    0.id
+    1.nombre
+    2.descripcion
+    3.permiso para editar
+    4.permiso para eliminar
+    """
+    model = TipoSoporte
+    columns = ['id','nombre','descripcion']
+    order_columns = ['id','nombre','descripcion']
+    max_display_length = 100
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.descripcion,
+                self.request.user.has_perm('permisos_sican.rh.rh_tipo_soporte.crear'),
+                self.request.user.has_perm('permisos_sican.rh.rh_tipo_soporte.eliminar')
+            ])
+        return json_data
+
+    def get_initial_queryset(self):
+        return TipoSoporte.objects.exclude(oculto = True)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombre__icontains=search) | Q(descripcion__icontains=search)
+            qs = qs.filter(q)
+        return qs
 #-----------------------------------------------------------------------------------------------------------------------

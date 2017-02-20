@@ -36,6 +36,8 @@ urlpatterns = [
     url(r'rh/personal/soportes_negociadores/(?P<id_negociador>\w+)/$', views.NegociadoresRhSoportes.as_view()),
     url(r'rh/personal/formadores/$', views.FormadoresRh.as_view()),
     url(r'rh/personal/soportes_formadores/(?P<id_formador>\w+)/$', views.FormadoresRhSoportes.as_view()),
+    url(r'rh/personal/cargos/$', views.CargosRh.as_view()),
+    url(r'rh/personal/tipo_soporte/$', views.TipoSoporteRh.as_view()),
     #-------------------------------------------------------------------------------------------------------------------
 
     url(r'usuarios/chat_list/$', UserList.as_view()),
@@ -49,11 +51,11 @@ urlpatterns = [
     url(r'adminuser/usuarios/$', AdminUserList.as_view()),
     url(r'adminuser/grupos/$', GroupUserList.as_view()),
 
-    url(r'cargos/rh/$', CargosRh.as_view()),
+
 
     url(r'adminuser/permisos/$', AdminUserPermissionList.as_view()),
 
-    url(r'tipo_soporte/rh/$', TipoSoporteRh.as_view()),
+
 
     url(r'bases/departamentos/$', DepartamentosList.as_view()),
     url(r'bases/municipios/$', MunicipiosList.as_view()),
