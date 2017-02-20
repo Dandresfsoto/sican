@@ -27,13 +27,13 @@ block scroll_header_panel_content
 
     div(class="container-fluid container-index")
         div(class="header-buttons")
-            | {% if nuevo_permiso %}
+            | {% if crear %}
             div(class="block-right")
                 a(href="nuevo",class="link_button")
                     paper-button(class="submit") Nuevo
             | {% endif %}
 
-            | {% if masivo_permiso %}
+            | {% if informes %}
             div
                 select(class="selectpicker",id="select_accion")
                     option(value="") ---------
@@ -86,7 +86,7 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/formadores/rh/",
+                "ajax": "/rest/rh/personal/formadores/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },

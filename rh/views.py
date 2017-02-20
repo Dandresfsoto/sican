@@ -572,14 +572,14 @@ class FormadoresView(LoginRequiredMixin,
                          TemplateView):
     template_name = 'rh/personal/formadores/lista.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.formadores.ver"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_formadores.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores.crear')
-        kwargs['masivo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores.masivo')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_formadores.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_formadores.informes')
         return super(FormadoresView, self).get_context_data(**kwargs)
 
 
@@ -591,9 +591,9 @@ class NuevoFormadorView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/personal/formadores/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.formadores.ver",
-                "permisos_sican.rh.formadores.crear"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_formadores.ver",
+                "permisos_sican.rh.rh_formadores.crear"),
         "any": ()
     }
 
@@ -607,9 +607,9 @@ class UpdateFormadorView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/formadores/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.formadores.ver",
-                "permisos_sican.rh.formadores.editar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_formadores.ver",
+                "permisos_sican.rh.rh_formadores.editar"),
         "any": ()
     }
 
@@ -622,9 +622,9 @@ class DeleteFormadorView(LoginRequiredMixin,
     success_url = '/rh/formadores/'
     template_name = 'rh/personal/formadores/eliminar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.formadores.ver",
-                "permisos_sican.rh.formadores.eliminar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_formadores.ver",
+                "permisos_sican.rh.rh_formadores.eliminar"),
         "any": ()
     }
 
@@ -642,16 +642,16 @@ class SoporteFormadorView(LoginRequiredMixin,
                          TemplateView):
     template_name = 'rh/personal/formadores/soportes/lista.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.formadores.ver",
-                "permisos_sican.rh.formadores_soportes.ver"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_formadores.ver",
+                "permisos_sican.rh.rh_formadores_soportes.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
         kwargs['nombre_formador'] = Formador.objects.get(id=kwargs['pk']).get_full_name
         kwargs['id_formador'] = kwargs['pk']
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.rh.formadores_soportes.crear')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_formadores_soportes.crear')
         return super(SoporteFormadorView, self).get_context_data(**kwargs)
 
 class NuevoSoporteFormadorView(LoginRequiredMixin,
@@ -662,10 +662,10 @@ class NuevoSoporteFormadorView(LoginRequiredMixin,
     success_url = '../'
     template_name = 'rh/personal/formadores/soportes/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.formadores.ver",
-                "permisos_sican.rh.formadores_soportes.ver",
-                "permisos_sican.rh.formadores_soportes.crear"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_formadores.ver",
+                "permisos_sican.rh.rh_formadores_soportes.ver",
+                "permisos_sican.rh.rh_formadores_soportes.crear"),
         "any": ()
     }
 
@@ -685,10 +685,10 @@ class UpdateSoporteFormadorView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/formadores/soportes/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.formadores.ver",
-                "permisos_sican.rh.formadores_soportes.ver",
-                "permisos_sican.rh.formadores_soportes.editar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_formadores.ver",
+                "permisos_sican.rh.rh_formadores_soportes.ver",
+                "permisos_sican.rh.rh_formadores_soportes.editar"),
         "any": ()
     }
 
@@ -709,10 +709,10 @@ class DeleteSoporteFormadorView(LoginRequiredMixin,
     success_url = '../../'
     template_name = 'rh/personal/formadores/soportes/eliminar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
-                "permisos_sican.rh.formadores.ver",
-                "permisos_sican.rh.formadores_soportes.ver",
-                "permisos_sican.rh.formadores_soportes.eliminar"),
+        "all": ("permisos_sican.rh.rh_personal.ver",
+                "permisos_sican.rh.rh_formadores.ver",
+                "permisos_sican.rh.rh_formadores_soportes.ver",
+                "permisos_sican.rh.rh_formadores_soportes.eliminar"),
         "any": ()
     }
 
