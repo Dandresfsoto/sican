@@ -2605,125 +2605,7 @@ class SemanasList(BaseDatatableView):
 
 
 
-class NegociadoresRhSoportes(BaseDatatableView):
-    """
-    0.id
-    1.tipo
-    2.fecha
-    3.descripcion
-    4.archivo (url o string vacio)
-    5.creacion
-    6.permiso para editar
-    7.permiso para eliminar
-    """
-    model = SoporteNegociador
-    columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
 
-    order_columns = ['id','tipo','fecha','descripcion']
-    max_display_length = 100
-
-    def get_initial_queryset(self):
-        return SoporteNegociador.objects.filter(oculto = False,negociador__id=self.kwargs['id_negociador'])
-
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            q = Q(tipo__nombre__icontains=search) | Q(tipo__descripcion__icontains=search) | Q(fecha__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-        for item in qs:
-            json_data.append([
-                item.id,
-                item.tipo.nombre,
-                item.fecha,
-                item.tipo.descripcion,
-                item.get_archivo_url(),
-                item.creacion,
-                self.request.user.has_perm('permisos_sican.rh.negociadores_soportes.editar'),
-                self.request.user.has_perm('permisos_sican.rh.negociadores_soportes.eliminar'),
-            ])
-        return json_data
-
-
-class NegociadoresRh(BaseDatatableView):
-    """
-    0.id
-    1.nombres
-    2.cargo
-    3.region
-    4.cedula
-    5.correo_personal
-    6.celular_personal
-    7.profesion
-    8.fecha_contratacion
-    9.fecha_terminacion
-    10.banco
-    11.tipo_cuenta
-    12.numero_cuenta
-    13.eps
-    14.pension
-    15.arl
-    16.permiso para editar
-    17.permiso para eliminar
-    18.permiso para ver soportes
-    """
-    model = Negociador
-    columns = ['id','nombres','cargo','region','cedula','correo_personal','celular_personal','profesion',
-               'fecha_contratacion','fecha_terminacion','banco','tipo_cuenta','numero_cuenta','eps',
-               'pension','arl']
-
-    order_columns = ['','nombres','cargo','']
-    max_display_length = 100
-
-    def get_initial_queryset(self):
-        return Negociador.objects.filter(oculto = False)
-
-    def filter_queryset(self, qs):
-        search = self.request.GET.get(u'search[value]', None)
-        if search:
-            search = unicode(search).capitalize()
-            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
-                Q(region__numero__icontains=search) | Q(cedula__icontains=search)
-            qs = qs.filter(q)
-        return qs
-
-    def prepare_results(self, qs):
-        json_data = []
-
-
-        for item in qs:
-
-            if item.banco != None:
-                banco = item.banco.nombre
-            else:
-                banco = ''
-
-            json_data.append([
-                item.id,
-                item.nombres + " " + item.apellidos,
-                item.cargo.nombre,
-                item.region.nombre,
-                item.cedula,
-                item.correo_personal,
-                item.celular_personal,
-                item.profesion,
-                item.fecha_contratacion,
-                item.fecha_terminacion,
-                banco,
-                item.tipo_cuenta,
-                item.numero_cuenta,
-                item.eps,
-                item.pension,
-                item.arl,
-                self.request.user.has_perm('permisos_sican.rh.lideres.editar'),
-                self.request.user.has_perm('permisos_sican.rh.lideres.eliminar'),
-                self.request.user.has_perm('permisos_sican.rh.lideres.ver'),
-            ])
-        return json_data
 
 class SemanasFormacionList(BaseDatatableView):
     """
@@ -4747,4 +4629,123 @@ class LideresRhSoportes(BaseDatatableView):
 
 
 
+class NegociadoresRh(BaseDatatableView):
+    """
+    0.id
+    1.nombres
+    2.cargo
+    3.region
+    4.cedula
+    5.correo_personal
+    6.celular_personal
+    7.profesion
+    8.fecha_contratacion
+    9.fecha_terminacion
+    10.banco
+    11.tipo_cuenta
+    12.numero_cuenta
+    13.eps
+    14.pension
+    15.arl
+    16.permiso para editar
+    17.permiso para eliminar
+    18.permiso para ver soportes
+    """
+    model = Negociador
+    columns = ['id','nombres','cargo','region','cedula','correo_personal','celular_personal','profesion',
+               'fecha_contratacion','fecha_terminacion','banco','tipo_cuenta','numero_cuenta','eps',
+               'pension','arl']
+
+    order_columns = ['','nombres','cargo','']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Negociador.objects.filter(oculto = False)
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            search = unicode(search).capitalize()
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cargo__nombre__icontains=search) | \
+                Q(region__numero__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+
+        for item in qs:
+
+            if item.banco != None:
+                banco = item.banco.nombre
+            else:
+                banco = ''
+
+            json_data.append([
+                item.id,
+                item.nombres + " " + item.apellidos,
+                item.cargo.nombre,
+                item.region.nombre,
+                item.cedula,
+                item.correo_personal,
+                item.celular_personal,
+                item.profesion,
+                item.fecha_contratacion,
+                item.fecha_terminacion,
+                banco,
+                item.tipo_cuenta,
+                item.numero_cuenta,
+                item.eps,
+                item.pension,
+                item.arl,
+                self.request.user.has_perm('permisos_sican.rh.rh_negociadores.editar'),
+                self.request.user.has_perm('permisos_sican.rh.rh_negociadores.eliminar'),
+                self.request.user.has_perm('permisos_sican.rh.rh_negociadores.ver'),
+            ])
+        return json_data
+
+
+class NegociadoresRhSoportes(BaseDatatableView):
+    """
+    0.id
+    1.tipo
+    2.fecha
+    3.descripcion
+    4.archivo (url o string vacio)
+    5.creacion
+    6.permiso para editar
+    7.permiso para eliminar
+    """
+    model = SoporteNegociador
+    columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
+
+    order_columns = ['id','tipo','fecha','descripcion']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return SoporteNegociador.objects.filter(oculto = False,negociador__id=self.kwargs['id_negociador'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(tipo__nombre__icontains=search) | Q(tipo__descripcion__icontains=search) | Q(fecha__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.tipo.nombre,
+                item.fecha,
+                item.tipo.descripcion,
+                item.get_archivo_url(),
+                item.creacion,
+                self.request.user.has_perm('permisos_sican.rh.rh_negociadores_soportes.editar'),
+                self.request.user.has_perm('permisos_sican.rh.rh_negociadores_soportes.eliminar'),
+            ])
+        return json_data
 #-----------------------------------------------------------------------------------------------------------------------
