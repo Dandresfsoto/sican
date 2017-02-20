@@ -828,7 +828,7 @@ class NuevoTipoSoporteAdministrativoView(LoginRequiredMixin,
     success_url = '/rh/personal/tipo_soporte/'
     template_name = 'rh/personal/tipo_soporte/nuevo.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
+        "all": ("permisos_sican.rh.rh_personal.ver",
                 "permisos_sican.rh.rh_tipo_soporte.ver",
                 "permisos_sican.rh.rh_tipo_soporte.crear"),
         "any": ()
@@ -843,7 +843,7 @@ class UpdateTipoSoporteAdministrativoView(LoginRequiredMixin,
     success_url = '/rh/personal/tipo_soporte/'
     template_name = 'rh/personal/tipo_soporte/editar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
+        "all": ("permisos_sican.rh.rh_personal.ver",
                 "permisos_sican.rh.rh_tipo_soporte.ver",
                 "permisos_sican.rh.rh_tipo_soporte.editar"),
         "any": ()
@@ -857,7 +857,7 @@ class DeleteTipoSoporteAdministrativoView(LoginRequiredMixin,
     success_url = '/rh/personal/tipo_soporte/'
     template_name = 'rh/personal/tipo_soporte/eliminar.html'
     permissions = {
-        "all": ("permisos_sican.rh.personal.ver",
+        "all": ("permisos_sican.rh.rh_personal.ver",
                 "permisos_sican.rh.rh_tipo_soporte.ver",
                 "permisos_sican.rh.rh_tipo_soporte.eliminar"),
         "any": ()
