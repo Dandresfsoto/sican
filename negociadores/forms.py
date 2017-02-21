@@ -19,15 +19,9 @@ class NegociadorForm(forms.ModelForm):
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
-                'Usuario del sistema',
+                'Usuario del sistema y Region',
                 Div(
                     Div('usuario',css_class='col-sm-6'),
-                    css_class = 'row'
-                ),
-            ),
-            Fieldset(
-                'Región',
-                Div(
                     Div('region',css_class='col-sm-6'),
                     css_class = 'row'
                 ),
@@ -73,27 +67,6 @@ class NegociadorForm(forms.ModelForm):
                     Div('numero_cuenta',css_class='col-sm-4'),
                     css_class = 'row'
                 ),
-            ),
-            Fieldset(
-                'Lider',
-                Div(
-                    Div('lider',css_class='col-sm-12'),
-                    css_class = 'row'
-                )
-            ),
-            Fieldset(
-                'Departamentos',
-                Div(
-                    Div('departamentos',css_class='col-sm-12'),
-                    css_class = 'row'
-                )
-            ),
-            Fieldset(
-                'Ruta',
-                Div(
-                    Div('codigo_ruta',css_class='col-sm-12'),
-                    css_class = 'row'
-                )
             ),
         )
 
