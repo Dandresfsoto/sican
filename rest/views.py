@@ -4026,15 +4026,16 @@ class LideresRhSoportes(BaseDatatableView):
     1.tipo
     2.fecha
     3.descripcion
-    4.archivo (url o string vacio)
-    5.creacion
-    6.permiso para editar
-    7.permiso para eliminar
+    4.contrato
+    5.archivo (url o string vacio)
+    6.creacion
+    7.permiso para editar
+    8.permiso para eliminar
     """
     model = SoporteLider
-    columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
+    columns = ['id','tipo','fecha','descripcion','contrato','get_archivo_url','creacion']
 
-    order_columns = ['id','tipo','fecha','descripcion']
+    order_columns = ['id','tipo','fecha','descripcion','contrato']
     max_display_length = 100
 
     def get_initial_queryset(self):
@@ -4056,6 +4057,7 @@ class LideresRhSoportes(BaseDatatableView):
                 item.tipo.nombre,
                 item.fecha,
                 item.tipo.descripcion,
+                item.contrato.nombre if item.contrato != None else '',
                 item.get_archivo_url(),
                 item.creacion,
                 self.request.user.has_perm('permisos_sican.rh.rh_lideres_soportes.editar'),
@@ -4146,15 +4148,16 @@ class NegociadoresRhSoportes(BaseDatatableView):
     1.tipo
     2.fecha
     3.descripcion
-    4.archivo (url o string vacio)
-    5.creacion
-    6.permiso para editar
-    7.permiso para eliminar
+    4.contrato
+    5.archivo (url o string vacio)
+    6.creacion
+    7.permiso para editar
+    8.permiso para eliminar
     """
     model = SoporteNegociador
-    columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
+    columns = ['id','tipo','fecha','descripcion','contrato','get_archivo_url','creacion']
 
-    order_columns = ['id','tipo','fecha','descripcion']
+    order_columns = ['id','tipo','fecha','descripcion','contrato']
     max_display_length = 100
 
     def get_initial_queryset(self):
@@ -4176,6 +4179,7 @@ class NegociadoresRhSoportes(BaseDatatableView):
                 item.tipo.nombre,
                 item.fecha,
                 item.tipo.descripcion,
+                item.contrato.nombre if item.contrato != None else '',
                 item.get_archivo_url(),
                 item.creacion,
                 self.request.user.has_perm('permisos_sican.rh.rh_negociadores_soportes.editar'),
@@ -4274,15 +4278,16 @@ class FormadoresRhSoportes(BaseDatatableView):
     1.tipo
     2.fecha
     3.descripcion
-    4.archivo (url o string vacio)
-    5.creacion
-    6.permiso para editar
-    7.permiso para eliminar
+    4.contrato
+    5.archivo (url o string vacio)
+    6.creacion
+    7.permiso para editar
+    8.permiso para eliminar
     """
     model = SoporteFormador
-    columns = ['id','tipo','fecha','descripcion','get_archivo_url','creacion']
+    columns = ['id','tipo','fecha','descripcion','contrato','get_archivo_url','creacion']
 
-    order_columns = ['id','tipo','fecha','descripcion']
+    order_columns = ['id','tipo','fecha','descripcion','contrato']
     max_display_length = 100
 
     def get_initial_queryset(self):
@@ -4304,6 +4309,7 @@ class FormadoresRhSoportes(BaseDatatableView):
                 item.tipo.nombre,
                 item.fecha,
                 item.tipo.descripcion,
+                item.contrato.nombre if item.contrato != None else '',
                 item.get_archivo_url(),
                 item.creacion,
                 self.request.user.has_perm('permisos_sican.rh.rh_formadores_soportes.editar'),

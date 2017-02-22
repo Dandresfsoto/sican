@@ -72,32 +72,6 @@ class Negociador(models.Model):
     def get_full_name(self):
         return self.nombres + " " + self.apellidos
 
-class Soporte(models.Model):
-    negociador = models.ForeignKey(Negociador)
-    creacion = models.DateField(auto_now=True)
-    fecha = models.DateField()
-    tipo = models.ForeignKey(TipoSoporte,related_name='soporte_negociador')
-    descripcion = models.TextField(max_length=1000,blank=True)
-    oculto = models.BooleanField(default=False)
-    archivo = models.FileField(upload_to='Negociadores/Soportes/',blank=True)
-
-    class Meta:
-        ordering = ['negociador']
-
-    def __unicode__(self):
-        return str(self.lider.cedula)
-
-    def get_archivo_url(self):
-        try:
-            url = self.archivo.url
-        except:
-            url = ""
-        return url
-
-
-    def archivo_filename(self):
-        return os.path.basename(self.archivo.name)
-
 class SolicitudSoportes(models.Model):
     nombre = models.CharField(max_length=200)
     soportes_requeridos = models.ManyToManyField(TipoSoporte,related_name='tipo_soporte_negociadores')
@@ -116,3 +90,30 @@ class Contrato(models.Model):
     soporte_renuncia = models.FileField(upload_to='Contratos/Negociadores/Soporte Renuncia/',blank=True,null=True)
     liquidado = models.BooleanField(default=False)
     soporte_liquidacion = models.FileField(upload_to='Contratos/Negociadores/Soporte Liquidacion/',blank=True,null=True)
+
+class Soporte(models.Model):
+    negociador = models.ForeignKey(Negociador)
+    creacion = models.DateField(auto_now=True)
+    fecha = models.DateField()
+    tipo = models.ForeignKey(TipoSoporte,related_name='soporte_negociador')
+    descripcion = models.TextField(max_length=1000,blank=True)
+    oculto = models.BooleanField(default=False)
+    archivo = models.FileField(upload_to='Negociadores/Soportes/',blank=True)
+    contrato = models.ForeignKey(Contrato,blank=True,null=True)
+
+    class Meta:
+        ordering = ['negociador']
+
+    def __unicode__(self):
+        return str(self.lider.cedula)
+
+    def get_archivo_url(self):
+        try:
+            url = self.archivo.url
+        except:
+            url = ""
+        return url
+
+
+    def archivo_filename(self):
+        return os.path.basename(self.archivo.name)
