@@ -49,6 +49,7 @@ urlpatterns = [
     url(r'^requerimientos/', include('requerimientos.urls', namespace='requerimientos')),
     url(r'^diplomas/', Diplomas.as_view()),
     url(r'^negociadores/', include('negociadores.urls', namespace='negociadores')),
+    url(r'^contratos/', include('contratos.urls', namespace='contratos')),
 ]
 
 if settings.DEBUG:

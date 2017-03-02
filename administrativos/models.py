@@ -6,10 +6,14 @@ from cargos.models import Cargo
 from bancos.models import Banco
 from rh.models import TipoSoporte
 import os
+from usuarios.models import User
 
 # Create your models here.
 
 class Administrativo(models.Model):
+
+    usuario = models.ForeignKey(User,blank=True,null=True,related_name='usuario_sistema_administrativo')
+
     #---------- REGION----------------------
     region = models.ManyToManyField(Region)
 
@@ -81,3 +85,22 @@ class Soporte(models.Model):
 
     def archivo_filename(self):
         return os.path.basename(self.archivo.name)
+
+class SolicitudSoportes(models.Model):
+    nombre = models.CharField(max_length=200)
+    soportes_requeridos = models.ManyToManyField(TipoSoporte,related_name='soportes_requeridos_contratos_administrativos')
+
+    def __unicode__(self):
+        return self.nombre
+
+class Contrato(models.Model):
+    nombre = models.CharField(max_length=200)
+    administrativo = models.ForeignKey(Administrativo)
+    soportes_requeridos = models.ForeignKey(SolicitudSoportes)
+    fecha = models.DateTimeField(auto_now_add = True)
+    fecha_inicio = models.DateField(blank=True,null=True)
+    fecha_fin = models.DateField(blank=True,null=True)
+    renuncia = models.BooleanField(default=False)
+    soporte_renuncia = models.FileField(upload_to='Contratos/Administrativos/Soporte Renuncia/',blank=True,null=True)
+    liquidado = models.BooleanField(default=False)
+    soporte_liquidacion = models.FileField(upload_to='Contratos/Administrativos/Soporte Liquidacion/',blank=True,null=True)

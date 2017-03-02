@@ -132,14 +132,32 @@ class ContratoForm(forms.ModelForm):
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
-                'Información de contrato',
+                'Información inicial de contrato',
                 Div(
                     Div('nombre',css_class='col-sm-6'),
                     Div('soportes_requeridos',css_class='col-sm-6'),
                     css_class = 'row'
                 ),
                 Div(
+                    Div('fecha_inicio',css_class='col-sm-6'),
+                    Div('fecha_fin',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
                     Div('negociador',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+            ),
+            Fieldset(
+                'Soportes',
+                Div(
+                    Div('soporte_renuncia',css_class='col-sm-6'),
+                    Div('soporte_liquidacion',css_class='col-sm-6'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('renuncia',css_class='col-sm-6'),
+                    Div('liquidado',css_class='col-sm-6'),
                     css_class = 'row'
                 ),
             ),

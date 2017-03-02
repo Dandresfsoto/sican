@@ -94,7 +94,7 @@ class Contrato(models.Model):
 class Soporte(models.Model):
     negociador = models.ForeignKey(Negociador)
     creacion = models.DateField(auto_now=True)
-    fecha = models.DateField()
+    fecha = models.DateField(blank=True,null=True)
     tipo = models.ForeignKey(TipoSoporte,related_name='soporte_negociador')
     descripcion = models.TextField(max_length=1000,blank=True)
     oculto = models.BooleanField(default=False)

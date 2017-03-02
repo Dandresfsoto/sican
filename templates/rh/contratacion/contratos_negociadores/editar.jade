@@ -39,14 +39,24 @@ block scroll_header_panel_content
                         paper-button(class="submit",id="submit_form") Guardar
 block body_script_content
     script.
-        $('#id_region').selectpicker({});
-        $('#id_departamentos').selectpicker({});
-        $('#id_fecha_contratacion').datetimepicker({
+        $("#id_soporte_renuncia").fileinput({
+            language: "es",
+            showRemove: false,
+            showUpload: false
+        });
+
+        $("#id_soporte_liquidacion").fileinput({
+            language: "es",
+            showRemove: false,
+            showUpload: false
+        });
+
+        $('#id_fecha_inicio').datetimepicker({
             locale: 'es',
             viewMode: 'years',
             format: 'DD/MM/YYYY'
         });
-        $('#id_fecha_terminacion').datetimepicker({
+        $('#id_fecha_fin').datetimepicker({
             locale: 'es',
             viewMode: 'years',
             format: 'DD/MM/YYYY'
