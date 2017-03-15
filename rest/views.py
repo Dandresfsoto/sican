@@ -535,14 +535,19 @@ class UserPermissionList(APIView):
                   'id':'contratos',
                   'links':[]
             },
+            'seguridad_social':{'name':'Seguridad Social',
+                  'icon':'image:healing',
+                  'id':'seguridad_social',
+                  'links':[]
+            },
         }
 
         links = {
             'contratos_legalizar':{
                 'ver':{'name':'Legalización de contratos','link':'/contratos/legalizacion/'}
             },
-            'seguridadsocial':{
-                'ver':{'name':'Soportes de seguridad social','link':'/formadores/seguridadsocial/'}
+            'ss_seguridad_social':{
+                'ver':{'name':'Soportes de seguridad social','link':'/contratos/seguridadsocial/'}
             },
             'seguridadsocial_lideres':{
                 'ver':{'name':'Soportes de seguridad social','link':'/lideres/seguridadsocial/'}

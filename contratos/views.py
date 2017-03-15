@@ -3,6 +3,7 @@ from django.views.generic import TemplateView, CreateView, DeleteView, UpdateVie
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin, MultiplePermissionsRequiredMixin
 
 from formadores.forms import LegalizacionForm as LegalizacionFormFormadores
+from formadores.forms import LegalizacionSeguridadForm as LegalizacionSeguridadFormFormadores
 from lideres.forms import LegalizacionForm as LegalizacionFormLideres
 from negociadores.forms import LegalizacionForm as LegalizacionFormNegociadores
 
@@ -233,3 +234,91 @@ class LegalizacionContratoNegociadorView(LoginRequiredMixin,
         return super(LegalizacionContratoNegociadorView,self).form_valid(form)
 
 #-----------------------------------------------------------------------------------------------------------------------
+
+
+
+#------------------------------------------------2. SEGURIDAD SOCIAL----------------------------------------------------
+
+class SeguridadSocialView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    '''
+    '''
+    template_name = 'contratos/legalizacion/seguridad_social.html'
+    permission_required = "permisos_sican.seguridad_social.ss_seguridad_social.ver"
+
+
+class SeguridadSocialAdministrativosView(LoginRequiredMixin,
+                         MultiplePermissionsRequiredMixin,
+                         TemplateView):
+    '''
+    DatatableView enlazada a la lista de formadores y cantidad de contratos de cada uno
+    '''
+    template_name = 'contratos/seguridad_social/administrativos/lista.html'
+    login_url = '../'
+    permissions = {
+        "all": ("permisos_sican.seguridad_social.ss_seguridad_social.ver",
+                "permisos_sican.seguridad_social.ss_seguridad_social_administrativos.ver"),
+        "any": ()
+    }
+
+
+#------------------------------------------- 2.1 SEGURIDAD SOCIAL LIDERES ----------------------------------------------
+
+class SeguridadSocialFormadoresView(LoginRequiredMixin,
+                         MultiplePermissionsRequiredMixin,
+                         TemplateView):
+    '''
+    DatatableView enlazada a la lista de formadores y cantidad de contratos de cada uno
+    '''
+    template_name = 'contratos/seguridad_social/formadores/lista.html'
+    login_url = '../'
+    permissions = {
+        "all": ("permisos_sican.seguridad_social.ss_seguridad_social.ver",
+                "permisos_sican.seguridad_social.ss_seguridad_social_formadores.ver"),
+        "any": ()
+    }
+
+class SeguridadSocialFormadorView(LoginRequiredMixin,
+                              MultiplePermissionsRequiredMixin,
+                              FormView):
+    form_class = LegalizacionSeguridadFormFormadores
+    success_url = '../../'
+    template_name = 'contratos/seguridad_social/formadores/seguridad_social.html'
+    permissions = {
+        "all": ("permisos_sican.seguridad_social.ss_seguridad_social.ver",
+                "permisos_sican.seguridad_social.ss_seguridad_social_formadores.ver",
+                "permisos_sican.seguridad_social.ss_seguridad_social_formadores.editar"),
+        "any": ()
+    }
+
+
+    def get_context_data(self, **kwargs):
+        kwargs['nombre_contrato'] = ContratosFormadores.objects.get(id = self.kwargs['id_contrato']).nombre
+        return super(SeguridadSocialFormadorView,self).get_context_data(**kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            contrato = ContratosFormadores.objects.get(id = kwargs['id_contrato'])
+        except:
+            return HttpResponseRedirect('../../')
+
+        else:
+            if request.user == contrato.formador.usuario:
+                return super(SeguridadSocialFormadorView,self).dispatch(request,*args,**kwargs)
+            else:
+                return HttpResponseRedirect('../../')
+
+    def get_initial(self):
+        return {'id_contrato': self.kwargs['id_contrato']}
+
+    def form_valid(self, form):
+        contrato = ContratosFormadores.objects.get(id = self.kwargs['id_contrato'])
+        for field in form.cleaned_data.keys():
+            if field != 'ids':
+                tipo = TipoSoporteFormador.objects.get(id = field)
+                soporte, created = SoporteFormador.objects.get_or_create(contrato = contrato,formador = contrato.formador,tipo = tipo)
+                soporte.fecha = datetime.datetime.now().date()
+                soporte.archivo = form.cleaned_data[field]
+                soporte.save()
+        return super(SeguridadSocialFormadorView,self).form_valid(form)

@@ -1,12 +1,11 @@
-extends ../../../../../inicio
+extends ../../../inicio
 block scroll_header_panel_title
-    span(class="title") LIDERES
+    span(class="title") SEGURIDAD SOCIAL - FORMADORES
 block help_content
     p(class="title-help") Descripción:
     p.
-        En esta pagina se visualizan todos los soportes cargados en el sistema de información para el lider
-        "{{nombre_formador}}", puedes ordenar la tabla alfabeticamente haciendo click en la cabecera de algunas
-        columnas.
+        En esta ventana observas el historial de contratos establecidos entre tú y la Asociación Nacional para el Desarrollo Social -
+        ANDES; para detallar la información individual del contrato haz click en el nombre.
 block head_content_inicio
     link(rel="import",href="{% static 'bower_components/paper-button/paper-button.html'%}")
 block custom_style_panel
@@ -18,42 +17,30 @@ block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
-    a(href="/rh/personal/",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Personal
+    a(href="/contratos/seguridadsocial/",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Soportes de seguridad social
             iron-icon(icon="check",item-icon)
-    a(href="/rh/personal/acceso/",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Acceso
-            iron-icon(icon="check",item-icon)
-    a(href="../../",class="link_button")
-        paper-icon-item(class="breadcrumb-paper-icon-item-class") Listado de lideres
-            iron-icon(icon="check",item-icon)
-    paper-icon-item(class="breadcrum_active",disabled) Soportes de {{nombre_lider}}
+    paper-icon-item(class="breadcrum_active",disabled) Formadores
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
     div(class="container-fluid container-index")
-        | {% if crear %}
-        a(href="nuevo",class="link_button")
-            paper-button(class="submit") Nuevo soporte
-        | {% endif %}
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
                     th
-                    th Tipo de soporte
-                    th Fecha
-                    th Descripcion
-                    th Contrato
-                    th Archivo
-                    th Eliminar
+                    th Nombre
+                    th Fecha Inicio
+                    th Fecha Finalización
+                    th Terminación por renuncia
+                    th Contrato liquidado
             tbody
                 tr
                     td
-                    td Tipo de soporte
-                    td Fecha
-                    td Descripcion
-                    td Contrato
-                    td Archivo
-                    td Eliminar
+                    td Nombre
+                    td Fecha Inicio
+                    td Fecha Finalización
+                    td Terminación por renuncia
+                    td Contrato liquidado
 block body_script_content
     script.
         $(document).ready(function () {
@@ -63,11 +50,11 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/rh/personal/soportes_lideres/{{id_lider}}/",
+                "ajax": "/rest/contratos/legalizacion/formadores/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
-                "order": [[1, "desc"]],
+                "order": [[1, "asc"]],
                 "columns": [
                     {
                         "className": 'details-control',
@@ -79,16 +66,12 @@ block body_script_content
                         "data": 1,
                         "render": function (data, type, row, meta) {
                             if (row[7]) {
-                                return '<a href="editar/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
+                                return '<a href="contrato/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
                                 return data;
                             }
                         },
-                        "orderable": true,
-                    },
-                    {
-                        "data": 2,
                         "orderable": true,
                     },
                     {
@@ -104,28 +87,29 @@ block body_script_content
                         "className": 'text-center',
                         "data": null,
                         "render": function (data, type, row, meta) {
-                            if (row[5] != '') {
-                                return '<a href="' + row[5] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
+                            if (row[5]) {
+                                return 'Si';
                             }
                             else {
-                                return '';
+                                return 'No';
                             }
                         },
+                        "defaultContent": ''
                     },
                     {
                         "orderable": false,
                         "className": 'text-center',
                         "data": null,
                         "render": function (data, type, row, meta) {
-                            if (row[8]) {
-                                return '<a href="eliminar/' + row[0] + '" style="color:#004c99;"><img src="/static/img/delete.png" height="24"></a>';
+                            if (row[6]) {
+                                return 'Si';
                             }
                             else {
-                                return '<img src="/static/img/delete_gray.png" height="24">';
+                                return 'No';
                             }
                         },
                         "defaultContent": ''
-                    },
+                    }
                 ]
             });
             // Add event listener for opening and closing details
@@ -148,7 +132,7 @@ block body_script_content
             // `d` is the original data object for the row
             return '<table class="table table-striped">' +
                     '<tr>' +
-                    '<td><p class="bold-p">Fecha de creación:</p>' + d[6] + '</td>' +
+                    '<td><p class="bold-p">Fecha de creación:</p>' + d[2] + '</td>' +
                     '</tr>' +
                     '</table>';
         }

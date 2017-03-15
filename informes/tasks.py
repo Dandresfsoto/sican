@@ -1138,7 +1138,7 @@ def matriz_chequeo(email,id_diplomado):
                           {'letter':'AS','id':18},
                           {'letter':'AT','id':19},
                           {'letter':'AD','id':20},
-                          {'letter':'AI','id':21},
+                          {'letter':'AH','id':21},
                           {'letter':'AJ','id':22},
                           {'letter':'AO','id':23},
                           {'letter':'AQ','id':24},

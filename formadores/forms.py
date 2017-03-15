@@ -2523,7 +2523,7 @@ class LegalizacionSeguridadForm(forms.Form):
 
         fields = []
 
-        for soporte in contrato.soportes_requeridos.soportes_requeridos.filter(categoria = 'Seguridad Social'):
+        for soporte in contrato.soportes_requeridos.soportes_requeridos.filter(categoria = 'Seguridad Social').order_by('nombre'):
 
             tipo = TipoSoporte.objects.get(id = soporte.id)
 
