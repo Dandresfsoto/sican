@@ -27,15 +27,25 @@ class EvidenciaForm(forms.ModelForm):
 
         queryset = Beneficiario.objects.filter(formador__id=kwargs['initial']['id_formador'])
         evidencias = Evidencia.objects.filter(formador = formador,entregable = entregable)
-        reds = Red.objects.filter(evidencias__id__in = evidencias.values_list('id',flat=True))
+        #reds = Red.objects.filter(evidencias__id__in = evidencias.values_list('id',flat=True))
 
         exclude_validados = list(evidencias.exclude(beneficiarios_validados = None).values_list('beneficiarios_validados__id',flat=True))
 
         exclude_enviados = []
 
-        for evidencia in evidencias.filter(id__in = reds.filter(retroalimentacion = False).values_list('evidencias__id',flat=True)):
-            for cargado in evidencia.beneficiarios_cargados.all():
-                exclude_enviados.append(cargado.id)
+        for red_id in evidencias.values_list('red_id',flat=True):
+            try:
+                red = Red.objects.get(id = red_id)
+            except:
+                pass
+            else:
+                if red.retroalimentacion:
+                    for evidencia in evidencias.filter(red_id = red_id):
+                        for cargado in evidencia.beneficiarios_cargados.all():
+                            exclude_enviados.append(cargado.id)
+            #for evidencia in evidencias.filter(id__in = reds.filter(retroalimentacion = False).values_list('evidencias__id',flat=True)):
+            #    for cargado in evidencia.beneficiarios_cargados.all():
+            #        exclude_enviados.append(cargado.id)
 
 
         self.fields['beneficiarios_cargados'].queryset = queryset.exclude(id__in = exclude_validados + exclude_enviados)
