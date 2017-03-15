@@ -33,13 +33,13 @@ class EvidenciaForm(forms.ModelForm):
 
         exclude_enviados = []
 
-        for red_id in evidencias.values_list('red_id',flat=True):
+        for red_id in evidencias.values_list('red_id',flat=True).distinct():
             try:
                 red = Red.objects.get(id = red_id)
             except:
                 pass
             else:
-                if red.retroalimentacion:
+                if not red.retroalimentacion:
                     for evidencia in evidencias.filter(red_id = red_id):
                         for cargado in evidencia.beneficiarios_cargados.all():
                             exclude_enviados.append(cargado.id)
