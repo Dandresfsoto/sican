@@ -55,7 +55,7 @@ from evidencias.models import Evidencia
 from requerimientos.models import Requerimiento
 from evidencias.models import Red, CargaMasiva as CargaMasivaEvidencias
 from django.utils.timezone import localtime
-from informes.tasks import zip_hv, zip_contrato
+from informes.tasks import zip_hv, zip_contrato, actividades_virtuales
 from informes.tasks import descargas_certificados_escuelatic, progreso_listados_actas, matriz_chequeo_actividad, progreso_listados_actas_aprobadas
 from evidencias.models import Subsanacion
 from django.db.models import Sum
@@ -69,6 +69,7 @@ from lideres.models import SolicitudSoportes as SolicitudSoportesLider
 from negociadores.models import Contrato as ContratoNegociador
 from negociadores.models import SolicitudSoportes as SolicitudSoportesNegociador
 from administrativos.models import Contrato as ContratoAdministrativo
+from informes.tasks import matriz_chequeo_compilada
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -260,6 +261,10 @@ class ReportesView(APIView):
             x = build_consolidado_aprobacion_red.delay(request.user.email)
         if id_accion == '30':
             x = aprobados_niveles.delay(request.user.email)
+        if id_accion == '31':
+            x = actividades_virtuales.delay(request.user.email)
+        if id_accion == '32':
+            x = matriz_chequeo_compilada.delay(request.user.email)
 
         return HttpResponse(status=200)
 

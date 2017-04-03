@@ -1971,14 +1971,6 @@ def descargas_certificados_escuelatic(email):
     return "Reporte generado exitosamente"
 
 @app.task
-def compilado_matriz_chequeo():
-    matriz_chequeo.delay('sistemas@asoandes.org','1')
-    matriz_chequeo.delay('sistemas@asoandes.org','2')
-    matriz_chequeo.delay('sistemas@asoandes.org','3')
-    matriz_chequeo.delay('sistemas@asoandes.org','4')
-    return "Reporte diario generado"
-
-@app.task
 def progreso_listados_actas(email):
     usuario = User.objects.get(email=email)
     nombre = "Progreso de carga listados de asistencia y actas de compromiso"
@@ -2935,3 +2927,560 @@ def aprobados_niveles(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
+
+@app.task
+def actividades_virtuales(id_red):
+
+    red = Red.objects.get(id = id_red)
+    output = StringIO()
+
+    wb = openpyxl.Workbook()
+    ws = wb.get_active_sheet()
+
+    wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED VIRTUAL.xlsx')
+    ws_innovatic = wb.get_sheet_by_name('InnovaTIC')
+    inicia_innovatic = 6
+    ws_tecnotic = wb.get_sheet_by_name('TecnoTIC')
+    inicia_tecnotic = 6
+    ws_directic = wb.get_sheet_by_name('DirecTIC')
+    inicia_directic = 6
+
+
+    ids_innovatic = [{'id':20,'letter':'O'},
+                     {'id':21,'letter':'Q'},
+                     {'id':22,'letter':'R'},
+                     {'id':15,'letter':'T'},
+                     {'id':16,'letter':'U'},
+                     {'id':23,'letter':'V'},
+                     {'id':28,'letter':'Y'},
+                     {'id':40,'letter':'Z'},
+                     {'id':31,'letter':'AB'},
+                     {'id':34,'letter':'AD'},
+                     {'id':35,'letter':'AE'},
+                     {'id':58,'letter':'AH'},
+                     {'id':59,'letter':'AJ'},
+                     {'id':60,'letter':'AL'},
+                     {'id':64,'letter':'AO'},
+                     {'id':67,'letter':'AQ'}]
+
+    ids_tecnotic = [{'id':75,'letter':'O'},
+                    {'id':77,'letter':'R'},
+                    {'id':84,'letter':'S'},
+                    {'id':85,'letter':'T'},
+                    {'id':97,'letter':'W'},
+                    {'id':98,'letter':'X'},
+                    {'id':93,'letter':'Y'},
+                    {'id':99,'letter':'AA'},
+                    {'id':100,'letter':'AC'},
+                    {'id':112,'letter':'AF'},
+                    {'id':109,'letter':'AH'},
+                    {'id':119,'letter':'AK'},
+                    {'id':124,'letter':'AL'},
+                    {'id':121,'letter':'AO'}]
+
+    ids_directic = [{'id':132,'letter':'P'},
+               {'id':134,'letter':'Q'},
+               {'id':142,'letter':'S'},
+               {'id':143,'letter':'T'},
+               {'id':144,'letter':'V'},
+               {'id':140,'letter':'X'},
+               {'id':147,'letter':'Z'},
+               {'id':152,'letter':'AB'},
+               {'id':149,'letter':'AD'},
+               {'id':151,'letter':'AE'},
+               {'id':156,'letter':'AG'},
+               {'id':164,'letter':'AJ'},
+               {'id':165,'letter':'AK'},
+               {'id':162,'letter':'AM'},
+               {'id':166,'letter':'AO'},
+               {'id':171,'letter':'AQ'},
+               {'id':171,'letter':'AR'}]
+
+
+    evidencias_total = Evidencia.objects.filter(red_id = id_red)
+    beneficiarios_id = evidencias_total.exclude(beneficiarios_cargados = None).values_list('beneficiarios_cargados__id',flat=True).distinct()
+
+
+    i = 0 + inicia
+    for beneficiario_id in beneficiarios_id:
+        beneficiario = Beneficiario.objects.get(id = beneficiario_id)
+        evidencias = evidencias_total.filter(beneficiarios_cargados__id = beneficiario_id)
+
+
+        ws.cell('A'+str(i)).value = i - inicia + 1
+        ws.cell('B'+str(i)).value = beneficiario.region.nombre.upper()
+        ws.cell('C'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text.upper()
+        ws.cell('D'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text.upper()
+        ws.cell('E'+str(i)).value = beneficiario.ruta.upper() + '-' + beneficiario.grupo.nombre
+        ws.cell('F'+str(i)).value = beneficiario.formador.get_full_name().upper()
+        ws.cell('G'+str(i)).value = beneficiario.formador.cedula
+        ws.cell('G'+str(i)).number_format = '0'
+        ws.cell('H'+str(i)).value = beneficiario.nombres.upper()
+        ws.cell('I'+str(i)).value = beneficiario.apellidos.upper()
+        ws.cell('J'+str(i)).value = beneficiario.cedula
+
+        ws.cell('J'+str(i)).number_format = '0'
+        ws.cell('K'+str(i)).value = 'SICAN'
+        ws.cell('L'+str(i)).value = 'I'
+
+        for id in ids:
+            evidencia = evidencias.filter(entregable__id = id['id'])
+            if evidencia.count() == 1:
+                if evidencia[0].subsanacion:
+                    ws.cell('L'+str(i)).value = 'S'
+                ws.cell( id['letter'] + str(i)).value = 'SIC-' + str(evidencia[0].id)
+                ws.cell( id['letter'] + str(i)).hyperlink = 'https://sican.asoandes.org' + evidencia[0].get_archivo_url()
+
+        i += 1
+
+
+    wb.save(output)
+    filename = 'RED-' + unicode(red.id) + '-'+ red.region.nombre +'.xlsx'
+    red.archivo.save(filename,File(output))
+
+    return "Generado RED-" + str(id_red)
+
+@app.task
+def matriz_chequeo_compilada(email):
+    usuario = User.objects.get(email=email)
+    nombre = 'Compilado listados de asistencia SICAN'
+
+    proceso = "REV-INF05"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+    output = StringIO()
+    dict_productos = []
+
+    dict_productos_innovatic = [{'letter':'I','id':8,'red':'J','aprobacion':'K'},
+                                {'letter':'L','id':9,'red':'M','aprobacion':'N'},
+                                {'letter':'O','id':12,'red':'P','aprobacion':'Q'},
+                                {'letter':'R','id':14,'red':'S','aprobacion':'T'},
+                                {'letter':'U','id':17,'red':'V','aprobacion':'W'},
+                                {'letter':'X','id':27,'red':'Y','aprobacion':'Z'},
+                                {'letter':'AA','id':30,'red':'AB','aprobacion':'AC'},
+                                {'letter':'AD','id':33,'red':'AE','aprobacion':'AF'},
+                                {'letter':'AG','id':36,'red':'AH','aprobacion':'AI'},
+                                {'letter':'AJ','id':46,'red':'AK','aprobacion':'AL'},
+                                {'letter':'AM','id':49,'red':'AN','aprobacion':'AO'},
+                                {'letter':'AP','id':52,'red':'AQ','aprobacion':'AR'},
+                                {'letter':'AS','id':55,'red':'AT','aprobacion':'AU'},
+                                {'letter':'AV','id':63,'red':'AW','aprobacion':'AX'},
+                                {'letter':'AY','id':66,'red':'AZ','aprobacion':'BA'},
+                                ]
+
+    dict_productos_tecnotic = [   {'letter':'I','id':72,'red':'J','aprobacion':'K'},
+                                  {'letter':'L','id':73,'red':'M','aprobacion':'N'},
+                                  {'letter':'O','id':74,'red':'P','aprobacion':'Q'},
+                                  {'letter':'R','id':76,'red':'S','aprobacion':'T'},
+                                  {'letter':'U','id':78,'red':'V','aprobacion':'W'},
+                                  {'letter':'X','id':89,'red':'Y','aprobacion':'Z'},
+                                  {'letter':'AA','id':92,'red':'AB','aprobacion':'AC'},
+                                  {'letter':'AD','id':94,'red':'AE','aprobacion':'AF'},
+                                  {'letter':'AG','id':95,'red':'AH','aprobacion':'AI'},
+                                  {'letter':'AJ','id':104,'red':'AK','aprobacion':'AL'},
+                                  {'letter':'AM','id':106,'red':'AN','aprobacion':'AO'},
+                                  {'letter':'AP','id':108,'red':'AQ','aprobacion':'AR'},
+                                  {'letter':'AS','id':110,'red':'AT','aprobacion':'AU'},
+                                  {'letter':'AV','id':118,'red':'AW','aprobacion':'AX'},
+                                  {'letter':'AY','id':120,'red':'AZ','aprobacion':'BA'},
+                                  ]
+
+
+    dict_productos_directic = [   {'letter':'I','id':127,'red':'J','aprobacion':'K'},
+                                  {'letter':'L','id':128,'red':'M','aprobacion':'N'},
+                                  {'letter':'O','id':131,'red':'P','aprobacion':'Q'},
+                                  {'letter':'R','id':133,'red':'S','aprobacion':'T'},
+                                  {'letter':'U','id':135,'red':'V','aprobacion':'W'},
+                                  {'letter':'X','id':137,'red':'Y','aprobacion':'Z'},
+                                  {'letter':'AA','id':139,'red':'AB','aprobacion':'AC'},
+                                  {'letter':'AD','id':146,'red':'AE','aprobacion':'AF'},
+                                  {'letter':'AG','id':148,'red':'AH','aprobacion':'AI'},
+                                  {'letter':'AJ','id':150,'red':'AK','aprobacion':'AL'},
+                                  {'letter':'AM','id':155,'red':'AN','aprobacion':'AO'},
+                                  {'letter':'AP','id':157,'red':'AQ','aprobacion':'AR'},
+                                  {'letter':'AS','id':159,'red':'AT','aprobacion':'AU'},
+                                  {'letter':'AV','id':161,'red':'AW','aprobacion':'AX'},
+                                  {'letter':'AY','id':167,'red':'AZ','aprobacion':'BA'},
+                                  {'letter':'BB','id':169,'red':'BC','aprobacion':'BD'},
+                                  ]
+
+
+
+    dict_productos_escuelatic = [{'letter':'I','id':224,'red':'J','aprobacion':'K'},
+                                 {'letter':'L','id':228,'red':'M','aprobacion':'N'},
+                                ]
+
+
+    wb = xlsxwriter.Workbook(output)
+    ws_innovatic = wb.add_worksheet('INNOVATIC')
+    ws_tecnotic = wb.add_worksheet('TECNOTIC')
+    ws_directic = wb.add_worksheet('DIRECTIC')
+    ws_escuelatic = wb.add_worksheet('ESCUELATIC')
+
+    text = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'left', 'valign':'vcenter', 'text_wrap':False})
+
+    number = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'right', 'valign':'vcenter', 'text_wrap':False,'num_format':'0'})
+
+    validado = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'left', 'valign':'vcenter', 'text_wrap':False, 'pattern':1, 'bg_color':'#00B050'})
+
+    enviado = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'left', 'valign':'vcenter', 'text_wrap':False, 'pattern':1, 'bg_color':'#FFC000'})
+
+    cargado = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'left', 'valign':'vcenter', 'text_wrap':False})
+
+    rechazado = wb.add_format({'font_name':'Calibri', 'font_size':12 ,'align':'left', 'valign':'vcenter', 'text_wrap':False, 'pattern':1, 'bg_color':'#FF0000'})
+
+    gris = wb.add_format({'font_name':'Arial Narrow','border':1, 'bold':1, 'font_size':10 ,'align':'center', 'valign':'vcenter', 'text_wrap':True, 'pattern':1, 'bg_color':'#808080', 'font_color':'#FFFFFF'})
+
+    verde = wb.add_format({'font_name':'Arial Narrow', 'border':1, 'bold':1, 'font_size':10 ,'align':'center', 'valign':'vcenter', 'text_wrap':True, 'pattern':1, 'bg_color':'#008000', 'font_color':'#FFFFFF'})
+
+    azul = wb.add_format({'font_name':'Arial Narrow', 'border':1, 'bold':1, 'font_size':10 ,'align':'center', 'valign':'vcenter', 'text_wrap':True, 'pattern':1, 'bg_color':'#000080', 'font_color':'#FFFFFF'})
+
+    morado = wb.add_format({'font_name':'Arial Narrow', 'border':1, 'bold':1, 'font_size':10 ,'align':'center', 'valign':'vcenter', 'text_wrap':True, 'pattern':1, 'bg_color':'#7030A0', 'font_color':'#FFFFFF'})
+
+    agua_marina = wb.add_format({'font_name':'Arial Narrow', 'border':1, 'bold':1, 'font_size':10 ,'align':'center', 'valign':'vcenter', 'text_wrap':True, 'pattern':1, 'bg_color':'#00B0F0', 'font_color':'#FFFFFF'})
+
+
+
+    for id_diplomado in [1,2,3,4]:
+
+        if id_diplomado == 1:
+            ws = ws_innovatic
+            dict_productos = dict_productos_innovatic
+
+            ws.write('I1','ACTA COMPROMISO',azul)
+            ws.set_column('I:I',12)
+
+            ws.write('J1','RED',azul)
+            ws.set_column('J:J',12)
+
+            ws.write('K1','APROBACIÓN',azul)
+            ws.set_column('K:K',12)
+
+            j = 11
+
+            for k in range(len(dict_productos_innovatic)-1):
+                ws.write(0,j,'ASISTENCIA ' + str(k+1),verde)
+                ws.set_column(j,j,14)
+
+                ws.write(0,j+1,'RED',verde)
+                ws.set_column(j+1,j+1,14)
+
+                ws.write(0,j+2,'APROBACIÓN',verde)
+                ws.set_column(j+2,j+2,14)
+
+                j += 3
+
+            fin = j
+
+            ws.write(0,fin,'APROBACIÓN N1',morado)
+            ws.set_column(0,fin,20)
+
+            ws.write(0,fin+1,'APROBACIÓN N2',morado)
+            ws.set_column(0,fin+1,20)
+
+            ws.write(0,fin+2,'APROBACIÓN N3',morado)
+            ws.set_column(0,fin+2,20)
+
+            ws.write(0,fin+3,'APROBACIÓN N4',morado)
+            ws.set_column(0,fin+3,20)
+
+
+            ws.write(0,fin+4,'APROBACIÓN N1 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+4,20)
+
+            ws.write(0,fin+5,'APROBACIÓN N2 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+5,20)
+
+            ws.write(0,fin+6,'APROBACIÓN N3 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+6,20)
+
+            ws.write(0,fin+7,'APROBACIÓN N4 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+7,20)
+
+
+        elif id_diplomado == 2:
+            ws = ws_tecnotic
+            dict_productos = dict_productos_tecnotic
+
+            ws.write('I1','ACTA COMPROMISO',azul)
+            ws.set_column('I:I',12)
+
+            ws.write('J1','RED',azul)
+            ws.set_column('J:J',12)
+
+            ws.write('K1','APROBACIÓN',azul)
+            ws.set_column('K:K',12)
+
+            j = 11
+
+            for k in range(len(dict_productos_tecnotic)-1):
+                ws.write(0,j,'ASISTENCIA ' + str(k+1),verde)
+                ws.set_column(j,j,14)
+
+                ws.write(0,j+1,'RED',verde)
+                ws.set_column(j+1,j+1,14)
+
+                ws.write(0,j+2,'APROBACIÓN',verde)
+                ws.set_column(j+2,j+2,14)
+
+                j += 3
+
+            fin = j
+
+            ws.write(0,fin,'APROBACIÓN N1',morado)
+            ws.set_column(0,fin,20)
+
+            ws.write(0,fin+1,'APROBACIÓN N2',morado)
+            ws.set_column(0,fin+1,20)
+
+            ws.write(0,fin+2,'APROBACIÓN N3',morado)
+            ws.set_column(0,fin+2,20)
+
+            ws.write(0,fin+3,'APROBACIÓN N4',morado)
+            ws.set_column(0,fin+3,20)
+
+
+            ws.write(0,fin+4,'APROBACIÓN N1 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+4,20)
+
+            ws.write(0,fin+5,'APROBACIÓN N2 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+5,20)
+
+            ws.write(0,fin+6,'APROBACIÓN N3 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+6,20)
+
+            ws.write(0,fin+7,'APROBACIÓN N4 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+7,20)
+
+        elif id_diplomado == 3:
+            ws = ws_directic
+            dict_productos = dict_productos_directic
+
+            ws.write('I1','ACTA COMPROMISO',azul)
+            ws.set_column('I:I',12)
+
+            ws.write('J1','RED',azul)
+            ws.set_column('J:J',12)
+
+            ws.write('K1','APROBACIÓN',azul)
+            ws.set_column('K:K',12)
+
+            j = 11
+
+            for k in range(len(dict_productos_directic)-1):
+                ws.write(0,j,'ASISTENCIA ' + str(k+1),verde)
+                ws.set_column(j,j,14)
+
+                ws.write(0,j+1,'RED',verde)
+                ws.set_column(j+1,j+1,14)
+
+                ws.write(0,j+2,'APROBACIÓN',verde)
+                ws.set_column(j+2,j+2,14)
+
+                j += 3
+
+            fin = j
+
+            ws.write(0,fin,'APROBACIÓN N1',morado)
+            ws.set_column(0,fin,20)
+
+            ws.write(0,fin+1,'APROBACIÓN N2',morado)
+            ws.set_column(0,fin+1,20)
+
+            ws.write(0,fin+2,'APROBACIÓN N3',morado)
+            ws.set_column(0,fin+2,20)
+
+            ws.write(0,fin+3,'APROBACIÓN N4',morado)
+            ws.set_column(0,fin+3,20)
+
+
+            ws.write(0,fin+4,'APROBACIÓN N1 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+4,20)
+
+            ws.write(0,fin+5,'APROBACIÓN N2 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+5,20)
+
+            ws.write(0,fin+6,'APROBACIÓN N3 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+6,20)
+
+            ws.write(0,fin+7,'APROBACIÓN N4 (CON ACTAS)',agua_marina)
+            ws.set_column(0,fin+7,20)
+
+        else:
+            ws = ws_escuelatic
+            dict_productos = dict_productos_escuelatic
+
+            ws.write('I1','LISTADO DE ASISTENCIA N2 S1',azul)
+            ws.set_column('I:I',12)
+
+            ws.write('J1','RED',azul)
+            ws.set_column('J:J',12)
+
+            ws.write('K1','APROBACIÓN',azul)
+            ws.set_column('K:K',12)
+
+
+            ws.write('L1','LISTADO DE ASISTENCIA N2 S2',azul)
+            ws.set_column('L:L',12)
+
+            ws.write('M1','RED',azul)
+            ws.set_column('M:M',12)
+
+            ws.write('N1','APROBACIÓN',azul)
+            ws.set_column('N:N',12)
+
+            fin = 14
+
+            ws.write('O1','APROBACIÓN N2',morado)
+            ws.set_column('O:O',20)
+
+
+
+        ws.write('A1','REGIÓN',gris)
+        ws.set_column('A:A',11)
+        ws.set_row(0,90)
+
+        ws.write('B1','DEPARTAMENTO',gris)
+        ws.set_column('B:B',23)
+
+        ws.write('C1','MUNICIPIO',gris)
+        ws.set_column('C:C',18)
+
+        ws.write('D1','NOMBRE DEL FORMADOR',gris)
+        ws.set_column('D:D',36)
+
+        ws.write('E1','NUMERO DE CEDULA DEL FORMADOR',gris)
+        ws.set_column('E:E',13)
+
+        ws.write('F1','APELLIDOS DEL BENEFICIARIO',verde)
+        ws.set_column('F:F',25)
+
+        ws.write('G1','NOMBRES DEL BENEFICIARIO',verde)
+        ws.set_column('G:G',25)
+
+        ws.write('H1','NUMERO DE CEDULA DEL BENEFICIARIO',verde)
+        ws.set_column('H:H',14)
+
+        i = 2
+
+        for beneficiario in Beneficiario.objects.filter(diplomado__id = id_diplomado).order_by('formador'):
+            ws.write('A'+str(i), beneficiario.region.nombre.upper(),text)
+
+            ws.write('B'+str(i), beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text,text)
+
+            ws.write('C'+str(i), beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text,text)
+
+            ws.write('D'+str(i), beneficiario.formador.get_full_name(),text)
+
+            ws.write('E'+str(i), beneficiario.formador.cedula,number)
+
+            ws.write('F'+str(i), beneficiario.apellidos,text)
+
+            ws.write('G'+str(i), beneficiario.nombres,text)
+
+            ws.write('H'+str(i), beneficiario.cedula,number)
+
+
+            for producto in dict_productos:
+                entregable = Entregable.objects.get(id = producto['id'])
+
+                evidencias_cargado = Evidencia.objects.filter(beneficiarios_cargados = beneficiario,entregable = entregable)
+                evidencias_validado = Evidencia.objects.filter(beneficiarios_validados = beneficiario,entregable = entregable)
+
+
+                if evidencias_validado.count() > 0:
+                    ws.write( producto['letter'] + str(i) , 'SIC-' + str(evidencias_validado[0].id), validado )
+                    ws.write( producto['red'] + str(i) , 'RED-' + str(evidencias_validado[0].red_id), text )
+                    ws.write( producto['aprobacion'] + str(i) , 'SI', text )
+
+
+                elif evidencias_validado.count() == 0 and evidencias_cargado.count() > 0:
+                    ultima_evidencia_cargada = evidencias_cargado[len(evidencias_cargado)-1]
+
+                    try:
+                        red = Red.objects.get(id = ultima_evidencia_cargada.red_id)
+                    except:
+                        # si ningun red contiene la evidencia
+                        ws.write( producto['letter'] + str(i), 'SIC-' + str(ultima_evidencia_cargada.id), cargado )
+                        if ultima_evidencia_cargada.red_id != None:
+                            ws.write( producto['red'] + str(i) , 'RED-' + str(ultima_evidencia_cargada.red_id), text )
+
+                    else:
+                        # si hay un red que contiene la evidencia
+                        if red.retroalimentacion:
+                            # si el red fue retroalimentado
+
+                            evidencias_rechazado = Evidencia.objects.filter(beneficiarios_rechazados__beneficiario_rechazo = beneficiario,
+                                                                            beneficiarios_rechazados__red_id = red.id,
+                                                                            beneficiarios_rechazados__evidencia_id = ultima_evidencia_cargada.id)
+
+                            if evidencias_rechazado > 0:
+                                ws.write( producto['letter'] + str(i) , 'SIC-' + str(ultima_evidencia_cargada.id), rechazado )
+                                if ultima_evidencia_cargada.red_id != None:
+                                    ws.write( producto['red'] + str(i) , 'RED-' + str(ultima_evidencia_cargada.red_id), text )
+                            else:
+                                pass
+
+
+                        else:
+                            #si el red no ha sido retroalimentado
+                            ws.write( producto['letter'] + str(i) , 'SIC-' + str(ultima_evidencia_cargada.id), enviado )
+                            if ultima_evidencia_cargada.red_id != None:
+                                    ws.write( producto['red'] + str(i) , 'RED-' + str(ultima_evidencia_cargada.red_id), text )
+
+
+                else:
+                    pass
+
+                if id_diplomado == 1:
+                    ws.write_formula(i-1,fin,'=IF(IF(N'+ str(i) +'="SI",1,0)+IF(Q'+ str(i) +'="SI",1,0)+IF(T'+ str(i) +'="SI",1,0)+IF(W' + str(i) + '="SI",1,0)>=3,"SI","NO")',text)
+                    ws.write_formula(i-1,fin+1,'=IF(IF(Z'+ str(i) +'="SI",1,0)+IF(AC'+ str(i) +'="SI",1,0)+IF(AF'+ str(i) +'="SI",1,0)+IF(AI'+ str(i) +'="SI",1,0)>=3,"SI","NO")',text)
+                    ws.write_formula(i-1,fin+2,'=IF(IF(AL'+ str(i) +'="SI",1,0)+IF(AO'+ str(i) +'="SI",1,0)+IF(AR'+ str(i) +'="SI",1,0)+IF(AU'+ str(i) +'="SI",1,0)>=3,"SI","NO")',text)
+                    ws.write_formula(i-1,fin+3,'=IF(IF(AX'+ str(i) +'="SI",1,0)+IF(BA'+ str(i) +'="SI",1,0)>=1,"SI","NO")',text)
+
+
+                    ws.write_formula(i-1,fin+4,'=IF($K'+ str(i) +'="SI",BB'+ str(i) +',"NO ACTA")',text)
+                    ws.write_formula(i-1,fin+5,'=IF($K'+ str(i) +'="SI",BC'+ str(i) +',"NO ACTA")',text)
+                    ws.write_formula(i-1,fin+6,'=IF($K'+ str(i) +'="SI",BD'+ str(i) +',"NO ACTA")',text)
+                    ws.write_formula(i-1,fin+7,'=IF($K'+ str(i) +'="SI",BE'+ str(i) +',"NO ACTA")',text)
+
+
+                if id_diplomado == 2:
+                    ws.write_formula(i-1,fin,'=IF(IF(N'+ str(i) +'="SI",1,0)+IF(Q'+ str(i) +'="SI",1,0)+IF(T'+ str(i) +'="SI",1,0)+IF(W' + str(i) + '="SI",1,0)>=3,"SI","NO")',text)
+                    ws.write_formula(i-1,fin+1,'=IF(IF(Z'+ str(i) +'="SI",1,0)+IF(AC'+ str(i) +'="SI",1,0)+IF(AF'+ str(i) +'="SI",1,0)+IF(AI'+ str(i) +'="SI",1,0)>=3,"SI","NO")',text)
+                    ws.write_formula(i-1,fin+2,'=IF(IF(AL'+ str(i) +'="SI",1,0)+IF(AO'+ str(i) +'="SI",1,0)+IF(AR'+ str(i) +'="SI",1,0)+IF(AU'+ str(i) +'="SI",1,0)>=3,"SI","NO")',text)
+                    ws.write_formula(i-1,fin+3,'=IF(IF(AX'+ str(i) +'="SI",1,0)+IF(BA'+ str(i) +'="SI",1,0)>=1,"SI","NO")',text)
+
+
+                    ws.write_formula(i-1,fin+4,'=IF($K'+ str(i) +'="SI",BB'+ str(i) +',"NO ACTA")',text)
+                    ws.write_formula(i-1,fin+5,'=IF($K'+ str(i) +'="SI",BC'+ str(i) +',"NO ACTA")',text)
+                    ws.write_formula(i-1,fin+6,'=IF($K'+ str(i) +'="SI",BD'+ str(i) +',"NO ACTA")',text)
+                    ws.write_formula(i-1,fin+7,'=IF($K'+ str(i) +'="SI",BE'+ str(i) +',"NO ACTA")',text)
+
+                if id_diplomado == 3:
+                    ws.write_formula(i-1,fin,'=IF(IF(N'+ str(i) +'="SI",1,0)+IF(Q'+ str(i) +'="SI",1,0)+IF(T'+ str(i) +'="SI",1,0)+IF(W'+ str(i) +'="SI",1,0)+IF(Z'+ str(i) +'="SI",1,0)+IF(AC'+ str(i) +'="SI",1,0)>=4,"SI","NO")',text)
+                    ws.write_formula(i-1,fin+1,'=IF(IF(AF'+ str(i) +'="SI",1,0)+IF(AI'+ str(i) +'="SI",1,0)+IF(AL'+ str(i) +'="SI",1,0)>=2,"SI","NO")',text)
+                    ws.write_formula(i-1,fin+2,'=IF(IF(AO'+ str(i) +'="IF",1,0)+IF(AR'+ str(i) +'="SI",1,0)+IF(AU'+ str(i) +'="SI",1,0)+IF(AX'+ str(i) +'="SI",1,0)>=3,"SI","NO")',text)
+                    ws.write_formula(i-1,fin+3,'=IF(IF(BA'+ str(i) +'="SI",1,0)+IF(BD'+ str(i) +'="SI",1,0)>=1,"SI","NO")',text)
+
+
+                    ws.write_formula(i-1,fin+4,'=IF($K'+ str(i) +'="SI",BE'+ str(i) +',"NO ACTA")',text)
+                    ws.write_formula(i-1,fin+5,'=IF($K'+ str(i) +'="SI",BF'+ str(i) +',"NO ACTA")',text)
+                    ws.write_formula(i-1,fin+6,'=IF($K'+ str(i) +'="SI",BG'+ str(i) +',"NO ACTA")',text)
+                    ws.write_formula(i-1,fin+7,'=IF($K'+ str(i) +'="SI",BH'+ str(i) +',"NO ACTA")',text)
+
+                if id_diplomado == 4:
+                    ws.write_formula(i-1,fin,'=IF(IF(K'+ str(i) +'="SI",1,0)+IF(N'+ str(i) +'="SI",1,0)=2,"SI","NO")',text)
+
+            i += 1
+
+    wb.close()
+
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+@app.task
+def compilado_matriz_chequeo():
+    matriz_chequeo_compilada.delay('sistemas@asoandes.org','1')
+    return "Reporte diario generado"
