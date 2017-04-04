@@ -803,6 +803,7 @@ def build_consolidado_aprobacion_red(email):
 
         ws.cell('A'+str(i)).value = 'RED-' + unicode(red.id)
         ws.cell('B'+str(i)).value = unicode(red.region.nombre)
+        ws.cell('C'+str(i)).value = red.fecha
 
         for id in ids:
             evidencias = Evidencia.objects.filter(red_id = red.id).filter(entregable__id = id['id']).values_list('beneficiarios_cargados',flat=True).distinct()
