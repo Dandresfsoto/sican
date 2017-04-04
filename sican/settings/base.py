@@ -28,11 +28,11 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute=0,hour=0),
         'args': (),
     },
-    'verificando-archivos-transportes': {
-        'task': 'financiera.tasks.verificar_archivos',
-        'schedule': crontab(),
-        'args': (),
-    },
+    #'verificando-archivos-transportes': {
+    #    'task': 'financiera.tasks.verificar_archivos',
+    #    'schedule': crontab(),
+    #    'args': (),
+    #},
     'Nueva-semana-cronograma': {
         'task': 'informes.tasks.nueva_semana',
         'schedule': crontab(minute=0,hour=0, day_of_week=1),

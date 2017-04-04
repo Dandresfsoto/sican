@@ -3482,5 +3482,5 @@ def matriz_chequeo_compilada(email):
 
 @app.task
 def compilado_matriz_chequeo():
-    matriz_chequeo_compilada.delay('sistemas@asoandes.org','1')
+    matriz_chequeo_compilada.delay('sistemas@asoandes.org')
     return "Reporte diario generado"
