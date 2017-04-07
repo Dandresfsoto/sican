@@ -69,7 +69,7 @@ from lideres.models import SolicitudSoportes as SolicitudSoportesLider
 from negociadores.models import Contrato as ContratoNegociador
 from negociadores.models import SolicitudSoportes as SolicitudSoportesNegociador
 from administrativos.models import Contrato as ContratoAdministrativo
-from informes.tasks import matriz_chequeo_compilada
+from informes.tasks import matriz_chequeo_compilada, reporte_sed_bogota
 
 # Create your views here.
 class ResultadosPercepcionInicial(APIView):
@@ -265,6 +265,8 @@ class ReportesView(APIView):
             x = actividades_virtuales.delay(request.user.email)
         if id_accion == '32':
             x = matriz_chequeo_compilada.delay(request.user.email)
+        if id_accion == '33':
+            x = reporte_sed_bogota.delay(request.user.email)
 
         return HttpResponse(status=200)
 
