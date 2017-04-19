@@ -58,10 +58,17 @@ urlpatterns = [
 
     #-------------------------------------------------------------------------------------------------------------------
 
+
+    #-------------------------------------------------- REST -----------------------------------------------------------
+
+    url(r'usuarios/permisos/$', UserPermissionList.as_view()),
+
+    #-------------------------------------------------------------------------------------------------------------------
+
     url(r'usuarios/chat_list/$', UserList.as_view()),
     url(r'usuarios/chat_list/(?P<id>\w+)/$', UserDetail.as_view()),
     url(r'usuarios/chat_last/$', UserChatList.as_view()),
-    url(r'usuarios/permisos/$', UserPermissionList.as_view()),
+
 
 
 

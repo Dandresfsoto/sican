@@ -72,6 +72,289 @@ from administrativos.models import Contrato as ContratoAdministrativo
 from informes.tasks import matriz_chequeo_compilada, reporte_sed_bogota
 
 # Create your views here.
+
+#----------------------------------------------------- REST ------------------------------------------------------------
+
+class UserPermissionList(APIView):
+    def get(self, request):
+        user = User.objects.get(id=self.request.user.id)
+        perms_user = list(user.get_all_permissions())
+
+        categories = {
+            'adminuser':{'name':'Usuarios',
+                  'icon':'icons:account-circle',
+                  'id':'usuarios',
+                  'links':[]
+            },
+            'rh':{'name':'Recursos Humanos',
+                  'icon':'icons:accessibility',
+                  'id':'rh',
+                  'links':[]
+            },
+            'bases':{'name':'Bases de datos',
+                  'icon':'icons:dashboard',
+                  'id':'bases',
+                  'links':[]
+            },
+            'financiera':{'name':'Financiera',
+                  'icon':'icons:payment',
+                  'id':'financiera',
+                  'links':[]
+            },
+            'informes':{'name':'Mis informes',
+                  'icon':'icons:assessment',
+                  'id':'informes',
+                  'links':[]
+            },
+            'formacion':{'name':'Formación',
+                  'icon':'icons:language',
+                  'id':'formacion',
+                  'links':[]
+            },
+            'encuestas':{'name':'Encuestas',
+                  'icon':'icons:assessment',
+                  'id':'encuestas',
+                  'links':[]
+            },
+            'productos':{'name':'Estrategia ETIC@',
+                  'icon':'icons:group-work',
+                  'id':'productos',
+                  'links':[]
+            },
+            'acceso':{'name':'Acceso',
+                  'icon':'icons:chrome-reader-mode',
+                  'id':'acceso',
+                  'links':[]
+            },
+            'matrices':{'name':'Matrices',
+                  'icon':'icons:timeline',
+                  'id':'matrices',
+                  'links':[]
+            },
+            'evidencias':{'name':'Evidencias',
+                  'icon':'icons:view-quilt',
+                  'id':'evidencias',
+                  'links':[]
+            },
+            'requerimientos':{'name':'Requerimientos',
+                  'icon':'icons:gavel',
+                  'id':'requerimientos',
+                  'links':[]
+            },
+            'formadores':{'name':'Formadores',
+                  'icon':'icons:face',
+                  'id':'formadores',
+                  'links':[]
+            },
+            'lideres':{'name':'Lideres regionales',
+                  'icon':'hardware:computer',
+                  'id':'lideres',
+                  'links':[]
+            },
+            'negociadores':{'name':'Negociadores',
+                  'icon':'icons:gavel',
+                  'id':'negociadores',
+                  'links':[]
+            },
+            'contratos':{'name':'Contratos',
+                  'icon':'icons:description',
+                  'id':'contratos',
+                  'links':[]
+            },
+            'seguridad_social':{'name':'Seguridad Social',
+                  'icon':'image:healing',
+                  'id':'seguridad_social',
+                  'links':[]
+            },
+        }
+
+        links = {
+            'contratos_legalizar':{
+                'ver':{'name':'Legalización de contratos','link':'/contratos/legalizacion/'}
+            },
+            'ss_seguridad_social':{
+                'ver':{'name':'Soportes de seguridad social','link':'/contratos/seguridadsocial/'}
+            },
+            'seguridadsocial_lideres':{
+                'ver':{'name':'Soportes de seguridad social','link':'/lideres/seguridadsocial/'}
+            },
+            'seguridadsocial_negociadores':{
+                'ver':{'name':'Soportes de seguridad social','link':'/negociadores/seguridadsocial/'}
+            },
+            'rh_contratacion':{
+                'ver':{'name':'Contratación','link':'/rh/contratacion/'}
+            },
+            'rh_personal':{
+                'ver':{'name':'Personal','link':'/rh/personal/'}
+            },
+            'subsanacion':{
+                'ver':{'name':'Subsanación de evidencias','link':'/evidencias/subsanacion/'}
+            },
+            'cedula_beneficiario':{
+                'ver':{'name':'Cedula beneficiario','link':'/evidencias/cedula/'}
+            },
+            'codigos_evidencia':{
+                'ver':{'name':'Actividades','link':'/evidencias/actividades/'}
+            },
+            'auxiliares':{
+                'ver':{'name':'Rendimiento carga de evidencias','link':'/evidencias/rendimiento/'}
+            },
+            'diplomas':{
+                'ver':{'name':'Diploma EscuelaTIC','link':'/formacion/diplomas/escuelatic/'}
+            },
+            'proyecto':{
+                'ver':{'name':'Delegación de requerimientos','link':'/requerimientos/delegacion/'}
+            },
+            'requerimientosrhrespuesta':{
+                'ver':{'name':'Requerimientos de contratación','link':'/rh/requerimientoscontratacion/'}
+            },
+            'requerimientosrh':{
+                'ver':{'name':'Requerimientos de contratación','link':'/formacion/requerimientoscontratacion/'}
+            },
+            'cortes':{
+                'ver':{'name':'Cortes de pago','link':'/financiera/cortes/'}
+            },
+            'gruposformacion':{
+                'ver':{'name':'Grupos de formación','link':'/formacion/grupos/'}
+            },
+            'cargamasiva':{
+                'ver':{'name':'Carga masiva','link':'/matrices/cargamasiva/'}
+            },
+            'general':{
+                'ver':{'name':'Carga general','link':'/evidencias/general/'}
+            },
+            'codigos':{
+                'ver':{'name':'Codigos de soporte','link':'/evidencias/codigos/'}
+            },
+            'red':{
+                'ver':{'name':'Formatos RED','link':'/evidencias/reds/'}
+            },
+            'cargamasivaevidencias':{
+                'ver':{'name':'Carga masiva de evidencias','link':'/evidencias/cargamasiva/'}
+            },
+            'matricesdiplomados':{
+                'ver_innovatic':{'name':'Matriz InnovaTIC','link':'/matrices/diplomados/innovatic/'},
+                'ver_tecnotic':{'name':'Matriz TecnoTIC','link':'/matrices/diplomados/tecnotic/'},
+                'ver_directic':{'name':'Matriz DirecTIC','link':'/matrices/diplomados/directic/'},
+                'ver_escuelatic':{'name':'Matriz EscuelaTIC','link':'/matrices/diplomados/escuelatic/'},
+            },
+            'contratos':{
+                'ver':{'name':'Contratos','link':'/financiera/contratos/'}
+            },
+            'retoma':{
+                'ver':{'name':'Retoma','link':'/acceso/retoma/'}
+            },
+            'radicadosretoma':{
+                'ver':{'name':'Radicados retoma','link':'/acceso/radicadosretoma/'}
+            },
+            'cronogramafinanciera':{
+                'ver':{'name':'Cronograma de formación','link':'/financiera/cronograma/'}
+            },
+            'cronograma':{
+                'ver':{'name':'Cronograma de formación','link':'/formacion/cronograma/'}
+            },
+            'transportesformacion':{
+                'ver':{'name':'Solicitudes de transporte','link':'/formacion/transportes/'}
+            },
+            'sesiones':{
+                'ver':{'name':'Sesiones','link':'/estrategia/sesiones/'}
+            },
+            'niveles':{
+                'ver':{'name':'Niveles','link':'/estrategia/niveles/'}
+            },
+            'diplomados':{
+                'ver':{'name':'Diplomados','link':'/estrategia/diplomados/'}
+            },
+            'entregables':{
+                'ver':{'name':'Entregables','link':'/estrategia/entregables/'}
+            },
+            'revision':{
+                'ver':{'name':'Revisión documental','link':'/formacion/revision/'}
+            },
+            'percepcioninicial':{
+                'ver':{'name':'Percepción inicial y detección de necesidades','link':'/encuestas/resultados/percepcioninicial/'}
+            },
+            'respuestaspercepcioninicial':{
+                'ver':{'name':'Respuestas percepción inicial','link':'/encuestas/respuestas/percepcioninicial/'}
+            },
+            'permisos':{
+                'ver':{'name':'Permisos','link':'/adminuser/permisos/'}
+            },
+            'usuarios':{
+                'ver':{'name':'Usuarios','link':'/adminuser/usuarios/'}
+            },
+            'grupos':{
+                'ver':{'name':'Grupos','link':'/adminuser/grupos/'}
+            },
+            'interventoria_formadores':{
+                'ver':{'name':'Consolidado Hv y Contratos','link':'/rh/consolidadoformadores/'}
+            },
+            'departamentos':{
+                'ver':{'name':'Departamentos','link':'/bases/departamentos/'}
+            },
+            'municipios':{
+                'ver':{'name':'Municipios','link':'/bases/municipios/'}
+            },
+            'secretarias':{
+                'ver':{'name':'Secretarias de educación','link':'/bases/secretarias/'}
+            },
+            'radicados':{
+                'ver':{'name':'Radicados','link':'/bases/radicados/'}
+            },
+            'transportes':{
+                'ver':{'name':'Solicitudes de transporte','link':'/financiera/transportes/'}
+            },
+            'excel':{
+                'ver':{'name':'Informes en excel','link':'/informes/excel/'}
+            },
+            'preinscritos':{
+                'ver':{'name':'Docentes preinscritos','link':'/formacion/preinscritos/'}
+            },
+        }
+
+
+
+
+        perms_response = []
+        perms_dict = {}
+
+        content_type = ContentType.objects.get_for_model(UserPermissionSican)
+        exclude_perms = ['add_userpermissionsican','change_userpermissionsican','delete_userpermissionsican']
+        permissions = Permission.objects.filter(content_type=content_type).exclude(codename__in=exclude_perms).values_list('codename',flat=True)
+        app = 'permisos_sican.'
+
+        array_tuple = []
+
+        for perm_user in perms_user:
+
+            if perm_user.replace(app,'') in permissions:
+                category, links_group, link = perm_user.replace(app,'').split('.')
+                if links_group in links:
+                    if link in links[links_group]:
+                        array_tuple.append(([category,links_group,link],categories[category]['name'],links[links_group][link]['name']))
+                        array_tuple.sort(key=itemgetter(1,2))
+
+        for perm in array_tuple:
+            perms_dict[perm[0][0]] = categories[perm[0][0]]
+            perms_dict[perm[0][0]]['links'].append(links[perm[0][1]][perm[0][2]])
+
+
+        for key, value in perms_dict.iteritems():
+            perms_response.append((key,value,categories[key]['name']))
+            perms_response.sort(key=itemgetter(2))
+
+        r = []
+
+        for res in perms_response:
+            r.append(res[1])
+
+
+
+
+        return Response(r)
+
+#-----------------------------------------------------------------------------------------------------------------------
+
 class ResultadosPercepcionInicial(APIView):
     """
     Retorna los resultados de la encuesta de percepcion inicial.
@@ -456,283 +739,6 @@ class UserDetail(APIView):
         serializer = UserSerializer(users,many=True)
         return Response(serializer.data)
 
-class UserPermissionList(APIView):
-    def get(self, request):
-        user = User.objects.get(id=self.request.user.id)
-        perms_user = list(user.get_all_permissions())
-
-        categories = {
-            'adminuser':{'name':'Usuarios',
-                  'icon':'icons:account-circle',
-                  'id':'usuarios',
-                  'links':[]
-            },
-            'rh':{'name':'Recursos Humanos',
-                  'icon':'icons:accessibility',
-                  'id':'rh',
-                  'links':[]
-            },
-            'bases':{'name':'Bases de datos',
-                  'icon':'icons:dashboard',
-                  'id':'bases',
-                  'links':[]
-            },
-            'financiera':{'name':'Financiera',
-                  'icon':'icons:payment',
-                  'id':'financiera',
-                  'links':[]
-            },
-            'informes':{'name':'Mis informes',
-                  'icon':'icons:assessment',
-                  'id':'informes',
-                  'links':[]
-            },
-            'formacion':{'name':'Formación',
-                  'icon':'icons:language',
-                  'id':'formacion',
-                  'links':[]
-            },
-            'encuestas':{'name':'Encuestas',
-                  'icon':'icons:assessment',
-                  'id':'encuestas',
-                  'links':[]
-            },
-            'productos':{'name':'Estrategia ETIC@',
-                  'icon':'icons:group-work',
-                  'id':'productos',
-                  'links':[]
-            },
-            'acceso':{'name':'Acceso',
-                  'icon':'icons:chrome-reader-mode',
-                  'id':'acceso',
-                  'links':[]
-            },
-            'matrices':{'name':'Matrices',
-                  'icon':'icons:timeline',
-                  'id':'matrices',
-                  'links':[]
-            },
-            'evidencias':{'name':'Evidencias',
-                  'icon':'icons:view-quilt',
-                  'id':'evidencias',
-                  'links':[]
-            },
-            'requerimientos':{'name':'Requerimientos',
-                  'icon':'icons:gavel',
-                  'id':'requerimientos',
-                  'links':[]
-            },
-            'formadores':{'name':'Formadores',
-                  'icon':'icons:face',
-                  'id':'formadores',
-                  'links':[]
-            },
-            'lideres':{'name':'Lideres regionales',
-                  'icon':'hardware:computer',
-                  'id':'lideres',
-                  'links':[]
-            },
-            'negociadores':{'name':'Negociadores',
-                  'icon':'icons:gavel',
-                  'id':'negociadores',
-                  'links':[]
-            },
-            'contratos':{'name':'Contratos',
-                  'icon':'icons:description',
-                  'id':'contratos',
-                  'links':[]
-            },
-            'seguridad_social':{'name':'Seguridad Social',
-                  'icon':'image:healing',
-                  'id':'seguridad_social',
-                  'links':[]
-            },
-        }
-
-        links = {
-            'contratos_legalizar':{
-                'ver':{'name':'Legalización de contratos','link':'/contratos/legalizacion/'}
-            },
-            'ss_seguridad_social':{
-                'ver':{'name':'Soportes de seguridad social','link':'/contratos/seguridadsocial/'}
-            },
-            'seguridadsocial_lideres':{
-                'ver':{'name':'Soportes de seguridad social','link':'/lideres/seguridadsocial/'}
-            },
-            'seguridadsocial_negociadores':{
-                'ver':{'name':'Soportes de seguridad social','link':'/negociadores/seguridadsocial/'}
-            },
-            'rh_contratacion':{
-                'ver':{'name':'Contratación','link':'/rh/contratacion/'}
-            },
-            'rh_personal':{
-                'ver':{'name':'Personal','link':'/rh/personal/'}
-            },
-            'subsanacion':{
-                'ver':{'name':'Subsanación de evidencias','link':'/evidencias/subsanacion/'}
-            },
-            'cedula_beneficiario':{
-                'ver':{'name':'Cedula beneficiario','link':'/evidencias/cedula/'}
-            },
-            'codigos_evidencia':{
-                'ver':{'name':'Actividades','link':'/evidencias/actividades/'}
-            },
-            'auxiliares':{
-                'ver':{'name':'Rendimiento carga de evidencias','link':'/evidencias/rendimiento/'}
-            },
-            'diplomas':{
-                'ver':{'name':'Diploma EscuelaTIC','link':'/formacion/diplomas/escuelatic/'}
-            },
-            'proyecto':{
-                'ver':{'name':'Delegación de requerimientos','link':'/requerimientos/delegacion/'}
-            },
-            'requerimientosrhrespuesta':{
-                'ver':{'name':'Requerimientos de contratación','link':'/rh/requerimientoscontratacion/'}
-            },
-            'requerimientosrh':{
-                'ver':{'name':'Requerimientos de contratación','link':'/formacion/requerimientoscontratacion/'}
-            },
-            'cortes':{
-                'ver':{'name':'Cortes de pago','link':'/financiera/cortes/'}
-            },
-            'gruposformacion':{
-                'ver':{'name':'Grupos de formación','link':'/formacion/grupos/'}
-            },
-            'cargamasiva':{
-                'ver':{'name':'Carga masiva','link':'/matrices/cargamasiva/'}
-            },
-            'general':{
-                'ver':{'name':'Carga general','link':'/evidencias/general/'}
-            },
-            'codigos':{
-                'ver':{'name':'Codigos de soporte','link':'/evidencias/codigos/'}
-            },
-            'red':{
-                'ver':{'name':'Formatos RED','link':'/evidencias/reds/'}
-            },
-            'cargamasivaevidencias':{
-                'ver':{'name':'Carga masiva de evidencias','link':'/evidencias/cargamasiva/'}
-            },
-            'matricesdiplomados':{
-                'ver_innovatic':{'name':'Matriz InnovaTIC','link':'/matrices/diplomados/innovatic/'},
-                'ver_tecnotic':{'name':'Matriz TecnoTIC','link':'/matrices/diplomados/tecnotic/'},
-                'ver_directic':{'name':'Matriz DirecTIC','link':'/matrices/diplomados/directic/'},
-                'ver_escuelatic':{'name':'Matriz EscuelaTIC','link':'/matrices/diplomados/escuelatic/'},
-            },
-            'contratos':{
-                'ver':{'name':'Contratos','link':'/financiera/contratos/'}
-            },
-            'retoma':{
-                'ver':{'name':'Retoma','link':'/acceso/retoma/'}
-            },
-            'radicadosretoma':{
-                'ver':{'name':'Radicados retoma','link':'/acceso/radicadosretoma/'}
-            },
-            'cronogramafinanciera':{
-                'ver':{'name':'Cronograma de formación','link':'/financiera/cronograma/'}
-            },
-            'cronograma':{
-                'ver':{'name':'Cronograma de formación','link':'/formacion/cronograma/'}
-            },
-            'transportesformacion':{
-                'ver':{'name':'Solicitudes de transporte','link':'/formacion/transportes/'}
-            },
-            'sesiones':{
-                'ver':{'name':'Sesiones','link':'/estrategia/sesiones/'}
-            },
-            'niveles':{
-                'ver':{'name':'Niveles','link':'/estrategia/niveles/'}
-            },
-            'diplomados':{
-                'ver':{'name':'Diplomados','link':'/estrategia/diplomados/'}
-            },
-            'entregables':{
-                'ver':{'name':'Entregables','link':'/estrategia/entregables/'}
-            },
-            'revision':{
-                'ver':{'name':'Revisión documental','link':'/formacion/revision/'}
-            },
-            'percepcioninicial':{
-                'ver':{'name':'Percepción inicial y detección de necesidades','link':'/encuestas/resultados/percepcioninicial/'}
-            },
-            'respuestaspercepcioninicial':{
-                'ver':{'name':'Respuestas percepción inicial','link':'/encuestas/respuestas/percepcioninicial/'}
-            },
-            'permisos':{
-                'ver':{'name':'Permisos','link':'/adminuser/permisos/'}
-            },
-            'usuarios':{
-                'ver':{'name':'Usuarios','link':'/adminuser/usuarios/'}
-            },
-            'grupos':{
-                'ver':{'name':'Grupos','link':'/adminuser/grupos/'}
-            },
-            'interventoria_formadores':{
-                'ver':{'name':'Consolidado Hv y Contratos','link':'/rh/consolidadoformadores/'}
-            },
-            'departamentos':{
-                'ver':{'name':'Departamentos','link':'/bases/departamentos/'}
-            },
-            'municipios':{
-                'ver':{'name':'Municipios','link':'/bases/municipios/'}
-            },
-            'secretarias':{
-                'ver':{'name':'Secretarias de educación','link':'/bases/secretarias/'}
-            },
-            'radicados':{
-                'ver':{'name':'Radicados','link':'/bases/radicados/'}
-            },
-            'transportes':{
-                'ver':{'name':'Solicitudes de transporte','link':'/financiera/transportes/'}
-            },
-            'excel':{
-                'ver':{'name':'Informes en excel','link':'/informes/excel/'}
-            },
-            'preinscritos':{
-                'ver':{'name':'Docentes preinscritos','link':'/formacion/preinscritos/'}
-            },
-        }
-
-
-
-
-        perms_response = []
-        perms_dict = {}
-
-        content_type = ContentType.objects.get_for_model(UserPermissionSican)
-        exclude_perms = ['add_userpermissionsican','change_userpermissionsican','delete_userpermissionsican']
-        permissions = Permission.objects.filter(content_type=content_type).exclude(codename__in=exclude_perms).values_list('codename',flat=True)
-        app = 'permisos_sican.'
-
-        array_tuple = []
-
-        for perm_user in perms_user:
-
-            if perm_user.replace(app,'') in permissions:
-                category, links_group, link = perm_user.replace(app,'').split('.')
-                if links_group in links:
-                    if link in links[links_group]:
-                        array_tuple.append(([category,links_group,link],categories[category]['name'],links[links_group][link]['name']))
-                        array_tuple.sort(key=itemgetter(1,2))
-
-        for perm in array_tuple:
-            perms_dict[perm[0][0]] = categories[perm[0][0]]
-            perms_dict[perm[0][0]]['links'].append(links[perm[0][1]][perm[0][2]])
-
-
-        for key, value in perms_dict.iteritems():
-            perms_response.append((key,value,categories[key]['name']))
-            perms_response.sort(key=itemgetter(2))
-
-        r = []
-
-        for res in perms_response:
-            r.append(res[1])
-
-
-
-
-        return Response(r)
 
 
 

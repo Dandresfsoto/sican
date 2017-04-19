@@ -6,6 +6,7 @@
 <link rel="import" href="../iron-icons/av-icons.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
 
 <dom-module id="permission-sican">
 
@@ -43,37 +44,61 @@
         margin-bottom: 10px;
     }
 
+    .big {
+        --iron-icon-height: 32px;
+        --iron-icon-width: 32px;
+    }
+
   </style>
 
   <template>
-    <iron-ajax auto url="{{ url }}" handle-as="json" last-response="{{ permission }}"></iron-ajax>
-    <div role="listbox">
-        <template is="dom-repeat" items="[[permission]]">
-            <div class="permission_class" id="[[item.id]]" on-tap="expand">
-                <a class="paper-item-link" href="#" id="[[item.id]]">
-                    <paper-icon-item class="permission" id="[[item.id]]">
-                        <paper-item-body id="[[item.id]]">[[item.name]]</paper-item-body>
-                        <iron-icon icon="[[item.icon]]" id="[[item.id]]" item-icon></iron-icon>
-                        <iron-icon icon="arrow-drop-down" id="[[item.id]]"></iron-icon>
-                    </paper-icon-item>
-                </a>
-                <iron-collapse id="collapse_[[item.id]]">
-                    <div class="list-group">
-                        <template is="dom-repeat" items="[[item.links]]" as="links">
-                            <a href="[[links.link]]" class="list-group-item link-collapse">
-                                &xrarr;&nbsp;&nbsp; [[links.name]]
-                            </a>
-                        </template>
+    <iron-ajax auto url="{{ url }}" handle-as="json" last-response="{{ permission }}" on-response="_handleResponse"></iron-ajax>
+    <div class="container-fluid container-index">
+        <div role="listbox" class="container-mixitup">
+            <template is="dom-repeat" items="[[permission]]">
+                <div class="mix formadores" data-order="1">
+                    <div class="title-mix">
+                        <a href="#" id="[[item.id]]" on-tap="test">
+                            <iron-icon class="big" icon="[[item.icon]]" id="[[item.id]]"></iron-icon>
+                            <p id="[[item.id]]">[[ item.name ]]</p>
+                        </a>
                     </div>
-                </iron-collapse>
+
+                    <div class="content-mix">
+                        <p>[[ item.name ]]</p>
+                    </div>
+
+                </div>
+            </template>
+            <div class="gap"></div>
+            <div class="gap"></div>
+            <div class="gap"></div>
+        </div>
+
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" id="title_modal"></h4>
+                    </div>
+                    <div role="listbox" class="container-mixitup" id="content_modal">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
             </div>
-        </template>
+        </div>
     </div>
+
   </template>
 
 </dom-module>
 
 <script>
+
+  var response = []
 
   Polymer({
 
@@ -95,7 +120,40 @@
         var collapse = Polymer.dom(e.currentTarget).querySelector(collapse_text);
 
         collapse.toggle();
+    },
+
+    _handleResponse: function(e){
+        response = e.detail.response;
+    },
+
+    test: function(e){
+
+        var category_object = []
+        $("#content_modal").empty();
+        $('#myModal').modal('toggle');
+
+        category = e.target.id;
+        category_text = '#' + e.target.id;
+
+        for(i = 0;i<response.length;i++){
+            if(response[i].id == category){
+                category_object = response[i];
+            }
+        }
+
+        $("#title_modal").text(category_object.name);
+
+        for(i = 0;i<category_object.links.length;i++){
+            var item = $('<div class="mix formadores" data-order="1"><div class="title-mix"><a href="'+ category_object.links[i].link +'"><iron-icon class="big" icon="'+ category_object.icon +'"></iron-icon><p>'+ category_object.links[i].name +'</p></a></div><div class="content-mix"><p>'+ category_object.links[i].name +'</p></div></div>')
+            $("#content_modal").append(item);
+        }
+
+        $("#content_modal").append($('<div class="gap"></div>'));
+        $("#content_modal").append($('<div class="gap"></div>'));
+        $("#content_modal").append($('<div class="gap"></div>'));
+
     }
+
 
   });
 

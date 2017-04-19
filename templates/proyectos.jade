@@ -13,5 +13,9 @@ block help_content
         realizar las tareas designadas en tu rol.
 
 block scroll_header_panel_content
-    div(class="container-fluid container-index")
-        permission-sican(url="/rest/usuarios/permisos/")
+    permission-sican(url="/rest/usuarios/permisos/")
+
+block body_script
+    script.
+        var mixer = mixitup('.container-mixitup-proyectos');
+        var mixer2 = mixitup('.container-mixitup-modal');
