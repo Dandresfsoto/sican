@@ -121,7 +121,7 @@ class Confirmation(TemplateView):
         return self.render_to_response(context)
 
 class Proyectos(LoginRequiredMixin,TemplateView):
-    template_name = "proyectos.html"
+    template_name = "proyectosmix.html"
 
     def get_context_data(self, **kwargs):
         kwargs['inicio'] = True
