@@ -258,7 +258,8 @@ def carga_masiva_evidencias(id_carga_masiva,id_usuario):
 
                     if beneficiario.id not in exclude_validados:
 
-                        if beneficiario.id not in exclude_enviados:
+                        #if beneficiario.id not in exclude_enviados:
+                        if True:
 
 
                             source = zip.open(fila[2].value)
