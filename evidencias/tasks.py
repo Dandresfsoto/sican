@@ -256,7 +256,8 @@ def carga_masiva_evidencias(id_carga_masiva,id_usuario):
                         for cargado in evidencia.beneficiarios_cargados.all():
                             exclude_enviados.append(cargado.id)
 
-                    if beneficiario.id not in exclude_validados:
+                    if True:
+                    #if beneficiario.id not in exclude_validados:
 
                         #if beneficiario.id not in exclude_enviados:
                         if True:
