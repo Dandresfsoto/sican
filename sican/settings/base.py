@@ -149,7 +149,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
     'PAGE_SIZE': 10,
     'UNICODE_JSON': True
 }
