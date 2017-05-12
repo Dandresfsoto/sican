@@ -50,6 +50,7 @@ urlpatterns = [
     url(r'^diplomas/', Diplomas.as_view()),
     url(r'^negociadores/', include('negociadores.urls', namespace='negociadores')),
     url(r'^contratos/', include('contratos.urls', namespace='contratos')),
+    url(r'^sicantelegram/', include('telegrambot.urls', namespace="telegrambot")),
 ]
 
 if settings.DEBUG:

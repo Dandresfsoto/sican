@@ -123,8 +123,7 @@ THIRD_PARTY_APPS = [
     'mail_templated',
     'django_cleanup',
     'rest_framework',
-    'rest_framework.authtoken',
-    'rest_framework_swagger',
+    'telegrambot',
     #'channels',
     'guardian',
     'crispy_forms',
@@ -248,3 +247,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 
 
 AUTH_USER_MODEL = "usuarios.User"
+
+TELEGRAM_BOT_HANDLERS_CONF = "sicantelegram.bot_handlers"
+TELEGRAM_BOT_TOKEN_EXPIRATION = "2"
+
+SITE_ID=1
