@@ -117,14 +117,17 @@ LOCAL_APPS = [
     'matrices',
     'evidencias',
     'negociadores',
-    'requerimientos'
+    'requerimientos',
+    'sicantelegram'
+    #'telegrambot',
 ]
 
 THIRD_PARTY_APPS = [
     'mail_templated',
     'django_cleanup',
+    "permabots",
     'rest_framework',
-    'telegrambot',
+    'rest_framework.authtoken',
     #'channels',
     'guardian',
     'crispy_forms',
@@ -135,7 +138,7 @@ THIRD_PARTY_APPS = [
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
+CELERY_ALWAYS_EAGER = True
 
 #CHANNEL_LAYERS = {
 #    "default": {
@@ -149,7 +152,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.authentication.TokenAuthentication',),
     'PAGE_SIZE': 10,
     'UNICODE_JSON': True
 }
