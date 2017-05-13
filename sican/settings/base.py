@@ -125,9 +125,10 @@ LOCAL_APPS = [
 THIRD_PARTY_APPS = [
     'mail_templated',
     'django_cleanup',
-    "permabots",
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_swagger',
+    "permabots",
     #'channels',
     'guardian',
     'crispy_forms',
@@ -152,7 +153,9 @@ CELERY_ALWAYS_EAGER = True
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.authentication.TokenAuthentication',),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     'PAGE_SIZE': 10,
     'UNICODE_JSON': True
 }

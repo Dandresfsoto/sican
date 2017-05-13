@@ -18,3 +18,5 @@ DATABASES = {
             'PORT': os.getenv('SICAN_DB_PORT'),
         }
 }
+
+DATABASES['default']['ATOMIC_REQUESTS'] = True
