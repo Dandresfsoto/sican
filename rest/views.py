@@ -70,12 +70,17 @@ from negociadores.models import Contrato as ContratoNegociador
 from negociadores.models import SolicitudSoportes as SolicitudSoportesNegociador
 from administrativos.models import Contrato as ContratoAdministrativo
 from informes.tasks import matriz_chequeo_compilada, reporte_sed_bogota
-
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
 
 class UserPermissionList(APIView):
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request):
         user = User.objects.get(id=self.request.user.id)
         perms_user = list(user.get_all_permissions())
@@ -359,6 +364,10 @@ class ResultadosPercepcionInicial(APIView):
     """
     Retorna los resultados de la encuesta de percepcion inicial.
     """
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         encuestas = PercepcionInicial.objects.all()
 
@@ -473,6 +482,10 @@ class ReportesView(APIView):
     """
     Retorna la informacion de los usuarios excluyendo al que realiza el request.
     """
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         id_accion = request._request.GET['action']
 
@@ -557,7 +570,7 @@ class MunicipiosChainedList(APIView):
     """
 
     """
-
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
@@ -599,6 +612,7 @@ class RadicadosChainedList(APIView):
     """
 
     """
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (AllowAny,)
     def get(self, request, format=None):
         try:
@@ -620,6 +634,7 @@ class Cedulas2BeneficiariosId(APIView):
     """
 
     """
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (AllowAny,)
     def get(self, request, format=None):
         cedulas = request.query_params['cedulas'].split(',')
@@ -641,6 +656,7 @@ class GruposChainedList(APIView):
     """
 
     """
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (AllowAny,)
     def get(self, request, format=None):
         try:
@@ -663,7 +679,7 @@ class SecretariasChainedList(APIView):
     """
 
     """
-
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
@@ -686,7 +702,7 @@ class SecretariasChainedList(APIView):
         return Response(response)
 
 class AutocompleteRadicados(APIView):
-
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
@@ -703,7 +719,7 @@ class AutocompleteRadicados(APIView):
         return Response({'suggestions':response})
 
 class AutocompleteMunicipios(APIView):
-
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (AllowAny,)
     renderer_classes = (JSONRenderer, )
 
@@ -722,18 +738,24 @@ class UserList(APIView):
     """
     Retorna la informacion de los usuarios excluyendo al que realiza el request.
     """
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
     def get(self, request, format=None):
         users = User.objects.exclude(id = request.user.id).exclude(email="AnonymousUser")
         serializer = UserSerializer(users,many=True)
         return Response(serializer.data)
 
 class UserChatList(APIView):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
     def get(self, request, format=None):
         users = Mensaje.objects.exclude(user = request.user)
         serializer = MensajeSerializer(users,many=True)
         return Response(serializer.data)
 
 class UserDetail(APIView):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
     def get(request, *args, **kwargs):
         users = User.objects.filter(id=kwargs['id'])
         serializer = UserSerializer(users,many=True)

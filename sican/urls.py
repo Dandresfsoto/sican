@@ -20,6 +20,7 @@ from sican.settings import base as settings
 from sican.settings import dev as develop_settings
 from django.conf.urls.static import static
 from rest_framework_swagger.views import get_swagger_view
+from rest_framework.authtoken import views
 
 schema_view = get_swagger_view(title='API SICAN')
 
@@ -57,6 +58,7 @@ urlpatterns = [
     url(r'^processing/', include('permabots.urls_processing', namespace="permabots")),
     url(r'^docs/', schema_view),
     url(r'^api/v1/', include('permabots.urls_api', namespace="api")),
+    url(r'^api-token-auth/', views.obtain_auth_token),
 ]
 
 if settings.DEBUG:

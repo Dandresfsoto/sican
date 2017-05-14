@@ -13,6 +13,7 @@ from django.dispatch import receiver
 from django.conf import settings
 from departamentos.models import Departamento
 from municipios.models import Municipio
+from rest_framework.authtoken.models import Token
 
 
 class UserManager(BaseUserManager):
@@ -144,3 +145,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __unicode__(self):
         return self.first_name + ' ' + self.last_name + ' - ' + self.email
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+            Token.objects.create(user=instance)
