@@ -1006,7 +1006,7 @@ class CohortesFormadoresView(LoginRequiredMixin,
     '''
 
     '''
-    template_name = 'rh/contratacion/contratos_formadores/lista.html'
+    template_name = 'rh/contratacion/contratos_formadores/cohortes/lista.html'
     permissions = {
         "all": ("permisos_sican.rh.rh_contratacion.ver",
                 "permisos_sican.rh.rh_contratacion_formadores.ver",
