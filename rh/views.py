@@ -999,6 +999,25 @@ class UpdateContratoFormadorView(LoginRequiredMixin,
     def get_initial(self):
         return {'id_formador':self.kwargs['id_formador']}
 
+
+class CohortesFormadoresView(LoginRequiredMixin,
+                         MultiplePermissionsRequiredMixin,
+                         TemplateView):
+    '''
+
+    '''
+    template_name = 'rh/contratacion/contratos_formadores/lista.html'
+    permissions = {
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_formadores.ver",
+                "permisos_sican.rh.rh_contratos_formadores.ver"),
+        "any": ()
+    }
+
+    def get_context_data(self, **kwargs):
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_contratos_formadores.informes')
+        return super(CohortesFormadoresView, self).get_context_data(**kwargs)
+
 #------------------------------------- 2.1.2 SOLICITUD SOPORTES FORMADORES ---------------------------------------------
 
 class SolicitudSoportesFormadoresView(LoginRequiredMixin,

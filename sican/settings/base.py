@@ -139,6 +139,7 @@ THIRD_PARTY_APPS = [
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CELERY_ALWAYS_EAGER = True
 
 #CHANNEL_LAYERS = {
 #    "default": {

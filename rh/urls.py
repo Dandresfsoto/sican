@@ -59,11 +59,19 @@ urlpatterns = [
 
     url(r'^contratacion/$', views.ContratacionView.as_view()),
 
+
+
+
+
     url(r'^contratacion/contratos/formadores/$', views.ContratosFormadoresGeneralView.as_view()),
     url(r'^contratacion/contratos/formadores/lista/$', views.ContratosFormadoresView.as_view()),
     url(r'^contratacion/contratos/formadores/lista/editar/(?P<id_formador>[0-9]+)/$', views.ContratoFormadorView.as_view()),
     url(r'^contratacion/contratos/formadores/lista/editar/(?P<id_formador>[0-9]+)/nuevo/$', views.NuevoContratoFormadorView.as_view()),
     url(r'^contratacion/contratos/formadores/lista/editar/(?P<id_formador>[0-9]+)/editar/(?P<id_contrato>[0-9]+)/$', views.UpdateContratoFormadorView.as_view()),
+
+    url(r'^contratacion/contratos/formadores/cohortes/$', views.CohortesFormadoresView.as_view()),
+
+
 
     url(r'^contratacion/solicitud_soportes/formadores/$', views.SolicitudSoportesFormadoresView.as_view()),
     url(r'^contratacion/solicitud_soportes/formadores/nuevo/$', views.NuevaSolicitudSoportesFormadorView.as_view()),
