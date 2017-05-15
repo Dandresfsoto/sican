@@ -109,6 +109,8 @@ class Contrato(models.Model):
     soporte_renuncia = models.FileField(upload_to='Contratos/Formadores/Soporte Renuncia/',blank=True,null=True)
     liquidado = models.BooleanField(default=False)
     soporte_liquidacion = models.FileField(upload_to='Contratos/Formadores/Soporte Liquidacion/',blank=True,null=True)
+    contrato_original = models.FileField(upload_to='Contratos/Formadores/Contrato Original/',blank=True,null=True)
+    contrato_firmado = models.FileField(upload_to='Contratos/Formadores/Contrato Firmado/',blank=True,null=True)
 
 class Soporte(models.Model):
     formador = models.ForeignKey(Formador)

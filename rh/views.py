@@ -886,6 +886,24 @@ class ContratacionView(LoginRequiredMixin,
 
 #--------------------------------------------- 2.1.1 FORMADORES --------------------------------------------------------
 
+class ContratosFormadoresGeneralView(LoginRequiredMixin,
+                         MultiplePermissionsRequiredMixin,
+                         TemplateView):
+    '''
+    DatatableView enlazada a la lista de formadores y cantidad de contratos de cada uno
+    '''
+    template_name = 'rh/contratacion/contratos_formadores/lista_general.html'
+    permissions = {
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_formadores.ver",
+                "permisos_sican.rh.rh_contratos_formadores.ver"),
+        "any": ()
+    }
+
+    def get_context_data(self, **kwargs):
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_contratos_formadores.informes')
+        return super(ContratosFormadoresGeneralView, self).get_context_data(**kwargs)
+
 class ContratosFormadoresView(LoginRequiredMixin,
                          MultiplePermissionsRequiredMixin,
                          TemplateView):
