@@ -72,6 +72,8 @@ from administrativos.models import Contrato as ContratoAdministrativo
 from informes.tasks import matriz_chequeo_compilada, reporte_sed_bogota
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest.serializers import BeneficiarioSerializer
+import json
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
@@ -761,7 +763,15 @@ class UserDetail(APIView):
         serializer = UserSerializer(users,many=True)
         return Response(serializer.data)
 
-
+class CedulaDocente(APIView):
+    """
+    Retorna la informacion de los usuarios excluyendo al que realiza el request.
+    """
+    permission_classes = (AllowAny,)
+    def get(self, request, format=None, cedula = None):
+        beneficiario = Beneficiario.objects.filter(cedula = cedula)
+        serializer = BeneficiarioSerializer(beneficiario,many=True)
+        return Response(serializer.data)
 
 
 

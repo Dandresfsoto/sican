@@ -45,6 +45,7 @@ block scroll_header_panel_content
                     td Formador
                     td Cedula
                     td Cantidad de contratos
+
 block body_script_content
     script.
         $("#accion").on("click", function () {
@@ -69,7 +70,7 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/rh/contratacion/contratos/formadores/",
+                "ajax": "/rest/rh/contratacion/contratos/formadores/cohortes/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },

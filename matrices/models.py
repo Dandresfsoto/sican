@@ -71,6 +71,9 @@ class Beneficiario(models.Model):
             url = ""
         return url
 
+    def diplomado_name(self):
+        return self.diplomado.nombre
+
 
 class BeneficiarioPendiente(models.Model):
     diplomado = models.ForeignKey(Diplomado,related_name='diplomado_beneficiariopendiente')

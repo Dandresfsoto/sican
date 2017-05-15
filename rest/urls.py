@@ -180,6 +180,7 @@ urlpatterns = [
     url(r'reds/subsanacionevidencias_id/red/(?P<id_red>\w+)/evidencia/(?P<id_evidencia>\w+)/',EvidenciasSubsanacionCodigosSubsanacion.as_view()),
 
 
+    url(r'cedula/(?P<cedula>\d+)/',views.CedulaDocente.as_view()),
 
 
 
