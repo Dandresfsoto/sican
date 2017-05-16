@@ -112,9 +112,52 @@ Contrato {{contrato}}
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
-                Tienes dudas?.
+                Para legalizar el contrato debes hacer lo siguiente:
               </td>
             </tr>
+
+            <tr>
+              <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
+                   <br/>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
+                <b>1. </b>Inicia sesión en el sistema de información <b>SICAN</b>.
+              </td>
+            </tr>
+            <tr>
+              <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
+                <b>2. </b>Da clic en el recuadro <b>Contratos</b>.
+              </td>
+            </tr>
+
+            <tr>
+              <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
+                <b>3. </b>Da clic en el menu <b>Legalización de contratos</b>.
+              </td>
+            </tr>
+
+            <tr>
+              <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
+                <b>4. </b>Selecciona el rol que vas a desempeñar, en tu caso <b>Formadores</b>.
+              </td>
+            </tr>
+
+            <tr>
+              <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
+                <b>5. </b>Imprime el contrato que descargas al hacer clic en la imagen que aparece en frente del código
+                  del contrato <b>{{ contrato }}</b>.
+              </td>
+            </tr>
+
+            <tr>
+              <td class="bodycopy" style="text-align: justify; color: #153643; font-family: sans-serif;font-size: 16px; line-height: 22px;">
+                <b>6. </b>Haz clic en el código del contrato <b>{{ contrato }}</b> para adjuntar todos los documentos solicitados.
+              </td>
+            </tr>
+
           </table>
         </td>
       </tr>
