@@ -28,40 +28,28 @@ block breadcrum
 block scroll_header_panel_content
     div(class="container-fluid container-index")
         div(class="header-buttons")
-            | {% if informes %}
-            div
-                select(class="selectpicker",id="select_accion")
-                    option(value="") ---------
-                button(class="btn",id="accion") Generar reporte
+            | {% if crear %}
+            div(class="block-right")
+                a(href="nuevo",class="link_button")
+                    paper-button(class="submit") Nuevo
             | {% endif %}
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr
-                    th Formador
-                    th Cedula
-                    th Cantidad de contratos
+                    th Nombre
+                    th Fecha
+                    th Excel
+                    th Contratos
+                    th Resultado
             tbody
                 tr
-                    td Formador
-                    td Cedula
-                    td Cantidad de contratos
+                    td Nombre
+                    td Fecha
+                    td Excel
+                    td Contratos
+                    td Resultado
 
 block body_script_content
-    script.
-        $("#accion").on("click", function () {
-            var action = $("#select_accion").val();
-            if (action != '') {
-                $.ajax({
-                    type: "GET",
-                    url: '/rest/reportes/?action=' + action,
-                    success: function (data) {
-                        $('#myModal').modal('show');
-                        $("#select_accion").val('');
-                        $("#select_accion").selectpicker('refresh');
-                    }
-                });
-            }
-        });
     script.
         $(document).ready(function () {
             var table = $('#table').DataTable({
@@ -70,7 +58,7 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/rh/contratacion/contratos/formadores/cohortes/",
+                "ajax": "/rest/rh/contratos/formadores/cohortes/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
@@ -79,7 +67,7 @@ block body_script_content
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[4]) {
+                            if (row[6]) {
                                 return '<a href="editar/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
@@ -90,12 +78,46 @@ block body_script_content
                     },
                     {
                         "data": 2,
-                        "orderable": true,
+                        "orderable": false,
                     },
                     {
-                        "data": 3,
                         "orderable": false,
                         "className": 'text-center',
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            if (row[3] != '') {
+                                return '<a href="' + row[3] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
+                            }
+                            else {
+                                return '';
+                            }
+                        },
+                    },
+                    {
+                        "orderable": false,
+                        "className": 'text-center',
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            if (row[4] != '') {
+                                return '<a href="' + row[4] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
+                            }
+                            else {
+                                return '';
+                            }
+                        },
+                    },
+                    {
+                        "orderable": false,
+                        "className": 'text-center',
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            if (row[5] != '') {
+                                return '<a href="' + row[5] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
+                            }
+                            else {
+                                return '';
+                            }
+                        },
                     },
                 ]
             });

@@ -74,6 +74,7 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest.serializers import BeneficiarioSerializer
 import json
+from formadores.models import CohortesFormadores
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
@@ -771,7 +772,7 @@ class CedulaDocente(APIView):
     def get(self, request, format=None, cedula = None):
         beneficiario = Beneficiario.objects.filter(cedula = cedula)
         serializer = BeneficiarioSerializer(beneficiario,many=True)
-        return Response(serializer.data)
+        return Response({'cantidad':beneficiario.count(),'data':serializer.data})
 
 
 
@@ -3636,6 +3637,42 @@ class RedSubsanacionList(BaseDatatableView):
         return json_data
 
 
+class CohortesFormadorList(BaseDatatableView):
+    """
+    """
+    model = CohortesFormadores
+    columns = ['id','nombre','fecha','archivo','resultado']
+
+    order_columns = ['id','nombre']
+    max_display_length = 100
+
+
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains = search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.fecha,
+                item.get_archivo_url(),
+                item.get_resultado_url(),
+                item.get_contratos_url(),
+                self.request.user.has_perm('permisos_sican.rh.rh_contratos_formadores.ver'),
+            ])
+        return json_data
+
 
 class CargaMasivaEvidenciasList(BaseDatatableView):
     """
@@ -4203,6 +4240,7 @@ class FormadoresRhSoportes(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.rh.rh_formadores_soportes.eliminar'),
             ])
         return json_data
+
 
 
 class CargosRh(BaseDatatableView):

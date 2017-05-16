@@ -66,7 +66,3 @@ class RequerimientoPersonal(models.Model):
 
     def archivo_filename(self):
         return os.path.basename(self.hv.name)
-
-class CohortesFormadores(models.Model):
-    fecha = models.DateTimeField(auto_now_add=True)
-    archivo = models.FileField(upload_to='Cohortes/Formadores/',blank=True,null=True)

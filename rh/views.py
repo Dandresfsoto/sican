@@ -34,6 +34,9 @@ from negociadores.models import Contrato as ContratoNegociador
 from negociadores.forms import ContratoForm as ContratoNegociadorForm
 from negociadores.models import SolicitudSoportes as SolicitudSoportesNegociador
 from negociadores.forms import SolicitudSoportesNegociadorForm
+from formadores.models import CohortesFormadores
+from formadores.forms import CohortesFormadoresForm
+from formadores.tasks import cohorte_formadores
 
 #------------------------------------------------ 1. PERSONAL ----------------------------------------------------------
 
@@ -1010,13 +1013,40 @@ class CohortesFormadoresView(LoginRequiredMixin,
     permissions = {
         "all": ("permisos_sican.rh.rh_contratacion.ver",
                 "permisos_sican.rh.rh_contratacion_formadores.ver",
-                "permisos_sican.rh.rh_contratos_formadores.ver"),
+                "permisos_sican.rh.rh_contratos_formadores.ver",
+                "permisos_sican.rh.rh_cohortes_formadores.ver"),
         "any": ()
     }
 
     def get_context_data(self, **kwargs):
-        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_contratos_formadores.informes')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.rh.rh_cohortes_formadores.informes')
+        kwargs['crear'] = self.request.user.has_perm('permisos_sican.rh.rh_cohortes_formadores.crear')
         return super(CohortesFormadoresView, self).get_context_data(**kwargs)
+
+class CohortesFormadoresNuevoView(LoginRequiredMixin,
+                              MultiplePermissionsRequiredMixin,
+                              CreateView):
+    '''
+    Vista para la creacion de un nuevo contrato para el formador
+    '''
+    model = CohortesFormadores
+    form_class = CohortesFormadoresForm
+    success_url = '../'
+    template_name = 'rh/contratacion/contratos_formadores/cohortes/nuevo.html'
+    permissions = {
+        "all": ("permisos_sican.rh.rh_contratacion.ver",
+                "permisos_sican.rh.rh_contratacion_formadores.ver",
+                "permisos_sican.rh.rh_contratos_formadores.ver",
+                "permisos_sican.rh.rh_cohortes_formadores.ver",
+                "permisos_sican.rh.rh_cohortes_formadores.crear"),
+        "any": ()
+    }
+
+    def form_valid(self, form):
+        self.object = form.save()
+        cohorte_formadores.delay(self.object.id)
+        return super(CohortesFormadoresNuevoView, self).form_valid(form)
+
 
 #------------------------------------- 2.1.2 SOLICITUD SOPORTES FORMADORES ---------------------------------------------
 

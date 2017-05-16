@@ -99,7 +99,7 @@ class SolicitudSoportes(models.Model):
         return self.nombre
 
 class Contrato(models.Model):
-    nombre = models.CharField(max_length=200)
+    nombre = models.CharField(unique=True,max_length=200)
     formador = models.ForeignKey(Formador)
     soportes_requeridos = models.ForeignKey(SolicitudSoportes)
     fecha = models.DateTimeField(auto_now_add = True)
@@ -231,3 +231,32 @@ class Revision(models.Model):
     descripcion = models.TextField(max_length=500,blank=True)
     productos = models.ManyToManyField(Producto,blank=True)
     corte = models.ForeignKey(Cortes,blank=True,null=True)
+
+
+class CohortesFormadores(models.Model):
+    nombre = models.CharField(max_length=100)
+    fecha = models.DateTimeField(auto_now_add=True)
+    archivo = models.FileField(upload_to='Cohortes/Formadores/Archivo/')
+    resultado = models.FileField(upload_to='Cohortes/Formadores/Resultado/')
+    contratos = models.FileField(upload_to='Cohortes/Formadores/Contratos/')
+
+    def get_archivo_url(self):
+        try:
+            url = self.archivo.url
+        except:
+            url = ""
+        return url
+
+    def get_resultado_url(self):
+        try:
+            url = self.resultado.url
+        except:
+            url = ""
+        return url
+
+    def get_contratos_url(self):
+        try:
+            url = self.resultado.url
+        except:
+            url = ""
+        return url

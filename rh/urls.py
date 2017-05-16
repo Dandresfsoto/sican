@@ -70,6 +70,7 @@ urlpatterns = [
     url(r'^contratacion/contratos/formadores/lista/editar/(?P<id_formador>[0-9]+)/editar/(?P<id_contrato>[0-9]+)/$', views.UpdateContratoFormadorView.as_view()),
 
     url(r'^contratacion/contratos/formadores/cohortes/$', views.CohortesFormadoresView.as_view()),
+    url(r'^contratacion/contratos/formadores/cohortes/nuevo/$', views.CohortesFormadoresNuevoView.as_view()),
 
 
 

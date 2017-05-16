@@ -21,6 +21,7 @@ from productos.models import Contratos, ValorEntregable
 from formadores.models import Cortes, Contrato
 from formadores.models import SolicitudSoportes
 import datetime
+from formadores.models import CohortesFormadores
 
 class FormadorForm(forms.ModelForm):
 
@@ -2546,3 +2547,27 @@ class LegalizacionSeguridadForm(forms.Form):
 
 
         self.helper.layout[0].fields = fields
+
+class CohortesFormadoresForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CohortesFormadoresForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Cohortes de contratación:',
+                Div(
+                    Div('nombre',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('archivo',css_class='col-sm-6'),
+                    Div('contratos',css_class='col-sm-6'),
+                    css_class = 'row'
+                )
+            ),
+        )
+
+    class Meta:
+        model = CohortesFormadores
+        fields = ['nombre','archivo','contratos']
