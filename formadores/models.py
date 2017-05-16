@@ -112,6 +112,13 @@ class Contrato(models.Model):
     contrato_original = models.FileField(upload_to='Contratos/Formadores/Contrato Original/',blank=True,null=True)
     contrato_firmado = models.FileField(upload_to='Contratos/Formadores/Contrato Firmado/',blank=True,null=True)
 
+    def get_contrato_url(self):
+        try:
+            url = self.contrato_original.url
+        except:
+            url = ""
+        return url
+
 class Soporte(models.Model):
     formador = models.ForeignKey(Formador)
     creacion = models.DateField(auto_now=True)

@@ -4787,24 +4787,19 @@ class ContratoFormadorUserView(BaseDatatableView):
 
     def prepare_results(self, qs):
         json_data = []
-        stack = []
 
         for item in qs:
-
-            if item not in stack:
-                stack.append(item)
-
-                json_data.append([
-                    item.id,
-                    item.nombre,
-                    item.get_contratos_url(),
-                    localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
-                    item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
-                    item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',
-                    item.renuncia,
-                    item.liquidado,
-                    self.request.user.has_perm('permisos_sican.contratos.contratos_formadores.editar'),
-                ])
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.get_contrato_url(),
+                localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
+                item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
+                item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',
+                item.renuncia,
+                item.liquidado,
+                self.request.user.has_perm('permisos_sican.contratos.contratos_formadores.editar'),
+            ])
         return json_data
 
 class ContratoLiderUserView(BaseDatatableView):
