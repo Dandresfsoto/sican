@@ -115,6 +115,8 @@ def cohorte_formadores(id):
                     formador.usuario = user
                     formador.save()
                     ws.cell(row=fila[0].row, column=15).value = 'Warning: Usuario actualizado'
+                else:
+                    ws.cell(row=fila[0].row, column=15).value = 'Formador ya existe'
 
 
             codigo = fila[8].value
