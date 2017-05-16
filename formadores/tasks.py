@@ -151,7 +151,7 @@ def cohorte_formadores(id):
                         with source, target:
                             shutil.copyfileobj(source,target)
 
-                        contrato.archivo = File(open("C://Temp//" + filename, 'rb'))
+                        contrato.contrato_original = File(open("C://Temp//" + filename, 'rb'))
                         contrato.save()
                         ws.cell(row=fila[0].row, column=16).value = 'Contrato creado y soporte cargado'
                         send_mail_templated.delay('email/contrato_formador.tpl',{'url_base' : 'https://sican.asoandes.org',
