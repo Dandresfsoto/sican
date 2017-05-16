@@ -4797,6 +4797,7 @@ class ContratoFormadorUserView(BaseDatatableView):
                 json_data.append([
                     item.id,
                     item.nombre,
+                    item.get_contratos_url(),
                     localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
                     item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
                     item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',

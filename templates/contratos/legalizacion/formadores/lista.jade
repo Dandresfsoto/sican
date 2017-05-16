@@ -29,6 +29,7 @@ block scroll_header_panel_content
                 tr
                     th
                     th Nombre
+                    th Contrato
                     th Fecha Inicio
                     th Fecha Finalización
                     th Terminación por renuncia
@@ -37,6 +38,7 @@ block scroll_header_panel_content
                 tr
                     td
                     td Nombre
+                    td Contrato
                     td Fecha Inicio
                     td Fecha Finalización
                     td Terminación por renuncia
@@ -65,7 +67,7 @@ block body_script_content
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[7]) {
+                            if (row[8]) {
                                 return '<a href="contrato/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
@@ -75,11 +77,24 @@ block body_script_content
                         "orderable": true,
                     },
                     {
-                        "data": 3,
-                        "orderable": true,
+                        "orderable": false,
+                        "className": 'text-center',
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            if (row[2] != '') {
+                                return '<a href="' + row[2] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
+                            }
+                            else {
+                                return '';
+                            }
+                        },
                     },
                     {
                         "data": 4,
+                        "orderable": true,
+                    },
+                    {
+                        "data": 5,
                         "orderable": true,
                     },
                     {
@@ -87,7 +102,7 @@ block body_script_content
                         "className": 'text-center',
                         "data": null,
                         "render": function (data, type, row, meta) {
-                            if (row[5]) {
+                            if (row[6]) {
                                 return 'Si';
                             }
                             else {
@@ -101,7 +116,7 @@ block body_script_content
                         "className": 'text-center',
                         "data": null,
                         "render": function (data, type, row, meta) {
-                            if (row[6]) {
+                            if (row[7]) {
                                 return 'Si';
                             }
                             else {
@@ -132,7 +147,7 @@ block body_script_content
             // `d` is the original data object for the row
             return '<table class="table table-striped">' +
                     '<tr>' +
-                    '<td><p class="bold-p">Fecha de creación:</p>' + d[2] + '</td>' +
+                    '<td><p class="bold-p">Fecha de creación:</p>' + d[3] + '</td>' +
                     '</tr>' +
                     '</table>';
         }
