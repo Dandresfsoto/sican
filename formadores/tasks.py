@@ -64,7 +64,7 @@ def cohorte_formadores(id):
                     user.set_password(password)
                     user.save()
 
-                    ws.cell(row=fila.row, column=13).value = 'Usuario creado'
+                    ws.cell(row=fila[0].row, column=13).value = 'Usuario creado'
 
                     send_mail_templated.delay('email/new_user.tpl',{'url_base' : 'https://sican.asoandes.org',
                                                                     'first_name': user.first_name,
@@ -72,12 +72,12 @@ def cohorte_formadores(id):
                                                                     'password':password},DEFAULT_FROM_EMAIL,[user.email])
                 else:
                     if cargo == None:
-                        ws.cell(row=fila.row, column=13).value = 'Error: ID cargo'
+                        ws.cell(row=fila[0].row, column=13).value = 'Error: ID cargo'
                     else:
-                        ws.cell(row=fila.row, column=13).value = 'Error: Campos vacios'
+                        ws.cell(row=fila[0].row, column=13).value = 'Error: Campos vacios'
 
             else:
-                ws.cell(row=fila.row, column=13).value = 'Warning: Usuario ya existe'
+                ws.cell(row=fila[0].row, column=13).value = 'Warning: Usuario ya existe'
 
 
             cedula = fila[7].value
@@ -100,17 +100,17 @@ def cohorte_formadores(id):
                     formador = Formador.objects.create(usuario=user,region=region,nombres=nombres,apellidos=apellidos,
                                                        cedula=cedula,correo_personal=correo_personal,celular_personal=celular_personal,
                                                        cargo=cargo)
-                    ws.cell(row=fila.row, column=14).value = 'Formador creado'
+                    ws.cell(row=fila[0].row, column=14).value = 'Formador creado'
                 else:
                     if region == None:
-                        ws.cell(row=fila.row, column=14).value = 'Error: ID region'
+                        ws.cell(row=fila[0].row, column=14).value = 'Error: ID region'
                     else:
-                        ws.cell(row=fila.row, column=14).value = 'Error: Campos vacios'
+                        ws.cell(row=fila[0].row, column=14).value = 'Error: Campos vacios'
             else:
                 if formador.usuario != user:
                     formador.usuario = user
                     formador.save()
-                    ws.cell(row=fila.row, column=14).value = 'Warning: Usuario actualizado'
+                    ws.cell(row=fila[0].row, column=14).value = 'Warning: Usuario actualizado'
 
 
             codigo = fila[8].value
@@ -127,7 +127,7 @@ def cohorte_formadores(id):
                     contrato = Contrato.objects.create(nombre=codigo,formador=formador,soportes_requeridos=soportes_requeridos,
                                                        fecha_inicio=fecha_inicio,fecha_fin=fecha_fin)
                 except:
-                    ws.cell(row=fila.row, column=15).value = 'Error: Creacion de contrato, posiblemente existe otro contrato con el mismo nombre'
+                    ws.cell(row=fila[0].row, column=15).value = 'Error: Creacion de contrato, posiblemente existe otro contrato con el mismo nombre'
 
                 else:
 
@@ -136,7 +136,7 @@ def cohorte_formadores(id):
                     try:
                         filename = os.path.basename(fila[12].value)
                     except:
-                        ws.cell(row=fila.row, column=15).value = 'Error: Path del contrato'
+                        ws.cell(row=fila[0].row, column=15).value = 'Error: Path del contrato'
 
                     else:
 
@@ -147,13 +147,13 @@ def cohorte_formadores(id):
 
                         contrato.archivo = File(open("C://Temp//" + filename, 'rb'))
                         contrato.save()
-                        ws.cell(row=fila.row, column=15).value = 'Contrato creado y soporte cargado'
+                        ws.cell(row=fila[0].row, column=15).value = 'Contrato creado y soporte cargado'
                         send_mail_templated.delay('email/contrato_formador.tpl',{'url_base' : 'https://sican.asoandes.org',
                                                                     'first_name': user.first_name,
                                                                     'last_name': user.last_name,'email': user.email,
                                                                     'contrato':contrato.nombre},DEFAULT_FROM_EMAIL,[user.email])
             else:
-                ws.cell(row=fila.row, column=15).value = 'Error: Campos vacios'
+                ws.cell(row=fila[0].row, column=15).value = 'Error: Campos vacios'
 
 
     wb.save(output)
