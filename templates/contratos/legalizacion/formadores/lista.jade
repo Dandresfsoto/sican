@@ -81,7 +81,7 @@ block body_script_content
                         "className": 'text-center',
                         "data": null,
                         "render": function (data, type, row, meta) {
-                            if (row[2] != '') {
+                            if (row[2] != '""') {
                                 return '<a href="' + row[2] + '" style="color:#004c99;"><img src="/static/img/file.png" height="32"></a>';
                             }
                             else {
