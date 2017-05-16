@@ -23,6 +23,7 @@ import os
 import shutil
 from django.core.files import File
 from StringIO import StringIO
+from django.contrib.auth.models import Group
 
 @shared_task
 def cohorte_formadores(id):
@@ -57,7 +58,7 @@ def cohorte_formadores(id):
 
                 if first_name != None and last_name != None and fullname != None and cargo!= None and telefono_personal != None and correo_personal != None:
 
-                    user = User.objects.create(email=email,first_name=first_name,last_name=last_name,fullname=fullname,
+                    user = User.objects.create_user(email=email,first_name=first_name,last_name=last_name,fullname=fullname,
                                                cargo=cargo,telefono_personal=telefono_personal,correo_personal=correo_personal)
 
                     password = "".join([random.choice(string.ascii_letters) for i in xrange(6)])
@@ -79,7 +80,7 @@ def cohorte_formadores(id):
             else:
                 ws.cell(row=fila[0].row, column=14).value = 'Warning: Usuario ya existe'
 
-
+            user.groups.add(Group.objects.get(id=23))
             cedula = fila[7].value
 
 

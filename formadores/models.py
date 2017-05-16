@@ -256,7 +256,7 @@ class CohortesFormadores(models.Model):
 
     def get_contratos_url(self):
         try:
-            url = self.resultado.url
+            url = self.contratos.url
         except:
             url = ""
         return url
