@@ -97,11 +97,12 @@ def cohorte_formadores(id):
                 cargo = Cargo.objects.get(id=fila[3].value)
 
                 if region != None and nombres != None and apellidos != None and cedula != None and correo_personal != None and celular_personal != None and cargo != None:
-                    formador = Formador.objects.create(usuario=user,region=region,nombres=nombres,apellidos=apellidos,
+                    formador = Formador.objects.create(usuario=user,nombres=nombres,apellidos=apellidos,
                                                        cedula=cedula,correo_personal=correo_personal,celular_personal=celular_personal)
                     formador.save()
                     formador.cargo.add(cargo)
-                    
+                    formador.region.add(region)
+
                     ws.cell(row=fila[0].row, column=14).value = 'Formador creado'
                 else:
                     if region == None:
