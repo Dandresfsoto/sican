@@ -116,7 +116,7 @@ class Contrato(models.Model):
         try:
             url = self.contrato_original.url
         except:
-            url = ""
+            url = None
         return url
 
 class Soporte(models.Model):
