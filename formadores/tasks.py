@@ -160,7 +160,7 @@ def cohorte_formadores(id):
                                                                     'last_name': user.last_name,'email': user.email,
                                                                     'contrato':contrato.nombre},DEFAULT_FROM_EMAIL,[user.email])
                         if user.telefono_personal != None and len(unicode(user.telefono_personal)) == 10:
-                            mensaje = 'Se agrego el contrato '+contrato.nombre+' a tu cuenta en el sistema SICAN,' \
+                            mensaje = 'ASOANDES: Se agrego el contrato '+contrato.nombre+' a tu cuenta en el sistema SICAN,' \
                                                                                ' procede a legalizarlo, dudas con recursohumano@asoandes.org'
                             parametros = urllib.urlencode({'apikey':API_KEY_SMS,'mensaje': mensaje,'numcelular': unicode(user.telefono_personal),'numregion':'57'})
                             headers = {"Content-type": "application/x-www-form-urlencoded", "Accept":"text/plain"}
