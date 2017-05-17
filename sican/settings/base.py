@@ -54,6 +54,7 @@ EMAIL_PORT = os.getenv('SICAN_EMAIL_PORT')
 DEFAULT_FROM_EMAIL = os.getenv('SICAN_DEFAULT_FROM_EMAIL')
 RECURSO_HUMANO_EMAIL = 'recursohumano@asoandes.org'
 EMAIL_USE_TLS = True
+API_KEY_SMS = os.getenv('SICAN_API_KEY_SMS')
 
 LOGIN_URL = '/'
 

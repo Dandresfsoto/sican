@@ -15,7 +15,7 @@ from region.models import Region
 from usuarios.tasks import send_mail_templated
 import random
 import string
-from sican.settings.base import DEFAULT_FROM_EMAIL
+from sican.settings.base import DEFAULT_FROM_EMAIL, API_KEY_SMS
 from formadores.models import Contrato
 from formadores.models import SolicitudSoportes
 from zipfile import ZipFile
@@ -24,6 +24,7 @@ import shutil
 from django.core.files import File
 from StringIO import StringIO
 from django.contrib.auth.models import Group
+import urllib, urllib2, json
 
 @shared_task
 def cohorte_formadores(id):
@@ -158,6 +159,17 @@ def cohorte_formadores(id):
                                                                     'first_name': user.first_name,
                                                                     'last_name': user.last_name,'email': user.email,
                                                                     'contrato':contrato.nombre},DEFAULT_FROM_EMAIL,[user.email])
+                        if user.telefono_personal != None and len(user.telefono_personal) == 10:
+                            mensaje = 'Se agrego el contrato '+contrato.nombre+' a tu cuenta en el sistema SICAN,' \
+                                                                               ' procede a legalizarlo, dudas con recursohumano@asoandes.org'
+                            parametros = urllib.urlencode({'apikey':API_KEY_SMS,'mensaje': mensaje,'numcelular': unicode(user.telefono_personal),'numregion':'57'})
+                            headers = {"Content-type": "application/x-www-form-urlencoded", "Accept":"text/plain"}
+                            request = urllib2.Request('http://panel.smasivos.com/api.envio.new.php', parametros, headers)
+                            opener = urllib2.build_opener()
+                            respuesta = opener.open(request).read()
+                            j=json.loads(respuesta)
+                            ws.cell(row=fila[0].row, column=17).value = unicode(j)
+
             else:
                 ws.cell(row=fila[0].row, column=16).value = 'Error: Campos vacios'
 
@@ -167,4 +179,4 @@ def cohorte_formadores(id):
     cohorte.resultado.save(filename,File(output))
 
 
-    return 'Cohorte procesado'
+    return 'Cohorte procesado, '
