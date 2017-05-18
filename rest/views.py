@@ -30,6 +30,7 @@ from django.http import HttpResponse
 from informes.tasks import formadores, formadores_soportes, preinscritos, transportes, cronograma_general, cronograma_lider
 from informes.tasks import lideres, lideres_soportes, encuesta_percepcion_inicial, radicados, pagos_mensual, reporte_requerimientos_contratacion
 from informes.tasks import acumulado_tipo_1,acumulado_tipo_2,acumulado_tipo_3,acumulado_tipo_4,matriz_chequeo, matriz_chequeo_formador, zip_ss
+from informes.tasks import reporte_legalizacion_contrato_formadores
 from encuestas.models import PercepcionInicial
 from productos.models import Diplomado, Nivel, Sesion, Entregable
 from formacion.models import EntradaCronograma
@@ -566,6 +567,8 @@ class ReportesView(APIView):
             x = matriz_chequeo_compilada.delay(request.user.email)
         if id_accion == '33':
             x = reporte_sed_bogota.delay(request.user.email)
+        if id_accion == '34':
+            x = reporte_legalizacion_contrato_formadores.delay(request.user.email)
 
         return HttpResponse(status=200)
 
@@ -4406,6 +4409,7 @@ class ContratoFormadorView(BaseDatatableView):
                 json_data.append([
                     item.id,
                     item.nombre,
+                    item.get_contrato_url(),
                     localtime(item.fecha).strftime('%d de %B del %Y, %X') if item.fecha != None else '',
                     item.fecha_inicio.strftime('%d de %B del %Y') if item.fecha_inicio != None else '',
                     item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',

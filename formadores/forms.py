@@ -161,6 +161,13 @@ class ContratoForm(forms.ModelForm):
                     css_class = 'row'
                 ),
             ),
+            Fieldset(
+                'Contrato',
+                Div(
+                    Div('contrato_original',css_class='col-sm-12'),
+                    css_class = 'row'
+                )
+            ),
         )
 
     class Meta:

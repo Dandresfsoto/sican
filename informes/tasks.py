@@ -39,6 +39,7 @@ from openpyxl.comments import Comment
 from django.db.models import Q
 from region.models import Region
 import xlsxwriter
+from formadores.models import Contrato
 
 @app.task
 def nueva_semana():
@@ -4010,6 +4011,66 @@ def reporte_sed_bogota(email):
 
     wb.close()
 
+    filename = unicode(informe.creacion) + '.xlsx'
+    informe.archivo.save(filename,File(output))
+    return "Reporte generado exitosamente"
+
+
+
+@app.task
+def reporte_legalizacion_contrato_formadores(email):
+    usuario = User.objects.get(email=email)
+    nombre = "Reporte de legalización de contratos"
+    proceso = "RH-INF01"
+    informe = InformesExcel.objects.create(usuario = usuario,nombre=nombre,progreso="0%")
+    fecha = informe.creacion
+
+    titulos = ['ID','Código','Formador','Cedula','Región','Agrupación de soportes']
+
+    formatos = ['General','General','General','General','General','General']
+
+
+    ancho_columnas =  [30,20,30,30,30,30]
+
+    contenidos = []
+
+    max = 0
+
+    for contrato in Contrato.objects.all():
+
+        soportes = SoporteFormadores.objects.filter(contrato = contrato)
+
+        restante = []
+
+        for soporte in soportes:
+            restante.append(soporte.tipo.nombre)
+            restante.append('https://sican.asoandes.org'+soporte.get_archivo_url())
+
+        contenido = ['CONT-FOR-'+unicode(contrato.id),
+                     contrato.nombre,
+                     contrato.formador.get_full_name(),
+                     contrato.formador.cedula,
+                     contrato.formador.get_region_string(),
+                     contrato.soportes_requeridos.nombre] + restante
+
+        if len(contenido) > max:
+            max = len(contenido)
+
+        if len(titulos) < max:
+            while(len(titulos)<max):
+                titulos.append('')
+
+        if len(formatos) < max:
+            while(len(formatos)<max):
+                formatos.append('General')
+
+        if len(ancho_columnas) < max:
+            while(len(ancho_columnas)<max):
+                ancho_columnas.append(30)
+
+        contenidos.append(contenido)
+
+    output = construir_reporte(titulos,contenidos,formatos,ancho_columnas,nombre,fecha,usuario,proceso)
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
