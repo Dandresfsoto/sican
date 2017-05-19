@@ -779,8 +779,6 @@ class CedulaDocente(APIView):
 
 
 
-
-
 class AdminUserList(BaseDatatableView):
     """
     0.id

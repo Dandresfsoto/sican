@@ -17,4 +17,4 @@ class MensajeSerializer(serializers.ModelSerializer):
 class BeneficiarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Beneficiario
-        fields = ('nombres','apellidos','diplomado_name')
+        fields = ('nombres','apellidos','diplomado_name','get_diploma_url_rest')

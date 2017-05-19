@@ -71,6 +71,13 @@ class Beneficiario(models.Model):
             url = ""
         return url
 
+    def get_diploma_url_rest(self):
+        try:
+            url = self.diploma.url
+        except:
+            url = None
+        return url
+
     def diplomado_name(self):
         return self.diplomado.nombre
 
