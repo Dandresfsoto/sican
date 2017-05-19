@@ -155,6 +155,7 @@ urlpatterns = [
     url(r'requerimientos/delegacion/$', DelegacionRequerimientos.as_view()),
 
     url(r'evidencias/codigos/',EvidenciasCodigos.as_view()),
+
     url(r'reds/lista/',RedList.as_view()),
 
     url(r'cargamasivaevidencias/lista/',CargaMasivaEvidenciasList.as_view()),
@@ -182,7 +183,5 @@ urlpatterns = [
     url(r'cedula/(?P<cedula>\d+)/',views.CedulaDocente.as_view()),
 
     url(r'rh/contratos/formadores/cohortes/',views.CohortesFormadorList.as_view()),
-
-
 
 ]
