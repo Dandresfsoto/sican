@@ -184,7 +184,5 @@ urlpatterns = [
     url(r'rh/contratos/formadores/cohortes/',views.CohortesFormadorList.as_view()),
 
 
-    url(r'cedula_escuelatic/(?P<cedula_escuelatic>\d+)/',views.CedulaEscuelaTic.as_view()),
-
 
 ]
