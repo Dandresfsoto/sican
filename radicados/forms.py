@@ -20,31 +20,33 @@ class RadicadoForm(forms.ModelForm):
             Fieldset(
                 'Radicado',
                 Div(
-                    Div('numero',css_class='col-sm-12'),
+                    Div('numero',css_class='col-sm-4'),
+                    Div('secretaria',css_class='col-sm-4'),
+                    Div('municipio',css_class='col-sm-4'),
+                    css_class = 'row'
+                )
+            ),
+            Fieldset(
+                'Institución Educativa',
+                Div(
+                    Div('nombre_ie',css_class='col-sm-4'),
+                    Div('ie_id',css_class='col-sm-4'),
+                    Div('dane_ie',css_class='col-sm-4'),
+                    css_class = 'row'
+                )
+            ),
+            Fieldset(
+                'Sede Educativa',
+                Div(
+                    Div('nombre_sede',css_class='col-sm-4'),
+                    Div('sede_id',css_class='col-sm-4'),
+                    Div('dane_sede',css_class='col-sm-4'),
                     css_class = 'row'
                 ),
                 Div(
-                    Div('secretaria',css_class='col-sm-12'),
-                    css_class = 'row'
-                ),
-                Div(
-                    Div('municipio',css_class='col-sm-12'),
-                    css_class = 'row'
-                ),
-                Div(
-                    Div('nombre_sede',css_class='col-sm-12'),
-                    css_class = 'row'
-                ),
-                Div(
-                    Div('dane_sede',css_class='col-sm-12'),
-                    css_class = 'row'
-                ),
-                Div(
-                    Div('tipo',css_class='col-sm-12'),
-                    css_class = 'row'
-                ),
-                Div(
-                    Div('ubicacion',css_class='col-sm-12'),
+                    Div('zona',css_class='col-sm-4'),
+                    Div('matricula',css_class='col-sm-4'),
+                    Div('direccion',css_class='col-sm-4'),
                     css_class = 'row'
                 )
             )
@@ -53,6 +55,16 @@ class RadicadoForm(forms.ModelForm):
     class Meta:
         model = Radicado
         fields = '__all__'
+        labels = {
+            'nombre_ie':'Nombre',
+            'dane_ie':'Código Dane',
+            'ie_id':'ID',
+            'nombre_sede':'Nombre',
+            'dane_sede':'Código Dane',
+            'sede_id':'ID',
+            'direccion':'Dirección',
+            'matricula':'Matrícula',
+        }
 
 class RadicadoRetomaForm(forms.ModelForm):
 

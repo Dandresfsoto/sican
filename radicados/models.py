@@ -5,13 +5,24 @@ from municipios.models import Municipio
 from secretarias.models import Secretaria
 # Create your models here.
 class Radicado(models.Model):
+    numero = models.BigIntegerField(unique=True)
     secretaria = models.ForeignKey(Secretaria)
     municipio = models.ForeignKey(Municipio)
-    numero = models.BigIntegerField()
-    nombre_sede = models.CharField(max_length=200)
-    dane_sede = models.BigIntegerField()
-    tipo = models.IntegerField()
-    ubicacion = models.IntegerField()
+
+    dane_sede = models.BigIntegerField(blank=True,null=True)
+    sede_id = models.BigIntegerField(blank=True,null=True)
+    nombre_sede = models.CharField(max_length=200,blank=True,null=True)
+
+    dane_ie = models.BigIntegerField(blank=True,null=True)
+    ie_id = models.BigIntegerField(blank=True,null=True)
+    nombre_ie = models.CharField(max_length=200,blank=True,null=True)
+
+    zona = models.CharField(max_length=200,blank=True,null=True)
+    matricula = models.BigIntegerField(blank=True,null=True)
+    direccion = models.CharField(max_length=200,blank=True,null=True)
+
+    tipo = models.IntegerField(blank=True,null=True)
+    ubicacion = models.IntegerField(blank=True,null=True)
     oculto = models.BooleanField(default=False)
 
     class Meta:

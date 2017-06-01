@@ -76,6 +76,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest.serializers import BeneficiarioSerializer
 import json
 from formadores.models import CohortesFormadores
+from informes.tasks import matriz_chequeo_virtual_compilada
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
@@ -569,6 +570,8 @@ class ReportesView(APIView):
             x = reporte_sed_bogota.delay(request.user.email)
         if id_accion == '34':
             x = reporte_legalizacion_contrato_formadores.delay(request.user.email)
+        if id_accion == '35':
+            x = matriz_chequeo_virtual_compilada.delay(request.user.email)
 
         return HttpResponse(status=200)
 
