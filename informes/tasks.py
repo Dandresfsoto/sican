@@ -3637,7 +3637,7 @@ def matriz_chequeo_virtual_compilada(email):
 
         i = 2
 
-        for beneficiario in Beneficiario.objects.filter(diplomado__id = id_diplomado).order_by('formador')[0:3]:
+        for beneficiario in Beneficiario.objects.filter(diplomado__id = id_diplomado).order_by('formador'):
             ws.write('A'+str(i), beneficiario.region.nombre.upper(),text)
 
             ws.write('B'+str(i), beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text,text)
