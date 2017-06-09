@@ -59,6 +59,7 @@ urlpatterns = [
     url(r'^docs/', schema_view),
     url(r'^api/v1/', include('permabots.urls_api', namespace="api")),
     url(r'^api-token-auth/', views.obtain_auth_token),
+    url(r'^beneficiarios/', include('beneficiarios.urls', namespace='beneficiarios')),
 ]
 
 if settings.DEBUG:

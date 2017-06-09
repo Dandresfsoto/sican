@@ -162,9 +162,20 @@ class ContratoForm(forms.ModelForm):
                 ),
             ),
             Fieldset(
-                'Contrato',
+                'Contrato original',
                 Div(
                     Div('contrato_original',css_class='col-sm-12'),
+                    css_class = 'row'
+                )
+            ),
+            Fieldset(
+                'Supervisión del contrato',
+                Div(
+                    Div('supervisores',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('municipios',css_class='col-sm-12'),
                     css_class = 'row'
                 )
             ),

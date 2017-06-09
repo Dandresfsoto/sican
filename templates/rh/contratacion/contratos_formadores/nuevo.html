@@ -139,7 +139,21 @@ $(document).ready(function () {
     if ($('#input_mensaje').val() != ""){
         toast_message.open();
     }
-});</script><script>$("#id_soporte_renuncia").fileinput({
+});</script><script>$("#id_supervisores").chosen(
+        {
+            no_results_text: "No hay resultados para",
+            placeholder_text_multiple: "Selecciona los supervisores del contrato"
+        }
+);
+$("#id_municipios").chosen(
+        {
+            no_results_text: "No hay resultados para",
+            placeholder_text_multiple: "Selecciona los supervisores del contrato"
+        }
+);
+
+
+$("#id_soporte_renuncia").fileinput({
     language: "es",
     showRemove: false,
     showUpload: false

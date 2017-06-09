@@ -55,6 +55,7 @@ urlpatterns = [
     url(r'contratos/legalizacion/formadores/$', views.ContratoFormadorUserView.as_view()),
     url(r'contratos/legalizacion/lideres/$', views.ContratoLiderUserView.as_view()),
     url(r'contratos/legalizacion/negociadores/$', views.ContratoNegociadorUserView.as_view()),
+    url(r'contratos/informacion/formadores/$', views.ContratoInfoView.as_view()),
 
     #-------------------------------------------------------------------------------------------------------------------
 
@@ -123,6 +124,13 @@ urlpatterns = [
     url(r'acceso/retoma/$', RetomaList.as_view()),
 
     url(r'matrices/diplomados/(?P<diplomado>\w+)/$', MatricesDiplomadosList.as_view()),
+
+
+
+    url(r'beneficiarios/grupos/$', views.BeneficiariosGruposList.as_view()),
+
+
+
     url(r'autocomplete/radicados/$', AutocompleteRadicados.as_view()),
     url(r'autocomplete/municipios/$', AutocompleteMunicipios.as_view()),
 

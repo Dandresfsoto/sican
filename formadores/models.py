@@ -102,6 +102,7 @@ class Contrato(models.Model):
     nombre = models.CharField(unique=True,max_length=200)
     formador = models.ForeignKey(Formador)
     soportes_requeridos = models.ForeignKey(SolicitudSoportes)
+    vigencia = models.CharField(max_length=100,blank=True,null=True)
     fecha = models.DateTimeField(auto_now_add = True)
     fecha_inicio = models.DateField(blank=True,null=True)
     fecha_fin = models.DateField(blank=True,null=True)
@@ -111,6 +112,12 @@ class Contrato(models.Model):
     soporte_liquidacion = models.FileField(upload_to='Contratos/Formadores/Soporte Liquidacion/',blank=True,null=True)
     contrato_original = models.FileField(upload_to='Contratos/Formadores/Contrato Original/',blank=True,null=True)
     contrato_firmado = models.FileField(upload_to='Contratos/Formadores/Contrato Firmado/',blank=True,null=True)
+    municipios = models.ManyToManyField(Municipio)
+    supervisores = models.ManyToManyField(User)
+    meta_beneficiarios = models.BigIntegerField()
+
+    def __unicode__(self):
+        return self.nombre
 
     def get_contrato_url(self):
         try:
@@ -118,6 +125,30 @@ class Contrato(models.Model):
         except:
             url = None
         return url
+
+    def get_municipios_string(self):
+        municipios = ''
+        for municipio in self.municipios.all():
+            municipios += municipio.__unicode__() + '</br>'
+        return municipios
+
+    def get_municipios_list(self):
+        municipios = ''
+        for municipio in self.municipios.all():
+            municipios += municipio.nombre+','+municipio.departamento.nombre + ';'
+        return municipios
+
+    def get_supervisores_string(self):
+        supervisores = ''
+        for supervisor in self.supervisores.all():
+            supervisores += supervisor.get_full_name_string()+ ' - '+ supervisor.email + '</br>'
+        return supervisores
+
+    def get_supervisores_list(self):
+        supervisores = ''
+        for supervisor in self.supervisores.all():
+            supervisores += supervisor.get_full_name_string()+ ' - '+ supervisor.email + ';'
+        return supervisores
 
 class Soporte(models.Model):
     formador = models.ForeignKey(Formador)
@@ -198,9 +229,12 @@ class SolicitudTransporte(models.Model):
         return os.path.basename(self.archivo.name)
 
 class Grupos(models.Model):
+    usuario = models.ForeignKey(User,blank=True,null=True)
     formador = models.ForeignKey(Formador,related_name="formador_grupos")
     nombre = models.CharField(max_length=100)
     oculto = models.BooleanField(default=False)
+    numero = models.IntegerField()
+    descripcion = models.CharField(max_length=100,blank=True,null=True)
 
     class Meta:
         ordering = ['nombre']

@@ -44,6 +44,19 @@ block scroll_header_panel_content
                         paper-button(class="submit",id="submit_form") Guardar
 block body_script_content
     script.
+        $("#id_supervisores").chosen(
+                {
+                    no_results_text: "No hay resultados para",
+                    placeholder_text_multiple: "Selecciona los supervisores del contrato"
+                }
+        );
+        $("#id_municipios").chosen(
+                {
+                    no_results_text: "No hay resultados para",
+                    placeholder_text_multiple: "Selecciona los municipios"
+                }
+        );
+
 
         $("#id_soporte_renuncia").fileinput({
             language: "es",

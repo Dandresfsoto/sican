@@ -3515,43 +3515,46 @@ def matriz_chequeo_virtual_compilada(email):
                                 {'letter':'V','id':67,'nombre':'N4S2 - Registro fotográfico: Evento de socialización'},
                                 ]
 
-    dict_productos_tecnotic = [{'letter':'I','id':20,'nombre':'N1S1 - Hoja de ruta'},
-                                {'letter':'J','id':21,'nombre':'N1S2 - Guía: construyendo lecciones de innovación educativa'},
-                                {'letter':'K','id':22,'nombre':'N1S2 - Taller práctico: 10 claves para la implementación de tendencias y enfoques innovadores'},
-                                {'letter':'L','id':15,'nombre':'N1S3 - Documento: Decálogo de un Proyecto Innovador'},
-                                {'letter':'M','id':16,'nombre':'N1S3 - Guía: Potenciando mi Experiencia Educativa de primera fase'},
-                                {'letter':'N','id':23,'nombre':'N1S4 - Guía: implementando la Experiencia Educativa Innovadora'},
+    dict_productos_tecnotic = [{'letter':'I','id':75,'nombre':'N1S2 - Taller práctico 1'},
+                                {'letter':'J','id':77,'nombre':'N1S3 - Ficha. Documentación de apps educativas'},
+                                {'letter':'K','id':84,'nombre':'N1S3 - Realimentar las apps educativas de mínimo dos compañeros'},
+                                {'letter':'L','id':85,'nombre':'N1S3 - Guía: implementación de apps educativas en prácticas de aula'},
 
-                                {'letter':'O','id':28,'nombre':'N2S1 - Quiz realizado en Blendspace (Fomato Word)'},
-                                {'letter':'P','id':40,'nombre':'N2S1 - Mapa mental'},
-                                {'letter':'Q','id':34,'nombre':'N2S3 - Guía: Construyendo mi PLE'},
+                                {'letter':'M','id':97,'nombre':'N2S1 - Campaña de expectativa'},
+                                {'letter':'N','id':98,'nombre':'N2S2 - Bitácora 1'},
+                                {'letter':'O','id':93,'nombre':'N2S2 - Bitácora 2'},
+                                {'letter':'P','id':99,'nombre':'N2S2 - Bitácora 3'},
+                                {'letter':'Q','id':100,'nombre':'N2S3 - Bitácora 4'},
 
-                                {'letter':'R','id':58,'nombre':'N3S1 - Formato de recopilación de resultados: "Lo aprendido"'},
-                                {'letter':'S','id':59,'nombre':'N3S2 - Enlace o imagen interactiva: Ruta de sostenibilidad'},
-                                {'letter':'T','id':60,'nombre':'N3S3 - Gráfica del PLE realizada en Mindomo'},
+                                {'letter':'R','id':112,'nombre':'N3S1 - Bitácora 5'},
+                                {'letter':'S','id':109,'nombre':'N3S2 - Bitácora 6'},
 
-                                {'letter':'U','id':64,'nombre':'N4S1 - Documento de Google Drive 8 puntos para exponer mi PLE + herramienta de presentación, cargada en la Blackboard'},
-                                {'letter':'V','id':67,'nombre':'N4S2 - Registro fotográfico: Evento de socialización'},
+                                {'letter':'T','id':119,'nombre':'N4S1 - Modelo de presentación del Proyecto Educativo App'},
+                                {'letter':'U','id':124,'nombre':'N4S1 - Realimentar la participación de un compañer'},
+                                {'letter':'V','id':121,'nombre':'N4S2 - Registro fotográfico del evento'},
                                 ]
 
 
-    dict_productos_directic = [{'letter':'I','id':20,'nombre':'N1S1 - Hoja de ruta'},
-                                {'letter':'J','id':21,'nombre':'N1S2 - Guía: construyendo lecciones de innovación educativa'},
-                                {'letter':'K','id':22,'nombre':'N1S2 - Taller práctico: 10 claves para la implementación de tendencias y enfoques innovadores'},
-                                {'letter':'L','id':15,'nombre':'N1S3 - Documento: Decálogo de un Proyecto Innovador'},
-                                {'letter':'M','id':16,'nombre':'N1S3 - Guía: Potenciando mi Experiencia Educativa de primera fase'},
-                                {'letter':'N','id':23,'nombre':'N1S4 - Guía: implementando la Experiencia Educativa Innovadora'},
+    dict_productos_directic = [{'letter':'I','id':132,'nombre':'N1S2 - Documento: presentación del capítulo  asignado a cada equipo'},
+                                {'letter':'J','id':134,'nombre':'N1S3 - El Gestor del Plan Estratégico TIC en su primer componente'},
+                                {'letter':'K','id':142,'nombre':'N1S3 -  Gestor del Plan Estratégico TIC con los dos componentes de laCaracterizacióndiligenciados'},
+                                {'letter':'L','id':143,'nombre':'N1S4 -  Gestor del Plan Estratégico TIC diligenciado en el componente Indicadores Educativos'},
+                                {'letter':'M','id':144,'nombre':'N1S5 -  Gestor de Plan Estratégico de TIC: componente, valoración de la gestión institucional'},
+                                {'letter':'N','id':140,'nombre':'N1S6 - Gestor del Plan Estratégico TIC componente Matriz FODA'},
 
-                                {'letter':'O','id':28,'nombre':'N2S1 - Quiz realizado en Blendspace (Fomato Word)'},
-                                {'letter':'P','id':40,'nombre':'N2S1 - Mapa mental'},
-                                {'letter':'Q','id':34,'nombre':'N2S3 - Guía: Construyendo mi PLE'},
+                                {'letter':'O','id':147,'nombre':'N2S1 - Gestor del Plan Estratégico TIC en el componente: Responsables y plazos'},
+                                {'letter':'P','id':152,'nombre':'N2S1 - Gestor del Plan Estratégico TIC. Componenete Comité de gestores TIC'},
+                                {'letter':'Q','id':149,'nombre':'N2S2 - Gestor del Plan Estratégico TIC. Objetivo general del Plan, objetivos específicos'},
+                                {'letter':'R','id':151,'nombre':'N2S3 - Gestor del Plan Estratégico TIC. Etapa: análisis y formulación del Plan'},
 
-                                {'letter':'R','id':58,'nombre':'N3S1 - Formato de recopilación de resultados: "Lo aprendido"'},
-                                {'letter':'S','id':59,'nombre':'N3S2 - Enlace o imagen interactiva: Ruta de sostenibilidad'},
-                                {'letter':'T','id':60,'nombre':'N3S3 - Gráfica del PLE realizada en Mindomo'},
+                                {'letter':'S','id':156,'nombre':'N3S1 - Gestor del Plan Estratégico TIC, componente Tipos de Cooperación.'},
+                                {'letter':'T','id':164,'nombre':'N3S2 - Diligenciar la plantilla del documento compartido en Google Drive denominado: Aliados Estratégicos.'},
+                                {'letter':'U','id':165,'nombre':'N3S3 - Gestor Plan Estratégico TIC'},
+                                {'letter':'V','id':162,'nombre':'N3S4 - Brochure'},
+                                {'letter':'W','id':166,'nombre':'N3S4 -  Audio, video o Guión de la entrevista ejecutada con la en entidad pública o privada'},
 
-                                {'letter':'U','id':64,'nombre':'N4S1 - Documento de Google Drive 8 puntos para exponer mi PLE + herramienta de presentación, cargada en la Blackboard'},
-                                {'letter':'V','id':67,'nombre':'N4S2 - Registro fotográfico: Evento de socialización'},
+                                {'letter':'X','id':171,'nombre':'N4S1 -  Dos fotografías del desarrollo de la socialización del Plan Estratégico TIC'},
+                               {'letter':'Y','id':171,'nombre':'N4S2 -  Acta diligenciada y firmada por los integrantes del Comité de Gestores TIC.'},
                                 ]
 
 

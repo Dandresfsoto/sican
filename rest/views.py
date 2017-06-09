@@ -77,6 +77,8 @@ from rest.serializers import BeneficiarioSerializer
 import json
 from formadores.models import CohortesFormadores
 from informes.tasks import matriz_chequeo_virtual_compilada
+from beneficiarios.models import GruposBeneficiarios
+from beneficiarios.models import BeneficiarioVigencia
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
@@ -176,9 +178,17 @@ class UserPermissionList(APIView):
                   'id':'seguridad_social',
                   'links':[]
             },
+            'beneficiarios':{'name':'Mis Beneficiarios',
+                  'icon':'icons:face',
+                  'id':'beneficiarios',
+                  'links':[]
+            },
         }
 
         links = {
+            'beneficiarios_registrar':{
+                'ver':{'name':'Registrar beneficiarios','link':'/beneficiarios/'}
+            },
             'contratos_legalizar':{
                 'ver':{'name':'Legalización de contratos','link':'/contratos/legalizacion/'}
             },
@@ -726,6 +736,41 @@ class AutocompleteRadicados(APIView):
                                      radicado.municipio.departamento.nombre + ' - ' + radicado.nombre_sede,'data':str(radicado.numero)})
 
         return Response({'suggestions':response})
+
+
+
+class ContratoInfoView(APIView):
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (AllowAny,)
+
+    def post(self, request, format=None):
+        contrato = None
+        data = {'vigencia':'----','municipios':'----','supervisores':'----','meta_beneficiarios':'----',
+                'inscritos_contrato':'----','inscritos_grupo':'----'}
+        if 'id_contrato' in request.data.keys() and 'id_grupo' in request.data.keys():
+            try:
+                contrato = Contrato.objects.get(id=request.data['id_contrato'])
+            except:
+                pass
+            else:
+                grupos = GruposBeneficiarios.objects.filter(contrato=contrato)
+                beneficiarios = BeneficiarioVigencia.objects.filter(grupo__in = grupos)
+                data['vigencia'] = contrato.vigencia
+                data['municipios'] = contrato.get_municipios_list()
+                data['supervisores'] = contrato.get_supervisores_list()
+                data['meta_beneficiarios'] = contrato.meta_beneficiarios
+                data['inscritos_contrato'] = beneficiarios.count()
+
+                try:
+                    grupo = GruposBeneficiarios.objects.get(id = request.data['id_grupo'])
+                except:
+                    data['inscritos_grupo'] = '----'
+                else:
+                    data['inscritos_grupo'] = BeneficiarioVigencia.objects.filter(grupo = grupo).count()
+        return Response({'contrato':data})
+
+
+
 
 class AutocompleteMunicipios(APIView):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
@@ -2234,6 +2279,40 @@ class MatricesDiplomadosList(BaseDatatableView):
             ])
         return json_data
 
+
+class BeneficiariosGruposList(BaseDatatableView):
+    """
+    """
+    model = GruposBeneficiarios
+    columns = ['nombre','numero','diplomado','descripcion']
+
+    order_columns = ['nombre','nombre','numero','diplomado','descripcion']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(numero__icontains=search)
+
+            qs = qs.filter(q)
+        return qs
+
+    def get_initial_queryset(self):
+        return self.model.objects.filter(usuario = self.request.user)
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombre,
+                item.numero,
+                item.diplomado_grupo.nombre,
+                item.descripcion,
+                self.request.user.has_perm('permisos_sican.beneficiarios.beneficiarios_registrar.ver'),
+            ])
+        return json_data
 
 
 class BeneficiariosCedulaListView(BaseDatatableView):
@@ -4416,6 +4495,8 @@ class ContratoFormadorView(BaseDatatableView):
                     item.fecha_fin.strftime('%d de %B del %Y') if item.fecha_fin != None else '',
                     item.renuncia,
                     item.liquidado,
+                    item.get_municipios_string(),
+                    item.get_supervisores_string(),
                     self.request.user.has_perm('permisos_sican.rh.rh_contratos_formadores.editar'),
                 ])
         return json_data

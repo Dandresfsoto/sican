@@ -119,8 +119,8 @@ LOCAL_APPS = [
     'evidencias',
     'negociadores',
     'requerimientos',
-    'sicantelegram'
-    #'telegrambot',
+    'sicantelegram',
+    'beneficiarios',
 ]
 
 THIRD_PARTY_APPS = [
