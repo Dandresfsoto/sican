@@ -210,6 +210,9 @@ class UserPermissionList(APIView):
             'subsanacion':{
                 'ver':{'name':'Subsanación de evidencias','link':'/evidencias/subsanacion/'}
             },
+            'ple':{
+                'ver':{'name':'PLE','link':'/evidencias/ple/'}
+            },
             'cedula_beneficiario':{
                 'ver':{'name':'Cedula beneficiario','link':'/evidencias/cedula/'}
             },
@@ -2348,6 +2351,70 @@ class BeneficiariosCedulaListView(BaseDatatableView):
                 item.formador.get_full_name()
             ])
         return json_data
+
+
+
+
+class BeneficiariosPleList(BaseDatatableView):
+    """
+    """
+    model = Beneficiario
+    columns = ['id','cedula','nombres','apellidos']
+    order_columns = ['cedula','nombres','apellidos']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return self.model.objects.filter(diplomado__id=1)
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) |\
+                Q(cedula__icontains=search) | Q(formador__nombres__icontains=search)
+
+            qs = qs.filter(q)
+        return qs
+
+
+    def get_guia_url(self,id):
+        evidencias = Evidencia.objects.filter(entregable__id=34).filter(beneficiarios_cargados__id=id)
+        try:
+            url = evidencias[0].archivo.url
+        except:
+            url = None
+        return url
+
+
+    def get_ple_url(self,id):
+        evidencias = Evidencia.objects.filter(entregable__id=259).filter(beneficiarios_cargados__id=id).order_by('-id')
+        try:
+            url = evidencias[0].archivo.url
+        except:
+            url = None
+        return url
+
+
+
+
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.cedula,
+                item.nombres,
+                item.apellidos,
+                item.formador.get_full_name(),
+                item.region.nombre,
+                self.get_guia_url(item.id),
+                self.get_ple_url(item.id),
+                item.link,
+                item.estado_producto_final
+            ])
+        return json_data
+
 
 
 

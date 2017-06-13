@@ -8,7 +8,7 @@ from evidencias.views import BeneficiariosEvidenciaListView
 from evidencias.views import BeneficiarioEvidenciaCedulaList, BeneficiarioEvidenciaCedulaProductoList
 from evidencias.views import SubsanacionListView
 from evidencias.views import SubsanacionEvidenciasListView, SubsanacionEvidenciasFormView
-from evidencias.views import SubsanacionEvidenciasBeneficiarioView, ListaSubsanacionEvidenciaView
+from evidencias.views import SubsanacionEvidenciasBeneficiarioView, ListaSubsanacionEvidenciaView, PleListView, PleBeneficiarioView
 
 urlpatterns = [
     url(r'^general/$', DiplomadosListView.as_view()),
@@ -51,4 +51,8 @@ urlpatterns = [
     url(r'^subsanacion/red/(?P<id_red>[0-9]+)/evidencia/(?P<id_evidencia>[0-9]+)/nuevo/$', SubsanacionEvidenciasFormView.as_view()),
 
     url(r'^subsanacion/red/(?P<id_red>[0-9]+)/evidencia/(?P<id_evidencia>[0-9]+)/nuevo/beneficiario/(?P<id_beneficiario>[0-9]+)/$', SubsanacionEvidenciasBeneficiarioView.as_view()),
+
+    url(r'^ple/$', PleListView.as_view()),
+
+    url(r'^ple/editar/(?P<id_beneficiario>[0-9]+)/$', PleBeneficiarioView.as_view()),
 ]

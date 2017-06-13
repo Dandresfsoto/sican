@@ -22,6 +22,7 @@ from matrices.forms import BeneficiarioUpdateForm
 import os
 from radicados.models import Radicado
 from evidencias.models import Rechazo
+from matrices.forms import PleBeneficiarioForm
 
 # Create your views here.
 
@@ -491,6 +492,57 @@ class SubsanacionEvidenciasListView(LoginRequiredMixin,
         return super(SubsanacionEvidenciasListView,self).get_context_data(**kwargs)
 
 
+
+class PleListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'evidencias/ple/lista.html'
+    permission_required = "permisos_sican.evidencias.subsanacion_ple.ver"
+
+
+
+
+
+
+class PleBeneficiarioView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              FormView):
+    form_class = PleBeneficiarioForm
+    success_url = '../../'
+    template_name = 'evidencias/ple/editar.html'
+    permission_required = "permisos_sican.evidencias.subsanacion_ple.editar"
+
+
+    def get_context_data(self, **kwargs):
+        kwargs['cedula'] = Beneficiario.objects.get(id=self.kwargs['id_beneficiario']).cedula
+        return super(PleBeneficiarioView,self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'beneficiario':Beneficiario.objects.get(id=self.kwargs['id_beneficiario'])}
+
+
+    def form_valid(self, form):
+        beneficiario = Beneficiario.objects.get(id=self.kwargs['id_beneficiario'])
+
+        evidencias = Evidencia.objects.filter(entregable__id=34).filter(beneficiarios_cargados__id=beneficiario.id).order_by('-id')
+        entregable = Entregable.objects.get(id=34)
+
+        if evidencias.count() > 0:
+            evidencia = evidencias[0]
+            evidencia.archivo = form.cleaned_data['guia']
+            evidencia.save()
+        else:
+            evidencia = Evidencia.objects.create(usuario = self.request.user, archivo = form.cleaned_data['guia'],
+                                                 entregable = entregable,formador = beneficiario.formador)
+            evidencia.beneficiarios_cargados.add(beneficiario)
+            evidencia.save()
+
+        beneficiario.link = form.cleaned_data['link']
+        beneficiario.nombre_producto_final = form.cleaned_data['nombre']
+        beneficiario.area_basica_producto_final = form.cleaned_data['area']
+        beneficiario.estado_producto_final = 'cargado'
+        beneficiario.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 

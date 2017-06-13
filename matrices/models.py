@@ -58,6 +58,11 @@ class Beneficiario(models.Model):
     ip_descarga = models.GenericIPAddressField(max_length=100,blank=True,null=True)
     fecha_descarga = models.DateTimeField(blank=True,null=True)
 
+    nombre_producto_final = models.CharField(max_length=100,blank=True)
+    area_basica_producto_final = models.CharField(max_length=100,blank=True)
+    estado_producto_final = models.CharField(max_length=100,blank=True)
+    link = models.URLField(max_length=200,null=True,blank=True)
+
     def __unicode__(self):
         return str(self.cedula) + ' - ' + self.nombres + ' ' + self.apellidos
 
@@ -83,6 +88,12 @@ class Beneficiario(models.Model):
 
     def diplomado_name(self):
         return self.diplomado.nombre
+
+
+    def get_ple_online_url(self):
+        return self.link
+
+
 
 
 class BeneficiarioPendiente(models.Model):

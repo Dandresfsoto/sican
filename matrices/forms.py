@@ -11,6 +11,7 @@ from radicados.models import Radicado
 from formadores.models import Grupos, Formador
 from matrices.models import CargaMasiva
 from usuarios.models import User
+from evidencias.models import Evidencia
 
 class BeneficiarioForm(forms.ModelForm):
 
@@ -289,3 +290,73 @@ class CargaMasivaForm(forms.ModelForm):
     class Meta:
         model = CargaMasiva
         fields = ['usuario','archivo']
+
+class PleBeneficiarioForm(forms.Form):
+
+    link = forms.URLField(max_length=200)
+    guia = forms.FileField()
+    nombre = forms.CharField(max_length=100)
+    area = forms.CharField(max_length=100,widget=forms.Select(choices=[
+        ('','----------'),
+        ('1','Ciencias naturales y educación ambiental'),
+        ('2','Ciencias sociales, historia, geografía, constitución política y/o deocrática'),
+        ('3','Educación artística'),
+        ('4','Educación ética y en valores humanos'),
+        ('5','Educación física, recreación y deportes'),
+        ('6','Educación religiosa'),
+        ('7','Humanidades'),
+        ('8','Matemáticas'),
+        ('9','Lengua castellana'),
+        ('10','Lengua extranjera: Inglés'),
+        ('11','Lengua nativa'),
+        ('12','Competencias Ciudadanas'),
+        ('13','Filosofía'),
+        ('14','Todas las áreas')
+    ]))
+
+    def get_guia_field(self,id):
+        evidencias = Evidencia.objects.filter(entregable__id=34).filter(beneficiarios_cargados__id=id)
+        try:
+            url = evidencias[0].archivo
+        except:
+            url = None
+        return url
+
+    def __init__(self, *args, **kwargs):
+        super(PleBeneficiarioForm, self).__init__(*args, **kwargs)
+
+
+        self.fields['link'].initial = kwargs['initial']['beneficiario'].link
+        self.fields['guia'].initial = self.get_guia_field(kwargs['initial']['beneficiario'].id)
+        self.fields['nombre'].initial = kwargs['initial']['beneficiario'].nombre_producto_final
+        self.fields['area'].initial = kwargs['initial']['beneficiario'].area_basica_producto_final
+
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'PLE online',
+                Div(
+                    Div('link',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+            ),
+            Fieldset(
+                'Guía: Construyendo mi PLE',
+                Div(
+                    Div('guia',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+            ),
+            Fieldset(
+                'Información especifica',
+                Div(
+                    Div('nombre',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+                Div(
+                    Div('area',css_class='col-sm-12'),
+                    css_class = 'row'
+                ),
+            ),
+        )

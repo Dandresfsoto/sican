@@ -49,6 +49,16 @@ class Evidencia(models.Model):
         return self.beneficiarios_rechazados.all().count()
 
 
+    def get_guia_field(self,id):
+        evidencias = Evidencia.objects.filter(entregable__id=34).filter(beneficiarios_cargados__id=id)
+        try:
+            url = evidencias[0].archivo
+        except:
+            url = None
+        return url
+
+
+
 class Red(models.Model):
     diplomado = models.ForeignKey(Diplomado)
     region = models.ForeignKey(Region)
