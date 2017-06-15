@@ -19,10 +19,7 @@ from sican.views import Login, Logout, Recovery, Confirmation, Proyectos, Diplom
 from sican.settings import base as settings
 from sican.settings import dev as develop_settings
 from django.conf.urls.static import static
-from rest_framework_swagger.views import get_swagger_view
 from rest_framework.authtoken import views
-
-schema_view = get_swagger_view(title='API SICAN')
 
 urlpatterns = [
     url(r'^adminuser-sican/', admin.site.urls),
@@ -56,7 +53,6 @@ urlpatterns = [
     url(r'^contratos/', include('contratos.urls', namespace='contratos')),
     #url(r'^sicantelegram/', include('telegrambot.urls', namespace="telegrambot")),
     url(r'^processing/', include('permabots.urls_processing', namespace="permabots")),
-    url(r'^docs/', schema_view),
     url(r'^api/v1/', include('permabots.urls_api', namespace="api")),
     url(r'^api-token-auth/', views.obtain_auth_token),
     url(r'^beneficiarios/', include('beneficiarios.urls', namespace='beneficiarios')),

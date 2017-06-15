@@ -12,7 +12,7 @@ from evidencias.models import Red, Subsanacion
 from evidencias.forms import RedForm, RedRetroalimentacionForm
 from region.models import Region
 from django.shortcuts import HttpResponseRedirect
-from evidencias.tasks import build_red, carga_masiva_evidencias, retroalimentacion_red
+from evidencias.tasks import build_red, carga_masiva_evidencias, retroalimentacion_red, build_red_producto_final
 from evidencias.models import CargaMasiva
 from evidencias.forms import CargaMasivaForm
 from matrices.models import Beneficiario
@@ -311,6 +311,9 @@ class NuevoRedView(LoginRequiredMixin,
         evidencias_r2_directic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
         evidencias_r2_escuelatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
 
+        ple_r1 = Beneficiario.objects.filter(region__id=1,estado_producto_final='cargado')
+        ple_r2 = Beneficiario.objects.filter(region__id=2, estado_producto_final='cargado')
+
 
         kwargs['formadores_innovatic_r1'] = evidencias_r1_innovatic.values_list('formador',flat=True).distinct().count()
         kwargs['beneficiarios_innovatic_r1'] = evidencias_r1_innovatic.values_list('beneficiarios_cargados',flat=True).distinct().count()
@@ -344,6 +347,9 @@ class NuevoRedView(LoginRequiredMixin,
         kwargs['beneficiarios_escuelatic_r2'] = evidencias_r2_escuelatic.values_list('beneficiarios_cargados',flat=True).distinct().count()
         kwargs['evidencias_escuelatic_r2'] = evidencias_r2_escuelatic.count()
 
+        kwargs['ple_r1'] = ple_r1.count()
+        kwargs['ple_r2'] = ple_r2.count()
+
         return super(NuevoRedView,self).get_context_data(**kwargs)
 
     def form_valid(self, form):
@@ -351,55 +357,83 @@ class NuevoRedView(LoginRequiredMixin,
 
         red = Red.objects.get(id = self.object.id)
 
-        evidencias = Evidencia.objects.filter(red_id = None)
+        if not red.producto_final:
+            evidencias = Evidencia.objects.filter(red_id = None)
 
-        region_1 = Region.objects.get(numero = 1)
-        region_2 = Region.objects.get(numero = 2)
+            region_1 = Region.objects.get(numero = 1)
+            region_2 = Region.objects.get(numero = 2)
 
-        evidencias_r1 = evidencias.filter(formador__region = region_1)
-        evidencias_r2 = evidencias.filter(formador__region = region_2)
+            evidencias_r1 = evidencias.filter(formador__region = region_1)
+            evidencias_r2 = evidencias.filter(formador__region = region_2)
 
-        evidencias_r1_innovatic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC')
-        evidencias_r1_tecnotic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC')
-        evidencias_r1_directic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
-        evidencias_r1_escuelatic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
+            evidencias_r1_innovatic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC')
+            evidencias_r1_tecnotic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC')
+            evidencias_r1_directic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
+            evidencias_r1_escuelatic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
 
-        evidencias_r2_innovatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC')
-        evidencias_r2_tecnotic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC')
-        evidencias_r2_directic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
-        evidencias_r2_escuelatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
+            evidencias_r2_innovatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC')
+            evidencias_r2_tecnotic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC')
+            evidencias_r2_directic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
+            evidencias_r2_escuelatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
 
 
 
-        if self.object.region.numero == 1:
-            if self.object.diplomado.nombre == 'INNOVATIC':
-                evidencias_r1_innovatic.update(red_id = red.id)
-            elif self.object.diplomado.nombre == 'TECNOTIC':
-                evidencias_r1_tecnotic.update(red_id = red.id)
-            elif self.object.diplomado.nombre == 'DIRECTIC':
-                evidencias_r1_directic.update(red_id = red.id)
-            elif self.object.diplomado.nombre == 'ESCUELA TIC FAMILIA':
-                evidencias_r1_escuelatic.update(red_id = red.id)
+            if self.object.region.numero == 1:
+                if self.object.diplomado.nombre == 'INNOVATIC':
+                    evidencias_r1_innovatic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'TECNOTIC':
+                    evidencias_r1_tecnotic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'DIRECTIC':
+                    evidencias_r1_directic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'ESCUELA TIC FAMILIA':
+                    evidencias_r1_escuelatic.update(red_id = red.id)
+                else:
+                    pass
+
+            elif self.object.region.numero == 2:
+                if self.object.diplomado.nombre == 'INNOVATIC':
+                    evidencias_r2_innovatic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'TECNOTIC':
+                    evidencias_r2_tecnotic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'DIRECTIC':
+                    evidencias_r2_directic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'ESCUELA TIC FAMILIA':
+                    evidencias_r2_escuelatic.update(red_id = red.id)
+                else:
+                    pass
+
+
             else:
                 pass
-
-        elif self.object.region.numero == 2:
-            if self.object.diplomado.nombre == 'INNOVATIC':
-                evidencias_r2_innovatic.update(red_id = red.id)
-            elif self.object.diplomado.nombre == 'TECNOTIC':
-                evidencias_r2_tecnotic.update(red_id = red.id)
-            elif self.object.diplomado.nombre == 'DIRECTIC':
-                evidencias_r2_directic.update(red_id = red.id)
-            elif self.object.diplomado.nombre == 'ESCUELA TIC FAMILIA':
-                evidencias_r2_escuelatic.update(red_id = red.id)
-            else:
-                pass
-
-
+            red.save()
+            build_red.delay(red.id)
         else:
-            pass
-        red.save()
-        build_red.delay(red.id)
+            ple_r1 = Beneficiario.objects.filter(region__id=1, estado_producto_final='cargado')
+            ple_r2 = Beneficiario.objects.filter(region__id=2, estado_producto_final='cargado')
+
+            if self.object.region.numero == 1:
+                if self.object.diplomado.nombre == 'INNOVATIC':
+                    for beneficiario in ple_r1:
+                        red.beneficiarios.add(beneficiario)
+                        beneficiario.estado_producto_final = 'enviado'
+                        beneficiario.save()
+                else:
+                    pass
+
+            elif self.object.region.numero == 2:
+                if self.object.diplomado.nombre == 'INNOVATIC':
+                    for beneficiario in ple_r2:
+                        red.beneficiarios.add(beneficiario)
+                        beneficiario.estado_producto_final = 'enviado'
+                        beneficiario.save()
+                else:
+                    pass
+
+            else:
+                pass
+
+            red.save()
+            build_red_producto_final.delay(red.id)
         return HttpResponseRedirect(self.get_success_url())
 
 

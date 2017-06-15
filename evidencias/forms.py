@@ -94,7 +94,7 @@ class RedForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RedForm, self).__init__(*args, **kwargs)
 
-        self.fields['region'].queryset = Region.objects.exclude(numero = 4)
+        self.fields['region'].queryset = Region.objects.exclude(numero__in = [4,3])
 
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
@@ -109,6 +109,7 @@ class RedForm(forms.ModelForm):
                                 <p>Formadores: {{formadores_innovatic_r1}}</p>
                                 <p>Beneficiarios: {{beneficiarios_innovatic_r1}}</p>
                                 <p>Evidencias: {{evidencias_innovatic_r1}}</p>
+                                <p>PLE: {{ple_r1}}</p>
                             </div>
                             <div class="col-sm-3">
                                 <h4 class="bold-p">Tecnotic</h4>
@@ -145,6 +146,7 @@ class RedForm(forms.ModelForm):
                                 <p>Formadores: {{formadores_innovatic_r2}}</p>
                                 <p>Beneficiarios: {{beneficiarios_innovatic_r2}}</p>
                                 <p>Evidencias: {{evidencias_innovatic_r2}}</p>
+                                <p>PLE: {{ple_r2}}</p>
                             </div>
                             <div class="col-sm-3">
                                 <h4 class="bold-p">Tecnotic</h4>
@@ -173,8 +175,9 @@ class RedForm(forms.ModelForm):
             Fieldset(
                 'RED',
                 Div(
-                    Div('diplomado',css_class='col-sm-6'),
-                    Div('region',css_class='col-sm-6'),
+                    Div('diplomado',css_class='col-sm-4'),
+                    Div('region',css_class='col-sm-4'),
+                    Div('producto_final', css_class='col-sm-4'),
                     css_class = 'row'
                 )
             ),

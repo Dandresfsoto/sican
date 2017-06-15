@@ -832,3 +832,57 @@ def build_consolidado_aprobacion_red(email):
     informe.archivo.save(filename,File(output))
 
     return "Generado consolidados RED"
+
+
+
+@app.task
+def build_red_producto_final(id_red):
+
+    red = Red.objects.get(id = id_red)
+    output = StringIO()
+
+    wb = openpyxl.Workbook()
+    ws = wb.get_active_sheet()
+    ids = []
+    inicia = 0
+
+    if red.diplomado.numero == 1:
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED PROYECTOS INNOVATIC.xlsx')
+        ws = wb.get_sheet_by_name('Hoja1')
+        i = 4
+
+        for beneficiario in red.beneficiarios.all():
+
+            ws.cell('A'+str(i)).value = i - 3
+            ws.cell('B'+str(i)).value = beneficiario.region.nombre.upper()
+            ws.cell('C'+str(i)).value = beneficiario.radicado.municipio.departamento.nombre.upper() if beneficiario.radicado != None else beneficiario.departamento_text.upper()
+            ws.cell('D'+str(i)).value = beneficiario.radicado.municipio.nombre.upper() if beneficiario.radicado != None else beneficiario.municipio_text.upper()
+            ws.cell('E'+str(i)).value = beneficiario.ie_text
+            ws.cell('F'+str(i)).value = beneficiario.dane_ie_text
+            ws.cell('G'+str(i)).value = beneficiario.ruta.upper() + '-' + beneficiario.grupo.nombre
+            ws.cell('H'+str(i)).value = beneficiario.formador.get_full_name().upper()
+            ws.cell('I'+str(i)).value = beneficiario.formador.cedula
+            ws.cell('I'+str(i)).number_format = '0'
+            ws.cell('J'+str(i)).value = beneficiario.nombres.upper()
+            ws.cell('K'+str(i)).value = beneficiario.apellidos.upper()
+            ws.cell('L'+str(i)).value = beneficiario.cedula
+
+            ws.cell('L'+str(i)).number_format = '0'
+            ws.cell('M'+str(i)).value = 'EXTERNO'
+            ws.cell('N'+str(i)).value = 'I'
+
+            ws.cell('O' + str(i)).value = beneficiario.nombre_producto_final
+            ws.cell('P' + str(i)).value = beneficiario.area_basica_producto_final
+            ws.cell('Q' + str(i)).value = 'N/A'
+            ws.cell('R' + str(i)).value = beneficiario.link
+
+
+
+            i += 1
+
+
+    wb.save(output)
+    filename = 'RED-' + unicode(red.id) + '-'+ red.region.nombre +'.xlsx'
+    red.archivo.save(filename,File(output))
+
+    return "Generado RED-" + str(id_red)

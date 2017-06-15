@@ -64,9 +64,11 @@ class Red(models.Model):
     region = models.ForeignKey(Region)
     fecha = models.DateTimeField(auto_now_add=True)
     evidencias = models.ManyToManyField(Evidencia,related_name='evidencia_red',blank=True)
+    beneficiarios = models.ManyToManyField(Beneficiario, related_name='beneficiarios_red', blank=True)
     retroalimentacion = models.BooleanField(default=False)
     archivo = models.FileField(upload_to='Formatos Red/',blank=True,null=True)
     archivo_retroalimentacion = models.FileField(upload_to='Formatos Red/Retroalimentacion/',blank=True,null=True)
+    producto_final = models.BooleanField(default=False)
 
     def get_archivo_url(self):
         try:
