@@ -29,7 +29,7 @@ class Radicado(models.Model):
         ordering = ['nombre_sede']
 
     def __unicode__(self):
-        return self.nombre_sede
+        return unicode(self.numero) + ' - ' + self.nombre_sede
 
 class RadicadoRetoma(models.Model):
     numero = models.BigIntegerField()

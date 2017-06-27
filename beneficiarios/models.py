@@ -22,24 +22,24 @@ class GruposBeneficiarios(models.Model):
         ordering = ['nombre']
 
     def __unicode__(self):
-        return str(self.formador.codigo_ruta) + "-" + self.nombre
+        return self.nombre
 
-    def get_full_name(self):
-        return self.formador.codigo_ruta + '-' + self.nombre
 
 
 class BeneficiarioVigencia(models.Model):
-    grupo = models.ForeignKey(GruposBeneficiarios,related_name='grupo_beneficiario')
+    grupo = models.ForeignKey(GruposBeneficiarios, related_name='grupo_beneficiario')
+
+    cedula = models.BigIntegerField(unique=True)
+    nombres = models.CharField(max_length=100)
+    apellidos = models.CharField(max_length=100)
+    correo = models.EmailField(max_length=100, blank=True, null=True)
+    telefono_fijo = models.CharField(max_length=100, blank=True, null=True)
+    telefono_celular = models.CharField(max_length=100, blank=True, null=True)
 
     radicado = models.ForeignKey(Radicado,blank=True,null=True)
 
-    apellidos = models.CharField(max_length=100)
-    nombres = models.CharField(max_length=100)
-    cedula = models.BigIntegerField(unique=True)
 
-    correo = models.EmailField(max_length=100,blank=True,null=True)
-    telefono_fijo = models.CharField(max_length=100,blank=True,null=True)
-    telefono_celular = models.CharField(max_length=100,blank=True,null=True)
+
     area = models.CharField(max_length=100,blank=True,null=True)
     grado = models.CharField(max_length=100,blank=True,null=True)
     genero = models.CharField(max_length=100,blank=True,null=True)

@@ -770,6 +770,20 @@ class ContratoInfoView(APIView):
                     data['inscritos_grupo'] = '----'
                 else:
                     data['inscritos_grupo'] = BeneficiarioVigencia.objects.filter(grupo = grupo).count()
+        elif 'id_contrato' in request.data.keys():
+            try:
+                contrato = Contrato.objects.get(id=request.data['id_contrato'])
+            except:
+                pass
+            else:
+                grupos = GruposBeneficiarios.objects.filter(contrato=contrato)
+                beneficiarios = BeneficiarioVigencia.objects.filter(grupo__in=grupos)
+                data['vigencia'] = contrato.vigencia
+                data['municipios'] = contrato.get_municipios_list()
+                data['supervisores'] = contrato.get_supervisores_list()
+                data['meta_beneficiarios'] = contrato.meta_beneficiarios
+                data['inscritos_contrato'] = beneficiarios.count()
+
         return Response({'contrato':data})
 
 
@@ -2296,8 +2310,7 @@ class BeneficiariosGruposList(BaseDatatableView):
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
         if search:
-            q = Q(numero__icontains=search)
-
+            q = Q(nombre__icontains=search) | Q(numero__icontains=search) | Q(diplomado_grupo__nombre__icontains=search)
             qs = qs.filter(q)
         return qs
 
@@ -2307,12 +2320,17 @@ class BeneficiariosGruposList(BaseDatatableView):
     def prepare_results(self, qs):
         json_data = []
         for item in qs:
+            contrato = ''
+            if item.contrato != None:
+                contrato = item.contrato.nombre
             json_data.append([
                 item.id,
                 item.nombre,
                 item.numero,
                 item.diplomado_grupo.nombre,
                 item.descripcion,
+                BeneficiarioVigencia.objects.filter(grupo__id = item.id).count(),
+                contrato,
                 self.request.user.has_perm('permisos_sican.beneficiarios.beneficiarios_registrar.ver'),
             ])
         return json_data
@@ -5055,3 +5073,50 @@ class ContratoNegociadorUserView(BaseDatatableView):
 
 
 #-----------------------------------------------------------------------------------------------------------------------
+
+
+
+
+class BeneficiariosGroupList(BaseDatatableView):
+    """
+    """
+    model = BeneficiarioVigencia
+    columns = ['id','cedula','nombres','apellidos','radicado','departamento','municipio']
+
+    order_columns = ['id','cedula','nombres','apellidos','radicado']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(radicado__numero__icontains=search) | Q(apellidos__icontains=search) | \
+                Q(nombres__icontains=search) | Q(cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def get_initial_queryset(self):
+        return self.model.objects.filter(grupo__id = self.kwargs['id_grupo'])
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.cedula,
+                item.nombres,
+                item.apellidos,
+                item.radicado.numero if item.radicado != None else '',
+                item.radicado.municipio.departamento.nombre if item.radicado != None else '',
+                item.radicado.municipio.nombre if item.radicado != None else '',
+                item.correo,
+                item.telefono_fijo,
+                item.telefono_celular,
+                item.area,
+                item.grado,
+                item.genero,
+                item.estado,
+                self.request.user.has_perm('permisos_sican.beneficiarios.beneficiarios_registrar.editar'),
+                self.request.user.has_perm('permisos_sican.beneficiarios.beneficiarios_registrar.ocultar'),
+            ])
+        return json_data

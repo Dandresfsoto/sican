@@ -33,6 +33,46 @@ block scroll_header_panel_content
                         paper-button(class="submit",id="submit_form") Guardar
 block body_script_content
     script.
+        $(document).ready(function () {
+            $.ajax({
+                type: 'POST',
+                url: '/rest/contratos/informacion/formadores/',
+                headers: {'X-CSRFToken': getCookie('csrftoken')},
+                data: {
+                    'id_contrato': $("#id_contrato").val(),
+                },
+                success: function (data) {
+                    $('#p_vigencia').text(' ' + data.contrato.vigencia);
+                    $('#p_municipios').text(' ' + data.contrato.municipios);
+                    $('#p_supervisores').text(' ' + data.contrato.supervisores);
+
+                    $('#p_meta_beneficiarios').text(' ' + data.contrato.meta_beneficiarios);
+                    $('#p_inscritos_contrato').text(' ' + data.contrato.inscritos_contrato);
+                    $('#p_inscritos_grupo').text(' ' + data.contrato.inscritos_grupo);
+                }
+            });
+        });
+    script.
+        $("#id_contrato").change(function () {
+            $.ajax({
+                type: 'POST',
+                url: '/rest/contratos/informacion/formadores/',
+                headers: {'X-CSRFToken': getCookie('csrftoken')},
+                data: {
+                    'id_contrato': $("#id_contrato").val(),
+                },
+                success: function (data) {
+                    $('#p_vigencia').text(' ' + data.contrato.vigencia);
+                    $('#p_municipios').text(' ' + data.contrato.municipios);
+                    $('#p_supervisores').text(' ' + data.contrato.supervisores);
+
+                    $('#p_meta_beneficiarios').text(' ' + data.contrato.meta_beneficiarios);
+                    $('#p_inscritos_contrato').text(' ' + data.contrato.inscritos_contrato);
+                    $('#p_inscritos_grupo').text(' ' + data.contrato.inscritos_grupo);
+                }
+            });
+        });
+    script.
         $('#submit_form').on('click', function () {
             $('#form-formador').submit();
         });

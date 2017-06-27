@@ -66,6 +66,12 @@ urlpatterns = [
 
     #-------------------------------------------------------------------------------------------------------------------
 
+    #--------------------------------------------- BENEFICIARIOS -------------------------------------------------------
+    url(r'beneficiarios/grupos/$', views.BeneficiariosGruposList.as_view()),
+    url(r'beneficiarios/(?P<id_grupo>\w+)/$', views.BeneficiariosGroupList.as_view()),
+    #-------------------------------------------------------------------------------------------------------------------
+
+
     url(r'usuarios/chat_list/$', UserList.as_view()),
     url(r'usuarios/chat_list/(?P<id>\w+)/$', UserDetail.as_view()),
     url(r'usuarios/chat_last/$', UserChatList.as_view()),
@@ -125,9 +131,6 @@ urlpatterns = [
 
     url(r'matrices/diplomados/(?P<diplomado>\w+)/$', MatricesDiplomadosList.as_view()),
 
-
-
-    url(r'beneficiarios/grupos/$', views.BeneficiariosGruposList.as_view()),
 
 
 

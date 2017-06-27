@@ -27,7 +27,7 @@ block scroll_header_panel_content
             | {% if nuevo_permiso %}
             div(class="block-right")
                 a(href="nuevo",class="link_button")
-                    paper-button(class="submit") Nuevo
+                    paper-button(class="submit") Añadir participante
             | {% endif %}
             | {% if informes %}
             div
@@ -39,25 +39,23 @@ block scroll_header_panel_content
             thead
                 tr
                     th
-                    th Región
-                    th Radicado
-                    th Formador
-                    th Grupo
-                    th Apellidos
-                    th Nombres
                     th Cedula
-                    th Eliminar
+                    th Nombres
+                    th Apellidos
+                    th Radicado
+                    th Departamento
+                    th Municipio
+                    th Estado
             tbody
                 tr
                     td
-                    td Región
-                    td Radicado
-                    td Formador
-                    td Grupo
-                    td Apellidos
-                    td Nombres
                     td Cedula
-                    td Eliminar
+                    td Nombres
+                    td Apellidos
+                    td Radicado
+                    td Departamento
+                    td Municipio
+                    td Estado
 block body_script_content
     script.
         $("#accion").on("click", function () {
@@ -82,7 +80,7 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/matrices/diplomados/{{diplomado}}/",
+                "ajax": "/rest/beneficiarios/{{id_grupo}}/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
@@ -97,8 +95,8 @@ block body_script_content
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[15]) {
-                                return '<a href="editar/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
+                            if (row[14]) {
+                                return '<a href="' + row[0] + '/editar/" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
                                 return data;
@@ -120,30 +118,24 @@ block body_script_content
                     },
                     {
                         "data": 5,
-                        "orderable": true,
+                        "orderable": false,
                     },
                     {
                         "data": 6,
-                        "orderable": true,
-                    },
-                    {
-                        "data": 7,
-                        "orderable": true,
-                    },
-                    {
                         "orderable": false,
-                        "data": null,
-                        "className": 'text-center',
+                    },
+                    {
+                        "data": 13,
                         "render": function (data, type, row, meta) {
-                            if (row[16]) {
-                                return '<a href="eliminar/' + row[0] + '" style="color:#004c99;"><img src="/static/img/delete.png" height="24"></a>';
+                            if (row[15]) {
+                                return '<a href="' + row[0] + '/estado/" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
-                                return '<img src="/static/img/delete_gray.png" height="24">';
+                                return data;
                             }
                         },
-                        "defaultContent": ''
-                    }
+                        "orderable": false,
+                    },
                 ]
             });
             // Add event listener for opening and closing details
@@ -166,15 +158,15 @@ block body_script_content
             // `d` is the original data object for the row
             return '<table class="table table-striped">' +
                     '<tr>' +
-                    '<td><p class="bold-p">Correo:</p>' + d[8] + '</td>' +
-                    '<td><p class="bold-p">Telefono fijo:</p>' + d[9] + '</td>' +
-                    '<td><p class="bold-p">Telefono celular:</p>' + d[10] + '</td>' +
-                    '<td><p class="bold-p">Area:</p>' + d[11] + '</td>' +
+                    '<td><p class="bold-p">Correo:</p>' + d[7] + '</td>' +
+                    '<td><p class="bold-p">Telefono fijo:</p>' + d[8] + '</td>' +
+                    '<td><p class="bold-p">Telefono celular:</p>' + d[9] + '</td>' +
+                    '<td><p class="bold-p">Area:</p>' + d[10] + '</td>' +
                     '</tr>' +
                     '<tr>' +
-                    '<td><p class="bold-p">Grado:</p>' + d[12] + '</td>' +
-                    '<td><p class="bold-p">Genero:</p>' + d[13] + '</td>' +
-                    '<td><p class="bold-p">Estado:</p>' + d[14] + '</td>' +
+                    '<td><p class="bold-p">Grado:</p>' + d[11] + '</td>' +
+                    '<td><p class="bold-p">Genero:</p>' + d[12] + '</td>' +
+                    '<td><p class="bold-p"></p></td>' +
                     '<td><p class="bold-p"></p></td>' +
                     '</tr>' +
                     '</table>';
