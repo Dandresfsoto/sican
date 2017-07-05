@@ -23,7 +23,6 @@ class Grado(models.Model):
 
 class Beneficiario(models.Model):
     usuario = models.ForeignKey(User,blank=True,null=True)
-    vigencia = models.CharField(max_length=100,blank=True,null=True)
 
     diplomado = models.ForeignKey(Diplomado,related_name='diplomado_beneficiario')
     region = models.ForeignKey(Region,related_name='region_beneficiario')
