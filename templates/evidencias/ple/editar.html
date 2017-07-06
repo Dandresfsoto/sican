@@ -137,11 +137,31 @@ $(document).ready(function () {
     if ($('#input_mensaje').val() != ""){
         toast_message.open();
     }
-});</script><script>$("#id_archivo_retroalimentacion").fileinput({
+});</script><script>$("#id_imagen_historieta").fileinput({
     language: "es",
     showRemove: false,
     showUpload: false
 });
+
+$("#id_imagen_infografia").fileinput({
+    language: "es",
+    showRemove: false,
+    showUpload: false
+});
+
+$("#id_imagen_graficacion_ple").fileinput({
+    language: "es",
+    showRemove: false,
+    showUpload: false
+});
+
+$("#id_imagen_para_leer").fileinput({
+    language: "es",
+    showRemove: false,
+    showUpload: false
+});
+
+
 $('#submit_form').on('click', function () {
     $('#form-administrador').submit();
 });</script></body></html>

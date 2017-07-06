@@ -62,6 +62,23 @@ class Beneficiario(models.Model):
     estado_producto_final = models.CharField(max_length=100,blank=True)
     link = models.URLField(max_length=200,null=True,blank=True)
 
+    para_leer = models.TextField(max_length=10000,blank=True)
+
+    para_hacer_1 = models.URLField(max_length=200,null=True,blank=True)
+    para_hacer_2 = models.URLField(max_length=200, null=True, blank=True)
+    para_hacer_3 = models.URLField(max_length=200, null=True, blank=True)
+    para_hacer_4 = models.URLField(max_length=200, null=True, blank=True)
+
+    imagen_historieta = models.ImageField(upload_to='PLE/Historietas',blank=True,null=True)
+    imagen_infografia = models.ImageField(upload_to='PLE/Infografias',blank=True,null=True)
+    imagen_graficacion_ple = models.ImageField(upload_to='PLE/Graficacion PLE',blank=True,null=True)
+    link_ruta_sostenibilidad = models.URLField(max_length=200, null=True, blank=True)
+
+    html = models.FileField(upload_to='PLE/HTML', blank=True, null=True)
+
+    imagen_para_leer = models.ImageField(upload_to='PLE/Imagen PARA LEER', blank=True, null=True)
+
+
     def __unicode__(self):
         return str(self.cedula) + ' - ' + self.nombres + ' ' + self.apellidos
 

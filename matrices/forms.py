@@ -293,9 +293,20 @@ class CargaMasivaForm(forms.ModelForm):
 
 class PleBeneficiarioForm(forms.Form):
 
-    link = forms.URLField(max_length=200)
-    guia = forms.FileField()
-    nombre = forms.CharField(max_length=100)
+    nombre = forms.CharField(label='Nombre del PLE',max_length=100)
+    para_leer = forms.CharField(label='Sección "PARA LEER"',max_length=10000,widget=forms.Textarea())
+    imagen_para_leer = forms.ImageField(required=False)
+
+    para_hacer_1 = forms.URLField(label='Link "PARA HACER"',max_length=200)
+    para_hacer_2 = forms.URLField(label='Link "PARA HACER"',max_length=200,required=False)
+    para_hacer_3 = forms.URLField(label='Link "PARA HACER"',max_length=200,required=False)
+    para_hacer_4 = forms.URLField(label='Link "PARA HACER"',max_length=200,required=False)
+
+    imagen_historieta = forms.ImageField()
+    imagen_infografia = forms.ImageField()
+    imagen_graficacion_ple = forms.ImageField()
+    link_ruta_sostenibilidad = forms.URLField(max_length=200)
+
     area = forms.CharField(max_length=100,widget=forms.Select(choices=[
         ('','----------'),
         ('1','Ciencias naturales y educación ambiental'),
@@ -314,49 +325,78 @@ class PleBeneficiarioForm(forms.Form):
         ('14','Todas las áreas')
     ]))
 
-    def get_guia_field(self,id):
-        evidencias = Evidencia.objects.filter(entregable__id=34).filter(beneficiarios_cargados__id=id)
-        try:
-            url = evidencias[0].archivo
-        except:
-            url = None
-        return url
 
     def __init__(self, *args, **kwargs):
         super(PleBeneficiarioForm, self).__init__(*args, **kwargs)
 
-
-        self.fields['link'].initial = kwargs['initial']['beneficiario'].link
-        self.fields['guia'].initial = self.get_guia_field(kwargs['initial']['beneficiario'].id)
         self.fields['nombre'].initial = kwargs['initial']['beneficiario'].nombre_producto_final
+        self.fields['para_leer'].initial = kwargs['initial']['beneficiario'].para_leer
+        self.fields['imagen_para_leer'].initial = kwargs['initial']['beneficiario'].imagen_para_leer
+
+        self.fields['para_hacer_1'].initial = kwargs['initial']['beneficiario'].para_hacer_1
+        self.fields['para_hacer_2'].initial = kwargs['initial']['beneficiario'].para_hacer_2
+        self.fields['para_hacer_3'].initial = kwargs['initial']['beneficiario'].para_hacer_3
+        self.fields['para_hacer_4'].initial = kwargs['initial']['beneficiario'].para_hacer_4
+
+        self.fields['imagen_historieta'].initial = kwargs['initial']['beneficiario'].imagen_historieta
+        self.fields['imagen_infografia'].initial = kwargs['initial']['beneficiario'].imagen_infografia
+        self.fields['imagen_graficacion_ple'].initial = kwargs['initial']['beneficiario'].imagen_graficacion_ple
+        self.fields['link_ruta_sostenibilidad'].initial = kwargs['initial']['beneficiario'].link_ruta_sostenibilidad
+
         self.fields['area'].initial = kwargs['initial']['beneficiario'].area_basica_producto_final
 
 
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
-                'PLE online',
+                'Construcción del PLE',
                 Div(
-                    Div('link',css_class='col-sm-12'),
-                    css_class = 'row'
-                ),
-            ),
-            Fieldset(
-                'Guía: Construyendo mi PLE',
-                Div(
-                    Div('guia',css_class='col-sm-12'),
-                    css_class = 'row'
-                ),
-            ),
-            Fieldset(
-                'Información especifica',
-                Div(
-                    Div('nombre',css_class='col-sm-12'),
-                    css_class = 'row'
+                    Div('nombre', css_class='col-sm-12'),
+                    css_class='row'
                 ),
                 Div(
-                    Div('area',css_class='col-sm-12'),
+                    Div('area', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('para_leer', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('imagen_para_leer', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('para_hacer_1',css_class='col-sm-12'),
                     css_class = 'row'
+                ),
+                Div(
+                    Div('para_hacer_2', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('para_hacer_3', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('para_hacer_4', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('imagen_historieta', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('imagen_infografia', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('imagen_graficacion_ple', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('link_ruta_sostenibilidad', css_class='col-sm-12'),
+                    css_class='row'
                 ),
             ),
         )

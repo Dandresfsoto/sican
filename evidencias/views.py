@@ -23,6 +23,10 @@ import os
 from radicados.models import Radicado
 from evidencias.models import Rechazo
 from matrices.forms import PleBeneficiarioForm
+import codecs
+from sican.settings import base as settings
+from django.core.files import File
+import random
 
 # Create your views here.
 
@@ -558,24 +562,64 @@ class PleBeneficiarioView(LoginRequiredMixin,
     def form_valid(self, form):
         beneficiario = Beneficiario.objects.get(id=self.kwargs['id_beneficiario'])
 
-        evidencias = Evidencia.objects.filter(entregable__id=34).filter(beneficiarios_cargados__id=beneficiario.id).order_by('-id')
-        entregable = Entregable.objects.get(id=34)
 
-        if evidencias.count() > 0:
-            evidencia = evidencias[0]
-            evidencia.archivo = form.cleaned_data['guia']
-            evidencia.save()
-        else:
-            evidencia = Evidencia.objects.create(usuario = self.request.user, archivo = form.cleaned_data['guia'],
-                                                 entregable = entregable,formador = beneficiario.formador)
-            evidencia.beneficiarios_cargados.add(beneficiario)
-            evidencia.save()
-
-        beneficiario.link = form.cleaned_data['link']
         beneficiario.nombre_producto_final = form.cleaned_data['nombre']
         beneficiario.area_basica_producto_final = form.cleaned_data['area']
         beneficiario.estado_producto_final = 'cargado'
+        beneficiario.para_leer = form.cleaned_data['para_leer']
+        beneficiario.para_hacer_1 = form.cleaned_data['para_hacer_1']
+        beneficiario.para_hacer_2 = form.cleaned_data['para_hacer_2']
+        beneficiario.para_hacer_3 = form.cleaned_data['para_hacer_3']
+        beneficiario.para_hacer_4 = form.cleaned_data['para_hacer_4']
+        beneficiario.imagen_historieta = form.cleaned_data['imagen_historieta']
+        beneficiario.imagen_infografia = form.cleaned_data['imagen_infografia']
+        beneficiario.imagen_graficacion_ple = form.cleaned_data['imagen_graficacion_ple']
+        beneficiario.link_ruta_sostenibilidad = form.cleaned_data['link_ruta_sostenibilidad']
+        beneficiario.imagen_para_leer = form.cleaned_data['imagen_para_leer']
+        beneficiario.html = File(open(settings.STATICFILES_DIRS[0] + '\\documentos\\ple.html'))
         beneficiario.save()
+
+        file = codecs.open(beneficiario.html.path, 'r+', 'utf-8')
+        text_index_1 = file.read()
+        file = codecs.open(beneficiario.html.path, 'w', 'utf-8')
+
+        para_hacer_adicionales = []
+
+        if beneficiario.para_hacer_2 != "":
+            para_hacer_adicionales.append(beneficiario.para_hacer_2)
+
+        if beneficiario.para_hacer_3 != "":
+            para_hacer_adicionales.append(beneficiario.para_hacer_3)
+
+        if beneficiario.para_hacer_4 != "":
+            para_hacer_adicionales.append(beneficiario.para_hacer_4)
+
+
+        adicional = ''
+
+        for x in para_hacer_adicionales:
+            adicional += '<div class="col-lg-12" style="margin-bottom: 50px;"><iframe style="width: 82vw;height: 100vh;position: relative;" src="'+x+'" frameborder="0" allowfullscreen></iframe></div>'
+
+
+        navar_color_list = ['#194F83','#4C4A9C',"#831A1C","#008346"]
+        section_color_list = ['#3DCF8C',"#3DC8CF","#9C9671","#9C3DCF"]
+
+        navar_color = random.choice(navar_color_list)
+        section_color = random.choice(section_color_list)
+
+        imagen_para_leer = ''
+        if beneficiario.imagen_para_leer != None:
+            imagen_para_leer = '<img src="' + beneficiario.imagen_para_leer.url + '" class="img-responsive center-block">'
+
+        file.write(text_index_1.replace('{{IMAGEN_PARA_LEER}}',imagen_para_leer).replace('{{NAVAR_COLOR}}',navar_color).replace('{{SECTION_COLOR}}',section_color).replace('{{TITULO}}', beneficiario.nombre_producto_final).replace('{{NOMBRE_DOCENTE}}',beneficiario.nombres+" "+beneficiario.apellidos + " - "+str(beneficiario.cedula)).replace('{{TEXTO_PARA_LEER}}',beneficiario.para_leer).replace('{{URL_PARA_HACER}}',beneficiario.para_hacer_1).replace('{{URL_PARA_HACER_ADICIONAL}}',adicional).replace('{{URL_HISTORIETA}}',beneficiario.imagen_historieta.url).replace('{{URL_INFOGRAFIA}}',beneficiario.imagen_infografia.url).replace('{{URL_GRAFICACION_PLE}}',beneficiario.imagen_graficacion_ple.url).replace('{{URL_RUTA_SOSTENIBILIDAD}}',beneficiario.link_ruta_sostenibilidad.replace('scene','card')))
+
+        file.close()
+
+        beneficiario.link = beneficiario.html.url
+
+        beneficiario.save()
+
+
         return HttpResponseRedirect(self.get_success_url())
 
 
