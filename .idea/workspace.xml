@@ -52,7 +52,7 @@
         <entry file="file://$PROJECT_DIR$/informes/tasks.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="262">
-              <caret line="3144" column="30" lean-forward="true" selection-start-line="3144" selection-start-column="30" selection-end-line="3144" selection-end-column="30" />
+              <caret line="3144" column="28" lean-forward="true" selection-start-line="3144" selection-start-column="28" selection-end-line="3144" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -497,7 +497,14 @@
       <option name="project" value="LOCAL" />
       <updated>1500988676639</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Informes 2 y 3">
+      <created>1500993902377</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1500993902377</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -537,7 +544,9 @@
     <MESSAGE value="RED PLE retroalimentacion" />
     <MESSAGE value="Vigencia not in beneficiario" />
     <MESSAGE value="PLE masivos" />
-    <option name="LAST_COMMIT_MESSAGE" value="PLE masivos" />
+    <MESSAGE value="Informes 2 y 3" />
+    <MESSAGE value="Informes 1" />
+    <option name="LAST_COMMIT_MESSAGE" value="Informes 1" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -900,7 +909,7 @@
     <entry file="file://$PROJECT_DIR$/informes/tasks.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="262">
-          <caret line="3144" column="30" lean-forward="true" selection-start-line="3144" selection-start-column="30" selection-end-line="3144" selection-end-column="30" />
+          <caret line="3144" column="28" lean-forward="true" selection-start-line="3144" selection-start-column="28" selection-end-line="3144" selection-end-column="28" />
           <folding />
         </state>
       </provider>
