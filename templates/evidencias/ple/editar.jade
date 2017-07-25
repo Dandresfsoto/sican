@@ -36,11 +36,7 @@ block body_script_content
             showUpload: false
         });
 
-        $("#id_imagen_infografia").fileinput({
-            language: "es",
-            showRemove: false,
-            showUpload: false
-        });
+
 
         $("#id_imagen_graficacion_ple").fileinput({
             language: "es",
@@ -57,4 +53,34 @@ block body_script_content
 
         $('#submit_form').on('click', function () {
             $('#form-administrador').submit();
+        });
+
+    script.
+        $(document).ready(function(){
+            window.addEventListener("paste",processEvent);
+
+
+            function processEvent(e) {
+                for (var i = 0 ; i < e.clipboardData.items.length ; i++) {
+                    var clipboardItem = e.clipboardData.items[i];
+                    var type = clipboardItem.type;
+
+
+                    if (type.indexOf("image") != -1){
+                        var blob = clipboardItem.getAsFile();
+
+                        if(blob){
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                var img = document.createElement("img");
+                                img.src = e.target.result;
+                            }
+                            reader.readAsDataURL(blob);
+
+                            console.log(blob);
+                        }
+                    }
+                }
+            }
+
         });

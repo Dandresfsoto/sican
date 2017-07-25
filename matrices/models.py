@@ -57,7 +57,7 @@ class Beneficiario(models.Model):
     ip_descarga = models.GenericIPAddressField(max_length=100,blank=True,null=True)
     fecha_descarga = models.DateTimeField(blank=True,null=True)
 
-    nombre_producto_final = models.CharField(max_length=100,blank=True)
+    nombre_producto_final = models.CharField(max_lensicgth=100,blank=True)
     area_basica_producto_final = models.CharField(max_length=100,blank=True)
     estado_producto_final = models.CharField(max_length=100,blank=True)
     link = models.URLField(max_length=200,null=True,blank=True)

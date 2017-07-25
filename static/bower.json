@@ -36,6 +36,7 @@
     "devbridge-autocomplete": "^1.2.26",
     "dropzone": "^4.3.0",
     "components-font-awesome": "^4.7.0",
-    "mixitup2": "^3.1.6"
+    "mixitup2": "^3.1.6",
+    "picEdit": "*"
   }
 }
