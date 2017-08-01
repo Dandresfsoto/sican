@@ -121,6 +121,7 @@ LOCAL_APPS = [
     'requerimientos',
     'sicantelegram',
     'beneficiarios',
+    'vigencia2017',
 ]
 
 THIRD_PARTY_APPS = [

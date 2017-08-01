@@ -102,6 +102,7 @@ class Contrato(models.Model):
     nombre = models.CharField(unique=True,max_length=200)
     formador = models.ForeignKey(Formador)
     soportes_requeridos = models.ForeignKey(SolicitudSoportes)
+    codigo_ruta = models.CharField(max_length=100,blank=True,null=True)
     vigencia = models.CharField(max_length=100,blank=True,null=True)
     fecha = models.DateTimeField(auto_now_add = True)
     fecha_inicio = models.DateField(blank=True,null=True)

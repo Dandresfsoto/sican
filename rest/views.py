@@ -79,6 +79,9 @@ from formadores.models import CohortesFormadores
 from informes.tasks import matriz_chequeo_virtual_compilada
 from beneficiarios.models import GruposBeneficiarios
 from beneficiarios.models import BeneficiarioVigencia
+from vigencia2017.models import DaneSEDE
+from vigencia2017.models import Grupos as GruposVigencia2017
+from vigencia2017.models import Beneficiario as BeneficiarioVigencia2017
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
@@ -183,11 +186,29 @@ class UserPermissionList(APIView):
                   'id':'beneficiarios',
                   'links':[]
             },
+            'vigencia_2017': {'name': 'Vigencia 2017',
+                              'icon': 'icons:verified-user',
+                              'id': 'vigencia_2017',
+                              'links': []
+            },
+
         }
 
         links = {
+            'vigencia_2017_grupos': {
+                'ver': {'name': 'Grupos de formación', 'link': '/vigencia2017/grupos/'}
+            },
+            'vigencia_2017_dane': {
+                'ver': {'name': 'Códigos DANE', 'link': '/vigencia2017/codigosdane/'}
+            },
+            'vigencia_2017_evidencias': {
+                'ver': {'name': 'Evidencias', 'link': '/vigencia2017/evidencias/'}
+            },
             'beneficiarios_registrar':{
                 'ver':{'name':'Registrar beneficiarios','link':'/beneficiarios/'}
+            },
+            'evidencias': {
+                'ver': {'name': 'Registrar beneficiarios', 'link': '/beneficiarios/'}
             },
             'contratos_legalizar':{
                 'ver':{'name':'Legalización de contratos','link':'/contratos/legalizacion/'}
@@ -376,6 +397,118 @@ class UserPermissionList(APIView):
 
         return Response(r)
 
+class CodigosDaneList(BaseDatatableView):
+    """
+    0.id
+    1.dane_sede
+    2.nombre_sede
+    3.dane_ie
+    4.nombre_ie
+    5.municipio
+    6.secretaria
+    7.zona
+    """
+    model = DaneSEDE
+    columns = ['id', 'dane_sede', 'nombre_sede', 'dane_ie', 'nombre_ie', 'municipio', 'secretaria','zona']
+
+    order_columns = ['dane_sede', 'nombre_sede', 'dane_ie', 'nombre_ie']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(dane_sede__icontains=search) | Q(municipio__nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.dane_sede,
+                item.nombre_sede,
+                item.dane_ie,
+                item.nombre_ie,
+                item.municipio.nombre,
+                item.secretaria.nombre,
+                item.zona,
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_dane.editar'),
+            ])
+        return json_data
+
+class Vigencia2017GruposList(BaseDatatableView):
+    """
+    0.id
+    1.formador
+    2.codigo_ruta
+    3.get_municipios_string
+    4.contrato
+    5.permiso_editar
+    """
+    model = Contrato
+    columns = ['id', 'formador','codigo_ruta']
+
+    order_columns = ['formador','codigo_ruta']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return Contrato.objects.filter(vigencia = "vigencia2017")
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(formador__nombres__icontains=search) | Q(formador__apellidos__icontains=search) | Q(formador__cedula__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.formador.get_full_name(),
+                item.nombre,
+                GruposVigencia2017.objects.filter(contrato = item).count(),
+                item.codigo_ruta,
+                item.get_municipios_list(),
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.editar'),
+            ])
+        return json_data
+
+class Vigencia2017ContratoList(BaseDatatableView):
+    """
+    0.id
+
+    """
+    model = GruposVigencia2017
+    columns = ['id', 'numero', 'diplomado']
+
+    order_columns = ['numero', 'diplomado']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return GruposVigencia2017.objects.filter(contrato__id = self.kwargs['id_contrato'])
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(diplomado__nombre__icontains=search) | Q(numero__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.numero,
+                item.diplomado.nombre,
+                BeneficiarioVigencia2017.objects.filter(grupo = item).count(),
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.editar'),
+            ])
+        return json_data
 #-----------------------------------------------------------------------------------------------------------------------
 
 class ResultadosPercepcionInicial(APIView):

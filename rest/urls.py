@@ -22,7 +22,7 @@ from rest.views import RedList, CargaMasivaEvidenciasList, DiplomadosEvidenciasL
 from rest.views import RendimientoAuxiliaresList, AcividadesList, BeneficiariosListView, FormadoresContratosFormador
 from rest.views import BeneficiariosCedulaListView, BeneficiariosCedulaProductosListView
 from rest.views import RedSubsanacionList
-from rest.views import EvidenciasSubsanacionCodigos, EvidenciasSubsanacionCodigosSubsanacion, NegociadoresRhSoportes
+from rest.views import EvidenciasSubsanacionCodigos, EvidenciasSubsanacionCodigosSubsanacion, NegociadoresRhSoportes,CodigosDaneList
 from rest import views
 
 urlpatterns = [
@@ -63,6 +63,9 @@ urlpatterns = [
     #-------------------------------------------------- REST -----------------------------------------------------------
 
     url(r'usuarios/permisos/$', UserPermissionList.as_view()),
+    url(r'vigencia_2017/codigos_dane/$', CodigosDaneList.as_view()),
+    url(r'vigencia_2017/grupos/$', views.Vigencia2017GruposList.as_view()),
+    url(r'vigencia_2017/grupos/formador/(?P<id_contrato>\w+)/$', views.Vigencia2017ContratoList.as_view()),
 
     #-------------------------------------------------------------------------------------------------------------------
 
