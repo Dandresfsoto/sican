@@ -171,7 +171,8 @@ class ContratoForm(forms.ModelForm):
             Fieldset(
                 'Supervisión del contrato',
                 Div(
-                    Div('supervisores',css_class='col-sm-12'),
+                    Div('codigo_ruta', css_class='col-sm-6'),
+                    Div('supervisores',css_class='col-sm-6'),
                     css_class = 'row'
                 ),
                 Div(
