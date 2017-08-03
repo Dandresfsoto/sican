@@ -12,4 +12,6 @@ urlpatterns = [
 
     url(r'^valor_contratos/$', views.ListadoValorContratosView.as_view()),
     url(r'^valor_contratos/nuevo/$', views.NuevoValorContratoView.as_view()),
+
+    url(r'^valor_contratos/(?P<id_contrato>[0-9]+)/diplomado/(?P<id_diplomado>[0-9]+)/$', views.ValorProductosView.as_view()),
 ]

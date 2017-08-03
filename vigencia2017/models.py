@@ -51,18 +51,12 @@ class Beneficiario(models.Model):
         return self.entregable.nombre
 
 
-class ValorEntregableVigencia2017(models.Model):
-    entregable = models.ForeignKey(Entregable,related_name='entregable_valor_vigencia_2017')
-    valor = models.FloatField()
 
-    def __unicode__(self):
-        return self.entregable.nombre
 
 
 class TipoContrato(models.Model):
     nombre = models.CharField(max_length=100)
     diplomados = models.ManyToManyField(Diplomado)
-    entregables = models.ManyToManyField(ValorEntregableVigencia2017)
 
     def __unicode__(self):
         return self.nombre
@@ -72,3 +66,12 @@ class TipoContrato(models.Model):
         for diplomado in self.diplomados.all():
             string += diplomado.nombre + ", "
         return string
+
+
+class ValorEntregableVigencia2017(models.Model):
+    entregable = models.ForeignKey(Entregable,related_name='entregable_valor_vigencia_2017')
+    tipo_contrato = models.ForeignKey(TipoContrato)
+    valor = models.FloatField()
+
+    def __unicode__(self):
+        return self.entregable.nombre

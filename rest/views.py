@@ -82,7 +82,7 @@ from beneficiarios.models import BeneficiarioVigencia
 from vigencia2017.models import DaneSEDE
 from vigencia2017.models import Grupos as GruposVigencia2017
 from vigencia2017.models import Beneficiario as BeneficiarioVigencia2017
-from vigencia2017.models import TipoContrato
+from vigencia2017.models import TipoContrato, ValorEntregableVigencia2017
 from django.db.models import Sum
 # Create your views here.
 
@@ -469,7 +469,8 @@ class ValorContratosList(BaseDatatableView):
             diplomados = []
 
             for diplomado in item.diplomados.all():
-                valor = item.entregables.filter(entregable__sesion__nivel__diplomado = diplomado).aggregate(Sum('valor'))['valor__sum']
+                valor = ValorEntregableVigencia2017.objects.filter(tipo_contrato=item).filter(entregable__sesion__nivel__diplomado = diplomado).aggregate(Sum('valor'))['valor__sum']
+                #valor = item.entregables.filter(entregable__sesion__nivel__diplomado = diplomado).aggregate(Sum('valor'))['valor__sum']
                 if valor == None:
                     valor = 0
                 diplomados.append({'nombre': diplomado.nombre, 'id': diplomado.id, 'valor': valor})
