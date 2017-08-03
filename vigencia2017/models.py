@@ -71,7 +71,7 @@ class TipoContrato(models.Model):
 class ValorEntregableVigencia2017(models.Model):
     entregable = models.ForeignKey(Entregable,related_name='entregable_valor_vigencia_2017')
     tipo_contrato = models.ForeignKey(TipoContrato)
-    valor = models.FloatField()
+    valor = models.FloatField(null=True,default=0)
 
     def __unicode__(self):
         return self.entregable.nombre

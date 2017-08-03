@@ -61,7 +61,7 @@
               <entry file="file://$PROJECT_DIR$/vigencia2017/models.py">
                 <provider selected="true" editor-type-id="text-editor">
                   <state relative-caret-position="424">
-                    <caret line="73" column="40" lean-forward="true" selection-start-line="73" selection-start-column="40" selection-end-line="73" selection-end-column="40" />
+                    <caret line="73" column="50" lean-forward="true" selection-start-line="73" selection-start-column="50" selection-end-line="73" selection-end-column="50" />
                     <folding />
                   </state>
                 </provider>
@@ -631,7 +631,14 @@
       <option name="project" value="LOCAL" />
       <updated>1501791043448</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Vigencia 2017 v5">
+      <created>1501792295408</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1501792295408</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -676,7 +683,8 @@
     <MESSAGE value="Vigencia 2017 v2" />
     <MESSAGE value="Vigencia 2017 v3" />
     <MESSAGE value="Vigencia 2017 v4" />
-    <option name="LAST_COMMIT_MESSAGE" value="Vigencia 2017 v4" />
+    <MESSAGE value="Vigencia 2017 v5" />
+    <option name="LAST_COMMIT_MESSAGE" value="Vigencia 2017 v5" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1086,7 +1094,7 @@
     <entry file="file://$PROJECT_DIR$/vigencia2017/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="424">
-          <caret line="73" column="40" lean-forward="true" selection-start-line="73" selection-start-column="40" selection-end-line="73" selection-end-column="40" />
+          <caret line="73" column="50" lean-forward="true" selection-start-line="73" selection-start-column="50" selection-end-line="73" selection-end-column="50" />
           <folding />
         </state>
       </provider>
