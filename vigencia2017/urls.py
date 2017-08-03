@@ -9,4 +9,7 @@ urlpatterns = [
     url(r'^grupos/$', views.ListadoGruposFormacionView.as_view()),
     url(r'^grupos/formador/(?P<pk>[0-9]+)/$', views.ListadoGruposFormadorView.as_view()),
     url(r'^grupos/formador/(?P<pk>[0-9]+)/nuevo/$', views.NuevoGrupoFormadorView.as_view()),
+
+    url(r'^valor_contratos/$', views.ListadoValorContratosView.as_view()),
+    url(r'^valor_contratos/nuevo/$', views.NuevoValorContratoView.as_view()),
 ]

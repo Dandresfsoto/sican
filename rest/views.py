@@ -82,6 +82,8 @@ from beneficiarios.models import BeneficiarioVigencia
 from vigencia2017.models import DaneSEDE
 from vigencia2017.models import Grupos as GruposVigencia2017
 from vigencia2017.models import Beneficiario as BeneficiarioVigencia2017
+from vigencia2017.models import TipoContrato
+from django.db.models import Sum
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
@@ -195,6 +197,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'vigencia_2017_valor_contratos': {
+                'ver': {'name': 'Valor contratos', 'link': '/vigencia2017/valor_contratos/'}
+            },
             'vigencia_2017_grupos': {
                 'ver': {'name': 'Grupos de formación', 'link': '/vigencia2017/grupos/'}
             },
@@ -435,6 +440,47 @@ class CodigosDaneList(BaseDatatableView):
                 item.secretaria.nombre,
                 item.zona,
                 self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_dane.editar'),
+            ])
+        return json_data
+
+class ValorContratosList(BaseDatatableView):
+    """
+
+    """
+    model = TipoContrato
+    columns = ['id', 'nombre']
+
+    order_columns = ['nombre']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombre__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+
+            diplomados = []
+
+            for diplomado in item.diplomados.all():
+                valor = item.entregables.filter(entregable__sesion__nivel__diplomado = diplomado).aggregate(Sum('valor'))['valor__sum']
+                if valor == None:
+                    valor = 0
+                diplomados.append({'nombre': diplomado.nombre, 'id': diplomado.id, 'valor': valor})
+
+
+
+            json_data.append([
+                item.id,
+                item.nombre,
+                diplomados,
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_valor_contratos.editar'),
             ])
         return json_data
 

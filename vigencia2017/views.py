@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView, CreateView, DeleteView, UpdateView
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
-from vigencia2017.models import DaneSEDE
-from vigencia2017.forms import DaneSEDEForm, GruposForm
+from vigencia2017.models import DaneSEDE, TipoContrato
+from vigencia2017.forms import DaneSEDEForm, GruposForm, TipoContratoForm
 from formadores.models import Contrato, Grupos
 
 # Create your views here.
@@ -87,3 +87,33 @@ class NuevoGrupoFormadorView(LoginRequiredMixin,
 
     def get_initial(self):
         return {'id_contrato':self.kwargs['pk']}
+
+
+
+
+
+
+
+
+
+
+class ListadoValorContratosView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'vigencia2017/valor_contratos/lista.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_valor_contratos.crear')
+        return super(ListadoValorContratosView, self).get_context_data(**kwargs)
+
+
+
+class NuevoValorContratoView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         CreateView):
+    model = TipoContrato
+    form_class = TipoContratoForm
+    success_url = '../'
+    template_name = 'vigencia2017/valor_contratos/nuevo.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.crear"

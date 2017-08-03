@@ -6,6 +6,7 @@ from secretarias.models import Secretaria
 from productos.models import Diplomado
 from region.models import Region
 from formadores.models import Formador, Contrato
+from productos.models import Entregable
 
 # Create your models here.
 
@@ -45,3 +46,29 @@ class Beneficiario(models.Model):
     area = models.IntegerField(blank=True,null=True)
     grado = models.IntegerField(blank=True,null=True)
     genero = models.CharField(max_length=100, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.entregable.nombre
+
+
+class ValorEntregableVigencia2017(models.Model):
+    entregable = models.ForeignKey(Entregable,related_name='entregable_valor_vigencia_2017')
+    valor = models.FloatField()
+
+    def __unicode__(self):
+        return self.entregable.nombre
+
+
+class TipoContrato(models.Model):
+    nombre = models.CharField(max_length=100)
+    diplomados = models.ManyToManyField(Diplomado)
+    entregables = models.ManyToManyField(ValorEntregableVigencia2017)
+
+    def __unicode__(self):
+        return self.nombre
+
+    def get_diplomado_string(self):
+        string = ''
+        for diplomado in self.diplomados.all():
+            string += diplomado.nombre + ", "
+        return string

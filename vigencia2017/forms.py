@@ -7,7 +7,7 @@ from secretarias.models import Secretaria
 from municipios.models import Municipio
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, HTML
-from vigencia2017.models import DaneSEDE, Grupos
+from vigencia2017.models import DaneSEDE, Grupos, TipoContrato
 from formadores.models import Contrato
 
 
@@ -74,5 +74,31 @@ class GruposForm(forms.ModelForm):
     class Meta:
         model = Grupos
         fields = '__all__'
+        labels = {
+        }
+
+class TipoContratoForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(TipoContratoForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Información del contrato',
+                Div(
+                    Div('nombre', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('diplomados', css_class='col-sm-12'),
+                    css_class='row'
+                )
+            )
+        )
+
+    class Meta:
+        model = TipoContrato
+        exclude = ['entregables']
         labels = {
         }

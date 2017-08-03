@@ -128,6 +128,7 @@ class ContratoForm(forms.ModelForm):
         super(ContratoForm, self).__init__(*args, **kwargs)
 
         self.fields['formador'].initial = Formador.objects.get(id = kwargs['initial']['id_formador'])
+        self.fields['vigencia'].widget = forms.Select(choices=[('','---------'),('vigencia2017','Vigencia 2017')])
 
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
@@ -171,8 +172,9 @@ class ContratoForm(forms.ModelForm):
             Fieldset(
                 'Supervisión del contrato',
                 Div(
-                    Div('meta_beneficiarios', css_class='col-sm-6'),
-                    Div('codigo_ruta', css_class='col-sm-6'),
+                    Div('meta_beneficiarios', css_class='col-sm-4'),
+                    Div('codigo_ruta', css_class='col-sm-4'),
+                    Div('vigencia', css_class='col-sm-4'),
                     css_class='row'
                 ),
                 Div(
