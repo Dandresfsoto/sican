@@ -66,7 +66,9 @@ urlpatterns = [
     url(r'vigencia_2017/codigos_dane/$', CodigosDaneList.as_view()),
     url(r'vigencia_2017/grupos/$', views.Vigencia2017GruposList.as_view()),
     url(r'vigencia_2017/grupos/formador/(?P<id_contrato>\w+)/$', views.Vigencia2017ContratoList.as_view()),
+    url(r'vigencia_2017/grupos/formador/(?P<id_contrato>\w+)/grupo/(?P<id_grupo>\w+)/$', views.Vigencia2017BeneficiariosList.as_view()),
     url(r'vigencia_2017/valor_contratos/$', views.ValorContratosList.as_view()),
+    url(r'vigencia_2017/cargar_matriz/$', views.CargaMatrizList.as_view()),
 
     #-------------------------------------------------------------------------------------------------------------------
 

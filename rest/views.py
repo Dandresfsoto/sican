@@ -84,6 +84,8 @@ from vigencia2017.models import Grupos as GruposVigencia2017
 from vigencia2017.models import Beneficiario as BeneficiarioVigencia2017
 from vigencia2017.models import TipoContrato, ValorEntregableVigencia2017
 from django.db.models import Sum
+from vigencia2017.models import CargaMatriz
+from vigencia2017.models import Beneficiario as BeneficiarioVigencia2017
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
@@ -197,6 +199,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'vigencia_2017_cargar_matriz': {
+                'ver': {'name': 'Carga de matriz', 'link': '/vigencia2017/cargar_matriz/'}
+            },
             'vigencia_2017_valor_contratos': {
                 'ver': {'name': 'Valor contratos', 'link': '/vigencia2017/valor_contratos/'}
             },
@@ -550,10 +555,87 @@ class Vigencia2017ContratoList(BaseDatatableView):
         for item in qs:
             json_data.append([
                 item.id,
-                item.numero,
+                item.get_nombre_grupo(),
                 item.diplomado.nombre,
                 BeneficiarioVigencia2017.objects.filter(grupo = item).count(),
                 self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.editar'),
+            ])
+        return json_data
+
+class CargaMatrizList(BaseDatatableView):
+    """
+    0.id
+
+    """
+    model = CargaMatriz
+    columns = ['id', 'usuario', 'fecha']
+
+    order_columns = ['id', 'usuario', 'fecha']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(id = search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.usuario.get_full_name_string(),
+                item.fecha,
+                item.get_archivo_url(),
+                item.get_resultado_url(),
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_cargar_matriz.editar'),
+            ])
+        return json_data
+
+
+class Vigencia2017BeneficiariosList(BaseDatatableView):
+    """
+    0.id
+    """
+    model = BeneficiarioVigencia2017
+    columns = ['id', 'cedula', 'nombres', 'apellidos', 'dane_sede']
+
+    order_columns = ['cedula', 'nombres', 'apellidos', 'dane_sede']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return self.model.objects.filter(grupo__id = self.kwargs['id_grupo'])
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(cedula__icontains=search) | Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(dane_sede__dane_sede__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.cedula,
+                item.nombres,
+                item.apellidos,
+                item.dane_sede.dane_sede,
+                item.grupo.get_nombre_grupo(),
+                item.correo,
+                item.telefono_fijo,
+                item.telefono_celular,
+                item.area,
+                item.grado,
+                item.genero,
+                item.dane_sede.nombre_sede,
+                item.dane_sede.dane_ie,
+                item.dane_sede.nombre_ie,
+                item.dane_sede.municipio.nombre + ', ' + item.dane_sede.municipio.departamento.nombre,
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_cargar_matriz.editar'),
             ])
         return json_data
 #-----------------------------------------------------------------------------------------------------------------------

@@ -1,1 +1,1 @@
-celery -A sican worker -l info
+C:\Python27\Scripts\celery -A sican worker -l info

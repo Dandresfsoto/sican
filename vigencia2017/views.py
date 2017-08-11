@@ -1,10 +1,14 @@
 from django.views.generic import TemplateView, CreateView, DeleteView, UpdateView, FormView
 from braces.views import LoginRequiredMixin, PermissionRequiredMixin
-from vigencia2017.models import DaneSEDE, TipoContrato, ValorEntregableVigencia2017
-from vigencia2017.forms import DaneSEDEForm, GruposForm, TipoContratoForm, ValorEntregableVigencia2017Form
+from vigencia2017.models import DaneSEDE, TipoContrato, ValorEntregableVigencia2017, CargaMatriz
+from vigencia2017.forms import DaneSEDEForm, GruposForm, TipoContratoForm, ValorEntregableVigencia2017Form, CargaMatrizForm
 from formadores.models import Contrato, Grupos
 from productos.models import Entregable
 from productos.models import Diplomado
+from vigencia2017.tasks import carga_masiva_matrices
+from vigencia2017.models import Grupos as GruposVigencia2017
+from vigencia2017.models import Beneficiario as BeneficiarioVigencia2017
+from vigencia2017.forms import BeneficiarioVigencia2017Form
 
 # Create your views here.
 class ListadoCodigosDaneView(LoginRequiredMixin,
@@ -150,3 +154,74 @@ class ValorProductosView(LoginRequiredMixin,
             valor.save()
 
         return super(ValorProductosView, self).form_valid(form)
+
+
+
+class ListadoCargaMatrizView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'vigencia2017/cargar_matriz/lista.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_cargar_matriz.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_cargar_matriz.crear')
+        return super(ListadoCargaMatrizView, self).get_context_data(**kwargs)
+
+
+
+
+class NuevaCargaMatrizView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         CreateView):
+    model = CargaMatriz
+    form_class = CargaMatrizForm
+    success_url = '../'
+    template_name = 'vigencia2017/cargar_matriz/nuevo.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_cargar_matriz.crear"
+
+    def get_initial(self):
+        return {'id_usuario':self.request.user.id}
+
+    def form_valid(self, form):
+        self.object = form.save()
+        carga_masiva_matrices.delay(self.object.id,self.request.user.email)
+        return super(NuevaCargaMatrizView, self).form_valid(form)
+
+
+
+class ListadoInscritosGrupoView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'vigencia2017/grupos_formacion/lista_inscritos.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.ver"
+
+
+    def get_context_data(self, **kwargs):
+        kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
+        kwargs['codigo_grupo'] = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo']).get_nombre_grupo()
+        kwargs['id_contrato'] = self.kwargs['pk']
+        kwargs['id_grupo'] = self.kwargs['id_grupo']
+        return super(ListadoInscritosGrupoView, self).get_context_data(**kwargs)
+
+
+
+class EditarBeneficiarioGrupoView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         UpdateView):
+    model = BeneficiarioVigencia2017
+    form_class = BeneficiarioVigencia2017Form
+    pk_url_kwarg = 'id_beneficiario'
+    success_url = '../../'
+    template_name = 'vigencia2017/grupos_formacion/editar_beneficiario.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.editar"
+
+
+    def get_context_data(self, **kwargs):
+        kwargs['codigo_dane'] = DaneSEDE.objects.get(id=self.kwargs['pk']).dane_sede
+        kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
+        kwargs['codigo_grupo'] = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo']).get_nombre_grupo()
+        kwargs['cedula'] = BeneficiarioVigencia2017.objects.get(id=self.kwargs['id_beneficiario']).cedula
+        return super(EditarBeneficiarioGrupoView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'id_contrato':self.kwargs['pk']}

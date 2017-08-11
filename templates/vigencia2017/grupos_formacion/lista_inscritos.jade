@@ -16,7 +16,13 @@ block breadcrum
     a(href="/proyectos/",class="link_button")
         paper-icon-item(class="breadcrumb-paper-icon-item-class") Inicio
             iron-icon(icon="check",item-icon)
-    paper-icon-item(class="breadcrum_active",disabled) Listado de grupos de formación
+    a(href="/vigencia2017/grupos/",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Listado de grupos de formación
+            iron-icon(icon="check",item-icon)
+    a(href="../../",class="link_button")
+        paper-icon-item(class="breadcrumb-paper-icon-item-class") Grupos de {{formador}}
+            iron-icon(icon="check",item-icon)
+    paper-icon-item(class="breadcrum_active",disabled) {{codigo_grupo}}
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
     div(class="container-fluid container-index")
@@ -25,17 +31,17 @@ block scroll_header_panel_content
             thead
                 tr
                     th
-                    th Formador
-                    th Contrato
-                    th Grupos
-                    th Ruta
+                    th Cedula
+                    th Nombres
+                    th Apellidos
+                    th DANE Sede
             tbody
                 tr
                     td
-                    td Formador
-                    td Contrato
-                    td Grupos
-                    td Ruta
+                    td Cedula
+                    td Nombres
+                    td Apellidos
+                    td DANE Sede
 
 
 block body_script_content
@@ -62,11 +68,11 @@ block body_script_content
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "ajax": "/rest/vigencia_2017/grupos/",
+                "ajax": "/rest/vigencia_2017/grupos/formador/{{id_contrato}}/grupo/{{id_grupo}}/",
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.8/i18n/Spanish.json"
                 },
-                "order": [[0, "asc"]],
+                "order": [[1, "asc"]],
                 "columns": [
                     {
                         "className": 'details-control',
@@ -77,8 +83,8 @@ block body_script_content
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[6]) {
-                                return '<a href="formador/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
+                            if (row[16]) {
+                                return '<a href="beneficiario/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
                                 return data;
@@ -122,8 +128,27 @@ block body_script_content
         function format(d) {
             // `d` is the original data object for the row
             return '<table class="table table-striped">' +
+
                 '<tr>' +
-                '<td><p class="bold-p">Municipios:</p>' + d[5] + '</td>' +
+                '<td><p class="bold-p">Nombre Sede:</p>' + d[12] + '</td>' +
+                '<td><p class="bold-p">Dane IE:</p>' + d[13] + '</td>' +
+                '<td><p class="bold-p">Nombre IE:</p>' + d[14] + '</td>' +
+                '<td><p class="bold-p">Municipio:</p>' + d[15] + '</td>' +
                 '</tr>' +
+
+                '<tr>' +
+                '<td><p class="bold-p">Grupo:</p>' + d[5] + '</td>' +
+                '<td><p class="bold-p">Correo:</p>' + d[6] + '</td>' +
+                '<td><p class="bold-p">Telefono Fijo:</p>' + d[7] + '</td>' +
+                '<td><p class="bold-p">Celular:</p>' + d[8] + '</td>' +
+                '</tr>' +
+
+                '<tr>' +
+                '<td><p class="bold-p">Area:</p>' + d[9] + '</td>' +
+                '<td><p class="bold-p">Grado:</p>' + d[10] + '</td>' +
+                '<td><p class="bold-p">Genero:</p>' + d[11] + '</td>' +
+                '<td><p class="bold-p"></p>' + '</td>' +
+                '</tr>' +
+
                 '</table>';
         }

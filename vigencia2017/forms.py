@@ -7,9 +7,11 @@ from secretarias.models import Secretaria
 from municipios.models import Municipio
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Fieldset, HTML
-from vigencia2017.models import DaneSEDE, Grupos, TipoContrato, ValorEntregableVigencia2017
+from vigencia2017.models import DaneSEDE, Grupos, TipoContrato, ValorEntregableVigencia2017, CargaMatriz, Beneficiario
 from formadores.models import Contrato
 from productos.models import Entregable
+from usuarios.models import User
+import openpyxl
 
 
 class DaneSEDEForm(forms.ModelForm):
@@ -144,3 +146,95 @@ class ValorEntregableVigencia2017Form(forms.Form):
                 pass
             else:
                 self.fields[str(entregable.id)].initial = valor.valor
+
+class CargaMatrizForm(forms.ModelForm):
+
+    def clean(self):
+        data = self.cleaned_data
+
+        wb = openpyxl.load_workbook(self.cleaned_data['archivo'])
+        sheet_names = wb.get_sheet_names()
+
+        if u'InnovaTIC' in sheet_names and u'TecnoTIC' in sheet_names and u'DirecTIC' in sheet_names:
+            pass
+
+        elif u'Matriz revisión documental' in sheet_names:
+            pass
+
+        else:
+            self._errors['archivo'] = self.error_class(u'El archivo no tiene la estructura necesaria')
+
+        return data
+
+    def __init__(self, *args, **kwargs):
+        super(CargaMatrizForm, self).__init__(*args, **kwargs)
+
+        self.fields['usuario'].initial = User.objects.get(id = kwargs['initial']['id_usuario'])
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Matriz',
+                Div(
+                    Div('usuario', css_class='hidden'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('archivo', css_class='col-sm-12'),
+                    css_class='row'
+                )
+            )
+        )
+
+
+    class Meta:
+        model = CargaMatriz
+        fields = "__all__"
+        labels = {
+        }
+
+class BeneficiarioVigencia2017Form(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(BeneficiarioVigencia2017Form, self).__init__(*args, **kwargs)
+
+        contrato = Contrato.objects.get(id=kwargs['initial']['id_contrato'])
+
+        self.fields['grupo'].queryset = Grupos.objects.filter(contrato = contrato)
+        self.fields['dane_sede'].queryset = DaneSEDE.objects.filter(municipio__id__in = contrato.municipios.all().values_list('id',flat=True))
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Información Personal',
+                Div(
+                    Div('nombres', css_class='col-sm-3'),
+                    Div('apellidos', css_class='col-sm-3'),
+                    Div('cedula', css_class='col-sm-3'),
+                    Div('grupo', css_class='col-sm-3'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('correo', css_class='col-sm-3'),
+                    Div('telefono_fijo', css_class='col-sm-3'),
+                    Div('telefono_celular', css_class='col-sm-3'),
+                    Div('genero', css_class='col-sm-3'),
+                    css_class='row'
+                ),
+            ),
+            Fieldset(
+                'Información laboral',
+                Div(
+                    Div('dane_sede', css_class='col-sm-8'),
+                    Div('area', css_class='col-sm-2'),
+                    Div('grado', css_class='col-sm-2'),
+                    css_class='row'
+                )
+            )
+        )
+
+    class Meta:
+        model = Beneficiario
+        exclude = ['region']
+        labels = {
+        }
