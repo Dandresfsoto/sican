@@ -116,6 +116,7 @@ class Contrato(models.Model):
     municipios = models.ManyToManyField(Municipio)
     supervisores = models.ManyToManyField(User)
     meta_beneficiarios = models.BigIntegerField()
+    tipo_contrato_id = models.IntegerField(blank=True,null=True)
 
     def __unicode__(self):
         return self.nombre

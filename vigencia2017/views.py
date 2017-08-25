@@ -8,7 +8,12 @@ from productos.models import Diplomado
 from vigencia2017.tasks import carga_masiva_matrices
 from vigencia2017.models import Grupos as GruposVigencia2017
 from vigencia2017.models import Beneficiario as BeneficiarioVigencia2017
-from vigencia2017.forms import BeneficiarioVigencia2017Form
+from vigencia2017.forms import BeneficiarioVigencia2017Form, NewBeneficiarioVigencia2017Form
+from vigencia2017.models import Evidencia as EvidenciaVigencia2017
+from vigencia2017.forms import EvidenciaVigencia2017Form, GruposVigencia2017ConectividadForm
+from vigencia2017.models import Evidencia
+import StringIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 # Create your views here.
 class ListadoCodigosDaneView(LoginRequiredMixin,
@@ -73,6 +78,7 @@ class ListadoGruposFormadorView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['formador'] = Contrato.objects.get(id = self.kwargs['pk']).formador.get_full_name()
         kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.crear')
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.informes')
         kwargs['id_contrato'] = self.kwargs['pk']
         return super(ListadoGruposFormadorView, self).get_context_data(**kwargs)
 
@@ -197,10 +203,12 @@ class ListadoInscritosGrupoView(LoginRequiredMixin,
 
 
     def get_context_data(self, **kwargs):
+        grupo = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo'])
         kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
-        kwargs['codigo_grupo'] = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo']).get_nombre_grupo()
+        kwargs['codigo_grupo'] = grupo.diplomado.nombre + ": " + grupo.get_nombre_grupo()
         kwargs['id_contrato'] = self.kwargs['pk']
         kwargs['id_grupo'] = self.kwargs['id_grupo']
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.crear')
         return super(ListadoInscritosGrupoView, self).get_context_data(**kwargs)
 
 
@@ -217,11 +225,281 @@ class EditarBeneficiarioGrupoView(LoginRequiredMixin,
 
 
     def get_context_data(self, **kwargs):
+        grupo = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo'])
         kwargs['codigo_dane'] = DaneSEDE.objects.get(id=self.kwargs['pk']).dane_sede
         kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
-        kwargs['codigo_grupo'] = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo']).get_nombre_grupo()
+        kwargs['codigo_grupo'] = grupo.diplomado.nombre + ": " + grupo.get_nombre_grupo()
         kwargs['cedula'] = BeneficiarioVigencia2017.objects.get(id=self.kwargs['id_beneficiario']).cedula
         return super(EditarBeneficiarioGrupoView, self).get_context_data(**kwargs)
 
     def get_initial(self):
-        return {'id_contrato':self.kwargs['pk']}
+        return {'id_contrato':self.kwargs['pk'],'id_grupo':self.kwargs['id_grupo']}
+
+
+class NuevoBeneficiarioGrupoView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         CreateView):
+    model = BeneficiarioVigencia2017
+    form_class = NewBeneficiarioVigencia2017Form
+    success_url = '../'
+    template_name = 'vigencia2017/grupos_formacion/nuevo_beneficiario.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.editar"
+
+
+    def get_context_data(self, **kwargs):
+        grupo = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo'])
+        kwargs['codigo_dane'] = DaneSEDE.objects.get(id=self.kwargs['pk']).dane_sede
+        kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
+        kwargs['codigo_grupo'] = grupo.diplomado.nombre + ": " + grupo.get_nombre_grupo()
+        return super(NuevoBeneficiarioGrupoView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        return {'id_contrato':self.kwargs['pk'],'id_grupo':self.kwargs['id_grupo']}
+
+
+
+
+
+class ListadoCambioMatrizView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'vigencia2017/cargar_matriz/lista_cambios.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_cargar_matriz.ver"
+
+
+    def get_context_data(self, **kwargs):
+        kwargs['id_matriz'] = self.kwargs['pk']
+        return super(ListadoCambioMatrizView, self).get_context_data(**kwargs)
+
+
+
+
+class ArbolDiplomadoView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'vigencia2017/grupos_formacion/arbol.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.ver"
+
+
+    def get_context_data(self, **kwargs):
+        grupo = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo'])
+        kwargs['id_contrato'] = self.kwargs['pk']
+        kwargs['id_grupo'] = self.kwargs['id_grupo']
+        kwargs['codigo_grupo'] = grupo.diplomado.nombre + ": " + grupo.get_nombre_grupo()
+        kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
+        kwargs['diplomado'] = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo']).diplomado.nombre
+        return super(ArbolDiplomadoView, self).get_context_data(**kwargs)
+
+
+
+
+
+class ListaEvidenciasEntregableView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'vigencia2017/grupos_formacion/lista_evidencias.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.ver"
+
+
+    def get_context_data(self, **kwargs):
+        grupo = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo'])
+        kwargs['id_contrato'] = self.kwargs['pk']
+        kwargs['id_grupo'] = self.kwargs['id_grupo']
+        kwargs['codigo_grupo'] = grupo.diplomado.nombre + ": " + grupo.get_nombre_grupo()
+        kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
+        kwargs['diplomado'] = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo']).diplomado.nombre
+        kwargs['id_entregable'] = self.kwargs['id_entregable']
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.nueva_evidencia')
+        kwargs['nombre_entregable'] = Entregable.objects.get(id=self.kwargs['id_entregable']).nombre
+        return super(ListaEvidenciasEntregableView, self).get_context_data(**kwargs)
+
+
+
+
+
+
+class NuevaEvidenciasEntregableView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         CreateView):
+    model = EvidenciaVigencia2017
+    form_class = EvidenciaVigencia2017Form
+    success_url = '../'
+    template_name = 'vigencia2017/grupos_formacion/nueva_evidencia.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.editar"
+
+
+    def get_context_data(self, **kwargs):
+        grupo = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo'])
+        kwargs['codigo_dane'] = DaneSEDE.objects.get(id=self.kwargs['pk']).dane_sede
+        kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
+        kwargs['codigo_grupo'] = grupo.diplomado.nombre + ": " + grupo.get_nombre_grupo()
+        kwargs['id_grupo'] = self.kwargs['id_grupo']
+        kwargs['nombre_entregable'] = Entregable.objects.get(id=self.kwargs['id_entregable']).nombre
+        return super(NuevaEvidenciasEntregableView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+
+
+        if 'archivo' in form.cleaned_data.keys():
+
+            self.object = form.save()
+
+
+        else:
+            output = StringIO.StringIO()
+            output.write(form.cleaned_data['link'])
+
+            output.seek(0,2)
+            file_data = InMemoryUploadedFile(output, 'file', 'link.txt', None, output.tell(), None)
+
+            self.object = form.save(commit=False)
+            self.object.archivo = file_data
+            self.object.save()
+
+            for cargado in form.cleaned_data['beneficiarios_cargados']:
+                self.object.beneficiarios_cargados.add(cargado)
+
+
+
+
+        cargados = self.object.beneficiarios_cargados.all()
+        contrato = Contrato.objects.get(id=self.kwargs['pk'])
+        entregable = Entregable.objects.get(id=self.kwargs['id_entregable'])
+        evidencias = Evidencia.objects.filter(contrato=contrato, entregable=entregable).filter(
+                beneficiarios_cargados__id__in=cargados.values_list('id', flat=True)).distinct()
+
+        for evidencia in evidencias:
+            for cargado in cargados:
+                evidencia.beneficiarios_cargados.remove(cargado)
+
+
+        return super(NuevaEvidenciasEntregableView,self).form_valid(form)
+
+    def get_initial(self):
+        return {'id_contrato':self.kwargs['pk'],'id_grupo':self.kwargs['id_grupo'],
+                'id_entregable':self.kwargs['id_entregable'],'id_usuario':self.request.user.id}
+
+
+
+
+
+
+class EditarEvidenciaEntregableView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         UpdateView):
+    model = EvidenciaVigencia2017
+    form_class = EvidenciaVigencia2017Form
+    success_url = '../../'
+    pk_url_kwarg = 'id_evidencia'
+    template_name = 'vigencia2017/grupos_formacion/editar_evidencia.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.editar"
+
+
+    def get_context_data(self, **kwargs):
+        grupo = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo'])
+        kwargs['codigo_dane'] = DaneSEDE.objects.get(id=self.kwargs['pk']).dane_sede
+        kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
+        kwargs['codigo_grupo'] = grupo.diplomado.nombre + ": " + grupo.get_nombre_grupo()
+        kwargs['id_grupo'] = self.kwargs['id_grupo']
+        kwargs['id_evidencia'] = self.kwargs['id_evidencia']
+        kwargs['nombre_entregable'] = Entregable.objects.get(id=self.kwargs['id_entregable']).nombre
+        return super(EditarEvidenciaEntregableView, self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+
+
+        if 'archivo' in form.cleaned_data.keys():
+
+            self.object = form.save()
+
+
+        else:
+            output = StringIO.StringIO()
+            output.write(form.cleaned_data['link'])
+
+            output.seek(0,2)
+            file_data = InMemoryUploadedFile(output, 'file', 'link.txt', None, output.tell(), None)
+
+            self.object = form.save(commit=False)
+            self.object.archivo = file_data
+            self.object.save()
+
+            for cargado in form.cleaned_data['beneficiarios_cargados']:
+                self.object.beneficiarios_cargados.add(cargado)
+
+
+
+
+        cargados = self.object.beneficiarios_cargados.all()
+        contrato = Contrato.objects.get(id=self.kwargs['pk'])
+        entregable = Entregable.objects.get(id=self.kwargs['id_entregable'])
+        evidencias = Evidencia.objects.filter(contrato=contrato, entregable=entregable).filter(
+                beneficiarios_cargados__id__in=cargados.values_list('id', flat=True)).distinct()
+
+        for evidencia in evidencias:
+            for cargado in cargados:
+                evidencia.beneficiarios_cargados.remove(cargado)
+
+
+        return super(EditarEvidenciaEntregableView,self).form_valid(form)
+
+    def get_initial(self):
+        return {'id_contrato':self.kwargs['pk'],'id_grupo':self.kwargs['id_grupo'],
+                'id_entregable':self.kwargs['id_entregable'],'id_usuario':self.request.user.id}
+
+
+
+
+
+
+
+
+
+class DeleteEvidenciaEntregableView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         DeleteView):
+    model = EvidenciaVigencia2017
+    success_url = '../../'
+    pk_url_kwarg = 'id_evidencia'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.eliminar"
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+
+
+
+class ConectividadGrupoView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         UpdateView):
+    model = GruposVigencia2017
+    form_class = GruposVigencia2017ConectividadForm
+    pk_url_kwarg = 'id_grupo'
+    success_url = '../../'
+    template_name = 'vigencia2017/grupos_formacion/no_conectividad.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.ver"
+
+
+    def get_context_data(self, **kwargs):
+        grupo = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo'])
+        kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
+        kwargs['codigo_grupo'] = grupo.diplomado.nombre + ": " + grupo.get_nombre_grupo()
+        kwargs['id_contrato'] = self.kwargs['pk']
+        kwargs['id_grupo'] = self.kwargs['id_grupo']
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.crear')
+        return super(ConectividadGrupoView, self).get_context_data(**kwargs)
+
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        archivo = form.cleaned_data['archivo']
+
+        if archivo == None or archivo == False:
+            self.object.no_conectividad = False
+        else:
+            self.object.no_conectividad = True
+
+        self.object.save()
+
+        return super(ConectividadGrupoView , self).form_valid(form)

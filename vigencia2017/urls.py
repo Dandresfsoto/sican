@@ -10,6 +10,18 @@ urlpatterns = [
     url(r'^grupos/formador/(?P<pk>[0-9]+)/$', views.ListadoGruposFormadorView.as_view()),
     url(r'^grupos/formador/(?P<pk>[0-9]+)/nuevo/$', views.NuevoGrupoFormadorView.as_view()),
     url(r'^grupos/formador/(?P<pk>[0-9]+)/grupo/(?P<id_grupo>[0-9]+)/$', views.ListadoInscritosGrupoView.as_view()),
+
+    url(r'^grupos/formador/(?P<pk>[0-9]+)/conectividad/(?P<id_grupo>[0-9]+)/$', views.ConectividadGrupoView.as_view()),
+
+    url(r'^grupos/formador/(?P<pk>[0-9]+)/evidencias/(?P<id_grupo>[0-9]+)/$', views.ArbolDiplomadoView.as_view()),
+    url(r'^grupos/formador/(?P<pk>[0-9]+)/evidencias/(?P<id_grupo>[0-9]+)/id/(?P<id_entregable>[0-9]+)/$', views.ListaEvidenciasEntregableView.as_view()),
+    url(r'^grupos/formador/(?P<pk>[0-9]+)/evidencias/(?P<id_grupo>[0-9]+)/id/(?P<id_entregable>[0-9]+)/nuevo/$', views.NuevaEvidenciasEntregableView.as_view()),
+    url(r'^grupos/formador/(?P<pk>[0-9]+)/evidencias/(?P<id_grupo>[0-9]+)/id/(?P<id_entregable>[0-9]+)/editar/(?P<id_evidencia>[0-9]+)/$', views.EditarEvidenciaEntregableView.as_view()),
+    url(r'^grupos/formador/(?P<pk>[0-9]+)/evidencias/(?P<id_grupo>[0-9]+)/id/(?P<id_entregable>[0-9]+)/eliminar/(?P<id_evidencia>[0-9]+)/$', views.DeleteEvidenciaEntregableView.as_view()),
+
+
+    url(r'^grupos/formador/(?P<pk>[0-9]+)/grupo/(?P<id_grupo>[0-9]+)/nuevo/$', views.NuevoBeneficiarioGrupoView.as_view()),
+
     url(r'^grupos/formador/(?P<pk>[0-9]+)/grupo/(?P<id_grupo>[0-9]+)/beneficiario/(?P<id_beneficiario>[0-9]+)/$', views.EditarBeneficiarioGrupoView.as_view()),
 
     url(r'^valor_contratos/$', views.ListadoValorContratosView.as_view()),
@@ -19,4 +31,5 @@ urlpatterns = [
 
     url(r'^cargar_matriz/$', views.ListadoCargaMatrizView.as_view()),
     url(r'^cargar_matriz/nuevo/$', views.NuevaCargaMatrizView.as_view()),
+    url(r'^cargar_matriz/pendientes/(?P<pk>[0-9]+)/$', views.ListadoCambioMatrizView.as_view()),
 ]

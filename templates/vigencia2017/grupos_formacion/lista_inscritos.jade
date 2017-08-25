@@ -26,7 +26,11 @@ block breadcrum
         iron-icon(icon="check",item-icon)
 block scroll_header_panel_content
     div(class="container-fluid container-index")
-
+        | {% if nuevo_permiso %}
+        div(class="block-right")
+            a(href="nuevo",class="link_button")
+                paper-button(class="submit") Nuevo
+        | {% endif %}
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr

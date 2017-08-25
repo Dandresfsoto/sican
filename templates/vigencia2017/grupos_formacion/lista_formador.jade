@@ -34,6 +34,7 @@ block scroll_header_panel_content
         div(style="margin-bottom:20px;")
             select(class="selectpicker",id="select_accion")
                 option(value="") ---------
+                option(value="36") Matriz de chequeo carga de evidencias
             button(class="btn",id="accion") Generar reporte
         | {% endif %}
 
@@ -41,13 +42,17 @@ block scroll_header_panel_content
             thead
                 tr
                     th Numero
+                    th Conectividad
                     th Diplomado
                     th Inscritos
+                    th Evidencias
             tbody
                 tr
                     td Numero
+                    td Conectividad
                     td Diplomado
                     td Inscritos
+                    td Evidencias
 
 
 block body_script_content
@@ -57,7 +62,7 @@ block body_script_content
             if(action != ''){
                 $.ajax({
                     type: "GET",
-                    url: '/rest/reportes/?action=' + action,
+                    url: '/rest/reportes/?action=' + action +'&id_contrato={{id_contrato}}',
                     success: function(data){
                         $('#myModal').modal('show');
                         $("#select_accion").val('');
@@ -83,7 +88,7 @@ block body_script_content
                     {
                         "data": 1,
                         "render": function (data, type, row, meta) {
-                            if (row[4]) {
+                            if (row[5]) {
                                 return '<a href="grupo/' + row[0] + '" style="color:#004c99;">' + data + '</a>';
                             }
                             else {
@@ -93,13 +98,33 @@ block body_script_content
                         "orderable": true,
                     },
                     {
+                        "data": 1,
+                        "render": function (data, type, row, meta) {
+                            if (row[4]) {
+                                return '<a href="conectividad/' + row[0] + '" style="color:#004c99;">No</a>';
+                            }
+                            else {
+                                return '<a href="conectividad/' + row[0] + '" style="color:#004c99;">Si</a>';
+                            }
+                        },
+                        "orderable": false,
+                    },
+                    {
                         "data": 2,
                         "orderable": false,
                     },
                     {
                         "data": 3,
                         "orderable": false,
-                    }
+                    },
+                    {
+                        "data": null,
+                        "className": 'text-center',
+                        "render": function (data, type, row, meta) {
+                            return '<a href="evidencias/' + row[0] + '" style="color:#004c99;"><img src="/static/img/upload.png" height="32"></a>';
+                        },
+                        "orderable": false,
+                    },
                 ]
             });
         });

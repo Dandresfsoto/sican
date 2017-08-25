@@ -22,6 +22,7 @@ from formadores.models import Cortes, Contrato
 from formadores.models import SolicitudSoportes
 import datetime
 from formadores.models import CohortesFormadores
+from vigencia2017.models import TipoContrato
 
 class FormadorForm(forms.ModelForm):
 
@@ -130,6 +131,13 @@ class ContratoForm(forms.ModelForm):
         self.fields['formador'].initial = Formador.objects.get(id = kwargs['initial']['id_formador'])
         self.fields['vigencia'].widget = forms.Select(choices=[('','---------'),('vigencia2017','Vigencia 2017')])
 
+        choices = [('','----------')]
+
+        for tipo in TipoContrato.objects.all():
+            choices.append((tipo.id,tipo.nombre + " - " + tipo.get_valor_beneficiario()) )
+
+        self.fields['tipo_contrato_id'].widget = forms.Select(choices=choices)
+
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Fieldset(
@@ -171,6 +179,10 @@ class ContratoForm(forms.ModelForm):
             ),
             Fieldset(
                 'Supervisión del contrato',
+                Div(
+                    Div('tipo_contrato_id', css_class='col-sm-12'),
+                    css_class='row'
+                ),
                 Div(
                     Div('meta_beneficiarios', css_class='col-sm-4'),
                     Div('codigo_ruta', css_class='col-sm-4'),

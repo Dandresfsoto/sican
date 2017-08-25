@@ -158,7 +158,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ),
     'PAGE_SIZE': 10,
-    'UNICODE_JSON': True
+    'UNICODE_JSON': False
 }
 
 

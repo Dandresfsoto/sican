@@ -6,12 +6,14 @@ from radicados.models import Radicado, RadicadoRetoma
 from secretarias.models import Secretaria
 from municipios.models import Municipio
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Fieldset, HTML
+from crispy_forms.layout import Layout, Div, Fieldset, HTML, Button
 from vigencia2017.models import DaneSEDE, Grupos, TipoContrato, ValorEntregableVigencia2017, CargaMatriz, Beneficiario
 from formadores.models import Contrato
 from productos.models import Entregable
 from usuarios.models import User
 import openpyxl
+from region.models import Region
+from vigencia2017.models import Evidencia, Red
 
 
 class DaneSEDEForm(forms.ModelForm):
@@ -68,15 +70,41 @@ class GruposForm(forms.ModelForm):
                     css_class='row'
                 ),
                 Div(
+                    Div('archivo', css_class='col-sm-12'),
+                    css_class='row'
+                ),
+                Div(
                     Div('contrato', css_class='hidden'),
                     css_class='row'
                 )
-            )
+            ),
         )
 
     class Meta:
         model = Grupos
         fields = '__all__'
+        labels = {
+        }
+
+class GruposVigencia2017ConectividadForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(GruposVigencia2017ConectividadForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Certificado de no conectividad',
+                Div(
+                    Div('archivo', css_class='col-sm-12'),
+                    css_class='row'
+                )
+            ),
+        )
+
+    class Meta:
+        model = Grupos
+        fields = ['archivo']
         labels = {
         }
 
@@ -199,6 +227,13 @@ class BeneficiarioVigencia2017Form(forms.ModelForm):
         super(BeneficiarioVigencia2017Form, self).__init__(*args, **kwargs)
 
         contrato = Contrato.objects.get(id=kwargs['initial']['id_contrato'])
+        grupo = Grupos.objects.get(id=kwargs['initial']['id_grupo'])
+
+        if grupo.diplomado.id in [1,2,3]:
+            self.fields['dane_sede'].required = True
+            self.fields['area'].required = True
+            self.fields['grado'].required = True
+            self.fields['genero'].required = True
 
         self.fields['grupo'].queryset = Grupos.objects.filter(contrato = contrato)
         self.fields['dane_sede'].queryset = DaneSEDE.objects.filter(municipio__id__in = contrato.municipios.all().values_list('id',flat=True))
@@ -238,3 +273,279 @@ class BeneficiarioVigencia2017Form(forms.ModelForm):
         exclude = ['region']
         labels = {
         }
+        widgets = {
+            'genero': forms.Select(choices=[('', '----------'), ('FEMENINO', 'FEMENINO'), ('MASCULINO', 'MASCULINO')]),
+            'area': forms.Select(
+                choices=[('', '----------'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'),
+                         ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'), ('11', '11'),
+                         ('12', '12'), ('13', '13'), ('14', '14')]),
+            'grado': forms.Select(
+                choices=[('', '----------'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'),
+                         ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'), ('11', '11'),
+                         ('12', '12'), ('13', '13'), ('14', '14')]),
+        }
+
+class NewBeneficiarioVigencia2017Form(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(NewBeneficiarioVigencia2017Form, self).__init__(*args, **kwargs)
+
+        contrato = Contrato.objects.get(id=kwargs['initial']['id_contrato'])
+        grupo = Grupos.objects.get(id=kwargs['initial']['id_grupo'])
+        departamentos = contrato.municipios.values_list('departamento',flat=True)
+        region = Region.objects.filter(departamentos__id__in = departamentos)
+
+        self.fields['grupo'].queryset = Grupos.objects.filter(contrato = contrato)
+        self.fields['grupo'].initial = Grupos.objects.filter(contrato = contrato).get(id = kwargs['initial']['id_grupo'])
+        self.fields['dane_sede'].queryset = DaneSEDE.objects.filter(municipio__id__in = contrato.municipios.all().values_list('id',flat=True))
+        self.fields['region'].initial = region[0]
+        if grupo.diplomado.id in [1,2,3]:
+            self.fields['dane_sede'].required = True
+            self.fields['area'].required = True
+            self.fields['grado'].required = True
+            self.fields['genero'].required = True
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Información Personal',
+                Div(
+                    Div('nombres', css_class='col-sm-4'),
+                    Div('apellidos', css_class='col-sm-4'),
+                    Div('cedula', css_class='col-sm-4'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('grupo', css_class='hidden'),
+                    Div('region', css_class='hidden'),
+                    css_class='row'
+                ),
+                Div(
+                    Div('correo', css_class='col-sm-3'),
+                    Div('telefono_fijo', css_class='col-sm-3'),
+                    Div('telefono_celular', css_class='col-sm-3'),
+                    Div('genero', css_class='col-sm-3'),
+                    css_class='row'
+                ),
+            ),
+            Fieldset(
+                'Información laboral',
+                Div(
+                    Div('dane_sede', css_class='col-sm-8'),
+                    Div('area', css_class='col-sm-2'),
+                    Div('grado', css_class='col-sm-2'),
+                    css_class='row'
+                )
+            )
+        )
+
+    class Meta:
+        model = Beneficiario
+        fields = '__all__'
+        labels = {
+        }
+        widgets = {
+            'genero': forms.Select(choices=[('','----------'),('FEMENINO','FEMENINO'),('MASCULINO','MASCULINO')]),
+            'area': forms.Select(choices=[('', '----------'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'),
+                                          ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'),('11', '11'),
+                                          ('12', '12'), ('13', '13'), ('14', '14')]),
+            'grado': forms.Select(
+                choices=[('', '----------'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'),
+                         ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'), ('11', '11'),
+                         ('12', '12'), ('13', '13'), ('14', '14')]),
+        }
+
+class EvidenciaVigencia2017Form(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EvidenciaVigencia2017Form, self).__init__(*args, **kwargs)
+
+        contrato = Contrato.objects.get(id=kwargs['initial']['id_contrato'])
+        entregable = Grupos.objects.get(id=kwargs['initial']['id_grupo'])
+        entregable = Entregable.objects.get(id=kwargs['initial']['id_entregable'])
+        grupo = Grupos.objects.get(id=kwargs['initial']['id_grupo'])
+
+        self.fields['contrato'].initial = contrato
+        self.fields['entregable'].initial = entregable
+        self.fields['usuario'].initial = User.objects.get(id=kwargs['initial']['id_usuario'])
+
+        queryset = Beneficiario.objects.filter(grupo__contrato = contrato)
+        evidencias = Evidencia.objects.filter(contrato = contrato,entregable = entregable)
+        #reds = Red.objects.filter(evidencias__id__in = evidencias.values_list('id',flat=True))
+
+        exclude_validados = list(evidencias.exclude(beneficiarios_validados = None).values_list('beneficiarios_validados__id',flat=True))
+
+        exclude_enviados = []
+
+        for red_id in evidencias.values_list('red_id',flat=True).distinct():
+            try:
+                red = Red.objects.get(id = red_id)
+            except:
+                pass
+            else:
+                if not red.retroalimentacion:
+                    for evidencia in evidencias.filter(red_id = red_id):
+                        for cargado in evidencia.beneficiarios_cargados.all():
+                            exclude_enviados.append(cargado.id)
+
+            #for evidencia in evidencias.filter(id__in = reds.filter(retroalimentacion = False).values_list('evidencias__id',flat=True)):
+            #    for cargado in evidencia.beneficiarios_cargados.all():
+            #        exclude_enviados.append(cargado.id)
+
+
+        self.fields['beneficiarios_cargados'].queryset = queryset.exclude(id__in = exclude_validados + exclude_enviados)
+
+
+        if entregable.escencial == "No":
+
+            self.fields.pop('archivo')
+            self.fields['link'] = forms.URLField(max_length=200)
+
+            self.helper = FormHelper(self)
+            self.helper.layout = Layout(
+                Fieldset(
+                    'Evidencia',
+                    Div(
+                        Div('link', css_class='col-sm-12'),
+                        css_class='row'
+                    ),
+                    Div(
+                        Div(
+                            Button('set_grupo', "Cargar grupo de beneficiarios", css_class='btn'),
+                            css_class='col-sm-12'
+                        ),
+                        css_class='row'
+                    ),
+                    Div(
+                        HTML('''</br>'''),
+                        css_class='row'
+                    ),
+                    Div(
+                        Div('beneficiarios_cargados', css_class='col-sm-12'),
+                        css_class='row'
+                    ),
+                    Div(
+                        Div('usuario', css_class='col-sm-12'),
+                        css_class='hidden'
+                    ),
+                    Div(
+                        Div('entregable', css_class='col-sm-12'),
+                        css_class='hidden'
+                    ),
+                    Div(
+                        Div('contrato', css_class='col-sm-12'),
+                        css_class='hidden'
+                    )
+                ),
+                Fieldset(
+                    'Excel',
+                    Div(
+                        Div('masivos', css_class='col-sm-12'),
+                        css_class='row'
+                    )
+                ),
+            )
+
+        elif entregable.escencial == "Si":
+
+            if grupo.no_conectividad == False and entregable.tipo == "Virtual":
+                self.fields.pop('archivo')
+                self.fields['link'] = forms.URLField(max_length=200)
+
+                self.helper = FormHelper(self)
+                self.helper.layout = Layout(
+                    Fieldset(
+                        'Evidencia',
+                        Div(
+                            Div('link', css_class='col-sm-12'),
+                            css_class='row'
+                        ),
+                        Div(
+                            Div(
+                                Button('set_grupo', "Cargar grupo de beneficiarios", css_class='btn'),
+                                css_class='col-sm-12'
+                            ),
+                            css_class='row'
+                        ),
+                        Div(
+                            HTML('''</br>'''),
+                            css_class='row'
+                        ),
+                        Div(
+                            Div('beneficiarios_cargados', css_class='col-sm-12'),
+                            css_class='row'
+                        ),
+                        Div(
+                            Div('usuario', css_class='col-sm-12'),
+                            css_class='hidden'
+                        ),
+                        Div(
+                            Div('entregable', css_class='col-sm-12'),
+                            css_class='hidden'
+                        ),
+                        Div(
+                            Div('contrato', css_class='col-sm-12'),
+                            css_class='hidden'
+                        )
+                    ),
+                    Fieldset(
+                        'Excel',
+                        Div(
+                            Div('masivos', css_class='col-sm-12'),
+                            css_class='row'
+                        )
+                    ),
+                )
+
+            else:
+                self.helper = FormHelper(self)
+                self.helper.layout = Layout(
+                    Fieldset(
+                        'Evidencia',
+                        Div(
+                            Div('archivo',css_class='col-sm-12'),
+                            css_class = 'row'
+                        ),
+                        Div(
+                            Div(
+                                Button('set_grupo', "Cargar grupo de beneficiarios", css_class='btn'),
+                                css_class='col-sm-12'
+                            ),
+                            css_class='row'
+                        ),
+                        Div(
+                            HTML('''</br>'''),
+                            css_class='row'
+                        ),
+                        Div(
+                            Div('beneficiarios_cargados',css_class='col-sm-12'),
+                            css_class = 'row'
+                        ),
+                        Div(
+                            Div('usuario',css_class='col-sm-12'),
+                            css_class = 'hidden'
+                        ),
+                        Div(
+                            Div('entregable',css_class='col-sm-12'),
+                            css_class = 'hidden'
+                        ),
+                        Div(
+                            Div('contrato',css_class='col-sm-12'),
+                            css_class = 'hidden'
+                        )
+                    ),
+                    Fieldset(
+                        'Excel',
+                        Div(
+                            Div('masivos',css_class='col-sm-12'),
+                            css_class = 'row'
+                        )
+                    ),
+                )
+
+
+    masivos = forms.CharField(max_length=1000,required=False,label='Cedulas',widget=forms.Textarea())
+
+    class Meta:
+        model = Evidencia
+        fields = ['usuario','archivo','entregable','beneficiarios_cargados','contrato']

@@ -58,6 +58,7 @@ from evidencias.models import Red, CargaMasiva as CargaMasivaEvidencias
 from django.utils.timezone import localtime
 from informes.tasks import zip_hv, zip_contrato, actividades_virtuales
 from informes.tasks import descargas_certificados_escuelatic, progreso_listados_actas, matriz_chequeo_actividad, progreso_listados_actas_aprobadas
+from informes.tasks import matriz_chequeo_vigencia_2017
 from evidencias.models import Subsanacion
 from django.db.models import Sum
 from informes.tasks import progreso_virtuales, progreso_virtuales_aprobadas,aprobados_niveles
@@ -86,6 +87,10 @@ from vigencia2017.models import TipoContrato, ValorEntregableVigencia2017
 from django.db.models import Sum
 from vigencia2017.models import CargaMatriz
 from vigencia2017.models import Beneficiario as BeneficiarioVigencia2017
+from vigencia2017.models import BeneficiarioCambio as BeneficiarioCambioVigencia2017
+from collections import OrderedDict
+from vigencia2017.models import Evidencia as EvidenciaVigencia2017
+from vigencia2017.models import Red as RedVigencia2017RedVigencia2017
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
@@ -506,7 +511,7 @@ class Vigencia2017GruposList(BaseDatatableView):
     max_display_length = 100
 
     def get_initial_queryset(self):
-        return Contrato.objects.filter(vigencia = "vigencia2017")
+        return Contrato.objects.filter(vigencia = "vigencia2017").exclude(tipo_contrato_id=None)
 
     def filter_queryset(self, qs):
         search = self.request.GET.get(u'search[value]', None)
@@ -558,6 +563,7 @@ class Vigencia2017ContratoList(BaseDatatableView):
                 item.get_nombre_grupo(),
                 item.diplomado.nombre,
                 BeneficiarioVigencia2017.objects.filter(grupo = item).count(),
+                item.no_conectividad,
                 self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.editar'),
             ])
         return json_data
@@ -638,6 +644,170 @@ class Vigencia2017BeneficiariosList(BaseDatatableView):
                 self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_cargar_matriz.editar'),
             ])
         return json_data
+
+
+
+
+class ListaSoportesVigencia2017(BaseDatatableView):
+    """
+    0.id
+    1.beneficiarios
+    2.aprobados
+    3.archivo
+    4.editar
+    5.eliminar
+    """
+    model = EvidenciaVigencia2017
+    columns = ['id']
+
+    order_columns = ['id','id']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return self.model.objects.filter(contrato__id = self.kwargs['id_contrato'],entregable__id = self.kwargs['id_entregable'])
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(nombre__icontains=search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+            baneficiarios_cargados = []
+            baneficiarios_validados = []
+            baneficiarios_rechazados = []
+
+            for beneficiario in item.beneficiarios_cargados.all():
+                if beneficiario != None:
+                    baneficiarios_cargados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.grupo.get_nombre_grupo()])
+
+            for beneficiario in item.beneficiarios_validados.all():
+                if beneficiario != None:
+                    baneficiarios_validados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.grupo.get_nombre_grupo()])
+
+            for beneficiario in item.beneficiarios_rechazados.all():
+                if beneficiario != None:
+                    baneficiarios_rechazados.append([beneficiario.beneficiario_rechazo.get_full_name(),beneficiario.beneficiario_rechazo.cedula,beneficiario.beneficiario_rechazo.grupo.get_nombre_grupo(),beneficiario.observacion])
+
+
+            json_data.append([
+                item.id,
+                item.get_beneficiarios_cantidad(),
+                item.get_validados_cantidad(),
+                item.get_archivo_url(),
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.editar_evidencia') if item.red_id == None else False,
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.eliminar_evidencia') if item.red_id == None else False,
+                baneficiarios_cargados,
+                baneficiarios_validados,
+                baneficiarios_rechazados
+            ])
+        return json_data
+
+
+class PendientesMatrizList(BaseDatatableView):
+    """
+    0.id
+    """
+    model = BeneficiarioCambioVigencia2017
+    columns = ['id', 'cedula', 'nombres', 'apellidos', 'dane_sede']
+
+    order_columns = ['cedula', 'nombres', 'apellidos', 'dane_sede']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        return self.model.objects.filter(masivo__id=self.kwargs['id_masivo'])
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(cedula__icontains=search) | Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(
+                dane_sede__dane_sede__icontains=search)
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.cedula,
+                item.nombres,
+                item.apellidos,
+                item.dane_sede.dane_sede,
+                item.grupo.get_nombre_grupo(),
+                item.correo,
+                item.telefono_fijo,
+                item.telefono_celular,
+                item.area,
+                item.grado,
+                item.genero,
+                item.dane_sede.nombre_sede,
+                item.dane_sede.dane_ie,
+                item.dane_sede.nombre_ie,
+                item.dane_sede.municipio.nombre + ', ' + item.dane_sede.municipio.departamento.nombre,
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_cargar_matriz.editar'),
+            ])
+        return json_data
+
+class Vigencia2017TreeDiplomado(APIView):
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, id_contrato, id_grupo):
+
+        grupo = GruposVigencia2017.objects.get(id=id_grupo)
+        r = []
+
+        nivel_count = 0
+        data = {}
+
+        for entregable in Entregable.objects.filter(sesion__nivel__diplomado = grupo.diplomado).order_by('numero'):
+            nombre_nivel = entregable.sesion.nivel.nombre
+            nombre_sesion = entregable.sesion.nombre
+
+            if nombre_nivel not in data.keys():
+                data[nombre_nivel] = {'position':nivel_count,'sesiones':{},'count':0}
+                nivel_count += 1
+
+
+            if nombre_sesion not in data[nombre_nivel]['sesiones'].keys():
+                data[nombre_nivel]['sesiones'][nombre_sesion] = {'position': data[nombre_nivel]['count']}
+                data[nombre_nivel]['count'] += 1
+
+            if 'entregables' not in data[nombre_nivel]['sesiones'][nombre_sesion].keys():
+                data[nombre_nivel]['sesiones'][nombre_sesion]['entregables'] = {}
+
+            data[nombre_nivel]['sesiones'][nombre_sesion]['entregables'][entregable.numero] = {'nombre':entregable.nombre,'id':entregable.id,'numero':entregable.numero}
+
+
+        data = OrderedDict(sorted(data.items(), key=lambda x: x[1]['position']))
+
+        for nivel in data.keys():
+            sesiones = OrderedDict(sorted(data[nivel]['sesiones'].items(), key=lambda x: x[1]['position']))
+            childs = []
+            for sesion in sesiones.keys():
+                entregables = OrderedDict(sorted(data[nivel]['sesiones'][sesion]['entregables'].items()))
+                childs_entregables = []
+
+                for entregable in entregables.keys():
+                    nombre = data[nivel]['sesiones'][sesion]['entregables'][entregable]['nombre']
+                    id = data[nivel]['sesiones'][sesion]['entregables'][entregable]['id']
+                    numero = data[nivel]['sesiones'][sesion]['entregables'][entregable]['numero']
+                    childs_entregables.append({'text':str(numero)+": "+nombre,'icon':'glyphicon glyphicon-file','href':'id/'+str(id)+'/'})
+
+                childs.append({'text':sesion,'nodes':childs_entregables})
+            r.append({'text':nivel,'state':{'expanded':False},'nodes':childs})
+
+
+
+        return Response(r)
 #-----------------------------------------------------------------------------------------------------------------------
 
 class ResultadosPercepcionInicial(APIView):
@@ -847,6 +1017,9 @@ class ReportesView(APIView):
             x = reporte_legalizacion_contrato_formadores.delay(request.user.email)
         if id_accion == '35':
             x = matriz_chequeo_virtual_compilada.delay(request.user.email)
+        if id_accion == '36':
+            id_contrato = request._request.GET['id_contrato']
+            x = matriz_chequeo_vigencia_2017.delay(request.user.email,id_contrato)
 
         return HttpResponse(status=200)
 
@@ -935,6 +1108,49 @@ class Cedulas2BeneficiariosId(APIView):
 
 
         return Response(response)
+
+
+
+class Cedulas2BeneficiariosIdVigencia2017(APIView):
+    """
+
+    """
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (AllowAny,)
+    def get(self, request, format=None):
+        cedulas = request.query_params['cedulas'].split(',')
+        ids = []
+        for cedula in cedulas:
+            try:
+                beneficiario = BeneficiarioVigencia2017.objects.get(cedula = cedula)
+            except:
+                pass
+            else:
+                ids.append(str(beneficiario.id))
+
+        response = {'cedulas':ids}
+
+
+        return Response(response)
+
+
+class GrupoCedulas2BeneficiariosIdVigencia2017(APIView):
+    """
+
+    """
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (AllowAny,)
+    def get(self, request, id_grupo, format=None):
+
+        ids = []
+        for beneficiario in BeneficiarioVigencia2017.objects.filter(grupo__id=id_grupo):
+            ids.append(str(beneficiario.id))
+
+        response = {'cedulas':ids}
+
+
+        return Response(response)
+
 
 class GruposChainedList(APIView):
     """
@@ -2734,7 +2950,7 @@ class BeneficiariosCedulaProductosListView(BaseDatatableView):
             if evidencia.count() == 0:
                 link = ''
             else:
-                link = evidencia[len(evidencia)-1].get_archivo_url()
+                link = evidencia[0].get_archivo_url()
 
             json_data.append([
                 item.id,
