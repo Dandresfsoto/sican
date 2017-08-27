@@ -209,16 +209,15 @@ def carga_masiva_matrices(id,email_user):
                                                     except:
                                                         grado = None
 
-
-                                                    beneficiario = Beneficiario.objects.get(cedula = cedula)
-
-                                                    if beneficiario.count() == 0:
+                                                    try:
+                                                        beneficiario = Beneficiario.objects.get(cedula = cedula)
+                                                    except:
                                                         resultado = "Beneficiario creado"
-                                                        Beneficiario.objects.create(region = region,
-                                                                                    dane_sede = dane_sede,
-                                                                                    grupo = grupo,
-                                                                                    apellidos = apellidos,
-                                                                                    nombres = nombres,
+                                                        Beneficiario.objects.create(region=region,
+                                                                                    dane_sede=dane_sede,
+                                                                                    grupo=grupo,
+                                                                                    apellidos=apellidos,
+                                                                                    nombres=nombres,
                                                                                     cedula=cedula,
                                                                                     correo=email,
                                                                                     telefono_fijo=telefono_fijo,
@@ -473,9 +472,9 @@ def carga_masiva_matrices(id,email_user):
                                                     except:
                                                         grado = None
 
-                                                    beneficiario = Beneficiario.objects.get(cedula=cedula)
-
-                                                    if beneficiario.count() == 0:
+                                                    try:
+                                                        beneficiario = Beneficiario.objects.get(cedula=cedula)
+                                                    except:
                                                         resultado = "Beneficiario creado"
                                                         Beneficiario.objects.create(region=region,
                                                                                     dane_sede=dane_sede,
