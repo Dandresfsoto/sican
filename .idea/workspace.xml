@@ -18,11 +18,10 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vigencia2017/migrations/0011_auto_20170824_1545.py" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vigencia2017/migrations/0012_auto_20170825_0912.py" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vigencia2017/migrations/0013_auto_20170827_1221.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vigencia2017/migrations/0014_auto_20170827_1742.py" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vigencia2017/migrations/__init__.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rest/views.py" afterPath="$PROJECT_DIR$/rest/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vigencia2017/models.py" afterPath="$PROJECT_DIR$/vigencia2017/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vigencia2017/tasks.py" afterPath="$PROJECT_DIR$/vigencia2017/tasks.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vigencia2017/forms.py" afterPath="$PROJECT_DIR$/vigencia2017/forms.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -69,12 +68,31 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vigencia2017/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="223" column="93" lean-forward="true" selection-start-line="223" selection-start-column="93" selection-end-line="223" selection-end-column="93" />
+            <state relative-caret-position="286">
+              <caret line="59" column="40" lean-forward="true" selection-start-line="59" selection-start-column="40" selection-end-line="59" selection-end-column="40" />
               <folding>
                 <element signature="e#46#85#0" expanded="true" />
                 <element signature="e#2509#2578#0" expanded="false" />
                 <element signature="e#2617#2659#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="forms.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/vigencia2017/forms.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="247">
+              <caret line="300" column="22" lean-forward="true" selection-start-line="300" selection-start-column="22" selection-end-line="300" selection-end-column="22" />
+              <folding>
+                <element signature="e#729#2092#0" expanded="false" />
+                <element signature="e#2134#3046#0" expanded="false" />
+                <element signature="e#3112#3636#0" expanded="false" />
+                <element signature="e#3684#4331#0" expanded="false" />
+                <element signature="e#4389#6204#0" expanded="false" />
+                <element signature="e#6251#7465#0" expanded="false" />
+                <element signature="e#12036#17064#0" expanded="false" />
+                <element signature="e#17121#24837#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -90,11 +108,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tasks.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="tasks.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vigencia2017/tasks.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="497">
-              <caret line="299" column="35" lean-forward="true" selection-start-line="299" selection-start-column="35" selection-end-line="299" selection-end-column="35" />
+            <state relative-caret-position="310">
+              <caret line="288" column="35" lean-forward="true" selection-start-line="288" selection-start-column="35" selection-end-line="288" selection-end-column="35" />
               <folding>
                 <element signature="e#46#85#0" expanded="true" />
                 <element signature="e#28923#36885#0" expanded="false" />
@@ -108,7 +126,7 @@
         <entry file="file://$PROJECT_DIR$/rest/views.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="357">
-              <caret line="643" column="155" lean-forward="true" selection-start-line="643" selection-start-column="155" selection-end-line="643" selection-end-column="155" />
+              <caret line="643" column="155" lean-forward="false" selection-start-line="643" selection-start-column="155" selection-end-line="643" selection-end-column="155" />
               <folding>
                 <element signature="e#46#85#0" expanded="true" />
                 <element signature="e#5251#17690#0" expanded="false" />
@@ -167,18 +185,6 @@
               <caret line="473" column="50" lean-forward="false" selection-start-line="473" selection-start-column="50" selection-end-line="473" selection-end-column="50" />
               <folding>
                 <element signature="e#0#91#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vigencia2017/admin.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="4" column="25" lean-forward="false" selection-start-line="4" selection-start-column="25" selection-end-line="4" selection-end-column="25" />
-              <folding>
-                <element signature="e#0#32#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -296,7 +302,6 @@
         <option value="$PROJECT_DIR$/formadores/forms.py" />
         <option value="$PROJECT_DIR$/vigencia2017/urls.py" />
         <option value="$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/no_conectividad.jade" />
-        <option value="$PROJECT_DIR$/vigencia2017/forms.py" />
         <option value="$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/nueva_evidencia.jade" />
         <option value="$PROJECT_DIR$/informes/tasks.py" />
         <option value="$PROJECT_DIR$/vigencia2017/admin.py" />
@@ -305,6 +310,7 @@
         <option value="$PROJECT_DIR$/vigencia2017/models.py" />
         <option value="$PROJECT_DIR$/rest/views.py" />
         <option value="$PROJECT_DIR$/vigencia2017/tasks.py" />
+        <option value="$PROJECT_DIR$/vigencia2017/forms.py" />
       </list>
     </option>
   </component>
@@ -352,7 +358,7 @@
             <path>
               <item name="sican" type="b2602c69:ProjectViewProjectNode" />
               <item name="sican" type="462c0819:PsiDirectoryNode" />
-              <item name="municipios" type="462c0819:PsiDirectoryNode" />
+              <item name="vigencia2017" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -796,7 +802,14 @@
       <option name="project" value="LOCAL" />
       <updated>1503870310726</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Vigencia 2017 v12">
+      <created>1503873498279</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1503873498279</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1108,24 +1121,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vigencia2017/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="452" column="68" lean-forward="false" selection-start-line="452" selection-start-column="68" selection-end-line="452" selection-end-column="68" />
-          <folding>
-            <element signature="e#46#85#0" expanded="false" />
-            <element signature="e#729#2092#0" expanded="false" />
-            <element signature="e#2134#3046#0" expanded="false" />
-            <element signature="e#3112#3636#0" expanded="false" />
-            <element signature="e#3684#4331#0" expanded="false" />
-            <element signature="e#4389#6204#0" expanded="false" />
-            <element signature="e#6251#7465#0" expanded="false" />
-            <element signature="e#7525#10240#0" expanded="false" />
-            <element signature="e#10303#13490#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/rh/personal/administrativos/lista.jade">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1462">
@@ -1297,18 +1292,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vigencia2017/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="223" column="93" lean-forward="true" selection-start-line="223" selection-start-column="93" selection-end-line="223" selection-end-column="93" />
-          <folding>
-            <element signature="e#46#85#0" expanded="true" />
-            <element signature="e#2509#2578#0" expanded="false" />
-            <element signature="e#2617#2659#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/rest/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="232">
@@ -1320,7 +1303,7 @@
     <entry file="file://$PROJECT_DIR$/rest/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
-          <caret line="643" column="155" lean-forward="true" selection-start-line="643" selection-start-column="155" selection-end-line="643" selection-end-column="155" />
+          <caret line="643" column="155" lean-forward="false" selection-start-line="643" selection-start-column="155" selection-end-line="643" selection-end-column="155" />
           <folding>
             <element signature="e#46#85#0" expanded="true" />
             <element signature="e#5251#17690#0" expanded="false" />
@@ -1366,12 +1349,41 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/vigencia2017/tasks.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="497">
-          <caret line="299" column="35" lean-forward="true" selection-start-line="299" selection-start-column="35" selection-end-line="299" selection-end-column="35" />
+        <state relative-caret-position="310">
+          <caret line="288" column="35" lean-forward="true" selection-start-line="288" selection-start-column="35" selection-end-line="288" selection-end-column="35" />
           <folding>
             <element signature="e#46#85#0" expanded="true" />
             <element signature="e#28923#36885#0" expanded="false" />
             <element signature="e#36954#43609#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vigencia2017/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="59" column="40" lean-forward="true" selection-start-line="59" selection-start-column="40" selection-end-line="59" selection-end-column="40" />
+          <folding>
+            <element signature="e#46#85#0" expanded="true" />
+            <element signature="e#2509#2578#0" expanded="false" />
+            <element signature="e#2617#2659#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vigencia2017/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="300" column="22" lean-forward="true" selection-start-line="300" selection-start-column="22" selection-end-line="300" selection-end-column="22" />
+          <folding>
+            <element signature="e#729#2092#0" expanded="false" />
+            <element signature="e#2134#3046#0" expanded="false" />
+            <element signature="e#3112#3636#0" expanded="false" />
+            <element signature="e#3684#4331#0" expanded="false" />
+            <element signature="e#4389#6204#0" expanded="false" />
+            <element signature="e#6251#7465#0" expanded="false" />
+            <element signature="e#12036#17064#0" expanded="false" />
+            <element signature="e#17121#24837#0" expanded="false" />
           </folding>
         </state>
       </provider>

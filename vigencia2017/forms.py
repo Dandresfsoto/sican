@@ -235,38 +235,73 @@ class BeneficiarioVigencia2017Form(forms.ModelForm):
             self.fields['grado'].required = True
             self.fields['genero'].required = True
 
-        self.fields['grupo'].queryset = Grupos.objects.filter(contrato = contrato)
-        self.fields['dane_sede'].queryset = DaneSEDE.objects.filter(municipio__id__in = contrato.municipios.all().values_list('id',flat=True))
+            self.fields['grupo'].queryset = Grupos.objects.filter(contrato = contrato)
+            self.fields['dane_sede'].queryset = DaneSEDE.objects.filter(municipio__id__in = contrato.municipios.all().values_list('id',flat=True))
 
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Fieldset(
-                'Información Personal',
-                Div(
-                    Div('nombres', css_class='col-sm-3'),
-                    Div('apellidos', css_class='col-sm-3'),
-                    Div('cedula', css_class='col-sm-3'),
-                    Div('grupo', css_class='col-sm-3'),
-                    css_class='row'
+            self.helper = FormHelper(self)
+            self.helper.layout = Layout(
+                Fieldset(
+                    'Información Personal',
+                    Div(
+                        Div('nombres', css_class='col-sm-3'),
+                        Div('apellidos', css_class='col-sm-3'),
+                        Div('cedula', css_class='col-sm-3'),
+                        Div('grupo', css_class='col-sm-3'),
+                        css_class='row'
+                    ),
+                    Div(
+                        Div('correo', css_class='col-sm-3'),
+                        Div('telefono_fijo', css_class='col-sm-3'),
+                        Div('telefono_celular', css_class='col-sm-3'),
+                        Div('genero', css_class='col-sm-3'),
+                        css_class='row'
+                    ),
                 ),
-                Div(
-                    Div('correo', css_class='col-sm-3'),
-                    Div('telefono_fijo', css_class='col-sm-3'),
-                    Div('telefono_celular', css_class='col-sm-3'),
-                    Div('genero', css_class='col-sm-3'),
-                    css_class='row'
-                ),
-            ),
-            Fieldset(
-                'Información laboral',
-                Div(
-                    Div('dane_sede', css_class='col-sm-8'),
-                    Div('area', css_class='col-sm-2'),
-                    Div('grado', css_class='col-sm-2'),
-                    css_class='row'
+                Fieldset(
+                    'Información laboral',
+                    Div(
+                        Div('dane_sede', css_class='col-sm-8'),
+                        Div('area', css_class='col-sm-2'),
+                        Div('grado', css_class='col-sm-2'),
+                        css_class='row'
+                    )
                 )
             )
-        )
+        else:
+            self.fields['genero'].required = True
+            self.fields['municipio'].required = True
+
+            self.fields['grupo'].queryset = Grupos.objects.filter(contrato=contrato)
+            self.fields['municipio'].queryset = Municipio.objects.filter(id__in = contrato.municipios.all().values_list('id',flat=True))
+
+            self.helper = FormHelper(self)
+            self.helper.layout = Layout(
+                Fieldset(
+                    'Información Personal',
+                    Div(
+                        Div('nombres', css_class='col-sm-2'),
+                        Div('apellidos', css_class='col-sm-2'),
+                        Div('cedula', css_class='col-sm-2'),
+                        Div('grupo', css_class='col-sm-3'),
+                        Div('municipio', css_class='col-sm-3'),
+                        css_class='row'
+                    ),
+                    Div(
+                        Div('correo', css_class='col-sm-3'),
+                        Div('telefono_fijo', css_class='col-sm-3'),
+                        Div('telefono_celular', css_class='col-sm-3'),
+                        Div('genero', css_class='col-sm-3'),
+                        css_class='row'
+                    ),
+                    Div(
+                        Div('area', css_class='col-sm-3'),
+                        Div('grado', css_class='col-sm-3'),
+                        Div('dane_sede', css_class='col-sm-3'),
+                        Div('region', css_class='col-sm-3'),
+                        css_class='hidden'
+                    )
+                )
+            )
 
     class Meta:
         model = Beneficiario
@@ -305,39 +340,77 @@ class NewBeneficiarioVigencia2017Form(forms.ModelForm):
             self.fields['grado'].required = True
             self.fields['genero'].required = True
 
-        self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Fieldset(
-                'Información Personal',
-                Div(
-                    Div('nombres', css_class='col-sm-4'),
-                    Div('apellidos', css_class='col-sm-4'),
-                    Div('cedula', css_class='col-sm-4'),
-                    css_class='row'
+            self.helper = FormHelper(self)
+            self.helper.layout = Layout(
+                Fieldset(
+                    'Información Personal',
+                    Div(
+                        Div('nombres', css_class='col-sm-4'),
+                        Div('apellidos', css_class='col-sm-4'),
+                        Div('cedula', css_class='col-sm-4'),
+                        css_class='row'
+                    ),
+                    Div(
+                        Div('grupo', css_class='hidden'),
+                        Div('region', css_class='hidden'),
+                        css_class='row'
+                    ),
+                    Div(
+                        Div('correo', css_class='col-sm-3'),
+                        Div('telefono_fijo', css_class='col-sm-3'),
+                        Div('telefono_celular', css_class='col-sm-3'),
+                        Div('genero', css_class='col-sm-3'),
+                        css_class='row'
+                    ),
                 ),
-                Div(
-                    Div('grupo', css_class='hidden'),
-                    Div('region', css_class='hidden'),
-                    css_class='row'
-                ),
-                Div(
-                    Div('correo', css_class='col-sm-3'),
-                    Div('telefono_fijo', css_class='col-sm-3'),
-                    Div('telefono_celular', css_class='col-sm-3'),
-                    Div('genero', css_class='col-sm-3'),
-                    css_class='row'
-                ),
-            ),
-            Fieldset(
-                'Información laboral',
-                Div(
-                    Div('dane_sede', css_class='col-sm-8'),
-                    Div('area', css_class='col-sm-2'),
-                    Div('grado', css_class='col-sm-2'),
-                    css_class='row'
+                Fieldset(
+                    'Información laboral',
+                    Div(
+                        Div('dane_sede', css_class='col-sm-8'),
+                        Div('area', css_class='col-sm-2'),
+                        Div('grado', css_class='col-sm-2'),
+                        css_class='row'
+                    )
                 )
             )
-        )
+        else:
+            self.fields['genero'].required = True
+            self.fields['municipio'].required = True
+            self.fields['area'].required = False
+            self.fields['grado'].required = False
+
+            self.fields['grupo'].queryset = Grupos.objects.filter(contrato=contrato)
+            self.fields['municipio'].queryset = Municipio.objects.filter(id__in = contrato.municipios.all().values_list('id',flat=True))
+
+            self.helper = FormHelper(self)
+            self.helper.layout = Layout(
+                Fieldset(
+                    'Información Personal',
+                    Div(
+                        Div('nombres', css_class='col-sm-3'),
+                        Div('apellidos', css_class='col-sm-3'),
+                        Div('cedula', css_class='col-sm-3'),
+                        Div('municipio', css_class='col-sm-3'),
+
+                        css_class='row'
+                    ),
+                    Div(
+                        Div('correo', css_class='col-sm-3'),
+                        Div('telefono_fijo', css_class='col-sm-3'),
+                        Div('telefono_celular', css_class='col-sm-3'),
+                        Div('genero', css_class='col-sm-3'),
+                        css_class='row'
+                    ),
+                    Div(
+                        Div('grupo', css_class='col-sm-3'),
+                        Div('area', css_class='col-sm-3'),
+                        Div('grado', css_class='col-sm-3'),
+                        Div('dane_sede', css_class='col-sm-3'),
+                        Div('region', css_class='col-sm-3'),
+                        css_class='hidden'
+                    )
+                )
+            )
 
     class Meta:
         model = Beneficiario
