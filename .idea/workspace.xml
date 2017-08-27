@@ -81,12 +81,12 @@
       <file leaf-file-name="tasks.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/vigencia2017/tasks.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="487" column="94" lean-forward="true" selection-start-line="487" selection-start-column="94" selection-end-line="487" selection-end-column="94" />
+            <state relative-caret-position="17">
+              <caret line="483" column="89" lean-forward="true" selection-start-line="483" selection-start-column="89" selection-end-line="483" selection-end-column="89" />
               <folding>
                 <element signature="e#46#85#0" expanded="true" />
-                <element signature="e#27704#35216#0" expanded="false" />
-                <element signature="e#35285#41490#0" expanded="false" />
+                <element signature="e#27698#35210#0" expanded="false" />
+                <element signature="e#35279#41484#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -205,7 +205,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>UpdateView</find>
       <find>Grupos</find>
       <find>gru</find>
       <find>ListadoGruposFormadorView</find>
@@ -235,6 +234,7 @@
       <find>beneficiario = Beneficiario.objects</find>
       <find>beneficiario = Beneficiario.objects.get(cedula=cedula)</find>
       <find>Beneficiario.objects.create(</find>
+      <find>original</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -770,7 +770,14 @@
       <option name="project" value="LOCAL" />
       <updated>1503868487905</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Vigencia 2017 v11">
+      <created>1503868807281</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1503868807281</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -822,7 +829,8 @@
     <MESSAGE value="Vigencia 2017 v8" />
     <MESSAGE value="Vigencia 2017 v9" />
     <MESSAGE value="Vigencia 2017 v10" />
-    <option name="LAST_COMMIT_MESSAGE" value="Vigencia 2017 v10" />
+    <MESSAGE value="Vigencia 2017 v11" />
+    <option name="LAST_COMMIT_MESSAGE" value="Vigencia 2017 v11" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1339,12 +1347,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/vigencia2017/tasks.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="487" column="94" lean-forward="true" selection-start-line="487" selection-start-column="94" selection-end-line="487" selection-end-column="94" />
+        <state relative-caret-position="17">
+          <caret line="483" column="89" lean-forward="true" selection-start-line="483" selection-start-column="89" selection-end-line="483" selection-end-column="89" />
           <folding>
             <element signature="e#46#85#0" expanded="true" />
-            <element signature="e#27704#35216#0" expanded="false" />
-            <element signature="e#35285#41490#0" expanded="false" />
+            <element signature="e#27698#35210#0" expanded="false" />
+            <element signature="e#35279#41484#0" expanded="false" />
           </folding>
         </state>
       </provider>

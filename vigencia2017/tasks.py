@@ -231,7 +231,7 @@ def carga_masiva_matrices(id,email_user):
                                                         if beneficiario.nombres != nombres and beneficiario.apellidos != apellidos:
                                                             if beneficiario.dane_sede != dane_sede and beneficiario.grupo != grupo:
 
-                                                                BeneficiarioCambio.objects.create(original = beneficiario[0],
+                                                                BeneficiarioCambio.objects.create(original = beneficiario,
                                                                                                   masivo = carga,
                                                                                                   region = region,
                                                                                                   dane_sede = dane_sede,
@@ -494,7 +494,7 @@ def carga_masiva_matrices(id,email_user):
                                                         if beneficiario.nombres != nombres and beneficiario.apellidos != apellidos:
                                                             if beneficiario.grupo != grupo:
                                                                 BeneficiarioCambio.objects.create(
-                                                                    original=beneficiario[0],
+                                                                    original=beneficiario,
                                                                     masivo=carga,
                                                                     region=region,
                                                                     dane_sede=dane_sede,
