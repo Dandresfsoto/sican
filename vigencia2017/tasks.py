@@ -34,6 +34,7 @@ from vigencia2017.models import Evidencia as EvidenciaVigencia2017
 from openpyxl.styles import Style, PatternFill, Border, Side, Alignment, Protection, Font
 from informes.models import InformesExcel
 from productos.models import Entregable
+from municipios.models import Municipio
 
 @app.task
 def carga_masiva_matrices(id,email_user):
@@ -227,10 +228,10 @@ def carga_masiva_matrices(id,email_user):
                                                                                     genero=genero
                                                                                     )
                                                     else:
-                                                        resultado = "Solicitud de cambio"
+
                                                         if beneficiario.nombres != nombres and beneficiario.apellidos != apellidos:
                                                             if beneficiario.dane_sede != dane_sede and beneficiario.grupo != grupo:
-
+                                                                resultado = "Solicitud de cambio"
                                                                 BeneficiarioCambio.objects.create(original = beneficiario,
                                                                                                   masivo = carga,
                                                                                                   region = region,
@@ -247,6 +248,7 @@ def carga_masiva_matrices(id,email_user):
                                                                                                   genero=genero
                                                                                                   )
                                                         else:
+                                                            resultado = "Beneficirio actualizado"
                                                             beneficiario.dane_sede = dane_sede
                                                             beneficiario.grupo = grupo
                                                             beneficiario.apellidos = apellidos
@@ -418,116 +420,125 @@ def carga_masiva_matrices(id,email_user):
                             resultado = 'No existe el codigo DANE de la sede'
                         else:
 
-                            ruta_archivo = fila[11].value.split('-')
+                            try:
+                                municipio = Municipio.objects.get(codigo_municipio = fila[5].value)
+                            except:
+                                resultado = 'Error en el codigo de municipio'
+                            else:
+                                ruta_archivo = fila[11].value.split('-')
 
-                            if len(ruta_archivo) == 3:
+                                if len(ruta_archivo) == 3:
 
-                                ruta = ruta_archivo[0] + "-" + ruta_archivo[1]
+                                    ruta = ruta_archivo[0] + "-" + ruta_archivo[1]
 
-                                try:
-                                    formador = Formador.objects.get(cedula=fila[13].value)
-                                except:
-                                    resultado = 'No existe el numero de cedula del formador'
-                                else:
                                     try:
-                                        contrato = Contrato.objects.get(formador=formador, codigo_ruta=ruta)
+                                        formador = Formador.objects.get(cedula=fila[13].value)
                                     except:
-                                        resultado = "No se pudo identificar el contrato del formador (contacte a sistemas)"
+                                        resultado = 'No existe el numero de cedula del formador'
                                     else:
                                         try:
-                                            numero_grupo = int(ruta_archivo[2])
+                                            contrato = Contrato.objects.get(formador=formador, codigo_ruta=ruta)
                                         except:
-                                            resultado = "Numero de grupo invalido"
+                                            resultado = "No se pudo identificar el contrato del formador (contacte a sistemas)"
                                         else:
-                                            grupo, created = Grupos.objects.get_or_create(contrato=contrato,
-                                                                                          diplomado=diplomado,
-                                                                                          numero=numero_grupo)
                                             try:
-                                                cedula = long(fila[16].value)
+                                                numero_grupo = int(ruta_archivo[2])
                                             except:
-                                                resultado = "Error en el numero de cedula"
+                                                resultado = "Numero de grupo invalido"
                                             else:
-
-                                                if fila[14].value != None and fila[15].value != None:
-
-                                                    nombres = fila[15].value.upper()
-                                                    apellidos = fila[14].value.upper()
-
-                                                    email = ''
-                                                    telefono_fijo = fila[18].value
-                                                    telefono_celular = fila[19].value
-
-                                                    genero = fila[23].value
-
-                                                    if validate_email(fila[17].value):
-                                                        email = fila[17].value
-
-                                                    try:
-                                                        area = int(fila[20].value)
-                                                    except:
-                                                        area = None
-
-                                                    try:
-                                                        grado = int(fila[21].value)
-                                                    except:
-                                                        grado = None
-
-                                                    try:
-                                                        beneficiario = Beneficiario.objects.get(cedula=cedula)
-                                                    except:
-                                                        resultado = "Beneficiario creado"
-                                                        Beneficiario.objects.create(region=region,
-                                                                                    dane_sede=dane_sede,
-                                                                                    grupo=grupo,
-                                                                                    apellidos=apellidos,
-                                                                                    nombres=nombres,
-                                                                                    cedula=cedula,
-                                                                                    correo=email,
-                                                                                    telefono_fijo=telefono_fijo,
-                                                                                    telefono_celular=telefono_celular,
-                                                                                    area=area,
-                                                                                    grado=grado,
-                                                                                    genero=genero
-                                                                                    )
-                                                    else:
-                                                        resultado = "Solicitud de cambio"
-                                                        if beneficiario.nombres != nombres and beneficiario.apellidos != apellidos:
-                                                            if beneficiario.grupo != grupo:
-                                                                BeneficiarioCambio.objects.create(
-                                                                    original=beneficiario,
-                                                                    masivo=carga,
-                                                                    region=region,
-                                                                    dane_sede=dane_sede,
-                                                                    grupo=grupo,
-                                                                    apellidos=apellidos,
-                                                                    nombres=nombres,
-                                                                    cedula=cedula,
-                                                                    correo=email,
-                                                                    telefono_fijo=telefono_fijo,
-                                                                    telefono_celular=telefono_celular,
-                                                                    area=area,
-                                                                    grado=grado,
-                                                                    genero=genero
-                                                                    )
-                                                        else:
-                                                            beneficiario.dane_sede = dane_sede
-                                                            beneficiario.grupo = grupo
-                                                            beneficiario.apellidos = apellidos
-                                                            beneficiario.nombres = nombres
-                                                            beneficiario.correo = email
-                                                            beneficiario.telefono_fijo = telefono_fijo
-                                                            beneficiario.telefono_celular = telefono_celular
-                                                            beneficiario.area = area
-                                                            beneficiario.grado = grado
-                                                            beneficiario.genero = genero
-                                                            beneficiario.save()
-
+                                                grupo, created = Grupos.objects.get_or_create(contrato=contrato,
+                                                                                              diplomado=diplomado,
+                                                                                              numero=numero_grupo)
+                                                try:
+                                                    cedula = long(fila[16].value)
+                                                except:
+                                                    resultado = "Error en el numero de cedula"
                                                 else:
-                                                    resultado = "Error en los nombres o apellidos del docente"
+
+                                                    if fila[14].value != None and fila[15].value != None:
+
+                                                        nombres = fila[15].value.upper()
+                                                        apellidos = fila[14].value.upper()
+
+                                                        email = ''
+                                                        telefono_fijo = fila[18].value
+                                                        telefono_celular = fila[19].value
+
+                                                        genero = fila[23].value
+
+                                                        if validate_email(fila[17].value):
+                                                            email = fila[17].value
+
+                                                        try:
+                                                            area = int(fila[20].value)
+                                                        except:
+                                                            area = None
+
+                                                        try:
+                                                            grado = int(fila[21].value)
+                                                        except:
+                                                            grado = None
+
+                                                        try:
+                                                            beneficiario = Beneficiario.objects.get(cedula=cedula)
+                                                        except:
+                                                            resultado = "Beneficiario creado"
+                                                            Beneficiario.objects.create(region=region,
+                                                                                        municipio = municipio,
+                                                                                        dane_sede=dane_sede,
+                                                                                        grupo=grupo,
+                                                                                        apellidos=apellidos,
+                                                                                        nombres=nombres,
+                                                                                        cedula=cedula,
+                                                                                        correo=email,
+                                                                                        telefono_fijo=telefono_fijo,
+                                                                                        telefono_celular=telefono_celular,
+                                                                                        area=area,
+                                                                                        grado=grado,
+                                                                                        genero=genero
+                                                                                        )
+                                                        else:
+                                                            if beneficiario.nombres != nombres and beneficiario.apellidos != apellidos:
+                                                                if beneficiario.grupo != grupo:
+                                                                    resultado = "Solicitud de cambio"
+                                                                    BeneficiarioCambio.objects.create(
+                                                                        original=beneficiario,
+                                                                        masivo=carga,
+                                                                        region=region,
+                                                                        municipio=municipio,
+                                                                        dane_sede=dane_sede,
+                                                                        grupo=grupo,
+                                                                        apellidos=apellidos,
+                                                                        nombres=nombres,
+                                                                        cedula=cedula,
+                                                                        correo=email,
+                                                                        telefono_fijo=telefono_fijo,
+                                                                        telefono_celular=telefono_celular,
+                                                                        area=area,
+                                                                        grado=grado,
+                                                                        genero=genero
+                                                                        )
+                                                            else:
+                                                                resultado = "Beneficiario actualizado"
+                                                                beneficiario.dane_sede = dane_sede
+                                                                beneficiario.municipio = municipio
+                                                                beneficiario.grupo = grupo
+                                                                beneficiario.apellidos = apellidos
+                                                                beneficiario.nombres = nombres
+                                                                beneficiario.correo = email
+                                                                beneficiario.telefono_fijo = telefono_fijo
+                                                                beneficiario.telefono_celular = telefono_celular
+                                                                beneficiario.area = area
+                                                                beneficiario.grado = grado
+                                                                beneficiario.genero = genero
+                                                                beneficiario.save()
+
+                                                    else:
+                                                        resultado = "Error en los nombres o apellidos del docente"
 
 
-                            else:
-                                resultado = 'El codigo de ruta no se encuentra bien parametrizado'
+                                else:
+                                    resultado = 'El codigo de ruta no se encuentra bien parametrizado'
 
                 contenidos.append([
                     name,

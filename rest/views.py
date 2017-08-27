@@ -630,7 +630,7 @@ class Vigencia2017BeneficiariosList(BaseDatatableView):
                 item.cedula,
                 item.nombres,
                 item.apellidos,
-                item.dane_sede.dane_sede,
+                item.dane_sede.dane_sede if item.dane_sede != None else 'N/A',
                 item.grupo.get_nombre_grupo(),
                 item.correo,
                 item.telefono_fijo,
@@ -638,10 +638,10 @@ class Vigencia2017BeneficiariosList(BaseDatatableView):
                 item.area,
                 item.grado,
                 item.genero,
-                item.dane_sede.nombre_sede,
-                item.dane_sede.dane_ie,
-                item.dane_sede.nombre_ie,
-                item.dane_sede.municipio.nombre + ', ' + item.dane_sede.municipio.departamento.nombre,
+                item.dane_sede.nombre_sede if item.dane_sede != None else 'N/A',
+                item.dane_sede.dane_ie if item.dane_sede != None else 'N/A',
+                item.dane_sede.nombre_ie if item.dane_sede != None else 'N/A',
+                item.dane_sede.municipio.nombre + ', ' + item.dane_sede.municipio.departamento.nombre if item.dane_sede != None else item.municipio.nombre + ', ' + item.municipio.departamento.nombre,
                 self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_cargar_matriz.editar'),
             ])
         return json_data

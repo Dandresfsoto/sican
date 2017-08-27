@@ -13,6 +13,7 @@ from usuarios.models import User
 from django.db.models import Sum
 import locale
 from django.utils.encoding import smart_unicode
+from municipios.models import Municipio
 
 # Create your models here.
 
@@ -44,8 +45,8 @@ class Grupos(models.Model):
 
 class Beneficiario(models.Model):
     region = models.ForeignKey(Region, related_name='region_beneficiario_vigencia_2017')
-    dane_sede_text = models.CharField(max_length=1000, blank=True, null=True)
     dane_sede = models.ForeignKey(DaneSEDE, blank=True, null=True)
+    municipio = models.ForeignKey(Municipio, blank=True, null=True)
 
     grupo = models.ForeignKey(Grupos, related_name='grupo_beneficiario_vigencia_2017')
     apellidos = models.CharField(max_length=100)
@@ -217,8 +218,8 @@ class BeneficiarioCambio(models.Model):
     masivo = models.ForeignKey(CargaMatriz)
 
     region = models.ForeignKey(Region, related_name='region_beneficiario_vigencia_2017_cambio')
-    dane_sede_text = models.CharField(max_length=1000, blank=True, null=True)
     dane_sede = models.ForeignKey(DaneSEDE, blank=True, null=True)
+    municipio = models.ForeignKey(Municipio, blank=True, null=True)
 
     grupo = models.ForeignKey(Grupos, related_name='grupo_beneficiario_vigencia_2017_cambio')
     apellidos = models.CharField(max_length=100)
