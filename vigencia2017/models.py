@@ -12,6 +12,7 @@ from productos.models import Entregable
 from usuarios.models import User
 from django.db.models import Sum
 import locale
+from django.utils.encoding import smart_unicode
 
 # Create your models here.
 
@@ -63,6 +64,92 @@ class Beneficiario(models.Model):
     def get_full_name(self):
         return self.nombres + ' ' + self.apellidos
 
+    def get_pago_state(self,id_entregable):
+        data = {'state': 'reportado'}
+
+        pago = self.get_pago_entregable(id_entregable)
+
+        if pago.corte_id != None:
+            data['state'] = 'pago'
+
+        return data
+
+
+    def get_evidencia_state(self,id_entregable):
+        data = {'state': None}
+
+        evidencias = Evidencia.objects.filter(entregable__id = id_entregable).filter(beneficiarios_cargados = self).order_by('id')
+
+        if evidencias.count() > 0:
+            evidencia = evidencias[0]
+
+            data['state'] = 'cargado'
+
+            if self in evidencia.beneficiarios_validados.all():
+                data['state'] = 'validado'
+
+            if self in evidencia.beneficiarios_rechazados.all():
+                data['state'] = 'rechazado'
+
+        return data
+
+
+
+
+    def get_valor_entregable(self,id_entregable):
+        valor = None
+        try:
+            valor = ValorEntregableVigencia2017.objects.get(tipo_contrato__id = self.grupo.contrato.tipo_contrato_id,
+                                                            entregable__id=id_entregable).valor
+        except:
+            pass
+        return valor
+
+
+    def get_pago_entregable(self, id_entregable):
+        pago = None
+
+        try:
+            pago = Pago.objects.get(beneficiario = self, entregable__id = id_entregable)
+        except:
+            pass
+
+        return pago
+
+    def get_pago_valor_entregable(self, id_entregable):
+        valor = 0
+
+        pago = self.get_pago_entregable(id_entregable)
+
+        if pago != None:
+            valor = pago.valor
+
+        return valor
+
+
+    def set_pago_entregable(self, id_entregable, evidencia_id):
+
+        pago = self.get_pago_entregable(id_entregable)
+
+        if pago == None:
+            entregable = Entregable.objects.get(id = id_entregable)
+            valor = self.get_valor_entregable(id_entregable)
+            pago = Pago.objects.create(beneficiario=self,evidencia_id = evidencia_id, entregable = entregable, valor = valor)
+
+        else:
+            pago.evidencia_id = evidencia_id
+            pago.save()
+
+        return pago
+
+    def delete_pago_entregable(self, id_entregable):
+
+        pago = self.get_pago_entregable(id_entregable)
+
+        if pago.corte_id == None:
+            pago.delete()
+
+        return None
 
 class TipoContrato(models.Model):
     nombre = models.CharField(max_length=100)
@@ -150,6 +237,8 @@ class Rechazo(models.Model):
     evidencia_id = models.IntegerField()
 
 
+def content_file_name(instance, filename):
+    return '/'.join(['Evidencias/Vigencia 2017/Soportes/', smart_unicode(instance.entregable.id), filename])
 
 
 class Evidencia(models.Model):
@@ -165,7 +254,6 @@ class Evidencia(models.Model):
     subsanacion = models.BooleanField(default=False)
     cantidad_cargados = models.IntegerField(blank=True,null=True)
     red_id = models.IntegerField(blank=True,null=True)
-    corte_id = models.IntegerField(blank=True, null=True)
 
     def get_archivo_url(self):
         try:
@@ -188,8 +276,10 @@ class Evidencia(models.Model):
 class Pago(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     beneficiario = models.ForeignKey(Beneficiario)
-    evidencia = models.ForeignKey(Evidencia)
+    evidencia_id = models.BigIntegerField()
+    entregable = models.ForeignKey(Entregable)
     valor = models.FloatField()
+    corte_id = models.IntegerField(blank=True, null=True)
 
 
 

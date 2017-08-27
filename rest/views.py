@@ -58,7 +58,7 @@ from evidencias.models import Red, CargaMasiva as CargaMasivaEvidencias
 from django.utils.timezone import localtime
 from informes.tasks import zip_hv, zip_contrato, actividades_virtuales
 from informes.tasks import descargas_certificados_escuelatic, progreso_listados_actas, matriz_chequeo_actividad, progreso_listados_actas_aprobadas
-from informes.tasks import matriz_chequeo_vigencia_2017
+from vigencia2017.tasks import matriz_chequeo_vigencia_2017
 from evidencias.models import Subsanacion
 from django.db.models import Sum
 from informes.tasks import progreso_virtuales, progreso_virtuales_aprobadas,aprobados_niveles
@@ -91,6 +91,7 @@ from vigencia2017.models import BeneficiarioCambio as BeneficiarioCambioVigencia
 from collections import OrderedDict
 from vigencia2017.models import Evidencia as EvidenciaVigencia2017
 from vigencia2017.models import Red as RedVigencia2017RedVigencia2017
+from vigencia2017.tasks import matriz_valores_vigencia_2017
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
@@ -1020,6 +1021,9 @@ class ReportesView(APIView):
         if id_accion == '36':
             id_contrato = request._request.GET['id_contrato']
             x = matriz_chequeo_vigencia_2017.delay(request.user.email,id_contrato)
+        if id_accion == '37':
+            id_contrato = request._request.GET['id_contrato']
+            x = matriz_valores_vigencia_2017.delay(request.user.email,id_contrato)
 
         return HttpResponse(status=200)
 

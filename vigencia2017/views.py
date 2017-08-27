@@ -14,6 +14,7 @@ from vigencia2017.forms import EvidenciaVigencia2017Form, GruposVigencia2017Cone
 from vigencia2017.models import Evidencia
 import StringIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from vigencia2017.models import Pago as PagoVigencia2017
 
 # Create your views here.
 class ListadoCodigosDaneView(LoginRequiredMixin,
@@ -358,7 +359,7 @@ class NuevaEvidenciasEntregableView(LoginRequiredMixin,
 
             for cargado in form.cleaned_data['beneficiarios_cargados']:
                 self.object.beneficiarios_cargados.add(cargado)
-
+                cargado.set_pago_entregable(id_entregable=self.object.entregable.id,evidencia_id=self.object.id)
 
 
 
@@ -426,6 +427,7 @@ class EditarEvidenciaEntregableView(LoginRequiredMixin,
 
             for cargado in form.cleaned_data['beneficiarios_cargados']:
                 self.object.beneficiarios_cargados.add(cargado)
+                cargado.set_pago_entregable(id_entregable=self.object.entregable.id, evidencia_id=self.object.id)
 
 
 
@@ -464,6 +466,11 @@ class DeleteEvidenciaEntregableView(LoginRequiredMixin,
     permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.eliminar"
 
     def get(self, request, *args, **kwargs):
+
+        evidencia = Evidencia.objects.get(id = kwargs['id_evidencia'])
+
+        for cargado in evidencia.beneficiarios_cargados.all():
+            cargado.delete_pago_entregable(id_entregable = evidencia.entregable.id)
         return self.post(request, *args, **kwargs)
 
 
