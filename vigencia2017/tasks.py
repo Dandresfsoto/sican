@@ -210,7 +210,7 @@ def carga_masiva_matrices(id,email_user):
                                                         grado = None
 
 
-                                                    beneficiario = Beneficiario.objects.filter(cedula = cedula)
+                                                    beneficiario = Beneficiario.objects.get(cedula = cedula)
 
                                                     if beneficiario.count() == 0:
                                                         resultado = "Beneficiario creado"
@@ -473,7 +473,7 @@ def carga_masiva_matrices(id,email_user):
                                                     except:
                                                         grado = None
 
-                                                    beneficiario = Beneficiario.objects.filter(cedula=cedula)
+                                                    beneficiario = Beneficiario.objects.get(cedula=cedula)
 
                                                     if beneficiario.count() == 0:
                                                         resultado = "Beneficiario creado"
