@@ -65,12 +65,15 @@ class Beneficiario(models.Model):
         return self.nombres + ' ' + self.apellidos
 
     def get_pago_state(self,id_entregable):
-        data = {'state': 'reportado'}
+        data = {'state': None}
 
         pago = self.get_pago_entregable(id_entregable)
 
-        if pago.corte_id != None:
-            data['state'] = 'pago'
+        if pago != None:
+            if pago.corte_id != None:
+                data['state'] = 'pago'
+            else:
+                data['state'] = 'reportado'
 
         return data
 
