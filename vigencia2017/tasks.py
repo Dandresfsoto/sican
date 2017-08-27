@@ -414,7 +414,7 @@ def carga_masiva_matrices(id,email_user):
                     else:
 
                         try:
-                            dane_sede = "N/A"
+                            dane_sede = None
                         except:
                             resultado = 'No existe el codigo DANE de la sede'
                         else:
