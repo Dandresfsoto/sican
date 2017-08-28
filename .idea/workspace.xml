@@ -68,8 +68,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/vigencia2017/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="496" column="76" lean-forward="true" selection-start-line="496" selection-start-column="76" selection-end-line="496" selection-end-column="76" />
+            <state relative-caret-position="364">
+              <caret line="369" column="85" lean-forward="true" selection-start-line="369" selection-start-column="85" selection-end-line="369" selection-end-column="85" />
               <folding>
                 <element signature="e#0#91#0" expanded="true" />
               </folding>
@@ -718,7 +718,14 @@
       <option name="project" value="LOCAL" />
       <updated>1503886244658</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Vigencia 2017 v15">
+      <created>1503887112688</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1503887112688</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1292,8 +1299,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/vigencia2017/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="496" column="76" lean-forward="true" selection-start-line="496" selection-start-column="76" selection-end-line="496" selection-end-column="76" />
+        <state relative-caret-position="364">
+          <caret line="369" column="85" lean-forward="true" selection-start-line="369" selection-start-column="85" selection-end-line="369" selection-end-column="85" />
           <folding>
             <element signature="e#0#91#0" expanded="true" />
           </folding>
