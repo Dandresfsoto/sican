@@ -21,6 +21,15 @@ block breadcrum
 block scroll_header_panel_content
     div(class="container-fluid container-index")
 
+        | {% if informes %}
+        div(style="margin-bottom:20px;")
+            select(class="selectpicker",id="select_accion")
+                option(value="") ---------
+                option(value="38") Consolidado matriz de chequeo
+                option(value="39") Consolidado matriz de pago
+            button(class="btn",id="accion") Generar reporte
+        | {% endif %}
+
         table(id="table",class="display responsive no-wrap table table-striped table-bordered",width="100%")
             thead
                 tr

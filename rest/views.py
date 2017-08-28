@@ -91,7 +91,7 @@ from vigencia2017.models import BeneficiarioCambio as BeneficiarioCambioVigencia
 from collections import OrderedDict
 from vigencia2017.models import Evidencia as EvidenciaVigencia2017
 from vigencia2017.models import Red as RedVigencia2017RedVigencia2017
-from vigencia2017.tasks import matriz_valores_vigencia_2017
+from vigencia2017.tasks import matriz_valores_vigencia_2017, matriz_chequeo_vigencia_2017_total, matriz_valores_vigencia_2017_total
 # Create your views here.
 
 #----------------------------------------------------- REST ------------------------------------------------------------
@@ -1021,6 +1021,10 @@ class ReportesView(APIView):
         if id_accion == '37':
             id_contrato = request._request.GET['id_contrato']
             x = matriz_valores_vigencia_2017.delay(request.user.email,id_contrato)
+        if id_accion == '38':
+            x = matriz_chequeo_vigencia_2017_total.delay(request.user.email)
+        if id_accion == '39':
+            x = matriz_valores_vigencia_2017_total.delay(request.user.email)
 
         return HttpResponse(status=200)
 

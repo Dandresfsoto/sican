@@ -68,6 +68,11 @@ class ListadoGruposFormacionView(LoginRequiredMixin,
     permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.ver"
 
 
+    def get_context_data(self, **kwargs):
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.informes')
+        return super(ListadoGruposFormacionView, self).get_context_data(**kwargs)
+
+
 
 
 class ListadoGruposFormadorView(LoginRequiredMixin,
