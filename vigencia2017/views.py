@@ -357,21 +357,22 @@ class NuevaEvidenciasEntregableView(LoginRequiredMixin,
             self.object.archivo = file_data
             self.object.save()
 
-        for cargado in form.cleaned_data['beneficiarios_cargados']:
-            self.object.beneficiarios_cargados.add(cargado)
-            cargado.set_pago_entregable(id_entregable=self.object.entregable.id,evidencia_id=self.object.id)
-
-
 
         cargados = self.object.beneficiarios_cargados.all()
         contrato = Contrato.objects.get(id=self.kwargs['pk'])
         entregable = Entregable.objects.get(id=self.kwargs['id_entregable'])
         evidencias = Evidencia.objects.filter(contrato=contrato, entregable=entregable).filter(
-                beneficiarios_cargados__id__in=cargados.values_list('id', flat=True)).distinct()
+                beneficiarios_cargados__id__in=cargados.values_list('id', flat=True)).exclude(id = self.object.id).distinct()
 
         for evidencia in evidencias:
             for cargado in cargados:
                 evidencia.beneficiarios_cargados.remove(cargado)
+                cargado.delete_pago_entregable(id_entregable=evidencia.entregable.id)
+
+
+        for cargado in form.cleaned_data['beneficiarios_cargados']:
+            self.object.beneficiarios_cargados.add(cargado)
+            cargado.set_pago_entregable(id_entregable=self.object.entregable.id,evidencia_id=self.object.id)
 
 
         return super(NuevaEvidenciasEntregableView,self).form_valid(form)
@@ -425,23 +426,22 @@ class EditarEvidenciaEntregableView(LoginRequiredMixin,
             self.object.archivo = file_data
             self.object.save()
 
-        for cargado in form.cleaned_data['beneficiarios_cargados']:
-            self.object.beneficiarios_cargados.add(cargado)
-            cargado.set_pago_entregable(id_entregable=self.object.entregable.id, evidencia_id=self.object.id)
-
-
-
 
         cargados = self.object.beneficiarios_cargados.all()
         contrato = Contrato.objects.get(id=self.kwargs['pk'])
         entregable = Entregable.objects.get(id=self.kwargs['id_entregable'])
         evidencias = Evidencia.objects.filter(contrato=contrato, entregable=entregable).filter(
-                beneficiarios_cargados__id__in=cargados.values_list('id', flat=True)).distinct()
+                beneficiarios_cargados__id__in=cargados.values_list('id', flat=True)).exclude(id = self.object.id).distinct()
 
         for evidencia in evidencias:
             for cargado in cargados:
                 evidencia.beneficiarios_cargados.remove(cargado)
+                cargado.delete_pago_entregable(id_entregable=evidencia.entregable.id)
 
+
+        for cargado in form.cleaned_data['beneficiarios_cargados']:
+            self.object.beneficiarios_cargados.add(cargado)
+            cargado.set_pago_entregable(id_entregable=self.object.entregable.id, evidencia_id=self.object.id)
 
         return super(EditarEvidenciaEntregableView,self).form_valid(form)
 
