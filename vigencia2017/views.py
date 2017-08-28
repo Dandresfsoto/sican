@@ -359,10 +359,6 @@ class NuevaEvidenciasEntregableView(LoginRequiredMixin,
 
 
         cargados = self.object.beneficiarios_cargados.all()
-
-        for cargado in cargados:
-            cargado.delete_pago_entregable(id_entregable = self.object.entregable.id)
-
         contrato = Contrato.objects.get(id=self.kwargs['pk'])
         entregable = Entregable.objects.get(id=self.kwargs['id_entregable'])
         evidencias = Evidencia.objects.filter(contrato=contrato, entregable=entregable).filter(
@@ -412,6 +408,9 @@ class EditarEvidenciaEntregableView(LoginRequiredMixin,
         return super(EditarEvidenciaEntregableView, self).get_context_data(**kwargs)
 
     def form_valid(self, form):
+
+        for cargado in self.object.beneficiarios_cargados.all():
+            cargado.delete_pago_entregable(id_entregable = self.object.entregable.id)
 
 
         if 'archivo' in form.cleaned_data.keys():
