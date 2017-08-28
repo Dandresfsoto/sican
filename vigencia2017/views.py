@@ -326,7 +326,7 @@ class NuevaEvidenciasEntregableView(LoginRequiredMixin,
     form_class = EvidenciaVigencia2017Form
     success_url = '../'
     template_name = 'vigencia2017/grupos_formacion/nueva_evidencia.html'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencia.crear"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencias.crear"
 
 
     def get_context_data(self, **kwargs):

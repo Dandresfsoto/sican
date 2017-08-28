@@ -21,7 +21,6 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vigencia2017/migrations/0014_auto_20170827_1742.py" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vigencia2017/migrations/__init__.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rest/views.py" afterPath="$PROJECT_DIR$/rest/views.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vigencia2017/views.py" afterPath="$PROJECT_DIR$/vigencia2017/views.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -69,8 +68,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/vigencia2017/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="310">
-              <caret line="321" column="55" lean-forward="true" selection-start-line="321" selection-start-column="55" selection-end-line="321" selection-end-column="55" />
+            <state relative-caret-position="429">
+              <caret line="328" column="87" lean-forward="true" selection-start-line="328" selection-start-column="87" selection-end-line="328" selection-end-column="87" />
               <folding>
                 <element signature="e#0#91#0" expanded="true" />
               </folding>
@@ -82,7 +81,7 @@
         <entry file="file://$PROJECT_DIR$/rest/views.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="230">
-              <caret line="705" column="107" lean-forward="true" selection-start-line="705" selection-start-column="107" selection-end-line="705" selection-end-column="107" />
+              <caret line="705" column="107" lean-forward="false" selection-start-line="705" selection-start-column="107" selection-end-line="705" selection-end-column="107" />
               <folding>
                 <element signature="e#5251#17690#0" expanded="false" />
                 <element signature="e#17738#18866#0" expanded="false" />
@@ -251,8 +250,8 @@
         <option value="$PROJECT_DIR$/vigencia2017/tasks.py" />
         <option value="$PROJECT_DIR$/vigencia2017/forms.py" />
         <option value="$PROJECT_DIR$/vigencia2017/models.py" />
-        <option value="$PROJECT_DIR$/vigencia2017/views.py" />
         <option value="$PROJECT_DIR$/rest/views.py" />
+        <option value="$PROJECT_DIR$/vigencia2017/views.py" />
       </list>
     </option>
   </component>
@@ -814,7 +813,14 @@
       <option name="project" value="LOCAL" />
       <updated>1503891903330</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Vigencia 2017 v16">
+      <created>1503893026193</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1503893026193</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1352,7 +1358,7 @@
     <entry file="file://$PROJECT_DIR$/rest/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="230">
-          <caret line="705" column="107" lean-forward="true" selection-start-line="705" selection-start-column="107" selection-end-line="705" selection-end-column="107" />
+          <caret line="705" column="107" lean-forward="false" selection-start-line="705" selection-start-column="107" selection-end-line="705" selection-end-column="107" />
           <folding>
             <element signature="e#5251#17690#0" expanded="false" />
             <element signature="e#17738#18866#0" expanded="false" />
@@ -1389,8 +1395,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/vigencia2017/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="321" column="55" lean-forward="true" selection-start-line="321" selection-start-column="55" selection-end-line="321" selection-end-column="55" />
+        <state relative-caret-position="429">
+          <caret line="328" column="87" lean-forward="true" selection-start-line="328" selection-start-column="87" selection-end-line="328" selection-end-column="87" />
           <folding>
             <element signature="e#0#91#0" expanded="true" />
           </folding>
