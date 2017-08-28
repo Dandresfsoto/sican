@@ -241,7 +241,7 @@ class Rechazo(models.Model):
     evidencia_id = models.IntegerField()
 
 
-def content_file_name(instance, filename):
+def evidencia_directory(instance, filename):
     return '/'.join(['Evidencias/Vigencia 2017/Soportes/', smart_unicode(instance.entregable.id), filename])
 
 
@@ -249,7 +249,7 @@ class Evidencia(models.Model):
     fecha = models.DateTimeField(auto_now_add= True)
     updated = models.DateTimeField(auto_now=True)
     usuario = models.ForeignKey(User,related_name='vigencia_2017_usuario_evidencia')
-    archivo = models.FileField(upload_to='Evidencias/Vigencia 2017/Soportes')
+    archivo = models.FileField(upload_to=evidencia_directory)
     entregable = models.ForeignKey(Entregable,related_name='vigencia_2017_entregable_diplomado')
     beneficiarios_cargados = models.ManyToManyField(Beneficiario,related_name='vigencia_2017_beneficiarios_cargados')
     beneficiarios_validados = models.ManyToManyField(Beneficiario,related_name='vigencia_2017_beneficiarios_validados',blank=True)
