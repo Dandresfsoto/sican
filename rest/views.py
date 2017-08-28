@@ -217,9 +217,6 @@ class UserPermissionList(APIView):
             'vigencia_2017_dane': {
                 'ver': {'name': 'Códigos DANE', 'link': '/vigencia2017/codigosdane/'}
             },
-            'vigencia_2017_evidencias': {
-                'ver': {'name': 'Evidencias', 'link': '/vigencia2017/evidencias/'}
-            },
             'beneficiarios_registrar':{
                 'ver':{'name':'Registrar beneficiarios','link':'/beneficiarios/'}
             },

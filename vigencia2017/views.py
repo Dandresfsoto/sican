@@ -394,7 +394,7 @@ class EditarEvidenciaEntregableView(LoginRequiredMixin,
     success_url = '../../'
     pk_url_kwarg = 'id_evidencia'
     template_name = 'vigencia2017/grupos_formacion/editar_evidencia.html'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencia.editar"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencias.editar"
 
 
     def get_context_data(self, **kwargs):
@@ -472,7 +472,7 @@ class DeleteEvidenciaEntregableView(LoginRequiredMixin,
     model = EvidenciaVigencia2017
     success_url = '../../'
     pk_url_kwarg = 'id_evidencia'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencia.eliminar"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencias.eliminar"
 
     def get(self, request, *args, **kwargs):
 
