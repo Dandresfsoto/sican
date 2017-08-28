@@ -299,7 +299,7 @@ class ListaEvidenciasEntregableView(LoginRequiredMixin,
                          PermissionRequiredMixin,
                          TemplateView):
     template_name = 'vigencia2017/grupos_formacion/lista_evidencias.html'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.ver"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencias.ver"
 
 
     def get_context_data(self, **kwargs):
@@ -310,7 +310,7 @@ class ListaEvidenciasEntregableView(LoginRequiredMixin,
         kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
         kwargs['diplomado'] = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo']).diplomado.nombre
         kwargs['id_entregable'] = self.kwargs['id_entregable']
-        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.nueva_evidencia')
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_evidencias.crear')
         kwargs['nombre_entregable'] = Entregable.objects.get(id=self.kwargs['id_entregable']).nombre
         return super(ListaEvidenciasEntregableView, self).get_context_data(**kwargs)
 
@@ -326,7 +326,7 @@ class NuevaEvidenciasEntregableView(LoginRequiredMixin,
     form_class = EvidenciaVigencia2017Form
     success_url = '../'
     template_name = 'vigencia2017/grupos_formacion/nueva_evidencia.html'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.editar"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencia.crear"
 
 
     def get_context_data(self, **kwargs):
@@ -394,7 +394,7 @@ class EditarEvidenciaEntregableView(LoginRequiredMixin,
     success_url = '../../'
     pk_url_kwarg = 'id_evidencia'
     template_name = 'vigencia2017/grupos_formacion/editar_evidencia.html'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.editar"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencia.editar"
 
 
     def get_context_data(self, **kwargs):
@@ -472,7 +472,7 @@ class DeleteEvidenciaEntregableView(LoginRequiredMixin,
     model = EvidenciaVigencia2017
     success_url = '../../'
     pk_url_kwarg = 'id_evidencia'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.eliminar"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencia.eliminar"
 
     def get(self, request, *args, **kwargs):
 
