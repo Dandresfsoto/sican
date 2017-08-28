@@ -150,8 +150,9 @@ class Beneficiario(models.Model):
 
         pago = self.get_pago_entregable(id_entregable)
 
-        if pago.corte_id == None:
-            pago.delete()
+        if pago != None:
+            if pago.corte_id == None:
+                pago.delete()
 
         return None
 
