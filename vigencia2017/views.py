@@ -222,7 +222,7 @@ class EditarBeneficiarioGrupoView(LoginRequiredMixin,
     pk_url_kwarg = 'id_beneficiario'
     success_url = '../../'
     template_name = 'vigencia2017/grupos_formacion/editar_beneficiario.html'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.editar"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.editar"
 
 
     def get_context_data(self, **kwargs):
@@ -244,7 +244,7 @@ class NuevoBeneficiarioGrupoView(LoginRequiredMixin,
     form_class = NewBeneficiarioVigencia2017Form
     success_url = '../'
     template_name = 'vigencia2017/grupos_formacion/nuevo_beneficiario.html'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.editar"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.editar"
 
 
     def get_context_data(self, **kwargs):
@@ -326,7 +326,7 @@ class NuevaEvidenciasEntregableView(LoginRequiredMixin,
     form_class = EvidenciaVigencia2017Form
     success_url = '../'
     template_name = 'vigencia2017/grupos_formacion/nueva_evidencia.html'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.editar"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.editar"
 
 
     def get_context_data(self, **kwargs):
@@ -394,7 +394,7 @@ class EditarEvidenciaEntregableView(LoginRequiredMixin,
     success_url = '../../'
     pk_url_kwarg = 'id_evidencia'
     template_name = 'vigencia2017/grupos_formacion/editar_evidencia.html'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.editar"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.editar"
 
 
     def get_context_data(self, **kwargs):
@@ -472,7 +472,7 @@ class DeleteEvidenciaEntregableView(LoginRequiredMixin,
     model = EvidenciaVigencia2017
     success_url = '../../'
     pk_url_kwarg = 'id_evidencia'
-    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_dane.eliminar"
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_grupos.eliminar"
 
     def get(self, request, *args, **kwargs):
 
