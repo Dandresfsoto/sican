@@ -702,8 +702,8 @@ class ListaSoportesVigencia2017(BaseDatatableView):
                 item.get_beneficiarios_cantidad(),
                 item.get_validados_cantidad(),
                 item.get_archivo_url(),
-                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_evidencia.editar') if item.red_id == None else False,
-                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_evidencia.eliminar') if item.red_id == None else False,
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_evidencias.editar') if item.red_id == None else False,
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_evidencias.eliminar') if item.red_id == None else False,
                 baneficiarios_cargados,
                 baneficiarios_validados,
                 baneficiarios_rechazados
