@@ -359,6 +359,10 @@ class NuevaEvidenciasEntregableView(LoginRequiredMixin,
 
 
         cargados = self.object.beneficiarios_cargados.all()
+
+        for cargado in cargados:
+            cargado.delete_pago_entregable(id_entregable = self.object.entregable.id)
+
         contrato = Contrato.objects.get(id=self.kwargs['pk'])
         entregable = Entregable.objects.get(id=self.kwargs['id_entregable'])
         evidencias = Evidencia.objects.filter(contrato=contrato, entregable=entregable).filter(
@@ -429,6 +433,11 @@ class EditarEvidenciaEntregableView(LoginRequiredMixin,
 
 
         cargados = self.object.beneficiarios_cargados.all()
+
+        for cargado in cargados:
+            cargado.delete_pago_entregable(id_entregable = self.object.entregable.id)
+
+
         contrato = Contrato.objects.get(id=self.kwargs['pk'])
         entregable = Entregable.objects.get(id=self.kwargs['id_entregable'])
         evidencias = Evidencia.objects.filter(contrato=contrato, entregable=entregable).filter(
