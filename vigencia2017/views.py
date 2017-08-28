@@ -357,9 +357,9 @@ class NuevaEvidenciasEntregableView(LoginRequiredMixin,
             self.object.archivo = file_data
             self.object.save()
 
-            for cargado in form.cleaned_data['beneficiarios_cargados']:
-                self.object.beneficiarios_cargados.add(cargado)
-                cargado.set_pago_entregable(id_entregable=self.object.entregable.id,evidencia_id=self.object.id)
+        for cargado in form.cleaned_data['beneficiarios_cargados']:
+            self.object.beneficiarios_cargados.add(cargado)
+            cargado.set_pago_entregable(id_entregable=self.object.entregable.id,evidencia_id=self.object.id)
 
 
 
@@ -425,9 +425,9 @@ class EditarEvidenciaEntregableView(LoginRequiredMixin,
             self.object.archivo = file_data
             self.object.save()
 
-            for cargado in form.cleaned_data['beneficiarios_cargados']:
-                self.object.beneficiarios_cargados.add(cargado)
-                cargado.set_pago_entregable(id_entregable=self.object.entregable.id, evidencia_id=self.object.id)
+        for cargado in form.cleaned_data['beneficiarios_cargados']:
+            self.object.beneficiarios_cargados.add(cargado)
+            cargado.set_pago_entregable(id_entregable=self.object.entregable.id, evidencia_id=self.object.id)
 
 
 
