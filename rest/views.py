@@ -639,7 +639,7 @@ class Vigencia2017BeneficiariosList(BaseDatatableView):
                 item.dane_sede.dane_ie if item.dane_sede != None else 'N/A',
                 item.dane_sede.nombre_ie if item.dane_sede != None else 'N/A',
                 item.dane_sede.municipio.nombre + ', ' + item.dane_sede.municipio.departamento.nombre if item.dane_sede != None else item.municipio.nombre + ', ' + item.municipio.departamento.nombre,
-                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_cargar_matriz.editar'),
+                self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_grupos.editar'),
             ])
         return json_data
 
