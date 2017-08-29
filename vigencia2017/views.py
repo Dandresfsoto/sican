@@ -10,11 +10,16 @@ from vigencia2017.models import Grupos as GruposVigencia2017
 from vigencia2017.models import Beneficiario as BeneficiarioVigencia2017
 from vigencia2017.forms import BeneficiarioVigencia2017Form, NewBeneficiarioVigencia2017Form
 from vigencia2017.models import Evidencia as EvidenciaVigencia2017
-from vigencia2017.forms import EvidenciaVigencia2017Form, GruposVigencia2017ConectividadForm
+from vigencia2017.forms import EvidenciaVigencia2017Form, GruposVigencia2017ConectividadForm, MasivoVigencia2017Form
 from vigencia2017.models import Evidencia
 import StringIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from vigencia2017.models import Pago as PagoVigencia2017
+from zipfile import ZipFile
+from django.core.files import File
+from sican.settings import base as settings
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 # Create your views here.
 class ListadoCodigosDaneView(LoginRequiredMixin,
@@ -385,6 +390,68 @@ class NuevaEvidenciasEntregableView(LoginRequiredMixin,
     def get_initial(self):
         return {'id_contrato':self.kwargs['pk'],'id_grupo':self.kwargs['id_grupo'],
                 'id_entregable':self.kwargs['id_entregable'],'id_usuario':self.request.user.id}
+
+
+
+
+
+
+
+class MasivoEvidenciasEntregableView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         FormView):
+    form_class = MasivoVigencia2017Form
+    success_url = '../'
+    template_name = 'vigencia2017/grupos_formacion/masivo_evidencia.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_evidencias.crear"
+
+
+    def get_context_data(self, **kwargs):
+        grupo = GruposVigencia2017.objects.get(id=self.kwargs['id_grupo'])
+        kwargs['codigo_dane'] = DaneSEDE.objects.get(id=self.kwargs['pk']).dane_sede
+        kwargs['formador'] = Contrato.objects.get(id=self.kwargs['pk']).formador.get_full_name()
+        kwargs['codigo_grupo'] = grupo.diplomado.nombre + ": " + grupo.get_nombre_grupo()
+        kwargs['id_grupo'] = self.kwargs['id_grupo']
+        kwargs['nombre_entregable'] = Entregable.objects.get(id=self.kwargs['id_entregable']).nombre
+        return super(MasivoEvidenciasEntregableView, self).get_context_data(**kwargs)
+
+
+    def form_valid(self, form):
+
+        contrato = Contrato.objects.get(id=self.kwargs['pk'])
+        entregable = Entregable.objects.get(id=self.kwargs['id_entregable'])
+        soportes = ZipFile(form.cleaned_data['archivo'], 'r')
+        for soporte_info in soportes.infolist():
+            soporte = soporte_info.filename
+            try:
+                cedula = soporte.split('/')[-1].split('.')[-2]
+            except:
+                pass
+            else:
+                try:
+                    beneficiario = BeneficiarioVigencia2017.objects.get(cedula = cedula)
+                except:
+                    pass
+                else:
+                    evidencias = EvidenciaVigencia2017.objects.filter(entregable = entregable, contrato = contrato)
+                    if evidencias.filter(beneficiarios_validados = beneficiario).count() == 0:
+                        if evidencias.filter(beneficiarios_cargados = beneficiario).count() > 0:
+                            evidencias_cargadas = evidencias.filter(beneficiarios_cargados = beneficiario)
+
+                            for evidencia_cargada in evidencias_cargadas:
+                                evidencia_cargada.beneficiarios_cargados.remove(beneficiario)
+                                beneficiario.delete_pago_entregable(id_entregable = entregable.id)
+
+                        archivo = SimpleUploadedFile(name=soporte, content= soportes.read(soporte_info))
+                        #archivo = ContentFile(StringIO.StringIO(soportes.open(soporte)))
+                        evidencia = EvidenciaVigencia2017.objects.create(usuario = self.request.user, archivo = archivo, entregable = entregable,
+                                                             contrato = contrato)
+                        evidencia.beneficiarios_cargados.add(beneficiario)
+                        beneficiario.set_pago_entregable(id_entregable=entregable.id,evidencia_id=evidencia.id)
+
+
+
+        return super(MasivoEvidenciasEntregableView,self).form_valid(form)
 
 
 

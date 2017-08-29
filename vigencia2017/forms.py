@@ -313,11 +313,11 @@ class BeneficiarioVigencia2017Form(forms.ModelForm):
             'area': forms.Select(
                 choices=[('', '----------'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'),
                          ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'), ('11', '11'),
-                         ('12', '12'), ('13', '13'), ('14', '14')]),
+                         ('12', '12'), ('13', '13'), ('14', '14'), ('15', '15')]),
             'grado': forms.Select(
                 choices=[('', '----------'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'),
                          ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'), ('11', '11'),
-                         ('12', '12'), ('13', '13'), ('14', '14')]),
+                         ('12', '12'), ('13', '13'), ('14', '14'), ('15', '15')]),
         }
 
 class NewBeneficiarioVigencia2017Form(forms.ModelForm):
@@ -622,3 +622,20 @@ class EvidenciaVigencia2017Form(forms.ModelForm):
     class Meta:
         model = Evidencia
         fields = ['usuario','archivo','entregable','beneficiarios_cargados','contrato']
+
+class MasivoVigencia2017Form(forms.Form):
+    archivo = forms.FileField(widget=forms.FileInput(attrs={'accept':'application/zip'}))
+
+    def __init__(self, *args, **kwargs):
+        super(MasivoVigencia2017Form, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Carga masiva de evidencias',
+                Div(
+                    Div('archivo', css_class='col-sm-12'),
+                    css_class='row'
+                )
+            )
+        )
