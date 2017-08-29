@@ -15,11 +15,11 @@ from vigencia2017.models import Evidencia
 import StringIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from vigencia2017.models import Pago as PagoVigencia2017
-from zipfile import ZipFile
-from django.core.files import File
-from sican.settings import base as settings
-from django.core.files.base import ContentFile
-from django.core.files.uploadedfile import SimpleUploadedFile
+import shutil
+from vigencia2017.models import CargaMasiva2017
+
+
+from vigencia2017.tasks import carga_masiva_evidencia
 
 # Create your views here.
 class ListadoCodigosDaneView(LoginRequiredMixin,
@@ -418,36 +418,9 @@ class MasivoEvidenciasEntregableView(LoginRequiredMixin,
 
     def form_valid(self, form):
 
-        contrato = Contrato.objects.get(id=self.kwargs['pk'])
-        entregable = Entregable.objects.get(id=self.kwargs['id_entregable'])
-        soportes = ZipFile(form.cleaned_data['archivo'], 'r')
-        for soporte_info in soportes.infolist():
-            soporte = soporte_info.filename
-            try:
-                cedula = soporte.split('/')[-1].split('.')[-2]
-            except:
-                pass
-            else:
-                try:
-                    beneficiario = BeneficiarioVigencia2017.objects.get(cedula = cedula)
-                except:
-                    pass
-                else:
-                    evidencias = EvidenciaVigencia2017.objects.filter(entregable = entregable, contrato = contrato)
-                    if evidencias.filter(beneficiarios_validados = beneficiario).count() == 0:
-                        if evidencias.filter(beneficiarios_cargados = beneficiario).count() > 0:
-                            evidencias_cargadas = evidencias.filter(beneficiarios_cargados = beneficiario)
+        carga = CargaMasiva2017.objects.create(archivo=form.cleaned_data['archivo'])
 
-                            for evidencia_cargada in evidencias_cargadas:
-                                evidencia_cargada.beneficiarios_cargados.remove(beneficiario)
-                                beneficiario.delete_pago_entregable(id_entregable = entregable.id)
-
-                        archivo = SimpleUploadedFile(name=soporte, content= soportes.read(soporte_info))
-                        #archivo = ContentFile(StringIO.StringIO(soportes.open(soporte)))
-                        evidencia = EvidenciaVigencia2017.objects.create(usuario = self.request.user, archivo = archivo, entregable = entregable,
-                                                             contrato = contrato)
-                        evidencia.beneficiarios_cargados.add(beneficiario)
-                        beneficiario.set_pago_entregable(id_entregable=entregable.id,evidencia_id=evidencia.id)
+        carga_masiva_evidencia.delay(carga.id,self.kwargs['pk'],self.kwargs['id_entregable'],self.request.user.id)
 
 
 

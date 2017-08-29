@@ -310,3 +310,7 @@ class Red(models.Model):
 
 class Corte(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
+
+
+class CargaMasiva2017(models.Model):
+    archivo = models.FileField(upload_to='Evidencias/Vigencia 2017/Carga Masiva')

@@ -35,6 +35,11 @@ from openpyxl.styles import Style, PatternFill, Border, Side, Alignment, Protect
 from informes.models import InformesExcel
 from productos.models import Entregable
 from municipios.models import Municipio
+from django.core.files import File
+from sican.settings import base as settings
+from django.core.files.uploadedfile import SimpleUploadedFile
+from zipfile import ZipFile
+from vigencia2017.models import CargaMasiva2017
 
 @app.task
 def carga_masiva_matrices(id,email_user):
@@ -842,9 +847,6 @@ def matriz_valores_vigencia_2017(email,id_contrato):
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
 
-
-
-
 @app.task
 def matriz_chequeo_vigencia_2017_total(email):
     usuario = User.objects.get(email=email)
@@ -979,7 +981,6 @@ def matriz_chequeo_vigencia_2017_total(email):
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
 
-
 @app.task
 def matriz_valores_vigencia_2017_total(email):
     usuario = User.objects.get(email=email)
@@ -1090,3 +1091,42 @@ def matriz_valores_vigencia_2017_total(email):
     filename = unicode(informe.creacion) + '.xlsx'
     informe.archivo.save(filename,File(output))
     return "Reporte generado exitosamente"
+
+@app.task
+def carga_masiva_evidencia(carga_id,id_contrato,id_entregable,user_id):
+    carga = CargaMasiva2017.objects.get(id = carga_id)
+    user = User.objects.get(id=user_id)
+    contrato = Contrato.objects.get(id=id_contrato)
+    entregable = Entregable.objects.get(id=id_entregable)
+
+    soportes = ZipFile(carga.archivo, 'r')
+
+    for soporte_info in soportes.infolist():
+        soporte = soporte_info.filename
+        try:
+            cedula = soporte.split('/')[-1].split('.')[-2]
+        except:
+            pass
+        else:
+            try:
+                beneficiario = BeneficiarioVigencia2017.objects.get(cedula=cedula)
+            except:
+                pass
+            else:
+                evidencias = EvidenciaVigencia2017.objects.filter(entregable=entregable, contrato=contrato)
+                if evidencias.filter(beneficiarios_validados=beneficiario).count() == 0:
+                    if evidencias.filter(beneficiarios_cargados=beneficiario).count() > 0:
+                        evidencias_cargadas = evidencias.filter(beneficiarios_cargados=beneficiario)
+
+                        for evidencia_cargada in evidencias_cargadas:
+                            evidencia_cargada.beneficiarios_cargados.remove(beneficiario)
+                            beneficiario.delete_pago_entregable(id_entregable=entregable.id)
+
+                    archivo = SimpleUploadedFile(name=soporte, content=soportes.read(soporte_info))
+                    evidencia = EvidenciaVigencia2017.objects.create(usuario=user, archivo=archivo,
+                                                                     entregable=entregable,
+                                                                     contrato=contrato)
+                    evidencia.beneficiarios_cargados.add(beneficiario)
+                    beneficiario.set_pago_entregable(id_entregable=entregable.id, evidencia_id=evidencia.id)
+
+    return "Evidencias cargadas"
