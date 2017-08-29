@@ -22,9 +22,8 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vigencia2017/migrations/0015_auto_20170829_1503.py" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vigencia2017/migrations/__init__.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vigencia2017/models.py" afterPath="$PROJECT_DIR$/vigencia2017/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vigencia2017/tasks.py" afterPath="$PROJECT_DIR$/vigencia2017/tasks.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vigencia2017/views.py" afterPath="$PROJECT_DIR$/vigencia2017/views.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/masivo_evidencia.html" afterPath="$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/masivo_evidencia.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/masivo_evidencia.jade" afterPath="$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/masivo_evidencia.jade" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -92,11 +91,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="tasks.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="tasks.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vigencia2017/tasks.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="1099" column="57" lean-forward="true" selection-start-line="1099" selection-start-column="57" selection-end-line="1099" selection-end-column="57" />
+            <state relative-caret-position="373">
+              <caret line="1109" column="13" lean-forward="false" selection-start-line="1109" selection-start-column="13" selection-end-line="1109" selection-end-column="13" />
               <folding>
                 <element signature="e#46#85#0" expanded="true" />
                 <element signature="e#1711#29071#0" expanded="false" />
@@ -112,11 +111,21 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vigencia2017/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
+            <state relative-caret-position="449">
               <caret line="426" column="0" lean-forward="false" selection-start-line="426" selection-start-column="0" selection-end-line="426" selection-end-column="0" />
               <folding>
                 <element signature="e#0#91#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="masivo_evidencia.jade" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/masivo_evidencia.jade">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="151">
+              <caret line="47" column="0" lean-forward="true" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -183,8 +192,8 @@
       <find>delay</find>
       <find>self</find>
       <find>settings</find>
-      <find>shu</find>
       <find>CargaMasiva2017</find>
+      <find>shu</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -238,12 +247,12 @@
         <option value="$PROJECT_DIR$/rest/views.py" />
         <option value="$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/lista_evidencias.jade" />
         <option value="$PROJECT_DIR$/vigencia2017/urls.py" />
-        <option value="$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/masivo_evidencia.jade" />
         <option value="$PROJECT_DIR$/vigencia2017/formatChecker.py" />
         <option value="$PROJECT_DIR$/vigencia2017/forms.py" />
         <option value="$PROJECT_DIR$/vigencia2017/views.py" />
         <option value="$PROJECT_DIR$/vigencia2017/models.py" />
         <option value="$PROJECT_DIR$/vigencia2017/tasks.py" />
+        <option value="$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/masivo_evidencia.jade" />
       </list>
     </option>
   </component>
@@ -290,7 +299,20 @@
             <path>
               <item name="sican" type="b2602c69:ProjectViewProjectNode" />
               <item name="sican" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sican" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sican" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
               <item name="vigencia2017" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sican" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sican" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="vigencia2017" type="462c0819:PsiDirectoryNode" />
+              <item name="grupos_formacion" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -854,7 +876,14 @@
       <option name="project" value="LOCAL" />
       <updated>1504024986815</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="Vigencia 2017 v16">
+      <created>1504037632493</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1504037632493</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1389,14 +1418,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/masivo_evidencia.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-164">
-          <caret line="32" column="73" lean-forward="false" selection-start-line="32" selection-start-column="73" selection-end-line="32" selection-end-column="73" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/lista_evidencias.jade">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="62">
@@ -1444,20 +1465,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/vigencia2017/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="426" column="0" lean-forward="false" selection-start-line="426" selection-start-column="0" selection-end-line="426" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#91#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vigencia2017/tasks.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="1099" column="57" lean-forward="true" selection-start-line="1099" selection-start-column="57" selection-end-line="1099" selection-end-column="57" />
+        <state relative-caret-position="373">
+          <caret line="1109" column="13" lean-forward="false" selection-start-line="1109" selection-start-column="13" selection-end-line="1109" selection-end-column="13" />
           <folding>
             <element signature="e#46#85#0" expanded="true" />
             <element signature="e#1711#29071#0" expanded="false" />
@@ -1466,6 +1477,24 @@
             <element signature="e#43889#51535#0" expanded="false" />
             <element signature="e#51598#57936#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vigencia2017/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="449">
+          <caret line="426" column="0" lean-forward="false" selection-start-line="426" selection-start-column="0" selection-end-line="426" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#91#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/vigencia2017/grupos_formacion/masivo_evidencia.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="151">
+          <caret line="47" column="0" lean-forward="true" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
