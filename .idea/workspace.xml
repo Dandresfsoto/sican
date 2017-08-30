@@ -70,13 +70,13 @@
         <entry file="file://$PROJECT_DIR$/vigencia2017/tasks.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="177">
-              <caret line="695" column="90" lean-forward="true" selection-start-line="695" selection-start-column="90" selection-end-line="695" selection-end-column="90" />
+              <caret line="695" column="89" lean-forward="false" selection-start-line="695" selection-start-column="8" selection-end-line="695" selection-end-column="89" />
               <folding>
                 <element signature="e#46#85#0" expanded="true" />
                 <element signature="e#1711#29071#0" expanded="false" />
-                <element signature="e#37163#43818#0" expanded="false" />
-                <element signature="e#43881#51527#0" expanded="false" />
-                <element signature="e#51590#57928#0" expanded="false" />
+                <element signature="e#37163#43810#0" expanded="false" />
+                <element signature="e#51574#57904#0" expanded="false" />
+                <element signature="e#57992#59838#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -94,8 +94,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>matriz_chequeo_vigencia_2017</find>
-      <find>para</find>
       <find>beneficiario = Beneficiario.objects</find>
       <find>beneficiario = Beneficiario.objects.get(cedula=cedula)</find>
       <find>Beneficiario.objects.create(</find>
@@ -124,6 +122,8 @@
       <find>settings</find>
       <find>CargaMasiva2017</find>
       <find>shu</find>
+      <find>ws.cell(row=contadores[str(id_diplomado)], column=22, value = beneficiario.grado)</find>
+      <find>ws.cell(row=contadores[str(id_diplomado)], column=24, value = beneficiario.genero</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -814,7 +814,14 @@
       <option name="project" value="LOCAL" />
       <updated>1504040444136</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="Vigencia 2017 v16">
+      <created>1504107020494</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1504107020494</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -872,7 +879,8 @@
     <MESSAGE value="Vigencia 2017 v14" />
     <MESSAGE value="Vigencia 2017 v15" />
     <MESSAGE value="Vigencia 2017 v16" />
-    <option name="LAST_COMMIT_MESSAGE" value="Vigencia 2017 v16" />
+    <MESSAGE value="Vigencia 2017 v17" />
+    <option name="LAST_COMMIT_MESSAGE" value="Vigencia 2017 v17" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1304,13 +1312,13 @@
     <entry file="file://$PROJECT_DIR$/vigencia2017/tasks.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="177">
-          <caret line="695" column="90" lean-forward="true" selection-start-line="695" selection-start-column="90" selection-end-line="695" selection-end-column="90" />
+          <caret line="695" column="89" lean-forward="false" selection-start-line="695" selection-start-column="8" selection-end-line="695" selection-end-column="89" />
           <folding>
             <element signature="e#46#85#0" expanded="true" />
             <element signature="e#1711#29071#0" expanded="false" />
-            <element signature="e#37163#43818#0" expanded="false" />
-            <element signature="e#43881#51527#0" expanded="false" />
-            <element signature="e#51590#57928#0" expanded="false" />
+            <element signature="e#37163#43810#0" expanded="false" />
+            <element signature="e#51574#57904#0" expanded="false" />
+            <element signature="e#57992#59838#0" expanded="false" />
           </folding>
         </state>
       </provider>

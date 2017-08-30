@@ -817,7 +817,7 @@ def matriz_valores_vigencia_2017(email,id_contrato):
         ws.cell(row=contadores[str(id_diplomado)], column=21, value = beneficiario.area)
         ws.cell(row=contadores[str(id_diplomado)], column=22, value = beneficiario.grado)
         ws.cell(row=contadores[str(id_diplomado)], column=23, value = beneficiario.grupo.diplomado.nombre.upper())
-        ws.cell(row=contadores[str(id_diplomado)], column=24, value = beneficiario.genero.upper())
+        ws.cell(row=contadores[str(id_diplomado)], column=24, value = beneficiario.genero)
 
         for entregable in Entregable.objects.filter(sesion__nivel__diplomado__id = id_diplomado):
 
@@ -947,7 +947,7 @@ def matriz_chequeo_vigencia_2017_total(email):
         ws.cell(row=contadores[str(id_diplomado)], column=21, value = beneficiario.area)
         ws.cell(row=contadores[str(id_diplomado)], column=22, value = beneficiario.grado)
         ws.cell(row=contadores[str(id_diplomado)], column=23, value = beneficiario.grupo.diplomado.nombre.upper())
-        ws.cell(row=contadores[str(id_diplomado)], column=24, value = beneficiario.genero.upper())
+        ws.cell(row=contadores[str(id_diplomado)], column=24, value = beneficiario.genero)
 
         for entregable in Entregable.objects.filter(sesion__nivel__diplomado__id = id_diplomado):
 
@@ -1062,7 +1062,7 @@ def matriz_valores_vigencia_2017_total(email):
         ws.cell(row=contadores[str(id_diplomado)], column=21, value = beneficiario.area)
         ws.cell(row=contadores[str(id_diplomado)], column=22, value = beneficiario.grado)
         ws.cell(row=contadores[str(id_diplomado)], column=23, value = beneficiario.grupo.diplomado.nombre.upper())
-        ws.cell(row=contadores[str(id_diplomado)], column=24, value = beneficiario.genero.upper())
+        ws.cell(row=contadores[str(id_diplomado)], column=24, value = beneficiario.genero)
 
         for entregable in Entregable.objects.filter(sesion__nivel__diplomado__id = id_diplomado):
 
