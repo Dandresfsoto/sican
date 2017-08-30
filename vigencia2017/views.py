@@ -615,3 +615,25 @@ class EvidenciasListView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         kwargs['informes'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_codigos.informes')
         return super(EvidenciasListView,self).get_context_data(**kwargs)
+
+
+
+class BeneficiarioEvidenciaCedulaList(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'vigencia2017/evidencias/cedula/lista_beneficiarios.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_cedula_beneficiario.ver"
+
+
+
+class BeneficiarioEvidenciaCedulaProductoList(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'vigencia2017/evidencias/cedula/lista_productos.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_cedula_beneficiario.ver"
+
+
+    def get_context_data(self, **kwargs):
+        kwargs['id_beneficiario'] = self.kwargs['id_beneficiario']
+        kwargs['nombre_beneficiario'] = BeneficiarioVigencia2017.objects.get(id = self.kwargs['id_beneficiario']).get_full_name()
+        return super(BeneficiarioEvidenciaCedulaProductoList,self).get_context_data(**kwargs)

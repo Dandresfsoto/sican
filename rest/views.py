@@ -205,6 +205,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'vigencia_2017_cedula_beneficiario': {
+                'ver': {'name': 'Cedula de beneficiario', 'link': '/vigencia2017/evidencias/cedula/'}
+            },
             'vigencia_2017_codigos': {
                 'ver': {'name': 'Codigos de soporte', 'link': '/vigencia2017/evidencias/codigos/'}
             },
@@ -2858,6 +2861,41 @@ class BeneficiariosCedulaListView(BaseDatatableView):
 
 
 
+class BeneficiariosVigencia2017CedulaListView(BaseDatatableView):
+    """
+    """
+    model = BeneficiarioVigencia2017
+    columns = ['id','nombres','apellidos','cedula','region','diplomado','formador']
+    order_columns = ['nombres','apellidos','cedula','region','diplomado','formador']
+    max_display_length = 100
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombres__icontains=search) | Q(apellidos__icontains=search) |\
+                Q(cedula__icontains=search) | Q(grupo__diplomado__nombre__icontains=search) |\
+                Q(grupo__contrato__formador__nombres__icontains=search)
+
+            qs = qs.filter(q)
+        return qs
+
+
+    def prepare_results(self, qs):
+        json_data = []
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.nombres,
+                item.apellidos,
+                item.cedula,
+                item.region.nombre,
+                item.grupo.diplomado.nombre,
+                item.grupo.contrato.formador.get_full_name()
+            ])
+        return json_data
+
+
 
 class BeneficiariosPleList(BaseDatatableView):
     """
@@ -2969,6 +3007,56 @@ class BeneficiariosCedulaProductosListView(BaseDatatableView):
                 link
             ])
         return json_data
+
+
+
+
+class BeneficiariosCedulaProductosVigencia2017ListView(BaseDatatableView):
+    """
+    """
+    model = Entregable
+    columns = ['id']
+    order_columns = ['id']
+    max_display_length = 100
+
+    def get_initial_queryset(self):
+        beneficiario = BeneficiarioVigencia2017.objects.get(id=self.kwargs['id_beneficiario'])
+        return Entregable.objects.filter(sesion__nivel__diplomado__id = beneficiario.grupo.diplomado.id,escencial="Si")
+
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+        if search:
+            q = Q(nombre__icontains=search) | Q(id__icontains=search)
+
+            qs = qs.filter(q)
+        return qs
+
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        beneficiario = BeneficiarioVigencia2017.objects.get(id=self.kwargs['id_beneficiario'])
+        evidencias = EvidenciaVigencia2017.objects.filter(beneficiarios_cargados = beneficiario)
+
+        for item in qs:
+            evidencia = evidencias.filter(entregable__id = item.id).order_by('id')
+
+            if evidencia.count() == 0:
+                link = ''
+            else:
+                link = evidencia[0].get_archivo_url()
+
+            json_data.append([
+                item.id,
+                item.sesion.nivel.diplomado.nombre,
+                item.sesion.nivel.nombre,
+                item.sesion.nombre,
+                item.nombre,
+                link
+            ])
+        return json_data
+
 
 
 
