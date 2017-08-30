@@ -33,4 +33,6 @@ urlpatterns = [
     url(r'^cargar_matriz/$', views.ListadoCargaMatrizView.as_view()),
     url(r'^cargar_matriz/nuevo/$', views.NuevaCargaMatrizView.as_view()),
     url(r'^cargar_matriz/pendientes/(?P<pk>[0-9]+)/$', views.ListadoCambioMatrizView.as_view()),
+
+    url(r'^evidencias/codigos/$', views.EvidenciasListView.as_view()),
 ]

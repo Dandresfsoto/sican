@@ -77,6 +77,8 @@ urlpatterns = [
     url(r'vigencia_2017/cedulas/id/',views.Cedulas2BeneficiariosIdVigencia2017.as_view()),
     url(r'vigencia_2017/cedulas/id_grupo/(?P<id_grupo>\w+)/',views.GrupoCedulas2BeneficiariosIdVigencia2017.as_view()),
 
+    url(r'vigencia_2017/evidencias/codigos/',views.EvidenciasCodigosVigencia2017.as_view()),
+
     #-------------------------------------------------------------------------------------------------------------------
 
     #--------------------------------------------- BENEFICIARIOS -------------------------------------------------------
@@ -179,6 +181,7 @@ urlpatterns = [
     url(r'requerimientos/delegacion/$', DelegacionRequerimientos.as_view()),
 
     url(r'evidencias/codigos/',EvidenciasCodigos.as_view()),
+
 
     url(r'reds/lista/',RedList.as_view()),
 

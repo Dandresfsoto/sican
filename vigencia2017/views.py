@@ -601,3 +601,17 @@ class ConectividadGrupoView(LoginRequiredMixin,
         self.object.save()
 
         return super(ConectividadGrupoView , self).form_valid(form)
+
+
+
+
+
+class EvidenciasListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'vigencia2017/evidencias/codigos/lista.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_codigos.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['informes'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_codigos.informes')
+        return super(EvidenciasListView,self).get_context_data(**kwargs)

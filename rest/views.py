@@ -205,6 +205,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'vigencia_2017_codigos': {
+                'ver': {'name': 'Codigos de soporte', 'link': '/vigencia2017/evidencias/codigos/'}
+            },
             'vigencia_2017_cargar_matriz': {
                 'ver': {'name': 'Carga de matriz', 'link': '/vigencia2017/cargar_matriz/'}
             },
@@ -4061,6 +4064,85 @@ class EvidenciasCodigos(BaseDatatableView):
                 item.usuario.get_full_name(),
                 item.entregable.nombre,
                 item.formador.get_full_name(),
+                baneficiarios_cargados,
+                baneficiarios_validados,
+                baneficiarios_rechazados
+            ])
+        return json_data
+
+
+
+class EvidenciasCodigosVigencia2017(BaseDatatableView):
+    """
+    0.id
+    1.red
+    2.fecha
+    3.actualizacion
+    4.usuario
+    5.archivo
+    6.entregable
+    7.beneficiarios cargados
+    8.beneficiarios validados
+    9.formador
+    """
+    model = EvidenciaVigencia2017
+    columns = ['id']
+
+    order_columns = ['id','id','id','id']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(id__exact = search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+
+            red = ''
+
+            if item.red_id != None:
+                red = 'RED-' + str(item.red_id)
+
+
+            baneficiarios_cargados = []
+            baneficiarios_validados = []
+            baneficiarios_rechazados = []
+
+            for beneficiario in item.beneficiarios_cargados.all():
+                if beneficiario != None:
+                    baneficiarios_cargados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.grupo.get_nombre_grupo()])
+
+            for beneficiario in item.beneficiarios_validados.all():
+                if beneficiario != None:
+                    baneficiarios_validados.append([beneficiario.get_full_name(),beneficiario.cedula,beneficiario.grupo.get_nombre_grupo()])
+
+            for beneficiario in item.beneficiarios_rechazados.all():
+                if beneficiario != None:
+                    baneficiarios_rechazados.append([beneficiario.beneficiario_rechazo.get_full_name(),beneficiario.beneficiario_rechazo.cedula,beneficiario.beneficiario_rechazo.grupo.get_nombre_grupo(),beneficiario.observacion])
+
+
+            json_data.append([
+                item.id,
+                red,
+                item.get_beneficiarios_cantidad(),
+                item.get_validados_cantidad(),
+                item.get_archivo_url(),
+                item.entregable.sesion.nivel.diplomado.nombre,
+                item.entregable.sesion.nivel.nombre,
+                item.entregable.sesion.nombre,
+                item.entregable.id,
+
+                localtime(item.fecha).strftime('%d/%m/%Y %I:%M:%S %p'),
+                localtime(item.updated).strftime('%d/%m/%Y %I:%M:%S %p'),
+                item.usuario.get_full_name(),
+                item.entregable.nombre,
+                item.contrato.formador.get_full_name(),
                 baneficiarios_cargados,
                 baneficiarios_validados,
                 baneficiarios_rechazados
