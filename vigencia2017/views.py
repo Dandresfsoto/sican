@@ -11,7 +11,7 @@ from vigencia2017.models import Beneficiario as BeneficiarioVigencia2017
 from vigencia2017.forms import BeneficiarioVigencia2017Form, NewBeneficiarioVigencia2017Form
 from vigencia2017.models import Evidencia as EvidenciaVigencia2017
 from vigencia2017.forms import EvidenciaVigencia2017Form, GruposVigencia2017ConectividadForm, MasivoVigencia2017Form
-from vigencia2017.models import Evidencia
+from vigencia2017.models import Evidencia, Red
 import StringIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from vigencia2017.models import Pago as PagoVigencia2017
@@ -19,6 +19,10 @@ import shutil
 from vigencia2017.models import CargaMasiva2017
 from django.core.files.uploadedfile import SimpleUploadedFile
 from zipfile import ZipFile
+from vigencia2017.forms import RedForm
+from region.models import Region
+from django.shortcuts import HttpResponseRedirect
+from vigencia2017.tasks import build_red
 
 
 from vigencia2017.tasks import carga_masiva_evidencia
@@ -637,3 +641,145 @@ class BeneficiarioEvidenciaCedulaProductoList(LoginRequiredMixin,
         kwargs['id_beneficiario'] = self.kwargs['id_beneficiario']
         kwargs['nombre_beneficiario'] = BeneficiarioVigencia2017.objects.get(id = self.kwargs['id_beneficiario']).get_full_name()
         return super(BeneficiarioEvidenciaCedulaProductoList,self).get_context_data(**kwargs)
+
+
+
+
+
+class RedsListView(LoginRequiredMixin,
+                         PermissionRequiredMixin,
+                         TemplateView):
+    template_name = 'vigencia2017/red/lista.html'
+    permission_required = "permisos_sican.vigencia_2017.vigencia_2017_reds.ver"
+
+    def get_context_data(self, **kwargs):
+        kwargs['nuevo_permiso'] = self.request.user.has_perm('permisos_sican.vigencia_2017.vigencia_2017_reds.crear')
+        return super(RedsListView,self).get_context_data(**kwargs)
+
+
+
+
+
+class NuevoRedView(LoginRequiredMixin,
+                              PermissionRequiredMixin,
+                              CreateView):
+    model = Red
+    form_class = RedForm
+    success_url = '../'
+    template_name = 'evidencias/red/nuevo.html'
+    permission_required = "permisos_sican.evidencias.red.crear"
+
+    def get_context_data(self, **kwargs):
+
+        evidencias = Evidencia.objects.filter(red_id = None)
+
+        region_1 = Region.objects.get(numero = 1)
+        region_2 = Region.objects.get(numero = 2)
+
+        evidencias_r1 = evidencias.filter(contrato__formador__region = region_1)
+        evidencias_r2 = evidencias.filter(contrato__formador__region = region_2)
+
+        evidencias_r1_innovatic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC')
+        evidencias_r1_tecnotic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC')
+        evidencias_r1_directic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
+        evidencias_r1_escuelatic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
+
+        evidencias_r2_innovatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC')
+        evidencias_r2_tecnotic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC')
+        evidencias_r2_directic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
+        evidencias_r2_escuelatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
+
+
+        kwargs['formadores_innovatic_r1'] = evidencias_r1_innovatic.values_list('contrato__formador',flat=True).distinct().count()
+        kwargs['beneficiarios_innovatic_r1'] = evidencias_r1_innovatic.values_list('beneficiarios_cargados',flat=True).distinct().count()
+        kwargs['evidencias_innovatic_r1'] = evidencias_r1_innovatic.count()
+
+        kwargs['formadores_tecnotic_r1'] = evidencias_r1_tecnotic.values_list('contrato__formador',flat=True).distinct().count()
+        kwargs['beneficiarios_tecnotic_r1'] = evidencias_r1_tecnotic.values_list('beneficiarios_cargados',flat=True).distinct().count()
+        kwargs['evidencias_tecnotic_r1'] = evidencias_r1_tecnotic.count()
+
+        kwargs['formadores_directic_r1'] = evidencias_r1_directic.values_list('contrato__formador',flat=True).distinct().count()
+        kwargs['beneficiarios_directic_r1'] = evidencias_r1_directic.values_list('beneficiarios_cargados',flat=True).distinct().count()
+        kwargs['evidencias_directic_r1'] = evidencias_r1_directic.count()
+
+        kwargs['formadores_escuelatic_r1'] = evidencias_r1_escuelatic.values_list('contrato__formador',flat=True).distinct().count()
+        kwargs['beneficiarios_escuelatic_r1'] = evidencias_r1_escuelatic.values_list('beneficiarios_cargados',flat=True).distinct().count()
+        kwargs['evidencias_escuelatic_r1'] = evidencias_r1_escuelatic.count()
+
+        kwargs['formadores_innovatic_r2'] = evidencias_r2_innovatic.values_list('contrato__formador',flat=True).distinct().count()
+        kwargs['beneficiarios_innovatic_r2'] = evidencias_r2_innovatic.values_list('beneficiarios_cargados',flat=True).distinct().count()
+        kwargs['evidencias_innovatic_r2'] = evidencias_r2_innovatic.count()
+
+        kwargs['formadores_tecnotic_r2'] = evidencias_r2_tecnotic.values_list('contrato__formador',flat=True).distinct().count()
+        kwargs['beneficiarios_tecnotic_r2'] = evidencias_r2_tecnotic.values_list('beneficiarios_cargados',flat=True).distinct().count()
+        kwargs['evidencias_tecnotic_r2'] = evidencias_r2_tecnotic.count()
+
+        kwargs['formadores_directic_r2'] = evidencias_r2_directic.values_list('contrato__formador',flat=True).distinct().count()
+        kwargs['beneficiarios_directic_r2'] = evidencias_r2_directic.values_list('beneficiarios_cargados',flat=True).distinct().count()
+        kwargs['evidencias_directic_r2'] = evidencias_r2_directic.count()
+
+        kwargs['formadores_escuelatic_r2'] = evidencias_r2_escuelatic.values_list('contrato__formador',flat=True).distinct().count()
+        kwargs['beneficiarios_escuelatic_r2'] = evidencias_r2_escuelatic.values_list('beneficiarios_cargados',flat=True).distinct().count()
+        kwargs['evidencias_escuelatic_r2'] = evidencias_r2_escuelatic.count()
+
+        return super(NuevoRedView,self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        red = Red.objects.get(id = self.object.id)
+
+        if not red.producto_final:
+            evidencias = EvidenciaVigencia2017.objects.filter(red_id = None)
+
+            region_1 = Region.objects.get(numero = 1)
+            region_2 = Region.objects.get(numero = 2)
+
+            evidencias_r1 = evidencias.filter(contrato__formador__region = region_1)
+            evidencias_r2 = evidencias.filter(contrato__formador__region = region_2)
+
+            evidencias_r1_innovatic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC')
+            evidencias_r1_tecnotic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC')
+            evidencias_r1_directic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
+            evidencias_r1_escuelatic = evidencias_r1.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
+
+            evidencias_r2_innovatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'INNOVATIC')
+            evidencias_r2_tecnotic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'TECNOTIC')
+            evidencias_r2_directic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'DIRECTIC')
+            evidencias_r2_escuelatic = evidencias_r2.filter(entregable__sesion__nivel__diplomado__nombre = 'ESCUELA TIC FAMILIA')
+
+
+
+            if self.object.region.numero == 1:
+                if self.object.diplomado.nombre == 'INNOVATIC':
+                    evidencias_r1_innovatic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'TECNOTIC':
+                    evidencias_r1_tecnotic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'DIRECTIC':
+                    evidencias_r1_directic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'ESCUELA TIC FAMILIA':
+                    evidencias_r1_escuelatic.update(red_id = red.id)
+                else:
+                    pass
+
+            elif self.object.region.numero == 2:
+                if self.object.diplomado.nombre == 'INNOVATIC':
+                    evidencias_r2_innovatic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'TECNOTIC':
+                    evidencias_r2_tecnotic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'DIRECTIC':
+                    evidencias_r2_directic.update(red_id = red.id)
+                elif self.object.diplomado.nombre == 'ESCUELA TIC FAMILIA':
+                    evidencias_r2_escuelatic.update(red_id = red.id)
+                else:
+                    pass
+
+
+            else:
+                pass
+            red.save()
+            build_red.delay(red.id)
+        else:
+
+            pass
+        return HttpResponseRedirect(self.get_success_url())

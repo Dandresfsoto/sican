@@ -639,3 +639,98 @@ class MasivoVigencia2017Form(forms.Form):
                 )
             )
         )
+
+class RedForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RedForm, self).__init__(*args, **kwargs)
+
+        self.fields['region'].queryset = Region.objects.exclude(numero__in = [4,3])
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Fieldset(
+                'Información R1',
+                Div(
+                    HTML(
+                        """
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h4 class="bold-p" style="margin-bottom:10px;">Innovatic</h4>
+                                <p>Formadores: {{formadores_innovatic_r1}}</p>
+                                <p>Beneficiarios: {{beneficiarios_innovatic_r1}}</p>
+                                <p>Evidencias: {{evidencias_innovatic_r1}}</p>
+                            </div>
+                            <div class="col-sm-3">
+                                <h4 class="bold-p">Tecnotic</h4>
+                                <p>Formadores: {{formadores_tecnotic_r1}}</p>
+                                <p>Beneficiarios: {{beneficiarios_tecnotic_r1}}</p>
+                                <p>Evidencias: {{evidencias_tecnotic_r1}}</p>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <h4 class="bold-p">Directic</h4>
+                                <p>Formadores: {{formadores_directic_r1}}</p>
+                                <p>Beneficiarios: {{beneficiarios_directic_r1}}</p>
+                                <p>Evidencias: {{evidencias_directic_r1}}</p>
+                            </div>
+                            <div class="col-sm-3">
+                                <h4 class="bold-p">Escuela TIC</h4>
+                                <p>Formadores: {{formadores_escuelatic_r1}}</p>
+                                <p>Beneficiarios: {{beneficiarios_escuelatic_r1}}</p>
+                                <p>Evidencias: {{evidencias_escuelatic_r1}}</p>
+                            </div>
+                        </div>
+                        """,
+                    ),
+                )
+            ),
+            Fieldset(
+                'Información R2',
+                Div(
+                    HTML(
+                        """
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h4 class="bold-p" style="margin-bottom:10px;">Innovatic</h4>
+                                <p>Formadores: {{formadores_innovatic_r2}}</p>
+                                <p>Beneficiarios: {{beneficiarios_innovatic_r2}}</p>
+                                <p>Evidencias: {{evidencias_innovatic_r2}}</p>
+                            </div>
+                            <div class="col-sm-3">
+                                <h4 class="bold-p">Tecnotic</h4>
+                                <p>Formadores: {{formadores_tecnotic_r2}}</p>
+                                <p>Beneficiarios: {{beneficiarios_tecnotic_r2}}</p>
+                                <p>Evidencias: {{evidencias_tecnotic_r2}}</p>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <h4 class="bold-p">Directic</h4>
+                                <p>Formadores: {{formadores_directic_r2}}</p>
+                                <p>Beneficiarios: {{beneficiarios_directic_r2}}</p>
+                                <p>Evidencias: {{evidencias_directic_r2}}</p>
+                            </div>
+                            <div class="col-sm-3">
+                                <h4 class="bold-p">Escuela TIC</h4>
+                                <p>Formadores: {{formadores_escuelatic_r2}}</p>
+                                <p>Beneficiarios: {{beneficiarios_escuelatic_r2}}</p>
+                                <p>Evidencias: {{evidencias_escuelatic_r2}}</p>
+                            </div>
+                        </div>
+                        """,
+                    ),
+                )
+            ),
+            Fieldset(
+                'RED',
+                Div(
+                    Div('diplomado',css_class='col-sm-6'),
+                    Div('region',css_class='col-sm-6'),
+                    css_class = 'row'
+                )
+            ),
+        )
+
+    class Meta:
+        model = Red
+        exclude = ['producto_final']

@@ -37,4 +37,8 @@ urlpatterns = [
     url(r'^evidencias/codigos/$', views.EvidenciasListView.as_view()),
     url(r'^evidencias/cedula/$', views.BeneficiarioEvidenciaCedulaList.as_view()),
     url(r'^evidencias/cedula/beneficiario/(?P<id_beneficiario>[0-9]+)/$', views.BeneficiarioEvidenciaCedulaProductoList.as_view()),
+
+
+    url(r'^reds/$', views.RedsListView.as_view()),
+    url(r'^reds/nuevo/$', views.NuevoRedView.as_view()),
 ]

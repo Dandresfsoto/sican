@@ -80,7 +80,7 @@ urlpatterns = [
     url(r'vigencia_2017/evidencias/codigos/',views.EvidenciasCodigosVigencia2017.as_view()),
     url(r'vigencia_2017/evidencias/cedula/$', views.BeneficiariosVigencia2017CedulaListView.as_view()),
     url(r'vigencia_2017/evidencias/cedula/(?P<id_beneficiario>\w+)/$', views.BeneficiariosCedulaProductosVigencia2017ListView.as_view()),
-
+    url(r'vigencia_2017/reds/lista/',views.RedListVigencia2017.as_view()),
     #-------------------------------------------------------------------------------------------------------------------
 
     #--------------------------------------------- BENEFICIARIOS -------------------------------------------------------

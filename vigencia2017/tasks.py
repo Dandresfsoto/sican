@@ -40,6 +40,7 @@ from sican.settings import base as settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from zipfile import ZipFile
 from vigencia2017.models import CargaMasiva2017
+from vigencia2017.models import Red
 
 @app.task
 def carga_masiva_matrices(id,email_user):
@@ -1130,3 +1131,191 @@ def carga_masiva_evidencia(carga_id,id_contrato,id_entregable,user_id):
                     beneficiario.set_pago_entregable(id_entregable=entregable.id, evidencia_id=evidencia.id)
 
     return "Evidencias cargadas"
+
+
+@app.task
+def build_red(id_red):
+
+    red = Red.objects.get(id = id_red)
+    output = StringIO.StringIO()
+
+    wb = openpyxl.Workbook()
+    ws = wb.get_active_sheet()
+    ids = []
+    inicia = 0
+
+    if red.diplomado.numero == 1:
+        ids = [{'id':8,'letter':'Q'},
+               {'id':9,'letter':'R'},
+               {'id':11,'letter':'S'},
+               {'id':20,'letter':'T'},
+               {'id':12,'letter':'U'},
+               {'id':262,'letter':'V'},
+               {'id':14,'letter':'W'},
+               {'id':15,'letter':'X'},
+               {'id':16,'letter':'Y'},
+               {'id':17,'letter':'Z'},
+               {'id':27,'letter':'AA'},
+               {'id':30,'letter':'AB'},
+               {'id':33,'letter':'AC'},
+               {'id':267,'letter':'AD'},
+               {'id':36,'letter':'AE'},
+               {'id':46,'letter':'AF'},
+               {'id':58,'letter':'AG'},
+               {'id':49,'letter':'AH'},
+               {'id':59,'letter':'AI'},
+               {'id':52,'letter':'AJ'},
+               {'id':60,'letter':'AK'},
+               {'id':55,'letter':'AL'},
+               {'id':63,'letter':'AM'},
+               {'id':66,'letter':'AN'},
+               {'id':67,'letter':'AO'}]
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED INNOVATIC 2017.xlsx')
+        ws = wb.get_sheet_by_name('RED InnovaTIC')
+        inicia = 6
+    elif red.diplomado.numero == 2:
+        ids = [{'id':72,'letter':'M'},
+               {'id':73,'letter':'N'},
+               {'id':75,'letter':'O'},
+               {'id':74,'letter':'P'},
+               {'id':76,'letter':'Q'},
+               {'id':77,'letter':'R'},
+               {'id':84,'letter':'S'},
+               {'id':85,'letter':'T'},
+               {'id':78,'letter':'U'},
+               {'id':89,'letter':'V'},
+               {'id':97,'letter':'W'},
+               {'id':98,'letter':'X'},
+               {'id':93,'letter':'Y'},
+               {'id':92,'letter':'Z'},
+               {'id':99,'letter':'AA'},
+               {'id':94,'letter':'AB'},
+               {'id':100,'letter':'AC'},
+               {'id':95,'letter':'AD'},
+               {'id':104,'letter':'AE'},
+               {'id':112,'letter':'AF'},
+               {'id':106,'letter':'AG'},
+               {'id':109,'letter':'AH'},
+               {'id':108,'letter':'AI'},
+               {'id':110,'letter':'AJ'},
+               {'id':119,'letter':'AK'},
+               {'id':124,'letter':'AL'},
+               {'id':118,'letter':'AM'},
+               {'id':120,'letter':'AN'},
+               {'id':121,'letter':'AO'}]
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED TECNOTIC.xlsx')
+        ws = wb.get_sheet_by_name('RED TecnoTIC')
+        inicia = 6
+    elif red.diplomado.numero == 3:
+        ids = [{'id':127,'letter':'M'},
+               {'id':128,'letter':'N'},
+               {'id':131,'letter':'O'},
+               {'id':132,'letter':'P'},
+               {'id':134,'letter':'Q'},
+               {'id':133,'letter':'R'},
+               {'id':142,'letter':'S'},
+               {'id':143,'letter':'T'},
+               {'id':135,'letter':'U'},
+               {'id':144,'letter':'V'},
+               {'id':137,'letter':'W'},
+               {'id':140,'letter':'X'},
+               {'id':139,'letter':'Y'},
+               {'id':147,'letter':'Z'},
+               {'id':146,'letter':'AA'},
+               {'id':152,'letter':'AB'},
+               {'id':148,'letter':'AC'},
+               {'id':149,'letter':'AD'},
+               {'id':151,'letter':'AE'},
+               {'id':150,'letter':'AF'},
+               {'id':156,'letter':'AG'},
+               {'id':155,'letter':'AH'},
+               {'id':157,'letter':'AI'},
+               {'id':164,'letter':'AJ'},
+               {'id':165,'letter':'AK'},
+               {'id':159,'letter':'AL'},
+               {'id':162,'letter':'AM'},
+               {'id':161,'letter':'AN'},
+               {'id':166,'letter':'AO'},
+               {'id':167,'letter':'AP'},
+               {'id':171,'letter':'AQ'},
+               {'id':171,'letter':'AR'},
+               {'id':169,'letter':'AS'}]
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED DIRECTIC.xlsx')
+        ws = wb.get_sheet_by_name('RED DirecTIC')
+        inicia = 6
+    elif red.diplomado.numero == 4:
+        ids = [{'id':221,'letter':'M'},
+               {'id':221,'letter':'N'},
+               {'id':221,'letter':'O'},
+               {'id':224,'letter':'P'},
+               {'id':228,'letter':'Q'}]
+
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED FAMILIA.xlsx')
+        ws = wb.get_sheet_by_name('RED Familia')
+        inicia = 2
+
+    elif red.diplomado.numero == 6:
+        ids = [{'id':258,'letter':'M'},
+               {'id':234,'letter':'N'},
+               {'id':235,'letter':'O'},
+               {'id':236,'letter':'P'},
+               {'id':239,'letter':'Q'},
+               {'id':242,'letter':'R'},
+               {'id':244,'letter':'S'},
+               {'id':247,'letter':'T'},
+               {'id':248,'letter':'U'},
+               {'id':255,'letter':'V'},
+               {'id':256,'letter':'W'}]
+
+        wb = openpyxl.load_workbook(filename=settings.STATICFILES_DIRS[0]+'/documentos/RED BOGOTA.xlsx')
+        ws = wb.get_sheet_by_name('RED BOGOTA')
+        inicia = 6
+
+    evidencias_total = EvidenciaVigencia2017.objects.filter(red_id = id_red)
+    beneficiarios_id = evidencias_total.exclude(beneficiarios_cargados = None).values_list('beneficiarios_cargados__id',flat=True).distinct()
+
+
+    i = 0 + inicia
+    for beneficiario_id in beneficiarios_id:
+        beneficiario = BeneficiarioVigencia2017.objects.get(id = beneficiario_id)
+        evidencias = evidencias_total.filter(beneficiarios_cargados__id = beneficiario_id)
+
+
+        ws.cell('A'+str(i)).value = i - inicia + 1
+        ws.cell('B'+str(i)).value = beneficiario.region.nombre.upper()
+        ws.cell('C'+str(i)).value = beneficiario.dane_sede.dane_sede
+        ws.cell('C' + str(i)).number_format = '0'
+        ws.cell('D'+str(i)).value = beneficiario.dane_sede.nombre_sede
+        ws.cell('E'+str(i)).value = beneficiario.dane_sede.dane_ie
+        ws.cell('E' + str(i)).number_format = '0'
+        ws.cell('F'+str(i)).value = beneficiario.dane_sede.nombre_ie
+        ws.cell('G'+str(i)).value = beneficiario.dane_sede.municipio.codigo_municipio
+        ws.cell('G'+str(i)).number_format = '0'
+        ws.cell('H'+str(i)).value = beneficiario.dane_sede.municipio.nombre.upper()
+        ws.cell('I'+str(i)).value = beneficiario.dane_sede.municipio.departamento.codigo_departamento
+        ws.cell('I' + str(i)).number_format = '0'
+        ws.cell('J'+str(i)).value = beneficiario.dane_sede.municipio.departamento.nombre.upper()
+
+        ws.cell('K'+str(i)).value = beneficiario.grupo.get_nombre_grupo()
+        ws.cell('L'+str(i)).value = beneficiario.grupo.contrato.formador.get_full_name().upper()
+        ws.cell('M' + str(i)).value = beneficiario.grupo.contrato.formador.cedula
+        ws.cell('N' + str(i)).value = beneficiario.apellidos.upper()
+        ws.cell('O' + str(i)).value = beneficiario.nombres.upper()
+        ws.cell('P' + str(i)).value = beneficiario.cedula
+
+        for id in ids:
+            evidencia = evidencias.filter(entregable__id = id['id']).order_by('id')
+            if evidencia.count() == 1:
+                if evidencia[0].subsanacion:
+                    ws.cell('L'+str(i)).value = 'S'
+                ws.cell( id['letter'] + str(i)).value = 'SIC-' + str(evidencia[0].id)
+                ws.cell( id['letter'] + str(i)).hyperlink = 'https://sican.asoandes.org' + evidencia[0].get_archivo_url()
+
+        i += 1
+
+
+    wb.save(output)
+    filename = 'RED-VIG2017' + unicode(red.id) + '-'+ red.region.nombre +'.xlsx'
+    red.archivo.save(filename,File(output))
+
+    return "Generado RED-" + str(id_red)

@@ -92,7 +92,9 @@ from collections import OrderedDict
 from vigencia2017.models import Evidencia as EvidenciaVigencia2017
 from vigencia2017.models import Red as RedVigencia2017RedVigencia2017
 from vigencia2017.tasks import matriz_valores_vigencia_2017, matriz_chequeo_vigencia_2017_total, matriz_valores_vigencia_2017_total
+from vigencia2017.models import Red as RedVigencia2017
 # Create your views here.
+
 
 #----------------------------------------------------- REST ------------------------------------------------------------
 
@@ -205,6 +207,9 @@ class UserPermissionList(APIView):
         }
 
         links = {
+            'vigencia_2017_reds': {
+                'ver': {'name': 'Formatos RED', 'link': '/vigencia2017/reds/'}
+            },
             'vigencia_2017_cedula_beneficiario': {
                 'ver': {'name': 'Cedula de beneficiario', 'link': '/vigencia2017/evidencias/cedula/'}
             },
@@ -4371,6 +4376,41 @@ class RedList(BaseDatatableView):
     """
     """
     model = Red
+    columns = ['id','diplomado','region','fecha']
+
+    order_columns = ['id','diplomado','region','fecha']
+    max_display_length = 100
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get(u'search[value]', None)
+
+        if search:
+            q = Q(id__exact = search.capitalize())
+            qs = qs.filter(q)
+        return qs
+
+    def prepare_results(self, qs):
+        json_data = []
+
+        for item in qs:
+            json_data.append([
+                item.id,
+                item.diplomado.nombre,
+                item.region.nombre,
+                localtime(item.fecha).strftime('%d/%m/%Y %I:%M:%S %p'),
+                Evidencia.objects.filter(red_id = item.id).count(),
+                'Si' if item.retroalimentacion else 'No',
+                item.get_archivo_url(),
+                self.request.user.has_perm('permisos_sican.evidencias.red.editar'),
+            ])
+        return json_data
+
+
+
+class RedListVigencia2017(BaseDatatableView):
+    """
+    """
+    model = RedVigencia2017
     columns = ['id','diplomado','region','fecha']
 
     order_columns = ['id','diplomado','region','fecha']
