@@ -730,7 +730,7 @@ class NuevoRedView(LoginRequiredMixin,
         red = Red.objects.get(id = self.object.id)
 
         if not red.producto_final:
-            evidencias = EvidenciaVigencia2017.objects.filter(red_id = None)
+            evidencias = Evidencia.objects.filter(red_id = None)
 
             region_1 = Region.objects.get(numero = 1)
             region_2 = Region.objects.get(numero = 2)

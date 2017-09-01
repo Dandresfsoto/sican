@@ -152,6 +152,15 @@ class Contrato(models.Model):
             supervisores += supervisor.get_full_name_string()+ ' - '+ supervisor.email + ';'
         return supervisores
 
+    def get_region(self):
+        region = None
+        departamentos = self.municipios.values_list('departamento__id',flat=True).distinct()
+        try:
+            region = Region.objects.filter(departamentos__in = departamentos)
+        except:
+            pass
+        return region
+
 class Soporte(models.Model):
     formador = models.ForeignKey(Formador)
     creacion = models.DateField(auto_now=True)
